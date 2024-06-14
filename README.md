@@ -21,7 +21,7 @@ VishwamAI/
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/VishwamAI/chat-agent
-   cd VishwamAI
+   cd chat-agent/VishwamAI
    ```
 
 2. **Run the setup script to install dependencies and set up the environment:**

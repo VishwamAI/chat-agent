@@ -1,74 +1,53 @@
-# MMLU Research Project
+# VishwamAI
 
-## Overview
-This project aims to achieve 100% accuracy on the Massive Multitask Language Understanding (MMLU) benchmark. The research paper, titled "How to Reach MMLU 100% Accuracy," is formatted in IEEE style and integrates formulas, data training models, images, and model designs. The paper credits Devin AI and Kasinadhsarma. The project includes advanced features such as auto-update, continuous evaluation, and integration with the `grok-1` model to enhance performance and accuracy.
+## Project Overview
+VishwamAI is a chat agent model designed to achieve 100% accuracy in MMLU, math, and reasoning tasks. The model incorporates a game-like design where it awards points for correct answers and deducts points for incorrect ones. VishwamAI leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and PyTorch.
 
-## Research Paper Outline
-The research paper is structured as follows:
-- **Abstract**: Overview of the methodologies and strategies required to achieve 100% accuracy on the MMLU benchmark.
-- **Introduction**: Introduction to the MMLU benchmark and the significance of achieving 100% accuracy.
-- **Related Work**: Review of existing models, their performance metrics, and key papers and benchmarks.
-- **Methodology**: Description of the models analyzed, their architectures, training techniques, and datasets used. Integration of images and model designs.
-- **Results**: Performance metrics of the top models, comparison of different approaches, and analysis of the results.
-- **Discussion**: Key challenges in achieving 100% accuracy, successful strategies and techniques, and implications of the findings.
-- **Conclusion**: Summary of the research, recommendations for future work, and final thoughts.
-- **References**: List of key papers and reports referenced in the research.
+## File Structure
+```
+VishwamAI/
+├── data/               # Directory for datasets
+├── models/             # Directory for storing trained models
+├── scripts/            # Directory for scripts (e.g., training, preprocessing, auto-update)
+├── logs/               # Directory for training logs and metrics
+├── config/             # Directory for configuration files
+├── utils/              # Directory for utility scripts and functions
+├── setup.sh            # Script for setting up the environment
+├── requirements.txt    # File for specifying required dependencies
+└── README.md           # Project overview and instructions
+```
 
-## Models Analyzed
-- **Gemini Ultra ~1760B**: Achieved human-expert performance on the MMLU benchmark with an accuracy of 90.04%.
-- **GPT-4o**: Demonstrated strong performance on the MMLU benchmark with an average accuracy of 72.6%.
-- **Claude 3 Opus**: Known for its robust performance across various tasks, achieving state-of-the-art results on the MMLU benchmark.
-- **LLaMA**: A collection of foundation language models, with the LLaMA-65B model achieving competitive performance on the MMLU benchmark.
-- **Llama 2**: Pretrained and fine-tuned large language models, with the Llama 2 34B model achieving an average accuracy of 62.6% on the MMLU benchmark.
-- **Chatbot Arena**: An open platform for evaluating LLMs based on human preferences, widely cited by leading LLM developers and companies.
-- **UL2**: A unified framework for pre-training models, achieving state-of-the-art performance on various benchmarks, including MMLU.
+## Setup Instructions
+1. **Clone the repository:**
+   ```bash
+   git clone <repository_url>
+   cd VishwamAI
+   ```
 
-## Methodologies
-- **Data Augmentation**: Techniques such as back-translation, synonym replacement, and paraphrasing to increase the diversity of the training data.
-- **Transfer Learning**: Fine-tuning pre-trained models on the MMLU dataset to leverage their existing knowledge.
-- **Ensemble Methods**: Combining the predictions of multiple models to achieve better accuracy and robustness.
+2. **Run the setup script to install dependencies and set up the environment:**
+   ```bash
+   ./setup.sh
+   ```
 
-## Datasets Used
-- **Natural Questions**: Real-world questions and answers for training models on question-answering tasks.
-- **MMLU**: The primary dataset for evaluating multitask language understanding.
-- **GSM8K**: Grade school math problems for training models on mathematical reasoning tasks.
+## Usage
+1. **Run the chat agent model:**
+   ```bash
+   python3 scripts/chat_agent_model.py
+   ```
 
-## Performance Metrics
-- **MMLU Scores**: Accuracy of models on the MMLU benchmark.
-- **GSM8K Scores**: Accuracy of models on the GSM8K benchmark.
-- **MATH Scores**: Accuracy of models on the MATH benchmark.
+2. **Interact with VishwamAI:**
+   - Provide input to the chat agent.
+   - Indicate whether the response was correct or incorrect.
+   - The scoring system will update the score based on your feedback.
 
-## Key Files
-- `/home/ubuntu/MMLU_Research_Paper_Outline.md`: Outline of the research paper.
-- `/home/ubuntu/detailed_report_gemini_models.md`: Detailed report on the Gemini models.
-- `/home/ubuntu/gemini_paper.txt`: Text version of the Gemini paper.
-- `/home/ubuntu/generate_performance_graphs.py`: Python script to generate performance metrics graphs.
-- `/home/ubuntu/gemini_ultra_architecture.dot`: DOT file describing the architecture of the Gemini Ultra model.
-- `/home/ubuntu/gemini_ultra_architecture.png`: PNG image of the Gemini Ultra model architecture.
+## Auto-Update Feature
+The `setup.sh` script is designed to check for updates and install them if available each time it is run. This ensures that the environment and dependencies are always up to date.
 
-## Current Status
-- Research and review of state-of-the-art methods, academic papers, and benchmarks for MMLU are ongoing.
-- Environment setup and necessary packages for interacting with Papers with Code and extracting text from PDFs are complete.
-- Key information from relevant model documentation, including the GPT-4 technical report and Gemini model papers, has been extracted and analyzed.
-- Performance metrics graphs have been generated and stored as `/home/ubuntu/performance_metrics_graphs.png`.
-- Detailed reports for individual MMLU-related papers are being compiled.
-- Integration of images and model designs into the research paper is in progress.
-- Table 2 with hyper-parameters for the LLaMA models has been added to the research paper outline.
-- Auto-update and continuous evaluation features have been implemented.
-- Integration with the `grok-1` model is under assessment.
+## Documentation
+The development process and results are documented in various formats, including txt and MD files. Refer to the `chat_agent_model_design.md` file for detailed information on the model's architecture, components, and implementation plan.
 
-## Next Steps
-- Continue collecting and analyzing research papers related to the MMLU projects.
-- Compile detailed reports on each MMLU project.
-- Integrate images and model designs into the research paper.
-- Write the research paper, including all formulas and data training models.
-- Compile a list of successful strategies and techniques used in top-performing models.
-- Analyze the architecture and training methods of leading models.
-- Develop a plan for implementing and testing these strategies.
-- Report findings and recommendations for achieving 100% on MMLU.
-- Generate our own MMLU model after thorough research and development.
-- Validate the auto-update and continuous evaluation features.
-- Finalize the integration with the `grok-1` model.
+## Contributing
+Contributions are welcome! Please follow the standard guidelines for contributing to this project.
 
-## Contact
-For any questions or further information, please contact Devin AI and Kasinadhsarma.
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.

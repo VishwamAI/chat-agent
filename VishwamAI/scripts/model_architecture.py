@@ -68,10 +68,10 @@ class VishwamAIModel(tf.keras.Model):
                 # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
                 relative_position_encoding = tf.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = tf.expand_dims(relative_position_encoding, 0)
-                # Tile the tensor to match the required shape [1, seq_length, num_heads, 1]
-                relative_position_encoding = tf.tile(relative_position_encoding, [1, 1, num_heads, 1])
-                # Reduce the size of the tensor to avoid OOM issues
-                relative_position_encoding = tf.image.resize(relative_position_encoding, [seq_length, head_size])
+                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size]
+                relative_position_encoding = tf.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
+                # Ensure the tensor has the correct shape [1, seq_length, num_heads, head_size]
+                relative_position_encoding = tf.reshape(relative_position_encoding, [1, seq_length, num_heads, head_size])
                 # Verify the shape of the tensor
                 tf.debugging.assert_shapes([(relative_position_encoding, [1, seq_length, num_heads, head_size])])
                 return relative_position_encoding

@@ -1,7 +1,7 @@
 # VishwamAI
 
 ## Overview
-VishwamAI is an image-generating chat model designed to create images based on chat interactions. The model is capable of self-improvement and has internet access without relying on APIs and development. It includes mechanisms for generating questions based on input text to enhance its auto-learning capabilities.
+VishwamAI is an image-generating chat model designed to create images based on chat interactions. The model is capable of self-improvement and has internet access without relying on APIs and development. It includes mechanisms for generating questions based on input text to enhance its auto-learning capabilities. Additionally, VishwamAI is designed to achieve 100% accuracy in MMLU, math, and reasoning tasks. The model incorporates a game-like design where it awards points for correct answers and deducts points for incorrect ones. VishwamAI leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and PyTorch.
 
 ## Note on Dependencies
 The `glide_text2im` module is a required dependency for the VishwamAI project. It can be obtained by cloning the official GitHub repository and installing it as an editable package. Ensure that you have the correct path to the TensorFlow checkpoint file for the GLIDE model.
@@ -11,11 +11,14 @@ The `glide_text2im` module is a required dependency for the VishwamAI project. I
 VishwamAI/
 ├── data/               # Directory for datasets
 ├── models/             # Directory for storing trained models
-├── scripts/            # Directory for scripts (e.g., training, preprocessing, model conversion)
+├── scripts/            # Directory for scripts (e.g., training, preprocessing, model conversion, auto-update)
 ├── notebooks/          # Directory for Jupyter notebooks
 ├── logs/               # Directory for training logs and metrics
 ├── docs/               # Directory for documentation
 ├── config/             # Directory for configuration files
+├── utils/              # Directory for utility scripts and functions
+├── setup.sh            # Script for setting up the environment
+├── requirements.txt    # File for specifying required dependencies
 └── README.md           # Project overview and instructions
 ```
 
@@ -38,6 +41,18 @@ VishwamAI/
 4. **Implement Model**: Code the model architecture and training loop.
 5. **Train Model**: Train the model on the collected datasets and monitor its performance.
 6. **Evaluate and Improve**: Evaluate the model's performance and make necessary adjustments. Implement self-improvement mechanisms and question generation capabilities.
+
+## Setup Instructions
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/VishwamAI/chat-agent
+   cd chat-agent/VishwamAI
+   ```
+
+2. **Run the setup script to install dependencies and set up the environment:**
+   ```bash
+   ./setup.sh
+   ```
 
 ## Installation
 To install the VishwamAI project as an editable package, follow these steps:
@@ -65,14 +80,22 @@ To install the VishwamAI project as an editable package, follow these steps:
    ```
 
 ## Usage
-To use the VishwamAI project, follow these steps:
+1. **Run the chat agent model:**
+   ```bash
+   python3 scripts/chat_agent_model.py
+   ```
 
-1. Ensure that the virtual environment is activated:
+2. **Interact with VishwamAI:**
+   - Provide input to the chat agent.
+   - Indicate whether the response was correct or incorrect.
+   - The scoring system will update the score based on your feedback.
+
+3. Ensure that the virtual environment is activated:
    ```bash
    source venv/bin/activate
    ```
 
-2. Run the `vishwamai` script to start the model:
+4. Run the `vishwamai` script to start the model:
    ```bash
    vishwamai
    ```
@@ -181,6 +204,73 @@ The VishwamAI project requires the following dependencies:
 - numpy
 - scipy
 - requests
+## Auto-Update Feature
+The `setup.sh` script is designed to check for updates and install them if available each time it is run. This ensures that the environment and dependencies are always up to date.
+
+## Documentation
+The development process and results are documented in various formats, including txt and MD files. Refer to the `chat_agent_model_design.md` file for detailed information on the model's architecture, components, and implementation plan.
+
+## Contributing
+Contributions are welcome! Please follow the standard guidelines for contributing to this project.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.
 - beautifulsoup4
 
 These dependencies are listed in the `requirements.txt` file and can be installed using `pip install -r requirements.txt`.
+||||||| empty tree
+=======
+# VishwamAI
+
+## Project Overview
+VishwamAI is a chat agent model designed to achieve 100% accuracy in MMLU, math, and reasoning tasks. The model incorporates a game-like design where it awards points for correct answers and deducts points for incorrect ones. VishwamAI leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and PyTorch.
+
+## File Structure
+```
+VishwamAI/
+├── data/               # Directory for datasets
+├── models/             # Directory for storing trained models
+├── scripts/            # Directory for scripts (e.g., training, preprocessing, auto-update)
+├── logs/               # Directory for training logs and metrics
+├── config/             # Directory for configuration files
+├── utils/              # Directory for utility scripts and functions
+├── setup.sh            # Script for setting up the environment
+├── requirements.txt    # File for specifying required dependencies
+└── README.md           # Project overview and instructions
+```
+
+## Setup Instructions
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/VishwamAI/chat-agent
+   cd chat-agent/VishwamAI
+   ```
+
+2. **Run the setup script to install dependencies and set up the environment:**
+   ```bash
+   ./setup.sh
+   ```
+
+## Usage
+1. **Run the chat agent model:**
+   ```bash
+   python3 scripts/chat_agent_model.py
+   ```
+
+2. **Interact with VishwamAI:**
+   - Provide input to the chat agent.
+   - Indicate whether the response was correct or incorrect.
+   - The scoring system will update the score based on your feedback.
+
+## Auto-Update Feature
+The `setup.sh` script is designed to check for updates and install them if available each time it is run. This ensures that the environment and dependencies are always up to date.
+
+## Documentation
+The development process and results are documented in various formats, including txt and MD files. Refer to the `chat_agent_model_design.md` file for detailed information on the model's architecture, components, and implementation plan.
+
+## Contributing
+Contributions are welcome! Please follow the standard guidelines for contributing to this project.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.
+>>>>>>> origin/main

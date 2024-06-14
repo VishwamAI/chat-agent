@@ -1,0 +1,5 @@
+# Ignore egg-info directory
+VishwamAI.egg-info/
+
+# Ignore virtual environment directory
+venv/

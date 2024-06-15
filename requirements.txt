@@ -67,6 +67,6 @@ triton==2.3.1
 typing_extensions==4.12.2
 urllib3==2.2.1
 # Editable install with no version control (VishwamAI==0.1)
--e /home/ubuntu/browser_downloads/VishwamAI/VishwamAI
+# -e /home/ubuntu/browser_downloads/VishwamAI/VishwamAI
 Werkzeug==3.0.3
 wrapt==1.16.0

@@ -43,18 +43,19 @@ class VishwamAIModel(hk.Module):
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
-                hk.Linear(2048),
-                hk.Linear(512)
+                hk.Linear(2048, dtype=jnp.float32),
+                hk.Linear(512, dtype=jnp.float32)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
         # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts)
+        self.gating_network = hk.Linear(self.num_experts, dtype=jnp.float32)
 
     def __call__(self, inputs):
         if isinstance(inputs, str):
-            inputs = self.tokenizer(inputs, return_tensors="jax").input_ids
+            inputs = self.tokenizer(inputs).input_ids
+            inputs = jax.numpy.array(inputs)
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(inputs)
@@ -104,7 +105,7 @@ class VishwamAIModel(hk.Module):
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
 
-                self.custom_dense = hk.Linear(1)
+                self.custom_dense = hk.Linear(1, dtype=jnp.float32)
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
                 # Create a tensor representing the relative positions of tokens within the sequence
@@ -188,7 +189,7 @@ def unique_features():
         def __init__(self, units):
             super(MemoryAugmentation, self).__init__()
             self.units = units
-            self.memory = jnp.zeros([units])
+            self.memory = jnp.zeros([units], dtype=jnp.float32)
 
         def __call__(self, inputs):
             if isinstance(inputs, jnp.ndarray):

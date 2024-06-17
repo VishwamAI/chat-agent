@@ -15,7 +15,7 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
                 ),
                 hk.Linear(2048),
                 hk.Linear(512)
@@ -25,7 +25,7 @@ class VishwamAIModel(hk.Module):
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=64,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
         )
         self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
@@ -41,7 +41,7 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
                 ),
                 hk.Linear(2048),
                 hk.Linear(512)
@@ -50,24 +50,30 @@ class VishwamAIModel(hk.Module):
         ) for _ in range(self.num_experts)]
 
         # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))
 
     def __call__(self, inputs):
         if isinstance(inputs, str):
-            inputs = self.tokenizer(inputs).input_ids
-            inputs = jax.numpy.array(inputs)
+            inputs = [inputs]  # Convert single input to a batch of one
+        inputs = self.tokenizer(inputs).input_ids
+        inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(inputs)
-        expert_indices = jnp.argmax(gate_values, axis=-1)
+        print(f"gate_values shape: {gate_values.shape}, gate_values: {gate_values}")  # Debugging print statement
+        expert_indices = jnp.argmax(gate_values, axis=1)
+        print(f"expert_indices shape: {expert_indices.shape}, expert_indices: {expert_indices}")  # Debugging print statement
 
         # Process inputs through the selected experts
         expert_outputs = []
         for i, expert in enumerate(self.experts):
             mask = (expert_indices == i)
             if jnp.any(mask):
-                expert_inputs = jnp.where(mask[:, None], inputs, 0)
-                expert_outputs.append(expert(expert_inputs))
+                print(f"mask shape: {mask.shape}, inputs shape: {inputs.shape}")  # Debugging print statement
+                mask = mask[:, None]  # Expand dimensions of mask to match inputs
+                expert_inputs = jnp.where(mask, inputs, 0)
+                expert_params = expert.init(jax.random.PRNGKey(42), expert_inputs)  # Initialize expert parameters
+                expert_outputs.append(expert.apply(expert_params, None, expert_inputs))  # Use apply method
 
         # Aggregate the outputs from the experts
         aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
@@ -96,7 +102,7 @@ class VishwamAIModel(hk.Module):
                         hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
                         ),
                         hk.Linear(2048),
                         hk.Linear(512)

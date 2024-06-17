@@ -9,13 +9,18 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = GPT2Tokenizer.from_pretrained(transformer_model_name)
-        self.transformer = hk.transformer.Transformer(
-            num_heads=8,
-            num_layers=12,
-            key_size=64,
-            model_size=512,
-            ffw_size=2048,
-            dropout_rate=0.1
+        self.transformer = hk.transform(
+            lambda x: hk.Sequential([
+                hk.Embed(vocab_size=50257, embed_dim=512),
+                hk.MultiHeadAttention(
+                    num_heads=8,
+                    key_size=64,
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                ),
+                hk.Linear(2048),
+                hk.Linear(512)
+            ])(x),
+            apply_rng=True
         )
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
@@ -30,13 +35,18 @@ class VishwamAIModel(hk.Module):
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 8
-        self.experts = [hk.transformer.Transformer(
-            num_heads=8,
-            num_layers=12,
-            key_size=64,
-            model_size=512,
-            ffw_size=2048,
-            dropout_rate=0.1
+        self.experts = [hk.transform(
+            lambda x: hk.Sequential([
+                hk.Embed(vocab_size=50257, embed_dim=512),
+                hk.MultiHeadAttention(
+                    num_heads=8,
+                    key_size=64,
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                ),
+                hk.Linear(2048),
+                hk.Linear(512)
+            ])(x),
+            apply_rng=True
         ) for _ in range(self.num_experts)]
 
         # Define gating mechanism
@@ -79,13 +89,18 @@ class VishwamAIModel(hk.Module):
                 self.transformer = transformer
                 self.memory_network = memory_network
 
-                self.transformer_xl = hk.transformer.Transformer(
-                    num_heads=8,
-                    num_layers=12,
-                    key_size=64,
-                    model_size=512,
-                    ffw_size=2048,
-                    dropout_rate=0.1
+                self.transformer_xl = hk.transform(
+                    lambda x: hk.Sequential([
+                        hk.Embed(vocab_size=50257, embed_dim=512),
+                        hk.MultiHeadAttention(
+                            num_heads=8,
+                            key_size=64,
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                        ),
+                        hk.Linear(2048),
+                        hk.Linear(512)
+                    ])(x),
+                    apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
 

@@ -15,7 +15,7 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
                 hk.Linear(2048),
                 hk.Linear(512)
@@ -25,7 +25,7 @@ class VishwamAIModel(hk.Module):
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=64,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
         )
         self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
@@ -41,7 +41,7 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
                 hk.Linear(2048),
                 hk.Linear(512)
@@ -50,7 +50,7 @@ class VishwamAIModel(hk.Module):
         ) for _ in range(self.num_experts)]
 
         # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))
+        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
     def __call__(self, inputs):
         if isinstance(inputs, str):
@@ -102,7 +102,7 @@ class VishwamAIModel(hk.Module):
                         hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                         ),
                         hk.Linear(2048),
                         hk.Linear(512)

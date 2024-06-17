@@ -28,11 +28,41 @@ class VishwamAIModel(hk.Module):
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
 
+        # Define expert networks for Mixture of Experts (MoE) architecture
+        self.num_experts = 8
+        self.experts = [hk.transformer.Transformer(
+            num_heads=8,
+            num_layers=12,
+            key_size=64,
+            model_size=512,
+            ffw_size=2048,
+            dropout_rate=0.1
+        ) for _ in range(self.num_experts)]
+
+        # Define gating mechanism
+        self.gating_network = hk.Linear(self.num_experts)
+
     def __call__(self, inputs):
         if isinstance(inputs, str):
             inputs = self.tokenizer(inputs, return_tensors="jax").input_ids
-        transformer_outputs = self.transformer(inputs)
-        hidden_states = transformer_outputs
+
+        # Use the gating network to determine which expert to use
+        gate_values = self.gating_network(inputs)
+        expert_indices = jnp.argmax(gate_values, axis=-1)
+
+        # Process inputs through the selected experts
+        expert_outputs = []
+        for i, expert in enumerate(self.experts):
+            mask = (expert_indices == i)
+            if jnp.any(mask):
+                expert_inputs = jnp.where(mask[:, None], inputs, 0)
+                expert_outputs.append(expert(expert_inputs))
+
+        # Aggregate the outputs from the experts
+        aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
+
+        # Continue with the rest of the model
+        hidden_states = aggregated_output
         attention_output = self.advanced_features(hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)

@@ -57,6 +57,7 @@ class VishwamAIModel(hk.Module):
             inputs = [inputs]  # Convert single input to a batch of one
         inputs = self.tokenizer(inputs).input_ids
         inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
+        inputs = jax.numpy.array(inputs, dtype=jnp.float32)  # Convert inputs to float dtype
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(inputs)

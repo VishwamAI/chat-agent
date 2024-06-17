@@ -43,8 +43,8 @@ class VishwamAIModel(hk.Module):
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
-                hk.Linear(2048, dtype=jnp.float32),
-                hk.Linear(512, dtype=jnp.float32)
+                hk.Linear(2048),
+                hk.Linear(512)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -105,7 +105,7 @@ class VishwamAIModel(hk.Module):
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
 
-                self.custom_dense = hk.Linear(1, dtype=jnp.float32)
+                self.custom_dense = hk.Linear(1)
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
                 # Create a tensor representing the relative positions of tokens within the sequence

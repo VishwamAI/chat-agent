@@ -119,7 +119,6 @@ def chat():
 
         # Tokenize the input
         tokenized_input = tokenizer(user_input, padding=True, truncation=True).input_ids
-        tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
         # Generate response
         app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging

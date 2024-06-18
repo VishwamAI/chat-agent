@@ -58,8 +58,10 @@ class VishwamAIModel(hk.Module):
         inputs = self.tokenizer(inputs).input_ids
         inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
 
-        # Embed the inputs to convert them to floating-point vectors
-        embedded_inputs = self.transformer(inputs)
+        # Initialize the parameters for the transformer
+        transformer_params = self.transformer.init(jax.random.PRNGKey(42), inputs)
+        # Apply the transformer to the inputs
+        embedded_inputs = self.transformer.apply(transformer_params, None, inputs)
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)

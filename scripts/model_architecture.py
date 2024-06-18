@@ -54,8 +54,15 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
     def __call__(self, inputs):
+        if isinstance(inputs, str):
+            inputs = [inputs]  # Convert single input to a batch of one
+        elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
+            pass  # Input is already in the correct format
+        else:
+            raise ValueError("Input must be of type `str` or `List[str]`")
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        # Ensure inputs are integer dtype for embedding layer only when needed
+        inputs = tokenized_inputs
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

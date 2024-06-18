@@ -112,7 +112,7 @@ class VishwamAIModel(hk.Module):
                     apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
-                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
                 # Ensure head_size is divisible by num_heads

@@ -29,3 +29,5 @@ jobs:
     - name: Run tests
       run: |
         pytest
+
+# Trivial change to trigger a new commit

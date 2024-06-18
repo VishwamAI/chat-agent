@@ -24,7 +24,8 @@ class VishwamAIModel(hk.Module):
         )
         self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
-        self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
 
@@ -38,7 +39,7 @@ class VishwamAIModel(hk.Module):
         ])(x)) for _ in range(self.num_experts)]
 
         # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
     def __call__(self, inputs):
         if isinstance(inputs, jnp.ndarray):
@@ -177,7 +178,7 @@ class VishwamAIModel(hk.Module):
         input_ids = self.tokenizer(question, return_tensors="jax").input_ids
         transformer_outputs = self.transformer(input_ids)
         hidden_states = transformer_outputs
-        attention_output = self.attention(hidden_states)
+        attention_output = self.attention(query=hidden_states, key=hidden_states, value=hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)
         answer = self.dense(augmented_memory)

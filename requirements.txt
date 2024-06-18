@@ -74,3 +74,6 @@ wrapt==1.16.0
 dm-haiku==0.0.9
 jax==0.4.10
 jaxlib==0.4.10
+
+# Add timeout_decorator
+timeout_decorator==0.5.0

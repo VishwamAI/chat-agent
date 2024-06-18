@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-from vishwamai_prototype import VishwamAI
+from scripts.vishwamai_prototype import VishwamAI
 import logging
 
 def test_build_generator():

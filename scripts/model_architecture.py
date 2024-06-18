@@ -12,15 +12,14 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
-                lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),  # Remove casting to float32
-                lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                )(x, x, x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         )
@@ -39,15 +38,14 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
-                lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),  # Remove casting to float32
-                lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                )(x, x, x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -63,38 +61,28 @@ class VishwamAIModel(hk.Module):
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-        print(f"Tokenized inputs dtype before conversion: {tokenized_inputs.dtype}")
         inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
-        print(f"Inputs dtype after conversion to int32 in VishwamAIModel: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
-        print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
-        print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
 
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
-        print(f"Embedded inputs dtype after transformer: {embedded_inputs.dtype}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
-        print(f"gate_values shape: {gate_values.shape}, gate_values: {gate_values}")  # Debugging print statement
         expert_indices = jnp.argmax(gate_values, axis=1)
-        print(f"expert_indices shape: {expert_indices.shape}, expert_indices: {expert_indices}")  # Debugging print statement
 
         # Process inputs through the selected experts
         expert_outputs = []
         for i, expert in enumerate(self.experts):
             mask = (expert_indices == i)
             if jnp.any(mask):
-                print(f"mask shape: {mask.shape}, inputs shape: {inputs.shape}")  # Debugging print statement
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
-                print(f"Initializing expert {i} with expert_inputs dtype: {expert_inputs.dtype}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
-                print(f"Expert {i} parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, expert_params)}")
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
                 expert_outputs.append(expert_output)
 

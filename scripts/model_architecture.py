@@ -12,14 +12,14 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
             ])(x),
             apply_rng=True
         )
@@ -38,14 +38,14 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -109,15 +109,15 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
                         lambda x: x,
                         lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(x, x, x),  # Remove casting to float32
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                        )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),  # Remove casting to float32
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
                     ])(x),
                     apply_rng=True
                 )

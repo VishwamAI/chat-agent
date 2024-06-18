@@ -58,8 +58,11 @@ class VishwamAIModel(hk.Module):
         inputs = self.tokenizer(inputs).input_ids
         inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
 
+        # Embed the inputs to convert them to floating-point vectors
+        embedded_inputs = self.transformer(inputs)
+
         # Use the gating network to determine which expert to use
-        gate_values = self.gating_network(inputs)
+        gate_values = self.gating_network(embedded_inputs)
         print(f"gate_values shape: {gate_values.shape}, gate_values: {gate_values}")  # Debugging print statement
         expert_indices = jnp.argmax(gate_values, axis=1)
         print(f"expert_indices shape: {expert_indices.shape}, expert_indices: {expert_indices}")  # Debugging print statement

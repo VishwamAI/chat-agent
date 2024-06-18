@@ -13,6 +13,7 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                app.logger.debug(f"Created JAX array for embedding layer: {jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x}"),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -39,6 +40,7 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                app.logger.debug(f"Created JAX array for expert embedding layer: {jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x}"),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -62,13 +64,17 @@ class VishwamAIModel(hk.Module):
             inputs = [inputs]  # Convert single input to a batch of one
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
         inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        app.logger.debug(f"Converted tokenized inputs to JAX array: {inputs}")
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)
+        app.logger.debug(f"Initialized random number generator: {rng}")
         transformer_params = self.transformer.init(rng, inputs)
+        app.logger.debug(f"Initialized transformer parameters: {transformer_params}")
 
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        app.logger.debug(f"Applied transformer to inputs: {embedded_inputs}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
@@ -82,8 +88,11 @@ class VishwamAIModel(hk.Module):
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
                 expert_rng = jax.random.PRNGKey(42)
+                app.logger.debug(f"Initialized expert random number generator: {expert_rng}")
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
+                app.logger.debug(f"Initialized expert parameters: {expert_params}")
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
+                app.logger.debug(f"Applied expert to inputs: {expert_output}")
                 expert_outputs.append(expert_output)
 
         # Aggregate the outputs from the experts

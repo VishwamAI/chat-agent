@@ -92,6 +92,14 @@ def chat():
         if not user_input or not user_id:
             return jsonify({"error": "No input or user_id provided"}), 400
 
+        # Ensure user_input is in the correct format
+        if isinstance(user_input, str):
+            user_input = [user_input]  # Convert single input to a batch of one
+        elif isinstance(user_input, list) and all(isinstance(i, str) for i in user_input):
+            pass  # Input is already in the correct format
+        else:
+            return jsonify({"error": "Invalid input format"}), 400
+
         # Maintain conversation context
         if user_id not in conversation_context:
             conversation_context[user_id] = []

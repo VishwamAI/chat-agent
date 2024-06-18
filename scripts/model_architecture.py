@@ -54,8 +54,9 @@ class VishwamAIModel(hk.Module):
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
 
-        # Apply the transformer to the inputs
+        # Apply the transformer to the inputs and ensure the output is a tensor
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        embedded_inputs = jnp.asarray(embedded_inputs)  # Ensure the output is a tensor
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)

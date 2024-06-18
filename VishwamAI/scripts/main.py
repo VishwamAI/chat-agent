@@ -52,10 +52,18 @@ def main():
 
     # Example input
     example_input = "What is the capital of France?"
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    tokenizer.pad_token = tokenizer.eos_token  # Set the padding token to the end-of-sequence token
+    tokenized_input = tokenizer(example_input, return_tensors="jax", padding=True, truncation=True).input_ids
+    tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+
+    # Debugging print statements to check dtype
+    print(f"Tokenized input dtype before model init: {tokenized_input.dtype}")
+
     transformed_model_fn = hk.transform(model_fn)
     rng = jax.random.PRNGKey(42)
-    params = transformed_model_fn.init(rng, example_input)
-    output = transformed_model_fn.apply(params, rng, example_input)
+    params = transformed_model_fn.init(rng, tokenized_input)
+    output = transformed_model_fn.apply(params, rng, tokenized_input)
     print(f"Model output: {output}")
 
     # Example scoring update

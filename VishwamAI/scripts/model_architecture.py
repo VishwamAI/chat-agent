@@ -13,11 +13,11 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.MultiHeadAttention(
+                lambda x: hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),  # Pass 'query', 'key', and 'value' as 'x' without casting
+                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
             ])(x),
@@ -39,11 +39,11 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.MultiHeadAttention(
+                lambda x: hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),  # Pass 'query', 'key', and 'value' as 'x' without casting
+                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
             ])(x),
@@ -57,7 +57,7 @@ class VishwamAIModel(hk.Module):
         if isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
+        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
         # Initialize the parameters for the transformer
         print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
@@ -111,11 +111,11 @@ class VishwamAIModel(hk.Module):
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
                         hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                        hk.MultiHeadAttention(
+                        lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(x, None, None),
+                        )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
                         hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                         hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
                     ])(x),

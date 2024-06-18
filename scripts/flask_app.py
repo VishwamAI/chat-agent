@@ -61,6 +61,7 @@ def initialize_model():
             installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
             app.logger.error(f"Python interpreter: {python_interpreter}")
             app.logger.error(f"Installed packages: {installed_packages}")
+            app.logger.error(f"JAX version during error: {jax.__version__}")  # Log the JAX version during error
         except Exception as pkg_error:
             app.logger.error(f"Error retrieving installed packages: {pkg_error}")
         raise

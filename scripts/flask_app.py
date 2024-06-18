@@ -54,7 +54,7 @@ def initialize_model():
 
         transformed_model_fn = hk.transform(model_fn)
         rng = jax.random.PRNGKey(42)
-        example_input = "dummy input"  # Dummy input for initialization
+        example_input = ["dummy input"]  # Dummy input for initialization as a list of strings
         tokenized_input = tokenizer(example_input, return_tensors="jax", padding=True, truncation=True).input_ids
         tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         app.logger.debug(f"Tokenized dummy input: {tokenized_input}")  # Log the tokenized dummy input for debugging

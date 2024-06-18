@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - feature-flask-setup
   pull_request:
     branches:
       - main
+      - feature-flask-setup
 
 jobs:
   build:

@@ -75,5 +75,8 @@ dm-haiku==0.0.9
 jax==0.4.10
 jaxlib==0.4.10
 
+# Add glide_text2im
+glide_text2im==0.0.1
+
 # Add timeout_decorator
 timeout_decorator==0.5.0

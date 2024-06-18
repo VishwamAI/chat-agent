@@ -75,8 +75,8 @@ class VishwamAIModel(hk.Module):
             mask = (expert_indices == i)
             if jnp.any(mask):
                 print(f"mask shape: {mask.shape}, inputs shape: {inputs.shape}")  # Debugging print statement
-                mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
-                mask = jnp.broadcast_to(mask, (inputs.shape[0], inputs.shape[1], 1))  # Broadcast mask to match inputs shape
+                mask = jnp.expand_dims(mask, axis=0)  # Expand dimensions of mask to match inputs
+                mask = jnp.broadcast_to(mask, (inputs.shape[0], inputs.shape[1]))  # Broadcast mask to match inputs shape
                 expert_inputs = jnp.where(mask, inputs, 0)
                 expert_params = expert.init(jax.random.PRNGKey(42), expert_inputs)  # Initialize expert parameters
                 expert_outputs.append(expert.apply(expert_params, None, expert_inputs))  # Use apply method

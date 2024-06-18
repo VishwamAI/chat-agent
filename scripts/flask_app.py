@@ -77,11 +77,12 @@ def chat():
 def generate_image():
     try:
         input_text = request.json.get('input_text')
+        resolution = request.json.get('resolution', [1080, 1080])
         if not input_text:
             return jsonify({"error": "No input_text provided"}), 400
 
         vishwamai = VishwamAI(batch_size=32)
-        generated_image = vishwamai.generate_image(input_text)
+        generated_image = vishwamai.generate_image(input_text, target_resolution=resolution)
         if generated_image is None:
             return jsonify({"error": "Failed to generate image"}), 500
 

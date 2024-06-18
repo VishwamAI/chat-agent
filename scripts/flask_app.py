@@ -7,6 +7,7 @@ from model_architecture import VishwamAIModel
 import logging
 import sys
 import os
+import subprocess
 
 app = Flask(__name__)
 
@@ -25,10 +26,13 @@ conversation_context = {}
 def initialize_model():
     global transformed_model_fn, params, rng
     try:
+        app.logger.debug("Starting model initialization...")  # Unique log message for confirmation
         app.logger.debug(f"sys.path: {sys.path}")  # Log the sys.path for debugging
         app.logger.debug(f"Environment PATH: {os.environ['PATH']}")  # Log the PATH environment variable for debugging
         app.logger.debug(f"Environment PYTHONPATH: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable for debugging
+        app.logger.debug(f"JAX version: {jax.__version__}")  # Log the JAX version for debugging
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
+        app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging
         def model_fn(inputs):
             model = VishwamAIModel()
             return model(inputs)
@@ -36,10 +40,29 @@ def initialize_model():
         transformed_model_fn = hk.transform(model_fn)
         rng = jax.random.PRNGKey(42)
         example_input = jnp.array([[0]])  # Dummy input for initialization
-        params = transformed_model_fn.init(rng, example_input)
-        app.logger.debug("Model initialized successfully.")
+        app.logger.debug(f"Dummy input shape: {example_input.shape}, dtype: {example_input.dtype}")  # Log the shape and dtype of the dummy input for debugging
+        try:
+            app.logger.debug(f"Initializing model with input: {example_input}")
+            app.logger.debug(f"JAX version before init: {jax.__version__}")  # Log the JAX version before initialization
+            params = transformed_model_fn.init(rng, example_input)
+            app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
+            app.logger.debug("Model initialized successfully.")
+        except Exception as init_error:
+            app.logger.error(f"Error during model parameter initialization: {init_error}")
+            app.logger.error(f"Input during initialization error: {example_input}")
+            raise
     except Exception as e:
         app.logger.error(f"Error during model initialization: {e}")
+        app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
+        app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
+        app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
+        try:
+            python_interpreter = sys.executable
+            installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
+            app.logger.error(f"Python interpreter: {python_interpreter}")
+            app.logger.error(f"Installed packages: {installed_packages}")
+        except Exception as pkg_error:
+            app.logger.error(f"Error retrieving installed packages: {pkg_error}")
         raise
 
 @app.route('/chat', methods=['POST'])
@@ -65,7 +88,9 @@ def chat():
         tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
         # Generate response
+        app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging
         output = transformed_model_fn.apply(params, rng, tokenized_input)
+        app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
         response = tokenizer.decode(output[0], skip_special_tokens=True)
 
         # Update conversation context with the response
@@ -77,6 +102,13 @@ def chat():
         app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
         app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
         app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
+        try:
+            python_interpreter = sys.executable
+            installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
+            app.logger.error(f"Python interpreter: {python_interpreter}")
+            app.logger.error(f"Installed packages: {installed_packages}")
+        except Exception as pkg_error:
+            app.logger.error(f"Error retrieving installed packages: {pkg_error}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

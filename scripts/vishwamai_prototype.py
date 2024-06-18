@@ -4,7 +4,6 @@ import numpy as np
 import os
 from transformers import GPT2Tokenizer, TFGPT2Model
 from PIL import Image
-import torch as th
 from glide_text2im.download import load_checkpoint
 from glide_text2im.model_creation import create_model_and_diffusion, model_and_diffusion_defaults, model_and_diffusion_defaults_upsampler
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input

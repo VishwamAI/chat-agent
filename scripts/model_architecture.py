@@ -72,6 +72,7 @@ class VishwamAIModel(hk.Module):
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
+                expert_output = jnp.asarray(expert_output)  # Ensure the output is a tensor
                 expert_outputs.append(expert_output)
 
         # Aggregate the outputs from the experts

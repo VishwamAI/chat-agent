@@ -127,6 +127,10 @@ class VishwamAIModel(hk.Module):
                 self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
+                # Ensure head_size is divisible by num_heads
+                if head_size % num_heads != 0:
+                    raise ValueError(f"head_size ({head_size}) must be divisible by num_heads ({num_heads})")
+
                 # Create a tensor representing the relative positions of tokens within the sequence
                 range_vec = jnp.arange(seq_length)
                 range_mat = jnp.expand_dims(range_vec, -1) - jnp.expand_dims(range_vec, 0)
@@ -135,11 +139,11 @@ class VishwamAIModel(hk.Module):
                 # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size]
-                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size])
+                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size // num_heads]
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, seq_length, num_heads, head_size // num_heads])
                 # Ensure the total number of elements matches the target shape
                 total_elements = relative_position_encoding.size
-                target_shape = jnp.array([1, seq_length, num_heads, head_size])
+                target_shape = jnp.array([1, seq_length, num_heads, head_size // num_heads])
                 if total_elements != jnp.prod(target_shape):
                     raise ValueError(f"Cannot reshape array of shape {relative_position_encoding.shape} (size {total_elements}) into shape {target_shape} (size {jnp.prod(target_shape)})")
                 relative_position_encoding = jnp.reshape(relative_position_encoding, target_shape)

@@ -15,8 +15,7 @@ class VishwamAIModel(hk.Module):
             lambda x: self.attention(query=x, key=x, value=x),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-        ])(x.astype(jnp.float32)))
-        x = jnp.asarray(x)  # Ensure the output is a tensor
+        ])(x.astype(jnp.float32) if isinstance(x, jnp.ndarray) else jnp.asarray(x)))
 
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
@@ -36,8 +35,7 @@ class VishwamAIModel(hk.Module):
             lambda x: self.attention(query=x, key=x, value=x),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-        ])(x.astype(jnp.float32))) for _ in range(self.num_experts)]
-        x = jnp.asarray(x)  # Ensure the output is a tensor
+        ])(x.astype(jnp.float32) if isinstance(x, jnp.ndarray) else jnp.asarray(x))) for _ in range(self.num_experts)]
 
         # Define gating mechanism
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))

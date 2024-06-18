@@ -75,6 +75,15 @@ def initialize_model():
 def chat():
     global transformed_model_fn, params, rng, conversation_context
     try:
+        app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging
+        app.logger.debug(f"Python interpreter path: {subprocess.check_output(['which', 'python3']).decode('utf-8').strip()}")  # Log the path of the Python interpreter for debugging
+        app.logger.debug(f"Python version: {subprocess.check_output(['python3', '--version']).decode('utf-8').strip()}")  # Log the Python version for debugging
+        app.logger.debug(f"sys.path: {sys.path}")  # Log the sys.path for debugging
+        app.logger.debug(f"Environment PATH: {os.environ['PATH']}")  # Log the PATH environment variable for debugging
+        app.logger.debug(f"Environment PYTHONPATH: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable for debugging
+        installed_packages = subprocess.check_output([sys.executable, '-m', 'pip', 'list']).decode('utf-8')
+        app.logger.debug(f"Installed packages before request handling: {installed_packages}")  # Log the installed packages before request handling
+
         if transformed_model_fn is None or params is None or rng is None:
             initialize_model()
 

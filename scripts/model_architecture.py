@@ -10,19 +10,17 @@ class VishwamAIModel(hk.Module):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = GPT2Tokenizer.from_pretrained(transformer_model_name)
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
-        self.transformer = hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-            ])(x.astype(jnp.int32)),
-            apply_rng=True
-        )
+        self.transformer = hk.transform(lambda x: hk.Sequential([
+            hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+            hk.MultiHeadAttention(
+                num_heads=8,
+                key_size=64,
+                w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+            ),
+            hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+            hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        ]))
+
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=64,
@@ -36,19 +34,16 @@ class VishwamAIModel(hk.Module):
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 4  # Reduced number of experts to 4
-        self.experts = [hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-            ])(x.astype(jnp.int32)),
-            apply_rng=True
-        ) for _ in range(self.num_experts)]
+        self.experts = [hk.transform(lambda x: hk.Sequential([
+            hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+            hk.MultiHeadAttention(
+                num_heads=8,
+                key_size=64,
+                w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+            ),
+            hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+            hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        ])) for _ in range(self.num_experts)]
 
         # Define gating mechanism
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))

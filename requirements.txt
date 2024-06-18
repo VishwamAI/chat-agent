@@ -58,7 +58,7 @@ tensorboard-data-server>=0.6.0,<0.7.0  # Adjusted to resolve dependency conflict
 tensorflow==2.13.1  # Updated to a version compatible with Python 3.8
 tensorflow-io-gcs-filesystem==0.31.0  # Updated to a version compatible with Python 3.8
 termcolor==2.4.0
-tf_keras==2.13.0  # Adjusted to be compatible with TensorFlow 2.13.1
+# Removed tf_keras==2.13.0 as it is not a standalone package
 tokenizers==0.19.1
 torch==2.3.1
 tqdm==4.66.4

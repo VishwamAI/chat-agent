@@ -12,15 +12,15 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x.astype(jnp.int32)),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
-            ])(x),
+                ),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+            ])(x.astype(jnp.int32)),
             apply_rng=True
         )
         self.attention = hk.MultiHeadAttention(
@@ -38,15 +38,15 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x.astype(jnp.int32)),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
-            ])(x),
+                ),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+            ])(x.astype(jnp.int32)),
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
@@ -109,16 +109,16 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x.astype(jnp.int32)),
+                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                         lambda x: x,
-                        lambda x: hk.MultiHeadAttention(
+                        hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(x, x, x),
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
-                    ])(x),
+                        ),
+                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                    ])(x.astype(jnp.int32)),
                     apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable

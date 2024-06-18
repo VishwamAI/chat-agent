@@ -61,7 +61,7 @@ class VishwamAIModel(hk.Module):
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.float32)  # Ensure inputs are float dtype for embedding layer
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)
@@ -109,7 +109,7 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
                         lambda x: x,
                         lambda x: hk.MultiHeadAttention(
                             num_heads=8,

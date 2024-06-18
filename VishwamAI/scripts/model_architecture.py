@@ -149,11 +149,7 @@ class VishwamAIModel(hk.Module):
                 # Adjust dimensions to match the required shape [batch_size, seq_length, seq_length, num_heads, head_size // num_heads]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                print(f"Shape after expanding dimensions: {relative_position_encoding.shape}")
-                relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
-                print(f"Shape after adding extra dimension: {relative_position_encoding.shape}")
                 relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, 1, num_heads, head_size // num_heads])
-                print(f"Final shape of relative_position_encoding: {relative_position_encoding.shape}")
                 return relative_position_encoding
 
             def __call__(self, inputs):

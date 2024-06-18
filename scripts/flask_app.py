@@ -5,6 +5,7 @@ import jax.numpy as jnp
 import haiku as hk
 from model_architecture import VishwamAIModel
 import logging
+import os
 
 app = Flask(__name__)
 
@@ -71,6 +72,17 @@ def chat():
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
+    # Create logs directory if it doesn't exist
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+
+    # Configure logging to write to a file
     logging.basicConfig(level=logging.DEBUG)
+    file_handler = logging.FileHandler('logs/server.log')
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    app.logger.addHandler(file_handler)
+
     app.logger.setLevel(logging.DEBUG)
     app.run(host='0.0.0.0', port=5000)

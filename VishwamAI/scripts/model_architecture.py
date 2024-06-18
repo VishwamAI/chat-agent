@@ -17,7 +17,7 @@ class VishwamAIModel(hk.Module):
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),  # Pass 'query', 'key', and 'value' as 'x'
+                )(x.astype(jnp.float32), x.astype(jnp.float32), x.astype(jnp.float32)),  # Pass 'query', 'key', and 'value' as 'x'
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
             ])(x),

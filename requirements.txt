@@ -58,7 +58,7 @@ tensorboard-data-server==0.7.2
 tensorflow==2.13.1  # Updated to a version compatible with Python 3.8
 tensorflow-io-gcs-filesystem==0.31.0  # Updated to a version compatible with Python 3.8
 termcolor==2.4.0
-tf_keras==2.16.0
+tf_keras==2.15.1  # Updated to a version compatible with Python 3.8
 tokenizers==0.19.1
 torch==2.3.1
 tqdm==4.66.4

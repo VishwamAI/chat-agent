@@ -137,6 +137,14 @@ def chat():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
+
+    # Add file handler to write logs to a file
+    file_handler = logging.FileHandler('flask_app.log')
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    app.logger.addHandler(file_handler)
+
     print(f"sys.path at startup: {sys.path}")  # Print sys.path at startup for debugging
     print(f"Environment PATH at startup: {os.environ['PATH']}")  # Print the PATH environment variable at startup for debugging
     print(f"Environment PYTHONPATH at startup: {os.environ.get('PYTHONPATH', '')}")  # Print the PYTHONPATH environment variable at startup for debugging

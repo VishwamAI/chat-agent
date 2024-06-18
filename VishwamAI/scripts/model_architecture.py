@@ -136,11 +136,12 @@ class VishwamAIModel(hk.Module):
                 range_mat = jnp.expand_dims(range_vec, -1) - jnp.expand_dims(range_vec, 0)
                 # Apply an encoding function to the relative positions
                 relative_position_encoding = jnp.sign(range_mat) * jnp.log1p(jnp.abs(range_mat))
-                # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
+                # Adjust dimensions to match the required shape [batch_size, seq_length, num_heads, head_size // num_heads]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                # Use broadcasting instead of tiling to match the required shape
-                relative_position_encoding = jnp.broadcast_to(relative_position_encoding, [1, seq_length, num_heads, head_size // num_heads])
+                # Ensure the dimensions are compatible for broadcasting
+                relative_position_encoding = jnp.broadcast_to(relative_position_encoding, [1, seq_length, 1, 1])
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
                 return relative_position_encoding
 
             def __call__(self, inputs):

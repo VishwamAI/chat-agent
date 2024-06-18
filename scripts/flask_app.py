@@ -74,6 +74,7 @@ def chat():
         return jsonify({"response": response})
     except Exception as e:
         app.logger.error(f"Error during request handling: {e}")
+        app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

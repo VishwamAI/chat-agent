@@ -190,7 +190,7 @@ class VishwamAI:
             prompt = f"{starter} {input_text}"
 
             logging.info("Encoding input text for question generation.")
-            tokens = self.tokenizer.encode(prompt, return_tensors='tf')
+            tokens = self.tokenizer.encode(prompt, return_tensors='tf', dtype=tf.int32)
             logging.info("Generating question from tokens.")
             outputs = self.nlp_model.generate(tokens, max_length=50, num_return_sequences=1)
             question = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -349,7 +349,7 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-    def generate_image(self, input_text, target_resolution=(1080, 1080)):
+    def generate_image(self, input_text, target_resolution=(512, 512)):
         """
         Generates an image based on input text using the NLP model and generator.
 
@@ -365,7 +365,7 @@ class VishwamAI:
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
 
@@ -377,11 +377,11 @@ class VishwamAI:
 
             # Generate the image using the generator model at a lower resolution
             logging.info("Generating image using the generator model.")
-            generated_image = self.generator.predict(noise)
+            low_res_image = self.generator.predict(noise)
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = tf.image.resize(generated_image, target_resolution).numpy()
+            generated_image = tf.image.resize(low_res_image, target_resolution).numpy()
 
             logging.info("Image generation successful.")
             return generated_image

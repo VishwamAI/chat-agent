@@ -54,7 +54,7 @@ def initialize_model():
 
         transformed_model_fn = hk.transform(model_fn)
         rng = jax.random.PRNGKey(42)
-        example_input = ["dummy input"]  # Dummy input for initialization as a list of strings
+        example_input = ["This is a dummy input for model initialization."]  # Dummy input for initialization as a list of strings
         app.logger.debug(f"Example input: {example_input}")  # Log the example input for debugging
         try:
             app.logger.debug(f"Initializing model with input: {example_input}")

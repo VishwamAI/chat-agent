@@ -56,11 +56,10 @@ def initialize_model():
         rng = jax.random.PRNGKey(42)
         example_input = ["dummy input"]  # Dummy input for initialization as a list of strings
         app.logger.debug(f"Example input: {example_input}")  # Log the example input for debugging
-        tokenized_input = tokenizer(example_input, padding=True, truncation=True).input_ids
         try:
-            app.logger.debug(f"Initializing model with input: {tokenized_input}")
+            app.logger.debug(f"Initializing model with input: {example_input}")
             app.logger.debug(f"JAX version before init: {jax.__version__}")  # Log the JAX version before initialization
-            params = transformed_model_fn.init(rng, tokenized_input)
+            params = transformed_model_fn.init(rng, example_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")
         except Exception as init_error:

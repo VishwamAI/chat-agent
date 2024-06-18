@@ -109,15 +109,15 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                        lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
-                        lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
+                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: x,
+                        lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                         )(x, x, x),  # Remove casting to float32
-                        lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                        lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),
                     apply_rng=True
                 )
@@ -148,7 +148,6 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
-                print(f"Inputs dtype after tokenization in CustomAttentionLayer: {input_ids.dtype}")
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)

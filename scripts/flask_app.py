@@ -54,8 +54,8 @@ def initialize_model():
 
         transformed_model_fn = hk.transform(model_fn)
         rng = jax.random.PRNGKey(42)
-        example_input = jnp.array([[0]])  # Dummy input for initialization
-        app.logger.debug(f"Dummy input shape: {example_input.shape}, dtype: {example_input.dtype}")  # Log the shape and dtype of the dummy input for debugging
+        example_input = ["dummy input"]  # Dummy input for initialization
+        app.logger.debug(f"Dummy input: {example_input}")  # Log the dummy input for debugging
         try:
             app.logger.debug(f"Initializing model with input: {example_input}")
             app.logger.debug(f"JAX version before init: {jax.__version__}")  # Log the JAX version before initialization

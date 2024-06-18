@@ -3,11 +3,11 @@ from transformers import GPT2Tokenizer
 import jax
 import jax.numpy as jnp
 import haiku as hk
-from model_architecture import VishwamAIModel
+from scripts.model_architecture import VishwamAIModel
 import logging
 import os
 import numpy as np
-from vishwamai_prototype import VishwamAI
+from scripts.vishwamai_prototype import VishwamAI
 
 app = Flask(__name__)
 
@@ -77,11 +77,11 @@ def chat():
 def generate_image():
     try:
         input_text = request.json.get('input_text')
-        resolution = request.json.get('resolution', [1080, 1080])
+        resolution = request.json.get('resolution', [512, 512])
         if not input_text:
             return jsonify({"error": "No input_text provided"}), 400
 
-        vishwamai = VishwamAI(batch_size=32)
+        vishwamai = VishwamAI(batch_size=16)
         generated_image = vishwamai.generate_image(input_text, target_resolution=resolution)
         if generated_image is None:
             return jsonify({"error": "Failed to generate image"}), 500

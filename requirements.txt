@@ -6,7 +6,7 @@ charset-normalizer==3.3.2
 filelock==3.15.1
 flatbuffers==24.3.25
 fsspec==2024.6.0
-gast==0.5.4
+gast<=0.4.0  # Adjusted to be compatible with TensorFlow 2.13.1
 google-pasta==0.2.0
 grpcio==1.64.1
 h5py==3.11.0

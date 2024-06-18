@@ -37,7 +37,7 @@ nvidia-nccl-cu12==2.20.5
 nvidia-nvjitlink-cu12==12.5.40
 nvidia-nvtx-cu12==12.1.105
 onnx==1.16.1
-onnx2keras==0.0.24
+onnx2keras==0.0.23  # Adjusted to be compatible with TensorFlow 2.13.1
 opt-einsum==3.3.0
 optree==0.11.0
 packaging==24.1
@@ -58,7 +58,7 @@ tensorboard-data-server>=0.6.0,<0.7.0  # Adjusted to resolve dependency conflict
 tensorflow==2.13.1  # Updated to a version compatible with Python 3.8
 tensorflow-io-gcs-filesystem==0.31.0  # Updated to a version compatible with Python 3.8
 termcolor==2.4.0
-tf_keras==2.15.1  # Updated to a version compatible with Python 3.8
+tf_keras==2.13.0  # Adjusted to be compatible with TensorFlow 2.13.1
 tokenizers==0.19.1
 torch==2.3.1
 tqdm==4.66.4

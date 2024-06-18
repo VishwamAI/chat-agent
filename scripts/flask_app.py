@@ -3,7 +3,7 @@ from transformers import GPT2Tokenizer
 import jax
 import jax.numpy as jnp
 import haiku as hk
-from model_architecture import VishwamAIModel
+from .model_architecture import VishwamAIModel
 import logging
 import sys
 import os

@@ -140,7 +140,7 @@ class VishwamAIModel(hk.Module):
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
                 # Ensure the dimensions are compatible for broadcasting
-                relative_position_encoding = jnp.broadcast_to(relative_position_encoding, [1, seq_length, 1, 1])
+                relative_position_encoding = jnp.broadcast_to(relative_position_encoding, [1, seq_length, seq_length, 1])
                 relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
                 return relative_position_encoding
 

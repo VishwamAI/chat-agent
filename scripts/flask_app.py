@@ -6,6 +6,7 @@ import haiku as hk
 from model_architecture import VishwamAIModel
 import logging
 import sys
+import os
 
 app = Flask(__name__)
 
@@ -25,6 +26,8 @@ def initialize_model():
     global transformed_model_fn, params, rng
     try:
         app.logger.debug(f"sys.path: {sys.path}")  # Log the sys.path for debugging
+        app.logger.debug(f"Environment PATH: {os.environ['PATH']}")  # Log the PATH environment variable for debugging
+        app.logger.debug(f"Environment PYTHONPATH: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable for debugging
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
         def model_fn(inputs):
             model = VishwamAIModel()
@@ -76,4 +79,5 @@ def chat():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
+    print(f"sys.path at startup: {sys.path}")  # Print sys.path at startup for debugging
     app.run(host='0.0.0.0', port=5000)

@@ -4,8 +4,8 @@ import numpy as np
 import os
 from transformers import GPT2Tokenizer, TFGPT2Model
 from PIL import Image
-from glide_text2im.download import load_checkpoint
-from glide_text2im.model_creation import create_model_and_diffusion, model_and_diffusion_defaults, model_and_diffusion_defaults_upsampler
+# from glide_text2im.download import load_checkpoint
+# from glide_text2im.model_creation import create_model_and_diffusion, model_and_diffusion_defaults, model_and_diffusion_defaults_upsampler
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input
 from scipy.linalg import sqrtm
 import logging
@@ -27,15 +27,15 @@ class VishwamAI:
         model.add(layers.Dense(135 * 135 * 16, activation='tanh'))
         model.add(layers.Reshape((135, 135, 16)))
         model.add(layers.Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(64, (4, 4), strides=(1, 1), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
         model.compile(optimizer='adam', loss='binary_crossentropy')
         return model
@@ -49,15 +49,15 @@ class VishwamAI:
         """
         model = models.Sequential()
         model.add(layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same', input_shape=(1080, 1080, 3)))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2D(128, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2D(256, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Conv2D(512, (4, 4), strides=(2, 2), padding='same'))
-        model.add(layers.LeakyReLU(negative_slope=0.2))
+        model.add(layers.LeakyReLU())
         model.add(layers.Flatten())
         model.add(layers.Dense(1, activation='sigmoid'))
         model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
@@ -171,58 +171,6 @@ class VishwamAI:
             os.makedirs('models')
         self.generator.save(f'models/generator_epoch_{epoch}.h5')
         self.discriminator.save(f'models/discriminator_epoch_{epoch}.h5')
-
-    def train_and_generate_images(self, epochs, batch_size, input_text, num_images=10, output_dir="generated_images"):
-        """
-        Trains the model and generates images based on input text.
-
-        Args:
-            epochs (int): The number of epochs to train the model.
-            batch_size (int): The batch size for training.
-            input_text (str): The input text for generating images.
-            num_images (int, optional): The number of images to generate. Defaults to 10.
-            output_dir (str, optional): The directory to save the generated images. Defaults to "generated_images".
-
-        Returns:
-            None
-        """
-        self.train(epochs, batch_size)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        for i in range(num_images):
-            generated_image = self.generate_image(input_text)
-            if generated_image is None:
-                logging.error(f"Failed to generate image for input text: '{input_text}'")
-                continue
-            generated_image = (generated_image * 127.5 + 127.5).astype(np.uint8)
-            tf.keras.preprocessing.image.save_img(f"{output_dir}/generated_image_{i}.png", generated_image[0])
-        logging.info(f"Generated {num_images} images based on the input text: '{input_text}'")
-
-    def generate_image(self, input_text):
-        options = model_and_diffusion_defaults()
-        options['use_fp16'] = False
-        options['timestep_respacing'] = '100'
-        logging.info("Creating GLIDE model and diffusion.")
-        glide_model, glide_diffusion = create_model_and_diffusion(**options)
-        try:
-            logging.info("Loading TensorFlow checkpoint.")
-            glide_model.load_weights('/home/ubuntu/VishwamAI/checkpoints/tensorflow_checkpoint')
-        except Exception as e:
-            logging.error(f"Error loading TensorFlow checkpoint: {e}")
-            return None
-        try:
-            logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text)
-            tokens = tf.constant([tokens], dtype=tf.int32)
-            logging.info("Generating image from tokens.")
-            generated_image = glide_model(tokens)
-            generated_image = tf.transpose(generated_image, perm=[0, 2, 3, 1]).numpy()
-            generated_image = (generated_image * 127.5 + 127.5).astype(np.uint8)
-            logging.info("Image generation successful.")
-            return generated_image
-        except Exception as e:
-            logging.error(f"Error during image generation: {e}")
-            return None
 
     def generate_question(self, input_text):
         """

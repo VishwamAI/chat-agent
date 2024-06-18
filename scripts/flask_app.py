@@ -83,6 +83,7 @@ def initialize_model():
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    app.logger.debug("Test log entry: /chat endpoint hit")  # Test log entry to confirm logging is working
     global transformed_model_fn, params, rng, conversation_context
     try:
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging

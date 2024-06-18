@@ -113,7 +113,7 @@ class VishwamAI:
             return image
 
         # Verify and adjust the path to the sample dataset if necessary
-        sample_dataset_path = '/home/ubuntu/VishwamAI/data/sample_dataset'
+        sample_dataset_path = '/home/ubuntu/chat-agent/VishwamAI/data/sample_dataset'
         if not os.path.exists(sample_dataset_path):
             logging.error(f"Sample dataset path does not exist: {sample_dataset_path}")
             return None
@@ -156,6 +156,9 @@ class VishwamAI:
 
     def train_step(self, half_batch, batch_size, epoch):
         for real_images in self.sample_dataset:
+            if real_images.shape[0] == 0:
+                logging.error("Empty batch encountered in sample dataset.")
+                continue
             noise = np.random.normal(0, 1, (half_batch, 100))
             generated_images = self.generator.predict(noise)
             d_loss_real = self.discriminator.train_on_batch(real_images[:half_batch], np.ones((half_batch, 1)))
@@ -348,6 +351,28 @@ class VishwamAI:
         if new_images:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
+
+    def generate_image(self, input_text):
+        """
+        Generates an image based on input text using the generator model.
+
+        Args:
+            input_text (str): The input text for generating the image.
+
+        Returns:
+            numpy.ndarray: The generated image.
+        """
+        try:
+            # Encode the input text
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
+            # Generate noise based on the encoded text
+            noise = np.random.normal(0, 1, (1, 100))
+            # Generate the image using the generator model
+            generated_image = self.generator.predict(noise)
+            return generated_image
+        except Exception as e:
+            logging.error(f"Error during image generation: {e}")
+            return None
 
 def test_data_generator(batch_size=2):
     vishwamai = VishwamAI(batch_size=batch_size)

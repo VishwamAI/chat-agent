@@ -6,6 +6,8 @@ import haiku as hk
 from model_architecture import VishwamAIModel
 import logging
 import os
+import numpy as np
+from vishwamai_prototype import VishwamAI
 
 app = Flask(__name__)
 
@@ -69,6 +71,29 @@ def chat():
         return jsonify({"response": response})
     except Exception as e:
         app.logger.error(f"Error during request handling: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/generate_image', methods=['POST'])
+def generate_image():
+    try:
+        input_text = request.json.get('input_text')
+        if not input_text:
+            return jsonify({"error": "No input_text provided"}), 400
+
+        vishwamai = VishwamAI(batch_size=32)
+        generated_image = vishwamai.generate_image(input_text)
+        if generated_image is None:
+            return jsonify({"error": "Failed to generate image"}), 500
+
+        # Denormalize the image to [0, 255] range
+        generated_image = (generated_image * 127.5 + 127.5).astype(np.uint8)
+
+        # Convert the image to a list for JSON serialization
+        image_list = generated_image.tolist()
+
+        return jsonify({"generated_image": image_list})
+    except Exception as e:
+        app.logger.error(f"Error during image generation: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

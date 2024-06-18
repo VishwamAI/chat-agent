@@ -17,9 +17,9 @@ class VishwamAIModel(hk.Module):
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
+                )(x, x, x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         )
@@ -43,9 +43,9 @@ class VishwamAIModel(hk.Module):
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
+                )(x, x, x),
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -115,9 +115,9 @@ class VishwamAIModel(hk.Module):
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x, jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),  # Remove casting to float32
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x)
+                        )(x, x, x),  # Remove casting to float32
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),
                     apply_rng=True
                 )

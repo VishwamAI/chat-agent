@@ -2,7 +2,6 @@ import unittest
 import sys
 import os
 import tensorflow as tf
-import torch
 import timeout_decorator
 
 # Add the directory containing model_architecture.py to the Python path

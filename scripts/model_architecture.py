@@ -105,7 +105,7 @@ class VishwamAIModel(hk.Module):
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                        ),
+                        )(query=x, key=x, value=x),
                         hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                         hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
                     ])(x),

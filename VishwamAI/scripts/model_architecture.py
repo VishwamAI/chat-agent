@@ -139,11 +139,11 @@ class VishwamAIModel(hk.Module):
                 # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size // num_heads]
-                relative_position_encoding = jnp.tile(relative_position_encoding, [1, seq_length, num_heads, head_size // num_heads])
+                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size // (num_heads * 8)]
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, seq_length, num_heads, head_size // (num_heads * 8)])
                 # Ensure the total number of elements matches the target shape
                 total_elements = relative_position_encoding.size
-                target_shape = [1, seq_length, num_heads, head_size // num_heads]
+                target_shape = [1, seq_length, num_heads, head_size // (num_heads * 8)]
                 if total_elements != jnp.prod(jnp.array(target_shape)):
                     raise ValueError(f"Cannot reshape array of shape {relative_position_encoding.shape} (size {total_elements}) into shape {target_shape} (size {jnp.prod(jnp.array(target_shape))})")
                 relative_position_encoding = jnp.reshape(relative_position_encoding, target_shape)

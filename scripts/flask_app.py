@@ -5,6 +5,7 @@ import jax.numpy as jnp
 import haiku as hk
 from model_architecture import VishwamAIModel
 import logging
+import sys
 
 app = Flask(__name__)
 
@@ -23,6 +24,8 @@ conversation_context = {}
 def initialize_model():
     global transformed_model_fn, params, rng
     try:
+        app.logger.debug(f"sys.path: {sys.path}")  # Log the sys.path for debugging
+        app.logger.debug("Initializing model...")  # Unique log message for confirmation
         def model_fn(inputs):
             model = VishwamAIModel()
             return model(inputs)

@@ -349,6 +349,40 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
+    def generate_image(self, input_text):
+        """
+        Generates an image based on input text using the NLP model and generator.
+
+        Args:
+            input_text (str): The input text for generating the image.
+
+        Returns:
+            numpy.ndarray: The generated image as a NumPy array.
+        """
+        try:
+            logging.info("Starting image generation process.")
+
+            # Process the input text using the NLP model
+            logging.info("Encoding input text.")
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
+            logging.info("Generating NLP output.")
+            nlp_output = self.nlp_model(tokens)[0]
+
+            # Generate noise vector based on NLP output
+            logging.info("Generating noise vector.")
+            noise = np.random.normal(0, 1, (1, 100))
+            noise[0, :nlp_output.shape[1]] = nlp_output[0, :100].numpy()
+
+            # Generate the image using the generator model
+            logging.info("Generating image using the generator model.")
+            generated_image = self.generator.predict(noise)
+
+            logging.info("Image generation successful.")
+            return generated_image
+        except Exception as e:
+            logging.error(f"Error during image generation: {e}")
+            return None
+
 def test_data_generator(batch_size=2):
     vishwamai = VishwamAI(batch_size=batch_size)
     dataset = vishwamai.load_sample_dataset(batch_size)

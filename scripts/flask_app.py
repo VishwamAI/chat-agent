@@ -9,6 +9,8 @@ import sys
 import os
 import subprocess
 
+app = Flask(__name__)
+
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
@@ -18,8 +20,6 @@ file_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 app.logger.addHandler(file_handler)
-
-app = Flask(__name__)
 
 # Initialize the tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")

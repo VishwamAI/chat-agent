@@ -42,7 +42,7 @@ opt-einsum==3.3.0
 optree==0.11.0
 packaging==24.1
 pillow==10.3.0
-protobuf==4.25.3
+protobuf>=3.20.2,<4  # Adjusted to resolve dependency conflicts
 Pygments==2.18.0
 PyYAML==6.0.1
 regex==2024.5.15

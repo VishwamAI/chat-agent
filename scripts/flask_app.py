@@ -75,10 +75,14 @@ def chat():
     except Exception as e:
         app.logger.error(f"Error during request handling: {e}")
         app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
+        app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
+        app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
     print(f"sys.path at startup: {sys.path}")  # Print sys.path at startup for debugging
+    print(f"Environment PATH at startup: {os.environ['PATH']}")  # Print the PATH environment variable at startup for debugging
+    print(f"Environment PYTHONPATH at startup: {os.environ.get('PYTHONPATH', '')}")  # Print the PYTHONPATH environment variable at startup for debugging
     app.run(host='0.0.0.0', port=5000)

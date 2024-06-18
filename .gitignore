@@ -3,3 +3,6 @@ VishwamAI.egg-info/
 
 # Ignore virtual environment directory
 venv/
+
+# Ignore Python cache directories
+__pycache__/

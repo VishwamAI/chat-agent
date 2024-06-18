@@ -20,7 +20,7 @@ class VishwamAIModel(hk.Module):
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=64,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
         self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
@@ -98,16 +98,16 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                        lambda x: x,
+                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                        lambda x: self.attention(query=x, key=x, value=x),
                         hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
                         ),
-                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-                    ])(x.astype(jnp.int32)),
+                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                    ])(x),
                     apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable

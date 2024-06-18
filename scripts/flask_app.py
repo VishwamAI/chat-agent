@@ -55,16 +55,18 @@ def initialize_model():
         transformed_model_fn = hk.transform(model_fn)
         rng = jax.random.PRNGKey(42)
         example_input = "dummy input"  # Dummy input for initialization
-        app.logger.debug(f"Dummy input: {example_input}")  # Log the dummy input for debugging
+        tokenized_input = tokenizer(example_input, return_tensors="jax", padding=True, truncation=True).input_ids
+        tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        app.logger.debug(f"Tokenized dummy input: {tokenized_input}")  # Log the tokenized dummy input for debugging
         try:
-            app.logger.debug(f"Initializing model with input: {example_input}")
+            app.logger.debug(f"Initializing model with input: {tokenized_input}")
             app.logger.debug(f"JAX version before init: {jax.__version__}")  # Log the JAX version before initialization
-            params = transformed_model_fn.init(rng, example_input)
+            params = transformed_model_fn.init(rng, tokenized_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")
         except Exception as init_error:
             app.logger.error(f"Error during model parameter initialization: {init_error}")
-            app.logger.error(f"Input during initialization error: {example_input}")
+            app.logger.error(f"Input during initialization error: {tokenized_input}")
             raise
     except Exception as e:
         app.logger.error(f"Error during model initialization: {e}")

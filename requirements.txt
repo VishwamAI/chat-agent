@@ -54,7 +54,7 @@ six==1.16.0
 soupsieve==2.5
 sympy==1.12.1
 tensorboard>=2.13,<2.14  # Adjusted to be compatible with TensorFlow 2.13.1
-tensorboard-data-server>=0.6.0,<0.7.0  # Adjusted to resolve dependency conflicts
+tensorboard-data-server>=0.7.0,<0.8.0  # Adjusted to resolve dependency conflicts
 tensorflow==2.13.1  # Updated to a version compatible with Python 3.8
 tensorflow-io-gcs-filesystem==0.31.0  # Updated to a version compatible with Python 3.8
 termcolor==2.4.0

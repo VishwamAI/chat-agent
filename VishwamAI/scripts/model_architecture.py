@@ -12,7 +12,7 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -38,7 +38,7 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 8
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)),
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -110,7 +110,7 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)),
                         hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,

@@ -24,3 +24,23 @@ sudo apt-get install -f
 
 # Clean up
 rm google-chrome-stable_current_amd64.deb
+
+# Create and activate virtual environment for TensorFlow
+python3 -m venv tensorflow_env
+source tensorflow_env/bin/activate
+
+# Install TensorFlow and related dependencies
+pip install tensorflow
+
+# Deactivate TensorFlow virtual environment
+deactivate
+
+# Create and activate virtual environment for JAX
+python3 -m venv jax_env
+source jax_env/bin/activate
+
+# Install JAX, Haiku, and related dependencies
+pip install jax jaxlib haiku
+
+# Deactivate JAX virtual environment
+deactivate

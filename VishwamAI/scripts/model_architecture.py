@@ -61,11 +61,12 @@ class VishwamAIModel(hk.Module):
 
         # Initialize the parameters for the transformer
         print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
-        transformer_params = self.transformer.init(jax.random.PRNGKey(42), inputs)
+        rng = jax.random.PRNGKey(42)
+        transformer_params = self.transformer.init(rng, inputs)
         print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
 
         # Apply the transformer to the inputs
-        embedded_inputs = self.transformer.apply(transformer_params, None, inputs)
+        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
@@ -82,9 +83,10 @@ class VishwamAIModel(hk.Module):
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
                 print(f"Initializing expert {i} with expert_inputs dtype: {expert_inputs.dtype}")
-                expert_params = expert.init(jax.random.PRNGKey(42), expert_inputs)  # Initialize expert parameters
+                expert_rng = jax.random.PRNGKey(42)
+                expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 print(f"Expert {i} parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, expert_params)}")
-                expert_output = expert.apply(expert_params, None, expert_inputs)  # Use apply method
+                expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
                 expert_outputs.append(expert_output)
 
         # Aggregate the outputs from the experts
@@ -133,10 +135,14 @@ class VishwamAIModel(hk.Module):
                 # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size // num_heads]
-                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
-                # Ensure the tensor has the correct shape [1, seq_length, num_heads, head_size]
-                relative_position_encoding = jnp.reshape(relative_position_encoding, [1, seq_length, num_heads, head_size])
+                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size]
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size])
+                # Ensure the total number of elements matches the target shape
+                total_elements = relative_position_encoding.size
+                target_shape = jnp.array([1, seq_length, num_heads, head_size])
+                if total_elements != jnp.prod(target_shape):
+                    raise ValueError(f"Cannot reshape array of shape {relative_position_encoding.shape} (size {total_elements}) into shape {target_shape} (size {jnp.prod(target_shape)})")
+                relative_position_encoding = jnp.reshape(relative_position_encoding, target_shape)
                 return relative_position_encoding
 
             def __call__(self, inputs):
@@ -147,13 +153,20 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
-                transformer_outputs = self.transformer(input_ids)
+
+                # Initialize the parameters for the transformer
+                rng = jax.random.PRNGKey(42)
+                transformer_params = self.transformer.init(rng, input_ids)
+                transformer_outputs = self.transformer.apply(transformer_params, rng, input_ids)
                 hidden_states = transformer_outputs
+
                 # Calculate relative position encoding
                 seq_length = hidden_states.shape[1]
                 relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
+
                 # Generate attention output using TransformerXL
-                attention_output = self.transformer_xl(hidden_states, relative_position_encoding=relative_position_encoding)
+                transformer_xl_params = self.transformer_xl.init(rng, hidden_states, relative_position_encoding=relative_position_encoding)
+                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states, relative_position_encoding=relative_position_encoding)
                 memory_output, state_h, state_c = self.memory_network(attention_output)
                 output = self.custom_dense(memory_output[:, 0, :])
                 return output

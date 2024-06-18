@@ -1,0 +1,4 @@
+haiku
+jax
+jaxlib
+transformers

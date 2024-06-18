@@ -13,13 +13,13 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                lambda x: hk.MultiHeadAttention(
+                hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x.astype(jnp.float32), x.astype(jnp.float32), x.astype(jnp.float32)),  # Pass 'query', 'key', and 'value' as 'x'
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                )(x, x, x),  # Pass 'query', 'key', and 'value' as 'x' without casting
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))
             ])(x),
             apply_rng=True
         )
@@ -43,9 +43,9 @@ class VishwamAIModel(hk.Module):
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                )(x, x, x),  # Pass 'query', 'key', and 'value' as 'x' without casting
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32)),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -60,7 +60,10 @@ class VishwamAIModel(hk.Module):
         inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
 
         # Initialize the parameters for the transformer
+        print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
         transformer_params = self.transformer.init(jax.random.PRNGKey(42), inputs)
+        print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
+
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, None, inputs)
 
@@ -78,8 +81,11 @@ class VishwamAIModel(hk.Module):
                 print(f"mask shape: {mask.shape}, inputs shape: {inputs.shape}")  # Debugging print statement
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                print(f"Initializing expert {i} with expert_inputs dtype: {expert_inputs.dtype}")
                 expert_params = expert.init(jax.random.PRNGKey(42), expert_inputs)  # Initialize expert parameters
-                expert_outputs.append(expert.apply(expert_params, None, expert_inputs))  # Use apply method
+                print(f"Expert {i} parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, expert_params)}")
+                expert_output = expert.apply(expert_params, None, expert_inputs)  # Use apply method
+                expert_outputs.append(expert_output)
 
         # Aggregate the outputs from the experts
         aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)

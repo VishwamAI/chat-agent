@@ -55,8 +55,8 @@ class VishwamAIModel(hk.Module):
     def __call__(self, inputs):
         if isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
-        inputs = self.tokenizer(inputs).input_ids
-        inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
+        tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
+        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype
 
         # Initialize the parameters for the transformer
         transformer_params = self.transformer.init(jax.random.PRNGKey(42), inputs)

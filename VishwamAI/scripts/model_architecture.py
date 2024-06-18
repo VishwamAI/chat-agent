@@ -12,14 +12,15 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                lambda x: hk.MultiHeadAttention(
+                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                )(x, x, x),  # Remove casting to float32
+                lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         )
@@ -38,14 +39,15 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 8
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                lambda x: hk.MultiHeadAttention(
+                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                )(x, x, x),  # Remove casting to float32
+                lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -54,10 +56,16 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
     def __call__(self, inputs):
-        if isinstance(inputs, str):
+        if isinstance(inputs, jnp.ndarray):
+            inputs = inputs.tolist()
+            # Flatten the nested list structure to a single list of strings
+            inputs = [" ".join(map(str, sublist)) for sublist in inputs]
+        elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
+        print(f"Tokenized inputs dtype before conversion: {tokenized_inputs.dtype}")
         inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        print(f"Inputs dtype after conversion to int32 in VishwamAIModel: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
         print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
@@ -67,6 +75,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        print(f"Embedded inputs dtype after transformer: {embedded_inputs.dtype}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
@@ -112,14 +121,15 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                        lambda x: hk.MultiHeadAttention(
+                        lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                        lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
-                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                        )(x, x, x),  # Remove casting to float32
+                        lambda x: print(f"Input dtype before Linear 2048: {x.dtype}") or hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                        lambda x: print(f"Input dtype before Linear 512: {x.dtype}") or hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),
                     apply_rng=True
                 )
@@ -136,12 +146,14 @@ class VishwamAIModel(hk.Module):
                 range_mat = jnp.expand_dims(range_vec, -1) - jnp.expand_dims(range_vec, 0)
                 # Apply an encoding function to the relative positions
                 relative_position_encoding = jnp.sign(range_mat) * jnp.log1p(jnp.abs(range_mat))
-                # Adjust dimensions to match the required shape [batch_size, seq_length, num_heads, head_size // num_heads]
+                # Adjust dimensions to match the required shape [batch_size, seq_length, seq_length, num_heads, head_size // num_heads]
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
                 relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                # Ensure the dimensions are compatible for broadcasting
-                relative_position_encoding = jnp.broadcast_to(relative_position_encoding, [1, seq_length, seq_length, 1])
-                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
+                print(f"Shape after expanding dimensions: {relative_position_encoding.shape}")
+                relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
+                print(f"Shape after adding extra dimension: {relative_position_encoding.shape}")
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, 1, num_heads, head_size // num_heads])
+                print(f"Final shape of relative_position_encoding: {relative_position_encoding.shape}")
                 return relative_position_encoding
 
             def __call__(self, inputs):
@@ -152,6 +164,7 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
+                print(f"Inputs dtype after tokenization in CustomAttentionLayer: {input_ids.dtype}")
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)
@@ -164,8 +177,8 @@ class VishwamAIModel(hk.Module):
                 relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
 
                 # Generate attention output using TransformerXL
-                transformer_xl_params = self.transformer_xl.init(rng, hidden_states, relative_position_encoding=relative_position_encoding)
-                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states, relative_position_encoding=relative_position_encoding)
+                transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
+                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
                 memory_output, state_h, state_c = self.memory_network(attention_output)
                 output = self.custom_dense(memory_output[:, 0, :])
                 return output

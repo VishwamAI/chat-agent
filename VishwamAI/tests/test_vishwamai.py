@@ -1,7 +1,9 @@
 import unittest
 import sys
 import os
-import tensorflow as tf
+import haiku as hk
+import jax
+import jax.numpy as jnp
 import timeout_decorator
 
 # Add the directory containing model_architecture.py to the Python path
@@ -19,7 +21,7 @@ class TestVishwamAIModel(unittest.TestCase):
     def test_attention_mechanism(self):
         # Test the attention mechanism with a sample input
         input_text = "What is the capital of France?"
-        input_tensor = self.model.tokenizer(input_text, return_tensors="tf").input_ids
+        input_tensor = self.model.tokenizer(input_text, return_tensors="jax").input_ids
         print(f"Input tensor shape: {input_tensor.shape}")
         print(f"Input tensor type: {type(input_tensor)}")
         output = self.model(input_tensor)
@@ -29,9 +31,9 @@ class TestVishwamAIModel(unittest.TestCase):
     def test_memory_augmentation(self):
         # Test the memory augmentation with a sample input
         input_text = "What is the capital of France?"
-        input_tensor = tf.convert_to_tensor([1.0, 2.0, 3.0], dtype=tf.float32)  # Example numerical tensor
+        input_tensor = jnp.array([1.0, 2.0, 3.0], dtype=jnp.float32)  # Example numerical tensor
         self.model.memory_augmentation.add_memory(input_tensor)
-        memory_output = self.model.memory_augmentation.call(input_tensor)
+        memory_output = self.model.memory_augmentation(input_tensor)
         self.assertIsNotNone(memory_output, "The memory output should not be None")
 
     def test_scoring_system(self):

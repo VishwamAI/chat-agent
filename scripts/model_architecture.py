@@ -62,7 +62,7 @@ class VishwamAIModel(hk.Module):
             raise ValueError("Input must be of type `str` or `List[str]`")
         tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
         # Ensure inputs are integer dtype for embedding layer only when needed
-        inputs = tokenized_inputs
+        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

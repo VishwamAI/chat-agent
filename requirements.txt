@@ -64,7 +64,7 @@ torch==2.3.1
 tqdm==4.66.4
 transformers==4.41.2
 triton==2.3.1
-typing_extensions>=3.6.6,<4.6.0  # Adjusted to resolve dependency conflicts
+typing_extensions  # Allow pip to resolve the appropriate version
 urllib3==2.2.2
 # Editable install with no version control (VishwamAI==0.1)
 # -e /home/ubuntu/browser_downloads/VishwamAI/VishwamAI

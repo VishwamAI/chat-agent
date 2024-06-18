@@ -13,7 +13,12 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token  # Set the padding token to the end-of-sequence token
 
 # Lazy model initialization
+transformed_model_fn = None
+params = None
+rng = None
+
 def initialize_model():
+    global transformed_model_fn, params, rng
     try:
         def model_fn(inputs):
             model = VishwamAIModel()
@@ -24,17 +29,17 @@ def initialize_model():
         example_input = jnp.array([[0]])  # Dummy input for initialization
         params = transformed_model_fn.init(rng, example_input)
         app.logger.debug("Model initialized successfully.")
-        return transformed_model_fn, params, rng
     except Exception as e:
         app.logger.error(f"Error during model initialization: {e}")
         raise
 
-# Initialize the model once when the server starts
-transformed_model_fn, params, rng = initialize_model()
-
 @app.route('/chat', methods=['POST'])
 def chat():
+    global transformed_model_fn, params, rng
     try:
+        if transformed_model_fn is None or params is None or rng is None:
+            initialize_model()
+
         user_input = request.json.get('input')
         if not user_input:
             return jsonify({"error": "No input provided"}), 400

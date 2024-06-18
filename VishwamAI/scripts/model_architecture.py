@@ -1,26 +1,97 @@
-import tensorflow as tf
-from transformers import GPT2Tokenizer, TFGPT2Model
-from official.nlp.modeling.layers import TransformerXL
+import haiku as hk
+import jax
+import jax.numpy as jnp
+from transformers import GPT2Tokenizer
 import random
 
 # Define the model architecture for VishwamAI
-class VishwamAIModel(tf.keras.Model):
+class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = GPT2Tokenizer.from_pretrained(transformer_model_name)
-        self.transformer = TFGPT2Model.from_pretrained(transformer_model_name)
-        self.attention = tf.keras.layers.Attention()
-        self.memory_network = tf.keras.layers.LSTM(128, return_sequences=True, return_state=True)
+        self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
+        self.transformer = hk.transform(
+            lambda x: hk.Sequential([
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                lambda x: hk.MultiHeadAttention(
+                    num_heads=8,
+                    key_size=64,
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+            ])(x),
+            apply_rng=True
+        )
+        self.attention = hk.MultiHeadAttention(
+            num_heads=8,
+            key_size=64,
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+        )
+        self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
-        self.dense = tf.keras.layers.Dense(1, activation='sigmoid')
+        self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
 
-    def call(self, inputs):
+        # Define expert networks for Mixture of Experts (MoE) architecture
+        self.num_experts = 8
+        self.experts = [hk.transform(
+            lambda x: hk.Sequential([
+                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                lambda x: hk.MultiHeadAttention(
+                    num_heads=8,
+                    key_size=64,
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+            ])(x),
+            apply_rng=True
+        ) for _ in range(self.num_experts)]
+
+        # Define gating mechanism
+        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+
+    def __call__(self, inputs):
         if isinstance(inputs, str):
-            inputs = self.tokenizer(inputs, return_tensors="tf").input_ids
-        transformer_outputs = self.transformer(inputs)
-        hidden_states = transformer_outputs.last_hidden_state
+            inputs = [inputs]  # Convert single input to a batch of one
+        tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
+        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+
+        # Initialize the parameters for the transformer
+        print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
+        transformer_params = self.transformer.init(jax.random.PRNGKey(42), inputs)
+        print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
+
+        # Apply the transformer to the inputs
+        embedded_inputs = self.transformer.apply(transformer_params, None, inputs)
+
+        # Use the gating network to determine which expert to use
+        gate_values = self.gating_network(embedded_inputs)
+        print(f"gate_values shape: {gate_values.shape}, gate_values: {gate_values}")  # Debugging print statement
+        expert_indices = jnp.argmax(gate_values, axis=1)
+        print(f"expert_indices shape: {expert_indices.shape}, expert_indices: {expert_indices}")  # Debugging print statement
+
+        # Process inputs through the selected experts
+        expert_outputs = []
+        for i, expert in enumerate(self.experts):
+            mask = (expert_indices == i)
+            if jnp.any(mask):
+                print(f"mask shape: {mask.shape}, inputs shape: {inputs.shape}")  # Debugging print statement
+                mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
+                expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                print(f"Initializing expert {i} with expert_inputs dtype: {expert_inputs.dtype}")
+                expert_params = expert.init(jax.random.PRNGKey(42), expert_inputs)  # Initialize expert parameters
+                print(f"Expert {i} parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, expert_params)}")
+                expert_output = expert.apply(expert_params, None, expert_inputs)  # Use apply method
+                expert_outputs.append(expert_output)
+
+        # Aggregate the outputs from the experts
+        aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
+
+        # Continue with the rest of the model
+        hidden_states = aggregated_output
         attention_output = self.advanced_features(hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)
@@ -30,68 +101,57 @@ class VishwamAIModel(tf.keras.Model):
     def add_advanced_features(self):
         # Implement advanced features to achieve 100% accuracy in MMLU, math, and reasoning
         # Example: Adding a custom attention mechanism
-        class CustomAttentionLayer(tf.keras.layers.Layer):
+        class CustomAttentionLayer(hk.Module):
             def __init__(self, tokenizer, transformer, memory_network):
                 super(CustomAttentionLayer, self).__init__()
                 self.tokenizer = tokenizer
                 self.transformer = transformer
                 self.memory_network = memory_network
 
-                self.transformer_xl = TransformerXL(
-                    vocab_size=32000,
-                    num_layers=12,
-                    hidden_size=512,
-                    num_attention_heads=8,
-                    head_size=64,
-                    inner_size=2048,
-                    dropout_rate=0.1,
-                    attention_dropout_rate=0.1,
-                    initializer=tf.keras.initializers.TruncatedNormal(stddev=0.02),
-                    two_stream=False,
-                    tie_attention_biases=True,
-                    memory_length=512,
-                    reuse_length=256,
-                    inner_activation='relu'
+                self.transformer_xl = hk.transform(
+                    lambda x: hk.Sequential([
+                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                        lambda x: hk.MultiHeadAttention(
+                            num_heads=8,
+                            key_size=64,
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                        )(jnp.float32(x), jnp.float32(x), jnp.float32(x)),  # Cast 'query', 'key', and 'value' to float32
+                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                    ])(x),
+                    apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
-
-                self.custom_dense = tf.keras.layers.Dense(1, activation='sigmoid')
+                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
                 # Create a tensor representing the relative positions of tokens within the sequence
-                range_vec = tf.range(seq_length)
-                range_mat = tf.expand_dims(range_vec, -1) - tf.expand_dims(range_vec, 0)
-                # Cast the range_mat tensor to float32
-                range_mat = tf.cast(range_mat, tf.float32)
+                range_vec = jnp.arange(seq_length)
+                range_mat = jnp.expand_dims(range_vec, -1) - jnp.expand_dims(range_vec, 0)
                 # Apply an encoding function to the relative positions
-                relative_position_encoding = tf.math.sign(range_mat) * tf.math.log1p(tf.abs(range_mat))
+                relative_position_encoding = jnp.sign(range_mat) * jnp.log1p(jnp.abs(range_mat))
                 # Adjust dimensions to match the required shape [batch_size, seq_length, 1, 1]
-                relative_position_encoding = tf.expand_dims(relative_position_encoding, -1)
-                relative_position_encoding = tf.expand_dims(relative_position_encoding, 0)
-                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size]
-                relative_position_encoding = tf.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
+                relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
+                relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
+                # Tile the tensor to match the required shape [1, seq_length, num_heads, head_size // num_heads]
+                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, num_heads, head_size // num_heads])
                 # Ensure the tensor has the correct shape [1, seq_length, num_heads, head_size]
-                relative_position_encoding = tf.reshape(relative_position_encoding, [1, seq_length, num_heads, head_size])
-                # Verify the shape of the tensor
-                tf.debugging.assert_shapes([(relative_position_encoding, [1, seq_length, num_heads, head_size])])
+                relative_position_encoding = jnp.reshape(relative_position_encoding, [1, seq_length, num_heads, head_size])
                 return relative_position_encoding
 
-            def call(self, inputs):
-                if isinstance(inputs, tf.Tensor):
-                    inputs = inputs.numpy().tolist()
+            def __call__(self, inputs):
+                if isinstance(inputs, jnp.ndarray):
+                    inputs = inputs.tolist()
                     # Flatten the nested list structure to a single list of strings
                     inputs = [" ".join(map(str, sublist)) for sublist in inputs]
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
-                input_ids = self.tokenizer(inputs, return_tensors="tf").input_ids
+                input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
                 transformer_outputs = self.transformer(input_ids)
-                hidden_states = transformer_outputs.last_hidden_state
-
+                hidden_states = transformer_outputs
                 # Calculate relative position encoding
-                seq_length = tf.shape(hidden_states)[1].numpy()
-                seq_length = int(seq_length)
+                seq_length = hidden_states.shape[1]
                 relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
-
                 # Generate attention output using TransformerXL
                 attention_output = self.transformer_xl(hidden_states, relative_position_encoding=relative_position_encoding)
                 memory_output, state_h, state_c = self.memory_network(attention_output)
@@ -117,10 +177,10 @@ class VishwamAIModel(tf.keras.Model):
         return question
 
     def answer_question(self, question):
-        input_ids = self.tokenizer(question, return_tensors="tf").input_ids
+        input_ids = self.tokenizer(question, return_tensors="jax").input_ids
         transformer_outputs = self.transformer(input_ids)
-        hidden_states = transformer_outputs.last_hidden_state
-        attention_output = self.attention([hidden_states, hidden_states])
+        hidden_states = transformer_outputs
+        attention_output = self.attention(hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)
         answer = self.dense(augmented_memory)
@@ -142,46 +202,46 @@ class VishwamAIModel(tf.keras.Model):
 def unique_features():
     # Implement additional advanced techniques to enhance model performance
     # Example: Adding a memory augmentation mechanism
-    class MemoryAugmentation(tf.keras.layers.Layer):
+    class MemoryAugmentation(hk.Module):
         def __init__(self, units):
             super(MemoryAugmentation, self).__init__()
             self.units = units
-            self.memory = tf.Variable(tf.zeros([units]), trainable=False)
+            self.memory = jnp.zeros([units], dtype=jnp.float32)
 
-        def call(self, inputs):
-            if tf.is_tensor(inputs):
-                inputs = inputs.numpy().copy()
+        def __call__(self, inputs):
+            if isinstance(inputs, jnp.ndarray):
+                inputs = inputs.copy()
             if inputs.shape != self.memory.shape:
                 try:
-                    inputs = tf.broadcast_to(inputs, self.memory.shape)
-                except tf.errors.InvalidArgumentError:
-                    if tf.reduce_prod(inputs.shape) == tf.reduce_prod(self.memory.shape):
-                        inputs = tf.reshape(inputs, self.memory.shape)
+                    inputs = jnp.broadcast_to(inputs, self.memory.shape)
+                except ValueError:
+                    if jnp.prod(inputs.shape) == jnp.prod(self.memory.shape):
+                        inputs = jnp.reshape(inputs, self.memory.shape)
                     else:
                         # Adjust memory tensor to accommodate input tensor
-                        self.memory = tf.Variable(tf.zeros(inputs.shape), trainable=False)
-                        self.memory.assign_add(inputs)
+                        self.memory = jnp.zeros(inputs.shape)
+                        self.memory += inputs
                         return self.memory
-            self.memory.assign_add(inputs)
+            self.memory += inputs
             return self.memory
 
         def add_memory(self, inputs):
-            if not tf.is_tensor(inputs) or inputs.dtype == tf.string:
+            if not isinstance(inputs, jnp.ndarray) or inputs.dtype == jnp.str_:
                 raise ValueError("Input must be a numerical tensor")
-            if not inputs.dtype.is_floating:
-                inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
+            if not jnp.issubdtype(inputs.dtype, jnp.floating):
+                inputs = jnp.asarray(inputs, dtype=jnp.float32)
             if inputs.shape != self.memory.shape:
                 try:
-                    inputs = tf.broadcast_to(inputs, self.memory.shape)
-                except tf.errors.InvalidArgumentError:
-                    if tf.reduce_prod(inputs.shape) == tf.reduce_prod(self.memory.shape):
-                        inputs = tf.reshape(inputs, self.memory.shape)
+                    inputs = jnp.broadcast_to(inputs, self.memory.shape)
+                except ValueError:
+                    if jnp.prod(inputs.shape) == jnp.prod(self.memory.shape):
+                        inputs = jnp.reshape(inputs, self.memory.shape)
                     else:
                         # Adjust memory tensor to accommodate input tensor
-                        self.memory = tf.Variable(tf.zeros(inputs.shape), trainable=False)
-                        self.memory.assign_add(inputs)
+                        self.memory = jnp.zeros(inputs.shape)
+                        self.memory += inputs
                         return self.memory
-            self.memory.assign_add(inputs)
+            self.memory += inputs
             return self.memory
 
     return MemoryAugmentation(units=128)

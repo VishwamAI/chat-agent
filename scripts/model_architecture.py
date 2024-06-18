@@ -15,7 +15,7 @@ class VishwamAIModel(hk.Module):
             lambda x: self.attention(query=x, key=x, value=x),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
-        ])(x if isinstance(x, jnp.ndarray) else jnp.asarray(x)))
+        ])(x.astype(jnp.int32)))
 
         self.attention = hk.MultiHeadAttention(
             num_heads=8,

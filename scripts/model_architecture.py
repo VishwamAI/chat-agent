@@ -123,10 +123,11 @@ class VishwamAIModel(hk.Module):
                         lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"),
+                            dtype=jnp.float32
                         )(x, x, x),
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)(x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)(x)
                     ])(x),
                     apply_rng=True
                 )
@@ -170,7 +171,7 @@ class VishwamAIModel(hk.Module):
 
                 # Generate attention output using TransformerXL
                 transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
-                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
+                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states, hidden_states, hidden_states)
                 memory_output, state_h, state_c = self.memory_network(attention_output)
                 output = self.custom_dense(memory_output[:, 0, :])
                 return output

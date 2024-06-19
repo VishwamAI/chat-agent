@@ -60,6 +60,8 @@ def initialize_model():
             app.logger.debug(f"Initializing model with input: {example_input}")
             app.logger.debug(f"Type of example input: {type(example_input)}")  # Log the type of example input for debugging
             app.logger.debug(f"Content of example input: {example_input}")  # Log the content of example input for debugging
+            if not isinstance(example_input, list) or not all(isinstance(i, str) for i in example_input):
+                raise ValueError("Example input must be a list of strings")
             params = transformed_model_fn.init(rng, example_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")

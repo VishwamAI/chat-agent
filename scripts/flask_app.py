@@ -123,6 +123,9 @@ def chat():
         # Tokenize the input
         tokenized_input = tokenizer(user_input, padding=True, truncation=True).input_ids
 
+        # Ensure tokenized input is in the correct format for the model
+        tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
+
         # Generate response
         app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging
         output = transformed_model_fn.apply(params, rng, tokenized_input)

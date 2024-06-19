@@ -84,6 +84,9 @@ def generate_image():
         app.logger.debug(f"Received request to generate image with input_text: {input_text} and resolution: {resolution}")
 
         vishwamai = VishwamAI(batch_size=16)
+        app.logger.debug(f"VishwamAI object created: {vishwamai}")
+        app.logger.debug(f"VishwamAI methods: {dir(vishwamai)}")
+
         generated_image = vishwamai.generate_image(input_text, target_resolution=resolution)
         if generated_image is None:
             app.logger.error("Failed to generate image: generated_image is None")

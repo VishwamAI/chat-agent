@@ -130,7 +130,12 @@ def chat():
         app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging
         output = transformed_model_fn.apply(params, rng, tokenized_input)
         app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
-        response = tokenizer.decode(output[0], skip_special_tokens=True)
+        try:
+            response = tokenizer.decode(output[0], skip_special_tokens=True)
+            app.logger.debug(f"Decoded response: {response}")  # Log the decoded response for debugging
+        except Exception as decode_error:
+            app.logger.error(f"Error during response decoding: {decode_error}")
+            raise
 
         # Update conversation context with the response
         conversation_context[user_id].append(response)

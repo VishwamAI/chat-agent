@@ -1,3 +1,4 @@
+from .flask_app import app
 import haiku as hk
 import jax
 import jax.numpy as jnp

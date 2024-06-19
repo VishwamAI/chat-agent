@@ -162,15 +162,18 @@ def chat():
 
         app.logger.debug(f"CHAT_ENDPOINT - Dtype of tokenized_input before model call: {jax.numpy.array(tokenized_input).dtype}")
         app.logger.debug(f"CHAT_ENDPOINT - JAX version before model call: {jax.__version__}")  # Log the JAX version before model call
-        output = transformed_model_fn.apply(params, rng, tokenized_input)
-        app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
+        try:
+            output = transformed_model_fn.apply(params, rng, tokenized_input)
+            app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
+        except Exception as model_call_error:
+            app.logger.error(f"Error during model call: {model_call_error}")
+            raise
         try:
             response = tokenizer.decode(output[0], skip_special_tokens=True)
             app.logger.debug(f"Decoded response: {response}")  # Log the decoded response for debugging
         except Exception as decode_error:
             app.logger.error(f"Error during response decoding: {decode_error}")
             raise
-
         # Update conversation context with the response
         conversation_context[user_id].append(response)
 

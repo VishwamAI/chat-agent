@@ -384,7 +384,8 @@ class VishwamAI:
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
+            generated_image = tf.image.resize(generated_image, target_resolution)
+            generated_image = generated_image.numpy()  # Convert to NumPy array
 
             logging.info("Image generation successful.")
             return generated_image

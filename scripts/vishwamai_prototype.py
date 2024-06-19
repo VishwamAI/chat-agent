@@ -23,18 +23,16 @@ class VishwamAI:
 
     def build_generator(self):
         model = models.Sequential()
-        model.add(layers.Input(shape=(100,)))
-        model.add(layers.Dense(135 * 135 * 16, activation='tanh'))
-        model.add(layers.Reshape((135, 135, 16)))
-        model.add(layers.Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Input(shape=(50,)))  # Adjusted noise vector size to 50
+        model.add(layers.Dense(64 * 64 * 16, activation='tanh'))  # Adjusted dimensions
+        model.add(layers.Reshape((64, 64, 16)))  # Adjusted dimensions
+        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(1, 1), padding='same'))
-        model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))
+        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
         model.compile(optimizer='adam', loss='binary_crossentropy')
@@ -371,9 +369,9 @@ class VishwamAI:
 
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
-            noise = np.random.normal(0, 1, (1, 100))  # Adjusted noise vector size to 100
+            noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
             nlp_output = nlp_output.numpy().flatten()
-            noise[0, :min(100, len(nlp_output))] = nlp_output[:min(100, len(nlp_output))]
+            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
 
             # Generate the image using the generator model at a lower resolution
             logging.info("Generating image using the generator model.")

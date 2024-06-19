@@ -34,7 +34,8 @@ class VishwamAI:
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(2, 2), padding='same', activation='tanh'))  # Adjusted strides to achieve 1080x1080 resolution
+        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))  # Adjusted strides to achieve 1080x1080 resolution
+        model.add(layers.Cropping2D(cropping=((4, 4), (4, 4))))  # Crop to achieve exact 1080x1080 resolution
         model.compile(optimizer='adam', loss='binary_crossentropy')
         return model
 

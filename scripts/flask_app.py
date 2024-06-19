@@ -9,6 +9,7 @@ import sys
 import os
 import subprocess
 import traceback  # Add this import statement
+from datetime import datetime  # Add this import statement
 
 app = Flask(__name__)
 
@@ -168,18 +169,18 @@ def chat():
 
         return jsonify({"response": response})
     except Exception as e:
-        app.logger.error(f"CHAT_ENDPOINT_ERROR: {e}")
-        app.logger.error(f"Stack trace: {traceback.format_exc()}")  # Log the stack trace for debugging
-        app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
-        app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
-        app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
+        app.logger.error(f"CHAT_ENDPOINT_ERROR: {e} - TIMESTAMP: {datetime.now().isoformat()}")
+        app.logger.error(f"Stack trace: {traceback.format_exc()} - TIMESTAMP: {datetime.now().isoformat()}")
+        app.logger.error(f"sys.path during error: {sys.path} - TIMESTAMP: {datetime.now().isoformat()}")
+        app.logger.error(f"Environment PATH during error: {os.environ['PATH']} - TIMESTAMP: {datetime.now().isoformat()}")
+        app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')} - TIMESTAMP: {datetime.now().isoformat()}")
         try:
             python_interpreter = sys.executable
             installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
-            app.logger.error(f"Python interpreter: {python_interpreter}")
-            app.logger.error(f"Installed packages: {installed_packages}")
+            app.logger.error(f"Python interpreter: {python_interpreter} - TIMESTAMP: {datetime.now().isoformat()}")
+            app.logger.error(f"Installed packages: {installed_packages} - TIMESTAMP: {datetime.now().isoformat()}")
         except Exception as pkg_error:
-            app.logger.error(f"Error retrieving installed packages: {pkg_error}")
+            app.logger.error(f"Error retrieving installed packages: {pkg_error} - TIMESTAMP: {datetime.now().isoformat()}")
         return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/env', methods=['GET'])

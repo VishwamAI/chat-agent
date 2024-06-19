@@ -107,7 +107,8 @@ def chat():
         app.logger.debug(f"Installed packages before request handling: {installed_packages}")  # Log the installed packages before request handling
 
         if transformed_model_fn is None or params is None or rng is None:
-            initialize_model()
+            with app.app_context():
+                initialize_model()
 
         user_id = request.json.get('user_id')
         user_input = request.json.get('input')

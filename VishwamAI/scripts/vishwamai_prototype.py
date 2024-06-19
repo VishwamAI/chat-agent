@@ -23,18 +23,16 @@ class VishwamAI:
 
     def build_generator(self):
         model = models.Sequential()
-        model.add(layers.Input(shape=(100,)))
-        model.add(layers.Dense(135 * 135 * 16, activation='tanh'))
-        model.add(layers.Reshape((135, 135, 16)))
-        model.add(layers.Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Input(shape=(50,)))  # Adjusted noise vector size to 50
+        model.add(layers.Dense(135 * 135 * 256, activation='tanh'))  # Adjusted dimensions
+        model.add(layers.Reshape((135, 135, 256)))  # Adjusted dimensions
+        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(1, 1), padding='same'))
-        model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))
+        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
         model.compile(optimizer='adam', loss='binary_crossentropy')
@@ -75,7 +73,7 @@ class VishwamAI:
             tensorflow.keras.Model: The combined GAN model.
         """
         discriminator.trainable = False
-        gan_input = layers.Input(shape=(100,))
+        gan_input = layers.Input(shape=(50,))  # Adjusted input shape to match generator's expected input shape
         generated_image = generator(gan_input)
         gan_output = discriminator(generated_image)
         gan = models.Model(gan_input, gan_output)
@@ -193,7 +191,7 @@ class VishwamAI:
             prompt = f"{starter} {input_text}"
 
             logging.info("Encoding input text for question generation.")
-            tokens = self.tokenizer.encode(prompt, return_tensors='tf')
+            tokens = self.tokenizer.encode(prompt, return_tensors='tf', dtype=tf.int32)
             logging.info("Generating question from tokens.")
             outputs = self.nlp_model.generate(tokens, max_length=50, num_return_sequences=1)
             question = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -352,28 +350,12 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-    def generate_image(self, input_text):
-        """
-        Generates an image based on input text using the generator model.
+<<<<<<< HEAD:VishwamAI/scripts/vishwamai_prototype.py
 
-        Args:
-            input_text (str): The input text for generating the image.
+||||||| 96d9e306b:scripts/vishwamai_prototype.py
+=======
 
-        Returns:
-            numpy.ndarray: The generated image.
-        """
-        try:
-            # Encode the input text
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
-            # Generate noise based on the encoded text
-            noise = np.random.normal(0, 1, (1, 100))
-            # Generate the image using the generator model
-            generated_image = self.generator.predict(noise)
-            return generated_image
-        except Exception as e:
-            logging.error(f"Error during image generation: {e}")
-            return None
-
+>>>>>>> origin/main:scripts/vishwamai_prototype.py
 def test_data_generator(batch_size=2):
     vishwamai = VishwamAI(batch_size=batch_size)
     dataset = vishwamai.load_sample_dataset(batch_size)

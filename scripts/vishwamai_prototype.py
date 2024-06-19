@@ -365,7 +365,7 @@ class VishwamAI:
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
 

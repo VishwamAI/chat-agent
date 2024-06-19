@@ -161,6 +161,7 @@ def chat():
         app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input after JAX conversion: {tokenized_input}")
 
         app.logger.debug(f"CHAT_ENDPOINT - Dtype of tokenized_input before model call: {jax.numpy.array(tokenized_input).dtype}")
+        app.logger.debug(f"CHAT_ENDPOINT - JAX version before model call: {jax.__version__}")  # Log the JAX version before model call
         output = transformed_model_fn.apply(params, rng, tokenized_input)
         app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
         try:

@@ -8,6 +8,7 @@ import logging
 import sys
 import os
 import subprocess
+import traceback  # Add this import statement
 
 app = Flask(__name__)
 
@@ -123,9 +124,9 @@ def chat():
         elif isinstance(user_input, list) and all(isinstance(i, str) for i in user_input):
             pass  # Input is already in the correct format
         else:
+            app.logger.error(f"CHAT_ENDPOINT_ERROR: Invalid input format. Type of user_input: {type(user_input)}, Content of user_input: {user_input}")
             return jsonify({"error": "Invalid input format"}), 400
 
-        # Log the type and content of user_input after format check
         app.logger.debug(f"CHAT_ENDPOINT - Type of user_input after format check: {type(user_input)}")
         app.logger.debug(f"CHAT_ENDPOINT - Content of user_input after format check: {user_input}")
 
@@ -166,7 +167,8 @@ def chat():
 
         return jsonify({"response": response})
     except Exception as e:
-        app.logger.error(f"Error during request handling: {e}")
+        app.logger.error(f"CHAT_ENDPOINT_ERROR: {e}")
+        app.logger.error(f"Stack trace: {traceback.format_exc()}")  # Log the stack trace for debugging
         app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
         app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
         app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
@@ -178,6 +180,14 @@ def chat():
         except Exception as pkg_error:
             app.logger.error(f"Error retrieving installed packages: {pkg_error}")
         return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/env', methods=['GET'])
+def get_env():
+    return jsonify({
+        "sys.path": sys.path,
+        "PATH": os.environ['PATH'],
+        "PYTHONPATH": os.environ.get('PYTHONPATH', '')
+    })
 
 if __name__ == '__main__':
     print(f"sys.path at startup: {sys.path}")  # Print sys.path at startup for debugging

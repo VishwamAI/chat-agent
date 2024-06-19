@@ -13,6 +13,11 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(lambda x: hk.Sequential([
             hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
+            hk.MultiHeadAttention(
+                num_heads=8,
+                key_size=64,
+                w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
+            )(query=x, key=self.key_input, value=self.value_input),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ])(x))

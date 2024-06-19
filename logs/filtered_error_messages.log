@@ -890,6 +890,8 @@
 2024-06-19 05:01:33,111 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:01:33,111 - scripts.flask_app - ERROR - Error during request handling: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:01:33,199 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+ValueError: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:01:33,200 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:01:33,200 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:01:33,200 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -906,6 +908,8 @@
 2024-06-19 05:05:17,906 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:05:17,907 - scripts.flask_app - ERROR - Error during request handling: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:05:17,908 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+ValueError: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:05:17,909 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:05:17,909 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:05:17,910 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -922,6 +926,8 @@
 2024-06-19 05:09:41,412 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:09:41,412 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:09:41,413 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+ValueError: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:09:41,413 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:09:41,413 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:09:41,414 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -938,6 +944,8 @@
 2024-06-19 05:13:53,377 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:13:53,377 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:13:53,379 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+ValueError: Input must be of type `str`, `List[str]`, or `List[List[int]]`
 2024-06-19 05:13:53,379 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:13:53,379 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:13:53,380 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -954,6 +962,8 @@
 2024-06-19 05:25:31,767 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:25:31,767 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:25:31,770 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:25:31,776 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:25:31,777 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:25:31,777 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -970,6 +980,7 @@
 2024-06-19 05:31:04,096 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:31:04,096 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
 2024-06-19 05:31:04,098 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
 2024-06-19 05:31:04,101 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:31:04,101 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:31:04,102 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -986,6 +997,8 @@
 2024-06-19 05:36:52,514 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:36:52,514 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:36:52,517 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:36:52,524 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:36:52,525 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:36:52,525 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1002,6 +1015,8 @@
 2024-06-19 05:42:20,752 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:42:20,752 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:42:20,753 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:42:20,760 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:42:20,761 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:42:20,761 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1018,6 +1033,8 @@
 2024-06-19 05:49:57,330 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:49:57,330 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:49:57,331 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 05:49:57,342 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:49:57,343 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:49:57,343 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1034,6 +1051,7 @@
 2024-06-19 05:55:44,034 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 05:55:44,034 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable
 2024-06-19 05:55:44,036 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: 'ArrayImpl' object is not callable
 2024-06-19 05:55:44,041 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 05:55:44,041 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 05:55:44,042 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1050,6 +1068,8 @@
 2024-06-19 06:01:27,293 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:01:27,293 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
 2024-06-19 06:01:27,295 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("hk.Embed's __call__ method must take an array of "
+ValueError: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
 2024-06-19 06:01:27,300 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:01:27,300 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:01:27,301 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1066,6 +1086,8 @@
 2024-06-19 06:05:36,997 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:05:36,997 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:05:37,001 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:05:37,001 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:05:37,001 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:05:37,001 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1082,6 +1104,8 @@
 2024-06-19 06:15:29,117 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:15:29,117 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:15:29,118 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:15:29,126 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:15:29,127 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:15:29,127 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1098,6 +1122,8 @@
 2024-06-19 06:24:27,220 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:24:27,220 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:24:27,223 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:24:27,229 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:24:27,232 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:24:27,233 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1114,6 +1140,8 @@
 2024-06-19 06:31:22,088 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:31:22,089 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:31:22,092 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:31:22,101 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:31:22,101 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:31:22,102 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1130,6 +1158,8 @@
 2024-06-19 06:44:22,450 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:44:22,451 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:44:22,452 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:44:22,462 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:44:22,463 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:44:22,463 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1146,6 +1176,8 @@
 2024-06-19 06:50:01,688 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 06:50:01,688 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:50:01,689 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 06:50:01,698 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 06:50:01,699 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 06:50:01,699 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1162,6 +1194,8 @@
 2024-06-19 07:04:01,268 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 07:04:01,270 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 07:04:01,272 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError(f"dtype argument to `uniform` must be a float dtype, "
+ValueError: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-19 07:04:01,280 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 07:04:01,280 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 07:04:01,280 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
@@ -1178,8 +1212,269 @@
 2024-06-19 07:15:43,329 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
 2024-06-19 07:15:43,329 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable
 2024-06-19 07:15:43,331 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: 'ArrayImpl' object is not callable
 2024-06-19 07:15:43,335 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
 2024-06-19 07:15:43,336 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
 2024-06-19 07:15:43,336 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
 2024-06-19 07:15:45,251 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
 2024-06-19 07:15:45,251 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 07:25:35,571 - scripts.flask_app - ERROR - Error during model parameter initialization: 'ArrayImpl' object is not callable
+2024-06-19 07:25:35,571 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 07:25:35,573 - scripts.flask_app - ERROR - Error during model initialization: 'ArrayImpl' object is not callable
+2024-06-19 07:25:35,573 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 07:25:35,574 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 07:25:35,574 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 07:25:37,166 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 07:25:37,166 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 07:25:37,190 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 07:25:37,190 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable - TIMESTAMP: 2024-06-19T07:25:37.190708
+2024-06-19 07:25:37,192 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: 'ArrayImpl' object is not callable
+2024-06-19 07:25:37,197 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T07:25:37.197005
+2024-06-19 07:25:37,198 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T07:25:37.198519
+2024-06-19 07:25:37,198 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T07:25:37.198967
+2024-06-19 07:25:38,781 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T07:25:38.780960
+2024-06-19 07:25:38,781 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 07:55:21,111 - scripts.flask_app - ERROR - Error during model parameter initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-19 07:55:21,112 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 07:55:21,112 - scripts.flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-19 07:55:21,112 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 07:55:21,112 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 07:55:21,113 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 07:55:22,741 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 07:55:22,741 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 07:55:22,741 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 07:55:22,742 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32 - TIMESTAMP: 2024-06-19T07:55:22.742090
+2024-06-19 07:55:22,744 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+    raise ValueError("hk.Embed's __call__ method must take an array of "
+ValueError: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-19 07:55:22,744 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T07:55:22.744320
+2024-06-19 07:55:22,744 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T07:55:22.744493
+2024-06-19 07:55:22,744 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T07:55:22.744664
+2024-06-19 07:55:24,416 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T07:55:24.416806
+2024-06-19 07:55:24,418 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:05:30,879 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:05:30,879 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:05:30,879 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:05:30,880 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:05:30,880 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:05:30,880 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 08:05:32,505 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:05:32,505 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:05:32,505 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:05:32,505 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:05:32.505914
+2024-06-19 08:05:32,509 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:05:32,509 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:05:32.509657
+2024-06-19 08:05:32,509 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:05:32.509853
+2024-06-19 08:05:32,510 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:05:32.510058
+2024-06-19 08:05:34,300 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:05:34.300827
+2024-06-19 08:05:34,301 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:17:04,894 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 08:17:06,503 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:17:06,504 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:17:06,518 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:17:06,518 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:17:06.518462
+2024-06-19 08:17:06,519 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:17:06,523 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:17:06.523740
+2024-06-19 08:17:06,524 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:17:06.524091
+2024-06-19 08:17:06,524 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:17:06.524451
+2024-06-19 08:17:08,085 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:17:08.085353
+2024-06-19 08:17:08,085 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:23:44,667 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:23:44,667 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:23:44,668 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:23:44,669 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:23:44,669 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:23:44,669 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 08:23:46,191 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:23:46,192 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:23:46,222 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:23:46,223 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:23:46.223279
+2024-06-19 08:23:46,224 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-19 08:23:46,233 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:23:46.233502
+2024-06-19 08:23:46,234 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:23:46.234164
+2024-06-19 08:23:46,234 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:23:46.234650
+2024-06-19 08:23:47,763 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:23:47.763235
+2024-06-19 08:23:47,763 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:29:26,554 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 08:29:28,176 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:29:28,178 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:29:28,178 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:29:28,179 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:29:28.179116
+2024-06-19 08:29:28,180 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:29:28,182 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:29:28.181990
+2024-06-19 08:29:28,182 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:29:28.182402
+2024-06-19 08:29:28,182 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:29:28.182794
+2024-06-19 08:29:29,760 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:29:29.760573
+2024-06-19 08:29:29,760 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:45:29,858 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:45:29,858 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:45:29,858 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:45:29,859 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:45:29,859 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:45:29,859 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 08:45:31,398 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:45:31,399 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:45:31,427 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:45:31,427 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:45:31.427606
+2024-06-19 08:45:31,429 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:45:31,435 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:45:31.435835
+2024-06-19 08:45:31,436 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:45:31.436969
+2024-06-19 08:45:31,437 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:45:31.437366
+2024-06-19 08:45:32,971 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:45:32.971781
+2024-06-19 08:45:32,972 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:56:21,637 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:56:21,638 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:56:21,638 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:56:21,639 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:56:21,639 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:56:21,640 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 08:56:23,322 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:56:23,324 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:56:23,344 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:56:23,344 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:56:23.344645
+2024-06-19 08:56:23,345 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:56:23,350 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:56:23.350642
+2024-06-19 08:56:23,351 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:56:23.351286
+2024-06-19 08:56:23,351 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:56:23.351788
+2024-06-19 08:56:24,963 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:56:24.963747
+2024-06-19 08:56:24,964 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:58:56,969 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:58:56,970 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 08:58:56,970 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:58:56,971 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 08:58:56,971 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 08:58:56,972 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 08:58:58,555 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 08:58:58,555 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 08:58:58,576 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 08:58:58,577 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:58:58.577143
+2024-06-19 08:58:58,578 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 08:58:58,582 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T08:58:58.582658
+2024-06-19 08:58:58,583 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T08:58:58.583106
+2024-06-19 08:58:58,583 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T08:58:58.583560
+2024-06-19 08:59:00,139 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T08:59:00.139250
+2024-06-19 08:59:00,140 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:07:40,731 - scripts.flask_app - ERROR - Error during model parameter initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:07:40,731 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:07:40,732 - scripts.flask_app - ERROR - Error during model initialization: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:07:40,732 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:07:40,732 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:07:40,733 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:07:42,359 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:07:42,360 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:07:42,380 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:07:42,380 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:07:42.380834
+2024-06-19 09:07:42,381 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:07:42,385 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:07:42.385436
+2024-06-19 09:07:42,385 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:07:42.385832
+2024-06-19 09:07:42,386 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:07:42.386167
+2024-06-19 09:07:44,003 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:07:44.003032
+2024-06-19 09:07:44,003 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:13:55,448 - scripts.flask_app - ERROR - Error during model parameter initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:13:55,449 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:13:55,449 - scripts.flask_app - ERROR - Error during model initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:13:55,449 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:13:55,449 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:13:55,449 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:13:57,082 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:13:57,082 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:13:57,110 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:13:57,110 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:13:57.110865
+2024-06-19 09:13:57,112 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:13:57,117 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:13:57.117595
+2024-06-19 09:13:57,118 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:13:57.118094
+2024-06-19 09:13:57,118 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:13:57.118561
+2024-06-19 09:13:58,675 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:13:58.675438
+2024-06-19 09:13:58,676 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:19:08,452 - scripts.flask_app - ERROR - Error during model parameter initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:19:08,453 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:19:08,453 - scripts.flask_app - ERROR - Error during model initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:19:08,453 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:19:08,453 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:19:08,454 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:19:10,086 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:19:10,087 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:19:10,114 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:19:10,115 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:19:10.114981
+2024-06-19 09:19:10,116 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:19:10,121 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:19:10.121582
+2024-06-19 09:19:10,122 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:19:10.122787
+2024-06-19 09:19:10,123 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:19:10.123174
+2024-06-19 09:19:11,812 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:19:11.812296
+2024-06-19 09:19:11,813 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:19:11,846 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:22:51,530 - scripts.flask_app - ERROR - Error during model parameter initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:22:51,530 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:22:51,530 - scripts.flask_app - ERROR - Error during model initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:22:51,531 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:22:51,531 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:22:51,531 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:22:53,102 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:22:53,102 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:22:53,123 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:22:53,124 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:22:53.124201
+2024-06-19 09:22:53,125 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:22:53,126 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:22:53.126075
+2024-06-19 09:22:53,126 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:22:53.126262
+2024-06-19 09:22:53,126 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:22:53.126582
+2024-06-19 09:22:54,744 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:22:54.744013
+2024-06-19 09:22:54,744 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:22:54,772 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:29:06,098 - scripts.flask_app - ERROR - Error during model parameter initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:29:06,098 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:29:06,098 - scripts.flask_app - ERROR - Error during model initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:29:06,099 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:29:06,099 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:29:06,099 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:29:07,631 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:29:07,631 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:29:07,632 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:29:07,632 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:29:07.632148
+2024-06-19 09:29:07,632 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:29:07,633 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:29:07.633049
+2024-06-19 09:29:07,633 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:29:07.633185
+2024-06-19 09:29:07,633 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:29:07.633356
+2024-06-19 09:29:09,203 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:29:09.203633
+2024-06-19 09:29:09,203 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:29:09,227 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:33:39,132 - scripts.flask_app - ERROR - Error during model parameter initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:33:39,132 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 09:33:39,133 - scripts.flask_app - ERROR - Error during model initialization: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:33:39,133 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 09:33:39,133 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 09:33:39,134 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent
+2024-06-19 09:33:40,734 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 09:33:40,735 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:33:40,761 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 09:33:40,761 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:33:40.761908
+2024-06-19 09:33:40,762 - scripts.flask_app - ERROR - Stack trace: Traceback (most recent call last):
+TypeError: Linear.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 09:33:40,767 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages'] - TIMESTAMP: 2024-06-19T09:33:40.767054
+2024-06-19 09:33:40,767 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin - TIMESTAMP: 2024-06-19T09:33:40.767466
+2024-06-19 09:33:40,767 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent:/home/ubuntu/chat-agent - TIMESTAMP: 2024-06-19T09:33:40.767847
+2024-06-19 09:33:42,379 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3 - TIMESTAMP: 2024-06-19T09:33:42.379228
+2024-06-19 09:33:42,380 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 09:33:42,405 - scripts.flask_app - ERROR - JAX version during error: 0.4.10

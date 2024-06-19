@@ -114,8 +114,8 @@ def chat():
             return jsonify({"error": "No input or user_id provided"}), 400
 
         # Log the type and content of user_input before format check
-        app.logger.debug(f"Type of user_input before format check: {type(user_input)}")
-        app.logger.debug(f"Content of user_input before format check: {user_input}")
+        app.logger.debug(f"CHAT_ENDPOINT - Type of user_input before format check: {type(user_input)}")
+        app.logger.debug(f"CHAT_ENDPOINT - Content of user_input before format check: {user_input}")
 
         # Ensure user_input is in the correct format
         if isinstance(user_input, str):
@@ -126,8 +126,8 @@ def chat():
             return jsonify({"error": "Invalid input format"}), 400
 
         # Log the type and content of user_input after format check
-        app.logger.debug(f"Type of user_input after format check: {type(user_input)}")
-        app.logger.debug(f"Content of user_input after format check: {user_input}")
+        app.logger.debug(f"CHAT_ENDPOINT - Type of user_input after format check: {type(user_input)}")
+        app.logger.debug(f"CHAT_ENDPOINT - Content of user_input after format check: {user_input}")
 
         # Maintain conversation context
         if user_id not in conversation_context:
@@ -139,17 +139,17 @@ def chat():
         tokenized_input = tokenizer(user_input, padding=True, truncation=True).input_ids
 
         # Log the type and content of tokenized_input before conversion to JAX array
-        app.logger.debug(f"Type of tokenized_input before JAX conversion: {type(tokenized_input)}")
-        app.logger.debug(f"Content of tokenized_input before JAX conversion: {tokenized_input}")
+        app.logger.debug(f"CHAT_ENDPOINT - Type of tokenized_input before JAX conversion: {type(tokenized_input)}")
+        app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input before JAX conversion: {tokenized_input}")
 
         # Ensure tokenized input is in the correct format for the model
         tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
 
         # Additional logging to capture the state of user_input and tokenized_input
-        app.logger.debug(f"Type of user_input after JAX conversion: {type(user_input)}")
-        app.logger.debug(f"Content of user_input after JAX conversion: {user_input}")
-        app.logger.debug(f"Type of tokenized_input after JAX conversion: {type(tokenized_input)}")
-        app.logger.debug(f"Content of tokenized_input after JAX conversion: {tokenized_input}")
+        app.logger.debug(f"CHAT_ENDPOINT - Type of user_input after JAX conversion: {type(user_input)}")
+        app.logger.debug(f"CHAT_ENDPOINT - Content of user_input after JAX conversion: {user_input}")
+        app.logger.debug(f"CHAT_ENDPOINT - Type of tokenized_input after JAX conversion: {type(tokenized_input)}")
+        app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input after JAX conversion: {tokenized_input}")
 
         # Generate response
         output = transformed_model_fn.apply(params, rng, tokenized_input)

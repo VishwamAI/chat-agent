@@ -360,20 +360,10 @@ class VishwamAI:
         Returns:
             numpy.ndarray: The generated image as a NumPy array.
         """
-        """
-        Generates an image based on input text using the NLP model and generator.
-
-        Args:
-            input_text (str): The input text for generating the image.
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
-
-        Returns:
-            numpy.ndarray: The generated image as a NumPy array.
-        """
         try:
-            noise = np.random.normal(0, 1, (1, 50))  # Reduced noise vector size
+            logging.info("Starting image generation process.")
 
-            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            # Process the input text using the NLP model
             logging.info("Encoding input text.")
             tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
             logging.info("Generating NLP output.")

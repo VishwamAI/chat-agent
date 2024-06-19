@@ -71,7 +71,6 @@ def initialize_model():
             app.logger.debug(f"Dtype of tokenized input: {type(tokenized_input[0][0])}")  # Log the dtype of tokenized input
             global params  # Ensure params is treated as global
             params = transformed_model_fn.init(rng, tokenized_input)
-            # app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")
         except Exception as init_error:
             app.logger.error(f"Error during model parameter initialization: {init_error}")

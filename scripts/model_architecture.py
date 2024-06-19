@@ -118,15 +118,15 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32)),
+                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
                         lambda x: x,
                         lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(jax.numpy.array(x, dtype=jnp.int32), jax.numpy.array(x, dtype=jnp.int32), jax.numpy.array(x, dtype=jnp.int32)),
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32)),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32))
+                        )(x, x, x),
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),
                     apply_rng=True
                 )

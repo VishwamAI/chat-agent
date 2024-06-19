@@ -24,15 +24,15 @@ class VishwamAI:
     def build_generator(self):
         model = models.Sequential()
         model.add(layers.Input(shape=(50,)))  # Adjusted noise vector size to 50
-        model.add(layers.Dense(64 * 64 * 16, activation='tanh'))  # Adjusted dimensions
-        model.add(layers.Reshape((64, 64, 16)))  # Adjusted dimensions
+        model.add(layers.Dense(135 * 135 * 256, activation='tanh'))  # Adjusted dimensions
+        model.add(layers.Reshape((135, 135, 256)))  # Adjusted dimensions
         model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))  # Adjusted dimensions
+        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
         model.compile(optimizer='adam', loss='binary_crossentropy')

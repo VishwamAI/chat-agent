@@ -19,8 +19,8 @@ class VishwamAIModel(hk.Module):
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
             ])(jax.numpy.array(x, dtype=jnp.int32)),
             apply_rng=True
         )
@@ -45,8 +45,8 @@ class VishwamAIModel(hk.Module):
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                 ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
             ])(jax.numpy.array(x, dtype=jnp.int32)),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -123,8 +123,8 @@ class VishwamAIModel(hk.Module):
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
                         )(x, x, x),
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)(x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)(x)
+                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
+                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),
                     apply_rng=True
                 )

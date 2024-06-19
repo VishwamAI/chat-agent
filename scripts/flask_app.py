@@ -52,6 +52,11 @@ def initialize_model():
         installed_packages = subprocess.check_output([sys.executable, '-m', 'pip', 'list']).decode('utf-8')
         app.logger.debug(f"Installed packages before initialization: {installed_packages}")  # Log the installed packages before initialization
         app.logger.debug(f"JAX version: {jax.__version__}")  # Log the JAX version for debugging
+        try:
+            import jax
+            app.logger.debug(f"JAX is accessible after setting environment variables. JAX version: {jax.__version__}")
+        except ImportError as e:
+            app.logger.error(f"Error importing JAX after setting environment variables: {e}")
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
 
         def model_fn(inputs):

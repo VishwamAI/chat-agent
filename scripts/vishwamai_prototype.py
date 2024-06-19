@@ -373,13 +373,10 @@ class VishwamAI:
             nlp_output = nlp_output.numpy().flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
 
-            # Generate the image using the generator model at a lower resolution
-            logging.info("Generating image using the generator model.")
-            low_res_image = self.generator.predict(noise)
-
-            # Resize the generated image to the target resolution
-            logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = tf.image.resize(low_res_image, target_resolution).numpy()
+            # Generate the image using the generator model at the target resolution
+            logging.info(f"Generating image using the generator model at resolution: {target_resolution}.")
+            generated_image = self.generator.predict(noise)
+            generated_image = tf.image.resize(generated_image, target_resolution).numpy()
 
             logging.info("Image generation successful.")
             return generated_image

@@ -87,6 +87,7 @@ def initialize_model():
             raise
     except Exception as e:
         app.logger.error(f"Error during model initialization: {e}")
+        app.logger.error(f"Stack trace: {traceback.format_exc()} - TIMESTAMP: {datetime.now().isoformat()}")
         app.logger.error(f"sys.path during error: {sys.path}")  # Log the sys.path during error for debugging
         app.logger.error(f"Environment PATH during error: {os.environ['PATH']}")  # Log the PATH environment variable during error for debugging
         app.logger.error(f"Environment PYTHONPATH during error: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable during error for debugging
@@ -97,7 +98,7 @@ def initialize_model():
             app.logger.error(f"Installed packages: {installed_packages}")
             app.logger.error(f"JAX version during error: {jax.__version__}")  # Log the JAX version during error
         except Exception as pkg_error:
-            app.logger.error(f"Error retrieving installed packages: {pkg_error}")
+            app.logger.error(f"Error retrieving installed packages: {pkg_error} - TIMESTAMP: {datetime.now().isoformat()}")
         raise
 
 @app.route('/chat', methods=['POST'])

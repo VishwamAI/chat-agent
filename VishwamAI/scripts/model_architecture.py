@@ -12,8 +12,8 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                lambda x: print(f"Input dtype before optimized Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                lambda x: print(f"Input dtype after optimized Embed: {x.dtype}") or x,
                 lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -39,8 +39,8 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 8
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                lambda x: print(f"Input dtype before optimized Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                lambda x: print(f"Input dtype after optimized Embed: {x.dtype}") or x,
                 lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -121,8 +121,8 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: print(f"Input dtype before Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                        lambda x: print(f"Input dtype after Embed: {x.dtype}") or x,
+                        lambda x: print(f"Input dtype before optimized Embed: {x.dtype}") or hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform", dtype=jnp.float32))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: print(f"Input dtype after optimized Embed: {x.dtype}") or x,
                         lambda x: print(f"Input dtype before MultiHeadAttention: {x.dtype}") or hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,

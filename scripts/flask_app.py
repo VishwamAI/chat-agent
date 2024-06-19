@@ -185,6 +185,7 @@ def chat():
             installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
             app.logger.error(f"Python interpreter: {python_interpreter} - TIMESTAMP: {datetime.now().isoformat()}")
             app.logger.error(f"Installed packages: {installed_packages} - TIMESTAMP: {datetime.now().isoformat()}")
+            app.logger.error(f"JAX version during error: {jax.__version__}")  # Log the JAX version during error
         except Exception as pkg_error:
             app.logger.error(f"Error retrieving installed packages: {pkg_error} - TIMESTAMP: {datetime.now().isoformat()}")
         return jsonify({"error": "Internal server error"}), 500

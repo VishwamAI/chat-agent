@@ -55,8 +55,13 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
     def __call__(self, inputs):
-        if isinstance(inputs, str):
+        if isinstance(inputs, jnp.ndarray):
+            if inputs.dtype != jnp.int32:
+                inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
+            tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
             tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
             inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array

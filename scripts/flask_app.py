@@ -144,7 +144,7 @@ def chat():
         app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input before JAX conversion: {tokenized_input}")
 
         # Ensure tokenized input is in the correct format for the model
-        tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
+        tokenized_input = jnp.array(tokenized_input, dtype=jnp.float32)
 
         # Additional logging to capture the state of user_input and tokenized_input
         app.logger.debug(f"CHAT_ENDPOINT - Type of user_input after JAX conversion: {type(user_input)}")

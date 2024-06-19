@@ -70,12 +70,20 @@ class VishwamAIModel(hk.Module):
         # Initialize the parameters for the transformer
         print(f"Initializing transformer with inputs dtype: {inputs.dtype}")
         rng = jax.random.PRNGKey(42)
-        transformer_params = self.transformer.init(rng, inputs)
-        print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
+        try:
+            transformer_params = self.transformer.init(rng, inputs)
+            print(f"Transformer parameters initialized with dtypes: {jax.tree_map(lambda x: x.dtype, transformer_params)}")
+        except Exception as init_error:
+            print(f"Error during transformer initialization: {init_error}")
+            raise
 
         # Apply the transformer to the inputs
-        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
-        print(f"Embedded inputs dtype after transformer: {embedded_inputs.dtype}")
+        try:
+            embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+            print(f"Embedded inputs dtype after transformer: {embedded_inputs.dtype}")
+        except Exception as apply_error:
+            print(f"Error during transformer application: {apply_error}")
+            raise
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)

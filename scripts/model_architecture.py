@@ -56,17 +56,17 @@ class VishwamAIModel(hk.Module):
 
     def __call__(self, inputs):
         if isinstance(inputs, jnp.ndarray):
-            if inputs.dtype != jnp.int32:
-                inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+            if inputs.dtype != jnp.float32:
+                inputs = jax.numpy.array(inputs, dtype=jnp.float32)  # Ensure inputs are float dtype for embedding layer
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
             tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
             tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
-            inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
+            inputs = jax.numpy.array(inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array
         else:
             raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
 
@@ -116,13 +116,13 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
+                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.float32) if x.dtype != jnp.float32 else x),
                         lambda x: x,
                         lambda x: hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(x, x, x),  # Remove casting to float32
+                        )(x, x, x),
                         lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
                         lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
                     ])(x),

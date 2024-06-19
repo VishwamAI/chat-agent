@@ -17,10 +17,11 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"),
+                    dtype=jnp.float32
                 ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)
             ])(jax.numpy.array(x, dtype=jnp.int32)),
             apply_rng=True
         )
@@ -43,10 +44,11 @@ class VishwamAIModel(hk.Module):
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"),
+                    dtype=jnp.float32
                 ),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"), dtype=jnp.float32)
             ])(jax.numpy.array(x, dtype=jnp.int32)),
             apply_rng=True
         ) for _ in range(self.num_experts)]

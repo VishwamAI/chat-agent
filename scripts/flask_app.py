@@ -36,7 +36,8 @@ rng = None
 conversation_context = {}
 
 def initialize_model():
-    global transformed_model_fn, params, rng
+    global transformed_model_fn, params, rng, jax
+    app.logger.debug(f"JAX import check: {jax}")  # Confirm the import of JAX
     try:
         app.logger.debug("Starting model initialization...")  # Unique log message for confirmation
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging

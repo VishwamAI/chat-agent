@@ -1,0 +1,536 @@
+2024-06-18 22:09:51,365 - scripts.flask_app - ERROR - Error during model parameter initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:09:51,366 - scripts.flask_app - ERROR - Input during initialization error: [[0]]
+2024-06-18 22:09:51,366 - scripts.flask_app - ERROR - Error during model initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:09:51,366 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:09:51,366 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:09:51,366 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:09:52,349 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:09:52,349 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:09:52,353 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:09:52,353 - scripts.flask_app - ERROR - Error during request handling: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:09:52,353 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:09:52,354 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:09:52,354 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:09:53,329 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:09:53,329 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:13:18,046 - scripts.flask_app - ERROR - Error during model parameter initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:13:18,051 - scripts.flask_app - ERROR - Input during initialization error: [[0]]
+2024-06-18 22:13:18,052 - scripts.flask_app - ERROR - Error during model initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:13:18,052 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:13:18,052 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:13:18,052 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:13:19,058 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:13:19,059 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:13:19,061 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:13:19,061 - scripts.flask_app - ERROR - Error during request handling: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:13:19,061 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:13:19,061 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:13:19,061 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:13:20,049 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:13:20,050 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:18:20,020 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:18:21,030 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:18:21,031 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:18:21,032 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:18:21,032 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:18:21,032 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:18:21,033 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:18:21,033 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:18:22,023 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:18:22,023 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:22:24,966 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:22:24,966 - scripts.flask_app - ERROR - Input during initialization error: dummy input
+2024-06-18 22:22:24,966 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:22:24,966 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:22:24,966 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:22:24,967 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:22:25,966 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:22:25,967 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:22:26,969 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:22:26,969 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:26:58,979 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:26:58,979 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:26:58,979 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:26:58,980 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:26:59,985 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:26:59,986 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:26:59,988 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:26:59,988 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:26:59,988 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:26:59,988 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:26:59,988 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:27:00,989 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:27:00,989 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:31:16,728 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:31:16,731 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:31:16,732 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:31:16,732 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:31:17,767 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:31:17,768 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:31:17,768 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:31:17,768 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:31:17,768 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:31:17,768 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:31:17,769 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:31:18,774 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:31:18,774 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:42:37,852 - scripts.flask_app - ERROR - Error during model parameter initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:42:37,853 - scripts.flask_app - ERROR - Input during initialization error: [[   67 13513  5128]]
+2024-06-18 22:42:37,853 - scripts.flask_app - ERROR - Error during model initialization: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:42:37,853 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:42:37,853 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:42:37,853 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:42:38,823 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:42:38,824 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:42:38,825 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:42:38,825 - scripts.flask_app - ERROR - Error during request handling: text input must be of type `str` (single example), `List[str]` (batch or single pretokenized example) or `List[List[str]]` (batch of pretokenized examples).
+2024-06-18 22:42:38,825 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:42:38,826 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:42:38,826 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:42:39,801 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:42:39,801 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:50:02,792 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:50:02,792 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 22:50:02,793 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:50:02,793 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:50:02,793 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:50:02,793 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:50:03,788 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:50:03,789 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:50:03,792 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:50:03,792 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:50:03,793 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:50:03,793 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:50:03,793 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:50:04,792 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:50:04,793 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:58:27,276 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:58:27,276 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 22:58:27,276 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:58:27,276 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:58:27,277 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:58:27,277 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:58:28,306 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:58:28,306 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 22:58:28,309 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 22:58:28,309 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 22:58:28,310 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 22:58:28,310 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 22:58:28,310 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 22:58:29,310 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 22:58:29,310 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:04:54,452 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:04:55,719 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:04:55,719 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:04:55,755 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:04:55,756 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:04:55,756 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:04:55,756 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:04:55,757 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:04:57,096 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:04:57,097 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:08:28,391 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:08:28,392 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:08:28,392 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:08:28,392 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:08:28,392 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:08:28,392 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:08:29,485 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:08:29,485 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:08:29,488 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:08:29,488 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:08:29,489 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:08:29,489 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:08:29,489 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:08:30,488 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:08:30,488 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:12:20,055 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:12:20,055 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:12:20,055 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:12:20,056 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:12:20,056 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:12:20,056 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:12:21,057 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:12:21,058 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:12:21,061 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:12:21,061 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:12:21,061 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:12:21,061 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:12:21,062 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:12:22,221 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:12:22,221 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:19:29,004 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:19:29,004 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:19:29,004 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:19:29,004 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:19:29,004 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:19:29,005 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:19:30,007 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:19:30,008 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:19:30,011 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:19:30,011 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:19:30,012 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:19:30,012 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:19:30,012 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:19:31,023 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:19:31,023 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:22:38,984 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:22:38,984 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:22:38,984 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:22:38,984 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:22:38,984 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:22:38,985 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:22:40,203 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:22:40,203 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:22:40,204 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:22:40,204 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:22:40,204 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:22:40,204 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:22:40,204 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:22:41,338 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:22:41,338 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:30:51,655 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:30:51,655 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:30:51,655 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:30:51,655 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:30:51,656 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:30:51,656 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:30:52,675 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:30:52,676 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:30:52,677 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:30:52,677 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:30:52,678 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:30:52,678 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:30:52,678 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:30:53,701 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:30:53,702 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:34:00,805 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:34:02,035 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:34:02,035 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:34:02,036 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:34:02,036 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:34:02,036 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:34:02,036 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:34:02,036 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:34:03,089 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:34:03,090 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:38:17,864 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:38:17,865 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:38:17,865 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:38:17,865 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:38:17,865 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:38:17,866 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:38:19,021 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:38:19,021 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:38:19,023 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:38:19,024 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:38:19,024 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:38:19,024 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:38:19,024 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:38:20,172 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:38:20,173 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:44:51,140 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:44:51,140 - scripts.flask_app - ERROR - Input during initialization error: ['dummy input']
+2024-06-18 23:44:51,140 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:44:51,141 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:44:51,141 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:44:51,141 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:44:52,204 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:44:52,204 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:44:52,209 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:44:52,209 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:44:52,209 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:44:52,209 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:44:52,210 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/.local/lib/python3.10/site-packages
+2024-06-18 23:44:53,244 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:44:53,244 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:49:46,884 - scripts.flask_app - ERROR - Error during model parameter initialization: Input must be of type `str` or `List[str]`
+2024-06-18 23:49:46,884 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-18 23:49:46,884 - scripts.flask_app - ERROR - Error during model initialization: Input must be of type `str` or `List[str]`
+2024-06-18 23:49:46,885 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:49:46,885 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:49:46,885 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:49:48,001 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:49:48,002 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:49:48,002 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:49:48,003 - scripts.flask_app - ERROR - Error during request handling: Input must be of type `str` or `List[str]`
+2024-06-18 23:49:48,003 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:49:48,003 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:49:48,003 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:49:49,028 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:49:49,029 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:57:36,452 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:57:36,452 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-18 23:57:36,452 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:57:36,452 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:57:36,452 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:57:36,453 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:57:38,255 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:57:38,255 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-18 23:57:38,274 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-18 23:57:38,275 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-18 23:57:38,276 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-18 23:57:38,276 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-18 23:57:38,276 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-18 23:57:39,820 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-18 23:57:39,821 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:32:57,235 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:32:57,235 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 00:32:57,235 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:32:57,235 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:32:57,236 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:32:57,236 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-19 00:32:58,960 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:32:58,961 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:32:58,988 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 00:32:58,988 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:32:58,989 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:32:58,989 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:32:58,990 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-19 00:33:00,634 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:33:00,634 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:36:19,568 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:36:19,568 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 00:36:19,568 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:36:19,568 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:36:19,569 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:36:19,569 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-19 00:36:21,170 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:36:21,171 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:36:21,190 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 00:36:21,190 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:36:21,191 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:36:21,191 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:36:21,191 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: 
+2024-06-19 00:36:22,794 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:36:22,794 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:41:38,551 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:41:38,551 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 00:41:38,552 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:41:38,552 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:41:38,553 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:41:38,553 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:41:40,216 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:41:40,216 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:41:40,237 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 00:41:40,237 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:41:40,238 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:41:40,238 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:41:40,238 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:41:41,911 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:41:41,912 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:48:09,003 - scripts.flask_app - ERROR - Error during model parameter initialization: Input must be of type `str` or `List[str]`
+2024-06-19 00:48:09,005 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 00:48:09,006 - scripts.flask_app - ERROR - Error during model initialization: Input must be of type `str` or `List[str]`
+2024-06-19 00:48:09,006 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:48:09,007 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:48:09,007 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:48:10,675 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:48:10,676 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:48:10,712 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 00:48:10,713 - scripts.flask_app - ERROR - Error during request handling: Input must be of type `str` or `List[str]`
+2024-06-19 00:48:10,713 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:48:10,714 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:48:10,714 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:48:12,353 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:48:12,355 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:53:37,420 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:53:37,421 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 00:53:37,422 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:53:37,422 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:53:37,422 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:53:37,423 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:53:38,985 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:53:38,986 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 00:53:39,017 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 00:53:39,018 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 00:53:39,018 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 00:53:39,019 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 00:53:39,019 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 00:53:40,565 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 00:53:40,565 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:00:23,436 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:00:23,436 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:00:23,437 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:00:23,437 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:00:23,438 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:00:23,438 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:00:25,222 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:00:25,222 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:00:25,225 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:00:25,226 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:00:25,226 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:00:25,226 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:00:25,227 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:00:26,821 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:00:26,821 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:06:06,181 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:06:06,182 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:06:06,182 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:06:06,183 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:06:06,183 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:06:06,183 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:06:07,770 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:06:07,771 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:06:07,791 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:06:07,792 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:06:07,792 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:06:07,793 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:06:07,793 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:06:09,329 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:06:09,330 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:14:06,328 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:14:06,328 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:14:06,328 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:14:06,329 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:14:06,329 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:14:06,329 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:14:07,871 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:14:07,872 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:14:07,872 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:14:07,872 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:14:07,872 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:14:07,872 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:14:07,873 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:14:09,460 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:14:09,461 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:18:10,402 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:18:10,403 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:18:10,403 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:18:10,403 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:18:10,404 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:18:10,404 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:18:12,020 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:18:12,021 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:18:12,054 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:18:12,054 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:18:12,054 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:18:12,054 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:18:12,055 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:18:13,737 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:18:13,738 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:25:13,175 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:25:13,175 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:25:13,176 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:25:13,176 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:25:13,176 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:25:13,177 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:25:14,807 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:25:14,807 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:25:14,840 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:25:14,840 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:25:14,841 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:25:14,841 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:25:14,842 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:25:16,417 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:25:16,418 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:29:05,058 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:29:05,061 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:29:05,061 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:29:05,062 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:29:05,062 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:29:05,062 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:29:06,683 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:29:06,684 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:29:06,704 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:29:06,704 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:29:06,704 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:29:06,705 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:29:06,705 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:29:08,317 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:29:08,317 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:34:04,569 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:34:04,570 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:34:04,570 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:34:04,571 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:34:04,571 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:34:04,571 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/chat-agent
+2024-06-19 01:34:06,147 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:34:06,148 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:34:06,172 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:34:06,173 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:34:06,173 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:34:06,174 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:34:06,174 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: :/home/ubuntu/chat-agent
+2024-06-19 01:34:07,703 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:34:07,704 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:40:03,174 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:40:03,174 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:40:03,175 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:40:03,176 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:40:03,176 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:40:03,176 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:40:04,738 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:40:04,738 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:40:04,740 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:40:04,741 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:40:04,741 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:40:04,742 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:40:04,742 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:40:06,381 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:40:06,381 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:45:15,012 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:45:15,013 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:45:15,013 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:45:15,014 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:45:15,014 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:45:15,015 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:45:16,622 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:45:16,622 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:45:16,649 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:45:16,650 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:45:16,650 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:45:16,651 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:45:16,651 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:45:18,322 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:45:18,322 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:57:16,469 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:57:18,092 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:57:18,092 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 01:57:18,116 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 01:57:18,117 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 01:57:18,117 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 01:57:18,117 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 01:57:18,118 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 01:57:19,711 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 01:57:19,712 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 02:08:32,188 - scripts.flask_app - ERROR - Error during model parameter initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 02:08:32,189 - scripts.flask_app - ERROR - Input during initialization error: ['This is a dummy input for model initialization.']
+2024-06-19 02:08:32,189 - scripts.flask_app - ERROR - Error during model initialization: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 02:08:32,189 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 02:08:32,189 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 02:08:32,190 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 02:08:34,066 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 02:08:34,067 - scripts.flask_app - ERROR - Installed packages: Package                      Version
+2024-06-19 02:08:34,098 - scripts.flask_app - ERROR - JAX version during error: 0.4.10
+2024-06-19 02:08:34,098 - scripts.flask_app - ERROR - Error during request handling: Unable to convert output to JAX tensors format, JAX is not installed.
+2024-06-19 02:08:34,099 - scripts.flask_app - ERROR - sys.path during error: ['/home/ubuntu/chat-agent', '/home/ubuntu/.local/bin', '/home/ubuntu/chat-agent', '/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload', '/home/ubuntu/.local/lib/python3.10/site-packages', '/usr/local/lib/python3.10/dist-packages', '/usr/lib/python3/dist-packages']
+2024-06-19 02:08:34,099 - scripts.flask_app - ERROR - Environment PATH during error: /opt/.devin/package/custom_binaries:/home/ubuntu/.local/bin:/home/ubuntu/.cargo/bin:/opt/.devin/package/custom_binaries:/home/ubuntu/.nvm/versions/node/v18.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/ubuntu/.local/share/coursier/bin
+2024-06-19 02:08:34,100 - scripts.flask_app - ERROR - Environment PYTHONPATH during error: /home/ubuntu/chat-agent
+2024-06-19 02:08:35,650 - scripts.flask_app - ERROR - Python interpreter: /usr/bin/python3
+2024-06-19 02:08:35,650 - scripts.flask_app - ERROR - Installed packages: Package                      Version

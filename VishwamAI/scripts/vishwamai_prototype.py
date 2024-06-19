@@ -111,7 +111,7 @@ class VishwamAI:
             return image
 
         # Verify and adjust the path to the sample dataset if necessary
-        sample_dataset_path = '/home/ubuntu/VishwamAI/data/sample_dataset'
+        sample_dataset_path = '/home/ubuntu/chat-agent/VishwamAI/data/sample_dataset'
         if not os.path.exists(sample_dataset_path):
             logging.error(f"Sample dataset path does not exist: {sample_dataset_path}")
             return None
@@ -154,6 +154,9 @@ class VishwamAI:
 
     def train_step(self, half_batch, batch_size, epoch):
         for real_images in self.sample_dataset:
+            if real_images.shape[0] == 0:
+                logging.error("Empty batch encountered in sample dataset.")
+                continue
             noise = np.random.normal(0, 1, (half_batch, 100))
             generated_images = self.generator.predict(noise)
             d_loss_real = self.discriminator.train_on_batch(real_images[:half_batch], np.ones((half_batch, 1)))
@@ -347,51 +350,12 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-    def generate_image(self, input_text, target_resolution=(1080, 1080)):
-        """
-        Generates an image based on input text using the NLP model and generator.
+<<<<<<< HEAD:VishwamAI/scripts/vishwamai_prototype.py
 
-        Args:
-            input_text (str): The input text for generating the image.
-            target_resolution (tuple): The desired resolution of the generated image (width, height).
+||||||| 96d9e306b:scripts/vishwamai_prototype.py
+=======
 
-        Returns:
-            numpy.ndarray: The generated image as a NumPy array.
-        """
-        try:
-            logging.info("Starting image generation process.")
-
-            # Process the input text using the NLP model
-            logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
-            logging.info(f"Tokens: {tokens}")
-
-            logging.info("Generating NLP output.")
-            nlp_output = self.nlp_model(tokens)[0]
-            logging.info(f"NLP output shape: {nlp_output.shape}")
-
-            # Generate noise vector based on NLP output
-            logging.info("Generating noise vector.")
-            noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
-            nlp_output = nlp_output.numpy().flatten()
-            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
-            logging.info(f"Noise vector: {noise}")
-
-            # Generate the image using the generator model
-            logging.info("Generating image using the generator model.")
-            generated_image = self.generator.predict(noise)
-            logging.info(f"Generated image shape: {generated_image.shape}")
-
-            # Resize the generated image to the target resolution
-            logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
-
-            logging.info("Image generation successful.")
-            return generated_image
-        except Exception as e:
-            logging.error(f"Error during image generation: {e}")
-            return None
-
+>>>>>>> origin/main:scripts/vishwamai_prototype.py
 def test_data_generator(batch_size=2):
     vishwamai = VishwamAI(batch_size=batch_size)
     dataset = vishwamai.load_sample_dataset(batch_size)

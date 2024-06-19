@@ -1,0 +1,2 @@
+2024-06-19 05:09:41,412 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`
+2024-06-19 05:13:53,377 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`

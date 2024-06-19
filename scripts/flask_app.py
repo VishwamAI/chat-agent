@@ -81,16 +81,23 @@ def generate_image():
         if not input_text:
             return jsonify({"error": "No input_text provided"}), 400
 
+        app.logger.debug(f"Received request to generate image with input_text: {input_text} and resolution: {resolution}")
+
         vishwamai = VishwamAI(batch_size=16)
         generated_image = vishwamai.generate_image(input_text, target_resolution=resolution)
         if generated_image is None:
+            app.logger.error("Failed to generate image: generated_image is None")
             return jsonify({"error": "Failed to generate image"}), 500
+
+        app.logger.debug("Image generated successfully")
 
         # Denormalize the image to [0, 255] range
         generated_image = (generated_image * 127.5 + 127.5).astype(np.uint8)
 
         # Convert the image to a list for JSON serialization
         image_list = generated_image.tolist()
+
+        app.logger.debug("Image converted to list for JSON serialization")
 
         return jsonify({"generated_image": image_list})
     except Exception as e:

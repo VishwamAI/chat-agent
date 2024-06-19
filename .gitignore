@@ -9,3 +9,6 @@ __pycache__/
 
 # Ignore data directory
 VishwamAI/data/
+
+# Ignore log files
+logs/flask_app.log

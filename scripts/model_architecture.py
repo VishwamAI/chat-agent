@@ -12,7 +12,7 @@ class VishwamAIModel(hk.Module):
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
         self.transformer = hk.transform(lambda x: hk.Sequential([
             hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-            lambda x: self.attention(query=x, key=x, value=x),  # Corrected to use separate inputs for key and value
+            lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ])(x))
@@ -29,11 +29,15 @@ class VishwamAIModel(hk.Module):
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
 
+        # Define key and value inputs for attention mechanism
+        self.key_input = jnp.zeros((1, 512))  # Example shape, adjust as needed
+        self.value_input = jnp.zeros((1, 512))  # Example shape, adjust as needed
+
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(lambda x: hk.Sequential([
             hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-            lambda x: self.attention(query=x, key=x, value=x),  # Corrected to use separate inputs for key and value
+            lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ])(x)) for _ in range(self.num_experts)]
@@ -100,12 +104,12 @@ class VishwamAIModel(hk.Module):
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
                         hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                        lambda x: self.attention(query=x, key=x, value=x),  # Corrected to use separate inputs for key and value
+                        lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
                         hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                        )(query=x, key=x, value=x),
+                        )(query=x, key=self.key_input, value=self.value_input),
                         hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                         hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
                     ])(x),

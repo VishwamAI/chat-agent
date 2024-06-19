@@ -364,18 +364,23 @@ class VishwamAI:
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
             tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            logging.info(f"Tokens: {tokens}")
+
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
+            logging.info(f"NLP output shape: {nlp_output.shape}")
 
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
             noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
             nlp_output = nlp_output.numpy().flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            logging.info(f"Noise vector: {noise}")
 
             # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
             generated_image = self.generator.predict(noise)
+            logging.info(f"Generated image shape: {generated_image.shape}")
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")

@@ -56,13 +56,11 @@ def initialize_model():
         rng = jax.random.PRNGKey(42)
         example_input = ["This is a dummy input for model initialization."]  # Dummy input for initialization as a list of strings
         app.logger.debug(f"Example input: {example_input}")  # Log the example input for debugging
-        tokenized_example_input = tokenizer(example_input, padding=True, truncation=True).input_ids
-        app.logger.debug(f"Tokenized example input: {tokenized_example_input}")  # Log the tokenized example input for debugging
         try:
-            app.logger.debug(f"Initializing model with input: {tokenized_example_input}")
-            app.logger.debug(f"Type of tokenized example input: {type(tokenized_example_input)}")  # Log the type of tokenized example input for debugging
-            app.logger.debug(f"Content of tokenized example input: {tokenized_example_input}")  # Log the content of tokenized example input for debugging
-            params = transformed_model_fn.init(rng, tokenized_example_input)
+            app.logger.debug(f"Initializing model with input: {example_input}")
+            app.logger.debug(f"Type of example input: {type(example_input)}")  # Log the type of example input for debugging
+            app.logger.debug(f"Content of example input: {example_input}")  # Log the content of example input for debugging
+            params = transformed_model_fn.init(rng, example_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")
         except Exception as init_error:

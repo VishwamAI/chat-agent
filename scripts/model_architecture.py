@@ -55,6 +55,7 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
     def __call__(self, inputs):
+        app.logger.debug(f"MODEL_CALL - Initial inputs: {inputs}")
         if isinstance(inputs, jnp.ndarray):
             if inputs.dtype != jnp.int32:
                 inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
@@ -70,16 +71,21 @@ class VishwamAIModel(hk.Module):
         else:
             raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
 
+        app.logger.debug(f"MODEL_CALL - Processed inputs: {inputs}")
+
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
+        app.logger.debug(f"MODEL_CALL - Transformer parameters initialized.")
 
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        app.logger.debug(f"MODEL_CALL - Embedded inputs: {embedded_inputs}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
         expert_indices = jnp.argmax(gate_values, axis=1)
+        app.logger.debug(f"MODEL_CALL - Expert indices: {expert_indices}")
 
         # Process inputs through the selected experts
         expert_outputs = []
@@ -92,9 +98,11 @@ class VishwamAIModel(hk.Module):
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
                 expert_outputs.append(expert_output)
+                app.logger.debug(f"MODEL_CALL - Expert {i} output: {expert_output}")
 
         # Aggregate the outputs from the experts
         aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
+        app.logger.debug(f"MODEL_CALL - Aggregated output: {aggregated_output}")
 
         # Continue with the rest of the model
         hidden_states = aggregated_output
@@ -102,6 +110,7 @@ class VishwamAIModel(hk.Module):
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)
         output = self.dense(augmented_memory)
+        app.logger.debug(f"MODEL_CALL - Final output: {output}")
         return output
 
     def add_advanced_features(self):

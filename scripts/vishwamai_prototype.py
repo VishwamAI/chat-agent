@@ -347,7 +347,7 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-    def generate_image(self, input_text, target_resolution=(512, 512)):
+    def generate_image(self, input_text, target_resolution=(1080, 1080)):
         """
         Generates an image based on input text using the NLP model and generator.
 
@@ -363,7 +363,7 @@ class VishwamAI:
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
 
@@ -373,9 +373,12 @@ class VishwamAI:
             nlp_output = nlp_output.numpy().flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
 
-            # Generate the image using the generator model at the target resolution
-            logging.info(f"Generating image using the generator model at resolution: {target_resolution}.")
+            # Generate the image using the generator model
+            logging.info("Generating image using the generator model.")
             generated_image = self.generator.predict(noise)
+
+            # Resize the generated image to the target resolution
+            logging.info(f"Resizing image to target resolution: {target_resolution}.")
             generated_image = tf.image.resize(generated_image, target_resolution).numpy()
 
             logging.info("Image generation successful.")

@@ -48,7 +48,6 @@ def initialize_model():
         app.logger.debug(f"Environment PYTHONPATH: {os.environ.get('PYTHONPATH', '')}")  # Log the PYTHONPATH environment variable for debugging
         installed_packages = subprocess.check_output([sys.executable, '-m', 'pip', 'list']).decode('utf-8')
         app.logger.debug(f"Installed packages before initialization: {installed_packages}")  # Log the installed packages before initialization
-        # app.logger.debug(f"JAX version: {jax.__version__}")  # Log the JAX version for debugging
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
 
         def model_fn(inputs):

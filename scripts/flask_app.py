@@ -87,7 +87,6 @@ def initialize_model():
             installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
             app.logger.error(f"Python interpreter: {python_interpreter}")
             app.logger.error(f"Installed packages: {installed_packages}")
-            app.logger.error(f"JAX version during error: {jax.__version__}")  # Log the JAX version during error
         except Exception as pkg_error:
             app.logger.error(f"Error retrieving installed packages: {pkg_error} - TIMESTAMP: {datetime.now().isoformat()}")
         raise
@@ -154,7 +153,6 @@ def chat():
         app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input after JAX conversion: {tokenized_input}")
 
         app.logger.debug(f"CHAT_ENDPOINT - Dtype of tokenized_input before model call: {jax.numpy.array(tokenized_input).dtype}")
-        app.logger.debug(f"CHAT_ENDPOINT - JAX version before model call: {jax.__version__}")  # Log the JAX version before model call
         try:
             app.logger.debug(f"CHAT_ENDPOINT - Calling model with tokenized_input: {tokenized_input}")
             output = transformed_model_fn.apply(params, rng, tokenized_input)
@@ -186,7 +184,6 @@ def chat():
             installed_packages = subprocess.check_output([python_interpreter, '-m', 'pip', 'list']).decode('utf-8')
             app.logger.error(f"Python interpreter: {python_interpreter} - TIMESTAMP: {datetime.now().isoformat()}")
             app.logger.error(f"Installed packages: {installed_packages} - TIMESTAMP: {datetime.now().isoformat()}")
-            app.logger.error(f"JAX version during error: {jax.__version__}")  # Log the JAX version during error
         except Exception as pkg_error:
             app.logger.error(f"Error retrieving installed packages: {pkg_error} - TIMESTAMP: {datetime.now().isoformat()}")
         return jsonify({"error": "Internal server error"}), 500

@@ -36,6 +36,9 @@ conversation_context = {}
 def initialize_model():
     global transformed_model_fn, params, rng
     try:
+        if 'PYTHONPATH' not in os.environ or '/home/ubuntu/chat-agent' not in os.environ['PYTHONPATH']:
+            os.environ['PYTHONPATH'] = '/home/ubuntu/chat-agent:' + os.environ.get('PYTHONPATH', '')
+            app.logger.debug(f"Set PYTHONPATH: {os.environ['PYTHONPATH']}")
         app.logger.debug("Starting model initialization...")  # Unique log message for confirmation
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging
         app.logger.debug(f"Python interpreter path: {subprocess.check_output(['which', 'python3']).decode('utf-8').strip()}")  # Log the path of the Python interpreter for debugging

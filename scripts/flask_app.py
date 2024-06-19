@@ -38,10 +38,6 @@ conversation_context = {}
 def initialize_model():
     global transformed_model_fn, params, rng
     try:
-        os.environ['PYTHONPATH'] = '/home/ubuntu/chat-agent:' + os.environ.get('PYTHONPATH', '')
-        sys.path.insert(0, '/home/ubuntu/chat-agent')
-        app.logger.debug(f"Set PYTHONPATH: {os.environ['PYTHONPATH']}")
-        app.logger.debug(f"Updated sys.path: {sys.path}")
         app.logger.debug("Starting model initialization...")  # Unique log message for confirmation
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging
         app.logger.debug(f"Python interpreter path: {subprocess.check_output(['which', 'python3']).decode('utf-8').strip()}")  # Log the path of the Python interpreter for debugging
@@ -102,10 +98,6 @@ def chat():
     app.logger.debug("Test log entry: /chat endpoint hit")  # Test log entry to confirm logging is working
     global transformed_model_fn, params, rng, conversation_context
     try:
-        os.environ['PYTHONPATH'] = '/home/ubuntu/chat-agent:' + os.environ.get('PYTHONPATH', '')
-        sys.path.insert(0, '/home/ubuntu/chat-agent')
-        app.logger.debug(f"Set PYTHONPATH: {os.environ['PYTHONPATH']}")
-        app.logger.debug(f"Updated sys.path: {sys.path}")
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging
         app.logger.debug(f"Python interpreter path: {subprocess.check_output(['which', 'python3']).decode('utf-8').strip()}")  # Log the path of the Python interpreter for debugging
         app.logger.debug(f"Python version: {subprocess.check_output(['python3', '--version']).decode('utf-8').strip()}")  # Log the Python version for debugging

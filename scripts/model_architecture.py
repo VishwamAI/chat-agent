@@ -222,18 +222,18 @@ class VishwamAIModel(hk.Module):
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
             noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
-            nlp_output = nlp_output.numpy().flatten()
+            nlp_output = nlp_output.flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
             logging.info(f"Noise vector: {noise}")
 
             # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
-            generated_image = self.generator.predict(noise)
+            generated_image = self.generator(noise)
             logging.info(f"Generated image shape: {generated_image.shape}")
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = tf.image.resize(generated_image, target_resolution).numpy()
+            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
 
             logging.info("Image generation successful.")
             return generated_image

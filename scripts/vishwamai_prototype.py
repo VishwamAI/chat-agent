@@ -383,6 +383,11 @@ class VishwamAI:
             generated_image = self.generator.predict(noise)
             logging.info(f"Generated image shape before resizing: {generated_image.shape}")
 
+            # Ensure the generated image has the correct shape before resizing
+            if generated_image.shape[1:3] != (1080, 1080):
+                logging.error(f"Unexpected generated image shape: {generated_image.shape}")
+                return None
+
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
             generated_image = tf.image.resize(generated_image, target_resolution)

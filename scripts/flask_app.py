@@ -48,6 +48,10 @@ def initialize_model():
         app.logger.debug(f"JAX version: {jax.__version__}")  # Log the JAX version for debugging
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
 
+        if 'PYTHONPATH' not in os.environ or '/home/ubuntu/chat-agent' not in os.environ['PYTHONPATH']:
+            os.environ['PYTHONPATH'] = '/home/ubuntu/chat-agent:' + os.environ.get('PYTHONPATH', '')
+            app.logger.debug(f"Set PYTHONPATH: {os.environ['PYTHONPATH']}")
+
         def model_fn(inputs):
             model = VishwamAIModel()
             return model(inputs)
@@ -109,6 +113,10 @@ def chat():
         if not user_input or not user_id:
             return jsonify({"error": "No input or user_id provided"}), 400
 
+        # Log the type and content of user_input before format check
+        app.logger.debug(f"Type of user_input before format check: {type(user_input)}")
+        app.logger.debug(f"Content of user_input before format check: {user_input}")
+
         # Ensure user_input is in the correct format
         if isinstance(user_input, str):
             user_input = [user_input]  # Convert single input to a batch of one
@@ -116,6 +124,10 @@ def chat():
             pass  # Input is already in the correct format
         else:
             return jsonify({"error": "Invalid input format"}), 400
+
+        # Log the type and content of user_input after format check
+        app.logger.debug(f"Type of user_input after format check: {type(user_input)}")
+        app.logger.debug(f"Content of user_input after format check: {user_input}")
 
         # Maintain conversation context
         if user_id not in conversation_context:
@@ -126,11 +138,20 @@ def chat():
         # Tokenize the input
         tokenized_input = tokenizer(user_input, padding=True, truncation=True).input_ids
 
+        # Log the type and content of tokenized_input before conversion to JAX array
+        app.logger.debug(f"Type of tokenized_input before JAX conversion: {type(tokenized_input)}")
+        app.logger.debug(f"Content of tokenized_input before JAX conversion: {tokenized_input}")
+
         # Ensure tokenized input is in the correct format for the model
         tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
 
+        # Additional logging to capture the state of user_input and tokenized_input
+        app.logger.debug(f"Type of user_input after JAX conversion: {type(user_input)}")
+        app.logger.debug(f"Content of user_input after JAX conversion: {user_input}")
+        app.logger.debug(f"Type of tokenized_input after JAX conversion: {type(tokenized_input)}")
+        app.logger.debug(f"Content of tokenized_input after JAX conversion: {tokenized_input}")
+
         # Generate response
-        app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging
         output = transformed_model_fn.apply(params, rng, tokenized_input)
         app.logger.debug(f"Model output: {output}")  # Log the model output for debugging
         try:

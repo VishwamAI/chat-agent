@@ -14,11 +14,11 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.MultiHeadAttention(
+                lambda x: hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                ),
+                )(x, x, x),
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(jax.numpy.array(x, dtype=jnp.int32)),
@@ -40,11 +40,11 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.MultiHeadAttention(
+                lambda x: hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
                     w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                ),
+                )(x, x, x),
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(jax.numpy.array(x, dtype=jnp.int32)),

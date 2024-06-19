@@ -24,8 +24,8 @@ class VishwamAI:
     def build_generator(self):
         model = models.Sequential()
         model.add(layers.Input(shape=(50,)))  # Adjusted noise vector size to 50
-        model.add(layers.Dense(135 * 135 * 256, activation='tanh'))  # Adjusted dimensions
-        model.add(layers.Reshape((135, 135, 256)))  # Adjusted dimensions
+        model.add(layers.Dense(68 * 68 * 256, activation='tanh'))  # Adjusted dimensions
+        model.add(layers.Reshape((68, 68, 256)))  # Adjusted dimensions
         model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
@@ -34,7 +34,8 @@ class VishwamAI:
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
+        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))  # Adjusted strides to achieve 1080x1080 resolution
+        model.add(layers.Cropping2D(cropping=((4, 4), (4, 4))))  # Crop to achieve exact 1080x1080 resolution
         model.compile(optimizer='adam', loss='binary_crossentropy')
         return model
 
@@ -375,16 +376,23 @@ class VishwamAI:
             noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
             nlp_output = nlp_output.numpy().flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            logging.info(f"Noise vector shape: {noise.shape}")
             logging.info(f"Noise vector: {noise}")
 
             # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
             generated_image = self.generator.predict(noise)
-            logging.info(f"Generated image shape: {generated_image.shape}")
+            logging.info(f"Generated image shape before resizing: {generated_image.shape}")
+
+            # Ensure the generated image has the correct shape before resizing
+            if generated_image.shape[1:3] != (1080, 1080):
+                logging.error(f"Unexpected generated image shape: {generated_image.shape}")
+                return None
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
+            generated_image = tf.image.resize(generated_image, target_resolution)
+            generated_image = generated_image.numpy()  # Convert to NumPy array
 
             logging.info("Image generation successful.")
             return generated_image

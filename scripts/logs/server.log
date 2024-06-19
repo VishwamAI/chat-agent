@@ -1,2 +1,86 @@
 2024-06-18 18:24:09,329 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
 2024-06-18 18:24:09,329 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 18:29:10,562 - flask_app - ERROR - Error during model initialization: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
+2024-06-18 18:29:10,562 - flask_app - ERROR - Error during request handling: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
+2024-06-18 18:34:13,656 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 18:34:13,656 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 18:40:34,488 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 18:40:34,489 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 18:45:01,717 - flask_app - ERROR - Error during model initialization: 'jaxlib.xla_extension.ArrayImpl' object is not callable
+2024-06-18 18:45:01,717 - flask_app - ERROR - Error during request handling: 'jaxlib.xla_extension.ArrayImpl' object is not callable
+2024-06-18 18:51:58,388 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 18:51:58,388 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:00:00,092 - flask_app - ERROR - Error during model initialization: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
+2024-06-18 19:00:00,092 - flask_app - ERROR - Error during request handling: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
+2024-06-18 19:06:17,222 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:06:17,222 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:12:57,635 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:12:57,636 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:17:13,519 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:17:13,519 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:21:37,476 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:21:37,476 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 19:26:41,148 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 19:26:41,148 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 19:30:51,558 - flask_app - ERROR - Error during model initialization: 'Sequential' object has no attribute 'shape'
+2024-06-18 19:30:51,558 - flask_app - ERROR - Error during request handling: 'Sequential' object has no attribute 'shape'
+2024-06-18 19:35:17,648 - flask_app - ERROR - Error during model initialization: 'Sequential' object has no attribute 'shape'
+2024-06-18 19:35:17,649 - flask_app - ERROR - Error during request handling: 'Sequential' object has no attribute 'shape'
+2024-06-18 19:38:50,033 - flask_app - ERROR - Error during model initialization: Value 'Sequential(
+    layers=[Embed(
+               vocab_size=50257,
+               embed_dim=512,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff2260>,
+           ),
+            <function VishwamAIModel.__init__.<locals>.<lambda>.<locals>.<lambda> at 0x7fd709268a60>,
+            Linear(
+               output_size=2048,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff20e0>,
+           ),
+            Linear(
+               output_size=512,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff2500>,
+           )],
+)' with dtype object is not a valid JAX array type. Only arrays of numeric types are supported by JAX.
+2024-06-18 19:38:50,033 - flask_app - ERROR - Error during request handling: Value 'Sequential(
+    layers=[Embed(
+               vocab_size=50257,
+               embed_dim=512,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff2260>,
+           ),
+            <function VishwamAIModel.__init__.<locals>.<lambda>.<locals>.<lambda> at 0x7fd709268a60>,
+            Linear(
+               output_size=2048,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff20e0>,
+           ),
+            Linear(
+               output_size=512,
+               w_init=<haiku._src.initializers.VarianceScaling object at 0x7fd704ff2500>,
+           )],
+)' with dtype object is not a valid JAX array type. Only arrays of numeric types are supported by JAX.
+2024-06-18 19:44:02,220 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:44:02,220 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:48:19,033 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:48:19,033 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:52:22,985 - flask_app - ERROR - Error during model initialization: local variable 'x' referenced before assignment
+2024-06-18 19:52:22,985 - flask_app - ERROR - Error during request handling: local variable 'x' referenced before assignment
+2024-06-18 19:57:10,693 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 19:57:10,693 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 20:02:03,372 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:02:03,372 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:05:43,391 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:05:43,392 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:12:01,588 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:12:01,588 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:16:58,904 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:16:58,904 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:22:30,058 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 20:22:30,058 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-18 20:30:34,366 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:30:34,366 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:39:45,837 - flask_app - ERROR - Error during model initialization: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:39:45,837 - flask_app - ERROR - Error during request handling: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value'
+2024-06-18 20:45:31,819 - flask_app - ERROR - Error during model initialization: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 20:45:31,819 - flask_app - ERROR - Error during request handling: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-18 21:47:01,280 - flask_app - ERROR - Error during image generation: 'VishwamAI' object has no attribute 'generate_image'
+2024-06-18 21:50:13,798 - flask_app - ERROR - Error during image generation: 'VishwamAI' object has no attribute 'generate_image'

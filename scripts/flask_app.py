@@ -51,10 +51,6 @@ def initialize_model():
         app.logger.debug(f"JAX version: {jax.__version__}")  # Log the JAX version for debugging
         app.logger.debug("Initializing model...")  # Unique log message for confirmation
 
-        if 'PYTHONPATH' not in os.environ or '/home/ubuntu/chat-agent' not in os.environ['PYTHONPATH']:
-            os.environ['PYTHONPATH'] = '/home/ubuntu/chat-agent:' + os.environ.get('PYTHONPATH', '')
-            app.logger.debug(f"Set PYTHONPATH: {os.environ['PYTHONPATH']}")
-
         def model_fn(inputs):
             model = VishwamAIModel()
             return model(inputs)

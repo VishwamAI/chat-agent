@@ -70,8 +70,9 @@ def initialize_model():
             if not isinstance(example_input, list) or not all(isinstance(i, str) for i in example_input):
                 raise ValueError("Example input must be a list of strings")
             tokenized_input = tokenizer(example_input, padding=True, truncation=True).input_ids
+            app.logger.debug(f"Tokenized input before JAX conversion: {tokenized_input}")  # Log the tokenized input before JAX conversion
             tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
-            app.logger.debug(f"Tokenized input: {tokenized_input}")  # Log the tokenized input for debugging
+            app.logger.debug(f"Tokenized input after JAX conversion: {tokenized_input}")  # Log the tokenized input after JAX conversion
             params = transformed_model_fn.init(rng, tokenized_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")

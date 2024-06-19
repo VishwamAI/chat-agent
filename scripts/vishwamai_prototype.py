@@ -34,7 +34,7 @@ class VishwamAI:
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
+        model.add(layers.Conv2DTranspose(3, (4, 4), strides=(4, 4), padding='same', activation='tanh'))  # Adjusted strides to achieve 1080x1080 resolution
         model.compile(optimizer='adam', loss='binary_crossentropy')
         return model
 
@@ -375,12 +375,13 @@ class VishwamAI:
             noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
             nlp_output = nlp_output.numpy().flatten()
             noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            logging.info(f"Noise vector shape: {noise.shape}")
             logging.info(f"Noise vector: {noise}")
 
             # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
             generated_image = self.generator.predict(noise)
-            logging.info(f"Generated image shape: {generated_image.shape}")
+            logging.info(f"Generated image shape before resizing: {generated_image.shape}")
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")

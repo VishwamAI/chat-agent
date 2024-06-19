@@ -73,7 +73,7 @@ class VishwamAI:
             tensorflow.keras.Model: The combined GAN model.
         """
         discriminator.trainable = False
-        gan_input = layers.Input(shape=(100,))
+        gan_input = layers.Input(shape=(50,))  # Adjusted input shape to match generator's expected input shape
         generated_image = generator(gan_input)
         gan_output = discriminator(generated_image)
         gan = models.Model(gan_input, gan_output)

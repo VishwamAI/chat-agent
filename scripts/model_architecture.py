@@ -212,7 +212,7 @@ class VishwamAIModel(hk.Module):
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            tokens = self.tokenizer.encode(input_text, return_tensors='jax')
             logging.info(f"Tokens: {tokens}")
 
             logging.info("Generating NLP output.")

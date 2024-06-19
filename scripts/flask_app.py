@@ -68,7 +68,7 @@ def initialize_model():
                 raise ValueError("Example input must be a list of strings")
             tokenized_input = tokenizer(example_input, padding=True, truncation=True).input_ids
             app.logger.debug(f"Tokenized input before JAX conversion: {tokenized_input}")  # Log the tokenized input before JAX conversion
-            tokenized_input = jnp.array(tokenized_input, dtype=jnp.int32)
+            tokenized_input = [list(map(int, token)) for token in tokenized_input]  # Convert tokenized input to List[List[int]]
             app.logger.debug(f"Tokenized input after JAX conversion: {tokenized_input}")  # Log the tokenized input after JAX conversion
             params = transformed_model_fn.init(rng, tokenized_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
@@ -144,7 +144,7 @@ def chat():
         app.logger.debug(f"CHAT_ENDPOINT - Content of tokenized_input before JAX conversion: {tokenized_input}")
 
         # Ensure tokenized input is in the correct format for the model
-        tokenized_input = jnp.array(tokenized_input, dtype=jnp.float32)
+        tokenized_input = [list(map(int, token)) for token in tokenized_input]  # Convert tokenized input to List[List[int]]
 
         # Additional logging to capture the state of user_input and tokenized_input
         app.logger.debug(f"CHAT_ENDPOINT - Type of user_input after JAX conversion: {type(user_input)}")

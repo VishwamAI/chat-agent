@@ -371,9 +371,9 @@ class VishwamAI:
 
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
-            noise = np.random.normal(0, 1, (1, 50))  # Reduced noise vector size
+            noise = np.random.normal(0, 1, (1, 100))  # Adjusted noise vector size to 100
             nlp_output = nlp_output.numpy().flatten()
-            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            noise[0, :min(100, len(nlp_output))] = nlp_output[:min(100, len(nlp_output))]
 
             # Generate the image using the generator model at a lower resolution
             logging.info("Generating image using the generator model.")

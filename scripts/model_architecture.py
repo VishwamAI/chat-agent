@@ -17,7 +17,7 @@ class VishwamAIModel(hk.Module):
                 num_heads=8,
                 key_size=64,
                 w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-            )(query=x.astype(jnp.int32), key=self.key_input.astype(jnp.int32), value=self.value_input.astype(jnp.int32)),  # Ensure inputs are integer dtype
+            )(query=x, key=self.key_input, value=self.value_input),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ])(x.astype(jnp.int32)))  # Ensure inputs are integer dtype for embedding layer

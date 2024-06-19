@@ -3,9 +3,11 @@ from transformers import GPT2Tokenizer
 import jax
 import jax.numpy as jnp
 import haiku as hk
-from model_architecture import VishwamAIModel
+from scripts.model_architecture import VishwamAIModel
 import logging
 import os
+import numpy as np
+from scripts.vishwamai_prototype import VishwamAI
 
 app = Flask(__name__)
 
@@ -69,6 +71,37 @@ def chat():
         return jsonify({"response": response})
     except Exception as e:
         app.logger.error(f"Error during request handling: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/generate_image', methods=['POST'])
+def generate_image():
+    try:
+        input_text = request.json.get('input_text')
+        resolution = request.json.get('resolution', [512, 512])
+        if not input_text:
+            return jsonify({"error": "No input_text provided"}), 400
+
+        app.logger.debug(f"Received request to generate image with input_text: {input_text} and resolution: {resolution}")
+
+        vishwamai = VishwamAI(batch_size=16)
+        generated_image = vishwamai.generate_image(input_text, target_resolution=resolution)
+        if generated_image is None:
+            app.logger.error("Failed to generate image: generated_image is None")
+            return jsonify({"error": "Failed to generate image"}), 500
+
+        app.logger.debug("Image generated successfully")
+
+        # Denormalize the image to [0, 255] range
+        generated_image = (generated_image * 127.5 + 127.5).astype(np.uint8)
+
+        # Convert the image to a list for JSON serialization
+        image_list = generated_image.tolist()
+
+        app.logger.debug("Image converted to list for JSON serialization")
+
+        return jsonify({"generated_image": image_list})
+    except Exception as e:
+        app.logger.error(f"Error during image generation: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

@@ -10,48 +10,45 @@ class VishwamAIModel(hk.Module):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = GPT2Tokenizer.from_pretrained(transformer_model_name)
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set padding token to eos token
-        self.transformer = hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
-            ])(x),
-            apply_rng=True
-        )
+        self.transformer = hk.transform(lambda x: hk.Sequential([
+            hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
+            hk.MultiHeadAttention(
+                num_heads=8,
+                key_size=64,
+                w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
+            )(query=x, key=self.key_input, value=self.value_input),
+            hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        ])(x))
+
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=64,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
         self.memory_network = hk.LSTM(128)
         self.memory_augmentation = unique_features()
-        self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
 
+        # Define key and value inputs for attention mechanism
+        self.key_input = jnp.zeros((1, 512))  # Example shape, adjust as needed
+        self.value_input = jnp.zeros((1, 512))  # Example shape, adjust as needed
+
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 4  # Reduced number of experts to 4
-        self.experts = [hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                )(x, x, x),
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
-            ])(x),
-            apply_rng=True
-        ) for _ in range(self.num_experts)]
+        self.experts = [hk.transform(lambda x: hk.Sequential([
+            hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
+            hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        ])(x)) for _ in range(self.num_experts)]
 
         # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
     def __call__(self, inputs):
         if isinstance(inputs, jnp.ndarray):
@@ -67,8 +64,9 @@ class VishwamAIModel(hk.Module):
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
 
-        # Apply the transformer to the inputs
+        # Apply the transformer to the inputs and ensure the output is a tensor
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        embedded_inputs = jnp.asarray(embedded_inputs)  # Ensure the output is a tensor
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
@@ -84,6 +82,7 @@ class VishwamAIModel(hk.Module):
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
+                expert_output = jnp.asarray(expert_output)  # Ensure the output is a tensor
                 expert_outputs.append(expert_output)
 
         # Aggregate the outputs from the experts
@@ -109,20 +108,20 @@ class VishwamAIModel(hk.Module):
 
                 self.transformer_xl = hk.transform(
                     lambda x: hk.Sequential([
-                        lambda x: hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(jax.numpy.array(x, dtype=jnp.int32) if x.dtype != jnp.int32 else x),
-                        lambda x: x,
-                        lambda x: hk.MultiHeadAttention(
+                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                        lambda x: self.attention(query=x, key=self.key_input, value=self.value_input),  # Corrected to use separate inputs for key and value
+                        hk.MultiHeadAttention(
                             num_heads=8,
                             key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform")
-                        )(x, x, x),  # Remove casting to float32
-                        lambda x: hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x),
-                        lambda x: hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))(x)
+                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
+                        )(query=x, key=self.key_input, value=self.value_input),
+                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
                     ])(x),
                     apply_rng=True
                 )
                 self.head_size = 64  # Store the head_size as an instance variable
-                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
+                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
             def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
                 # Ensure head_size is divisible by num_heads
@@ -148,6 +147,7 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
+                input_ids = jax.numpy.array(input_ids, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)
@@ -188,7 +188,7 @@ class VishwamAIModel(hk.Module):
         input_ids = self.tokenizer(question, return_tensors="jax").input_ids
         transformer_outputs = self.transformer(input_ids)
         hidden_states = transformer_outputs
-        attention_output = self.attention(hidden_states)
+        attention_output = self.attention(query=hidden_states, key=hidden_states, value=hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)
         answer = self.dense(augmented_memory)
@@ -205,6 +205,36 @@ class VishwamAIModel(hk.Module):
         print(f"Question: {question}")
         print(f"Answer: {answer}")
         print(f"Updated score: {new_score}")
+
+    def generate_image(self, input_text, target_resolution=(512, 512)):
+        try:
+            logging.info("Starting image generation process.")
+
+            # Process the input text using the NLP model
+            logging.info("Encoding input text.")
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            logging.info("Generating NLP output.")
+            nlp_output = self.nlp_model(tokens)[0]
+
+            # Generate noise vector based on NLP output
+            logging.info("Generating noise vector.")
+            noise = np.random.normal(0, 1, (1, 100))
+            nlp_output = nlp_output.numpy().flatten()
+            noise[0, :min(100, len(nlp_output))] = nlp_output[:min(100, len(nlp_output))]
+
+            # Generate the image using the generator model at a lower resolution
+            logging.info("Generating image using the generator model.")
+            low_res_image = self.generator.predict(noise)
+
+            # Resize the generated image to the target resolution
+            logging.info(f"Resizing image to target resolution: {target_resolution}.")
+            generated_image = tf.image.resize(low_res_image, target_resolution).numpy()
+
+            logging.info("Image generation successful.")
+            return generated_image
+        except Exception as e:
+            logging.error(f"Error during image generation: {e}")
+            return None
 
 # Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning
 def unique_features():

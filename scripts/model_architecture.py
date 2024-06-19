@@ -20,7 +20,7 @@ class VishwamAIModel(hk.Module):
             )(query=x, key=self.key_input, value=self.value_input),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-        ])(x))
+        ])(x.astype(jnp.int32)))  # Ensure inputs are integer dtype for embedding layer
 
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
@@ -212,7 +212,7 @@ class VishwamAIModel(hk.Module):
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
 

@@ -70,6 +70,7 @@ def initialize_model():
             app.logger.debug(f"Tokenized input before JAX conversion: {tokenized_input}")  # Log the tokenized input before JAX conversion
             tokenized_input = [list(map(int, token)) for token in tokenized_input]  # Convert tokenized input to List[List[int]]
             app.logger.debug(f"Tokenized input after JAX conversion: {tokenized_input}")  # Log the tokenized input after JAX conversion
+            app.logger.debug(f"Dtype of tokenized input: {type(tokenized_input[0][0])}")  # Log the dtype of tokenized input
             params = transformed_model_fn.init(rng, tokenized_input)
             app.logger.debug(f"JAX version after init: {jax.__version__}")  # Log the JAX version after initialization
             app.logger.debug("Model initialized successfully.")

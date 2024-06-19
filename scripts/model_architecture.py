@@ -1,4 +1,4 @@
-from .flask_app import app
+# from .flask_app import app
 import haiku as hk
 import jax
 import jax.numpy as jnp
@@ -55,23 +55,15 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
 
     def __call__(self, inputs):
-        app.logger.debug(f"MODEL_CALL - Initial input type: {type(inputs)}")
-        app.logger.debug(f"MODEL_CALL - Initial input content: {inputs}")
         if isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
-            pass  # Input is already in the correct format
+            tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
+        elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
+            inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
         else:
-            raise ValueError("Input must be of type `str` or `List[str]`")
-        app.logger.debug(f"MODEL_CALL - Input type after format check: {type(inputs)}")
-        app.logger.debug(f"MODEL_CALL - Input content after format check: {inputs}")
-        tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-        app.logger.debug(f"MODEL_CALL - Tokenized input type: {type(tokenized_inputs)}")
-        app.logger.debug(f"MODEL_CALL - Tokenized input content: {tokenized_inputs}")
-        # Ensure inputs are integer dtype for embedding layer only when needed
-        inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array
-        app.logger.debug(f"MODEL_CALL - Final input type: {type(inputs)}")
-        app.logger.debug(f"MODEL_CALL - Final input content: {inputs}")
+            raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

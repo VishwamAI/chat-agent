@@ -36,7 +36,7 @@ rng = None
 conversation_context = {}
 
 def initialize_model():
-    global transformed_model_fn, params, rng, jax
+    global transformed_model_fn, params, rng
     try:
         app.logger.debug("Starting model initialization...")  # Unique log message for confirmation
         app.logger.debug(f"Python interpreter: {sys.executable}")  # Log the Python interpreter for debugging

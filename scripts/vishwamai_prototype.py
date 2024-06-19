@@ -23,18 +23,16 @@ class VishwamAI:
 
     def build_generator(self):
         model = models.Sequential()
-        model.add(layers.Input(shape=(100,)))
-        model.add(layers.Dense(135 * 135 * 16, activation='tanh'))
-        model.add(layers.Reshape((135, 135, 16)))
-        model.add(layers.Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Input(shape=(50,)))  # Adjusted noise vector size to 50
+        model.add(layers.Dense(135 * 135 * 256, activation='tanh'))  # Adjusted dimensions
+        model.add(layers.Reshape((135, 135, 256)))  # Adjusted dimensions
+        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
+        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(64, (4, 4), strides=(1, 1), padding='same'))
-        model.add(layers.LeakyReLU())
-        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(1, 1), padding='same'))
+        model.add(layers.Conv2DTranspose(32, (4, 4), strides=(2, 2), padding='same'))  # Adjusted dimensions
         model.add(layers.LeakyReLU())
         model.add(layers.Conv2DTranspose(3, (4, 4), strides=(1, 1), padding='same', activation='tanh'))
         model.compile(optimizer='adam', loss='binary_crossentropy')
@@ -75,7 +73,7 @@ class VishwamAI:
             tensorflow.keras.Model: The combined GAN model.
         """
         discriminator.trainable = False
-        gan_input = layers.Input(shape=(100,))
+        gan_input = layers.Input(shape=(50,))  # Adjusted input shape to match generator's expected input shape
         generated_image = generator(gan_input)
         gan_output = discriminator(generated_image)
         gan = models.Model(gan_input, gan_output)
@@ -349,7 +347,7 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-    def generate_image(self, input_text, target_resolution=(512, 512)):
+    def generate_image(self, input_text, target_resolution=(1080, 1080)):
         """
         Generates an image based on input text using the NLP model and generator.
 
@@ -365,23 +363,28 @@ class VishwamAI:
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf')
+            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            logging.info(f"Tokens: {tokens}")
+
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
+            logging.info(f"NLP output shape: {nlp_output.shape}")
 
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
-            noise = np.random.normal(0, 1, (1, 100))  # Adjusted noise vector size to 100
+            noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
             nlp_output = nlp_output.numpy().flatten()
-            noise[0, :min(100, len(nlp_output))] = nlp_output[:min(100, len(nlp_output))]
+            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            logging.info(f"Noise vector: {noise}")
 
-            # Generate the image using the generator model at a lower resolution
+            # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
-            low_res_image = self.generator.predict(noise)
+            generated_image = self.generator.predict(noise)
+            logging.info(f"Generated image shape: {generated_image.shape}")
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = tf.image.resize(low_res_image, target_resolution).numpy()
+            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
 
             logging.info("Image generation successful.")
             return generated_image

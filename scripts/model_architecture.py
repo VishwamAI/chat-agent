@@ -20,7 +20,7 @@ class VishwamAIModel(hk.Module):
             )(query=x, key=self.key_input, value=self.value_input),
             hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-        ])(x))
+        ])(x.astype(jnp.int32)))  # Ensure inputs are integer dtype for embedding layer
 
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
@@ -206,29 +206,34 @@ class VishwamAIModel(hk.Module):
         print(f"Answer: {answer}")
         print(f"Updated score: {new_score}")
 
-    def generate_image(self, input_text, target_resolution=(512, 512)):
+    def generate_image(self, input_text, target_resolution=(1080, 1080)):
         try:
             logging.info("Starting image generation process.")
 
             # Process the input text using the NLP model
             logging.info("Encoding input text.")
-            tokens = self.tokenizer.encode(input_text, return_tensors='tf', dtype=tf.int32)
+            tokens = self.tokenizer.encode(input_text, return_tensors='jax')
+            logging.info(f"Tokens: {tokens}")
+
             logging.info("Generating NLP output.")
             nlp_output = self.nlp_model(tokens)[0]
+            logging.info(f"NLP output shape: {nlp_output.shape}")
 
             # Generate noise vector based on NLP output
             logging.info("Generating noise vector.")
-            noise = np.random.normal(0, 1, (1, 100))
-            nlp_output = nlp_output.numpy().flatten()
-            noise[0, :min(100, len(nlp_output))] = nlp_output[:min(100, len(nlp_output))]
+            noise = np.random.normal(0, 1, (1, 50))  # Adjusted noise vector size to 50
+            nlp_output = nlp_output.flatten()
+            noise[0, :min(50, len(nlp_output))] = nlp_output[:min(50, len(nlp_output))]
+            logging.info(f"Noise vector: {noise}")
 
-            # Generate the image using the generator model at a lower resolution
+            # Generate the image using the generator model
             logging.info("Generating image using the generator model.")
-            low_res_image = self.generator.predict(noise)
+            generated_image = self.generator(noise)
+            logging.info(f"Generated image shape: {generated_image.shape}")
 
             # Resize the generated image to the target resolution
             logging.info(f"Resizing image to target resolution: {target_resolution}.")
-            generated_image = tf.image.resize(low_res_image, target_resolution).numpy()
+            generated_image = jax.image.resize(generated_image, target_resolution, method='bilinear')
 
             logging.info("Image generation successful.")
             return generated_image

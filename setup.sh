@@ -13,14 +13,12 @@ pip3 install -r requirements.txt
 sudo DEBIAN_FRONTEND=noninteractive apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
-# Download the latest Google Chrome package
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# Install necessary libraries and dependencies
+sudo apt-get install -y python3-pip python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
 
-# Install the package
-sudo dpkg -i google-chrome-stable_current_amd64.deb
-
-# Fix any dependency issues
-sudo apt-get install -f
+# Install JAX, Haiku, TensorFlow, and other required libraries
+pip3 install jax jaxlib haiku tensorflow tensorflow-text
 
 # Clean up
-rm google-chrome-stable_current_amd64.deb
+sudo apt-get autoremove -y
+sudo apt-get clean

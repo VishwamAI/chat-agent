@@ -2,7 +2,6 @@ tensorflow
 torch
 onnx
 onnx2keras
-transformers
 tf-keras
 Pillow
 numpy
@@ -10,7 +9,6 @@ scipy
 requests
 jax
 haiku
-transformers[gpt2]
 scikit-learn
 pandas
 matplotlib
@@ -21,3 +19,4 @@ dynet
 lightgbm
 catboost
 spacy
+tensorflow-text

@@ -13,13 +13,10 @@ class VishwamAIModel(hk.Module):
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile("t5-spiece.model", "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                print(f"Data type of inputs before hk.Embed: {x.dtype}"),
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                print(f"Data type of inputs after hk.Embed: {x.dtype}"),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         )
@@ -37,13 +34,10 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                print(f"Data type of inputs before hk.Embed: {x.dtype}"),
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                print(f"Data type of inputs after hk.Embed: {x.dtype}"),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -162,6 +156,7 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer.tokenize(inputs)
+                input_ids = jax.numpy.array(input_ids, dtype=jnp.int32)  # Ensure input_ids are integer dtype
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)
@@ -175,7 +170,8 @@ class VishwamAIModel(hk.Module):
 
                 # Generate attention output using TransformerXL
                 transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
-                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states, hidden_states, hidden_states)
+                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
+                attention_output = jax.numpy.array(attention_output, dtype=jnp.float32)  # Convert to float32 after embedding
                 memory_output, state_h, state_c = self.memory_network(attention_output)
                 output = self.custom_dense(memory_output[:, 0, :])
                 return output

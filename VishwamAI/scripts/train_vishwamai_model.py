@@ -12,7 +12,7 @@ from config import VOCAB_FILE
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=50, batch_size=16):
+def load_data(file_path, max_seq_length=50, batch_size=8):
     """
     Load and preprocess the training data.
     Args:
@@ -61,7 +61,7 @@ def train_model(data_file, num_epochs=10):
         num_epochs: int. Number of training epochs.
     """
     # Load and preprocess the data
-    dataset = load_data(data_file, batch_size=16)
+    dataset = load_data(data_file, batch_size=8)
 
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))

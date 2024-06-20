@@ -64,7 +64,8 @@ class VishwamAIModel(hk.Module):
 
         # Ensure inputs are integer dtype for embedding layer
         print(f"Data type of inputs before embedding layer: {inputs.dtype}")
-        inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+        if inputs.dtype != jnp.int32:
+            inputs = jax.numpy.array(inputs, dtype=jnp.int32)
         print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
@@ -72,10 +73,13 @@ class VishwamAIModel(hk.Module):
         transformer_params = self.transformer.init(rng, inputs)
 
         # Apply the transformer to the inputs
+        print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
         embedded_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.float32)
+        print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)

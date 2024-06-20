@@ -68,8 +68,11 @@ class VishwamAIModel(hk.Module):
             raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
         print(f"Data type of inputs after conversion: {inputs.dtype}")
 
-        # Ensure inputs are integer dtype for embedding layer and transformer initialization
+        # Ensure inputs are integer dtype for embedding layer
         inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+
+        # Convert inputs to float32 for subsequent layers
+        inputs = jax.numpy.array(inputs, dtype=jnp.float32)
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

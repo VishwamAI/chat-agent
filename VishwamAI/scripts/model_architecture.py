@@ -51,10 +51,10 @@ class VishwamAIModel(hk.Module):
                 inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
-            tokenized_inputs = self.tokenizer.tokenize(inputs).to_tensor()
+            tokenized_inputs = self.tokenizer.tokenize(inputs)
             inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
-            tokenized_inputs = self.tokenizer.tokenize(inputs).to_tensor()
+            tokenized_inputs = self.tokenizer.tokenize(inputs)
             inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
             inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype

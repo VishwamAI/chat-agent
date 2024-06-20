@@ -5,3 +5,6 @@ MODEL_NAME = "t5-small"
 
 # Random number generator seed
 RNG_SEED = 42
+
+# Vocabulary file path for BertTokenizer
+VOCAB_FILE = "t5-spiece.model"

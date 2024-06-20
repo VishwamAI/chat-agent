@@ -204,6 +204,8 @@ The VishwamAI project requires the following dependencies:
 - numpy
 - scipy
 - requests
+- hiku
+- jax
 ## Auto-Update Feature
 The `setup.sh` script is designed to check for updates and install them if available each time it is run. This ensures that the environment and dependencies are always up to date.
 

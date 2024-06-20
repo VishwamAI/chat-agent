@@ -11,3 +11,13 @@ requests
 jax
 haiku
 transformers[gpt2]
+scikit-learn
+pandas
+matplotlib
+huggingface-tokenizers
+rust-bert
+kaldi-asr
+dynet
+lightgbm
+catboost
+spacy

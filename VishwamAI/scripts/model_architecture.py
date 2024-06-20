@@ -1,9 +1,14 @@
-# from .flask_app import app
+from .flask_app import app
 import haiku as hk
 import jax
 import jax.numpy as jnp
 from transformers import GPT2Tokenizer
 import random
+from grok_1.model import LanguageModelConfig, TransformerConfig
+from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
+from gemma_pytorch import GemmaModel  # Assuming GemmaModel is available in gemma_pytorch library
+from mistralai import MixtralModel  # Assuming MixtralModel is available in mistralai library
+from openai.whisper import WhisperModel  # Assuming WhisperModel is available in openai.whisper library
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -34,6 +39,18 @@ class VishwamAIModel(hk.Module):
         self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         self.advanced_features = self.add_advanced_features()
         self.scoring_system = ScoringSystem()
+
+        # Initialize Grok-1 model
+        self.grok_model = GrokModel()
+
+        # Initialize Gemma model
+        self.gemma_model = GemmaModel()
+
+        # Initialize Mixtral model
+        self.mixtral_model = MixtralModel()
+
+        # Initialize Whisper model
+        self.whisper_model = WhisperModel()
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 4  # Reduced number of experts to 4
@@ -104,8 +121,28 @@ class VishwamAIModel(hk.Module):
         aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
         app.logger.debug(f"MODEL_CALL - Aggregated output: {aggregated_output}")
 
+        # Process inputs through Grok-1 model
+        grok_output = self.grok_model(inputs)
+        app.logger.debug(f"MODEL_CALL - Grok-1 output: {grok_output}")
+
+        # Process inputs through Gemma model
+        gemma_output = self.gemma_model(inputs)
+        app.logger.debug(f"MODEL_CALL - Gemma output: {gemma_output}")
+
+        # Process inputs through Mixtral model
+        mixtral_output = self.mixtral_model(inputs)
+        app.logger.debug(f"MODEL_CALL - Mixtral output: {mixtral_output}")
+
+        # Process inputs through Whisper model
+        whisper_output = self.whisper_model(inputs)
+        app.logger.debug(f"MODEL_CALL - Whisper output: {whisper_output}")
+
+        # Combine outputs from all models
+        combined_output = aggregated_output + grok_output + gemma_output + mixtral_output + whisper_output
+        app.logger.debug(f"MODEL_CALL - Combined output: {combined_output}")
+
         # Continue with the rest of the model
-        hidden_states = aggregated_output
+        hidden_states = combined_output
         attention_output = self.advanced_features(hidden_states)
         memory_output, state_h, state_c = self.memory_network(attention_output)
         augmented_memory = self.memory_augmentation(memory_output)

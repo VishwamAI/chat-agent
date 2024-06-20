@@ -350,12 +350,6 @@ class VishwamAI:
             new_dataset = tf.data.Dataset.from_tensor_slices(new_images)
             self.sample_dataset = self.sample_dataset.concatenate(new_dataset)
 
-<<<<<<< HEAD:VishwamAI/scripts/vishwamai_prototype.py
-
-||||||| 96d9e306b:scripts/vishwamai_prototype.py
-=======
-
->>>>>>> origin/main:scripts/vishwamai_prototype.py
 def test_data_generator(batch_size=2):
     vishwamai = VishwamAI(batch_size=batch_size)
     dataset = vishwamai.load_sample_dataset(batch_size)

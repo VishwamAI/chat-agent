@@ -44,3 +44,15 @@ pip install jax jaxlib haiku
 
 # Deactivate JAX virtual environment
 deactivate
+
+# Install Grok-1 model dependencies
+pip install grok-1==1.0.0
+
+# Install Gemma model dependencies
+pip install gemma-pytorch==1.0.0
+
+# Install Mixtral model dependencies
+pip install mistralai==1.0.0
+
+# Install Whisper model dependencies
+pip install openai-whisper==1.0.0

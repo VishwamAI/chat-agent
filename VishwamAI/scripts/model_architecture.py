@@ -175,6 +175,7 @@ class VishwamAIModel(hk.Module):
                 relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
 
                 # Generate attention output using TransformerXL
+                hidden_states = jax.numpy.array(hidden_states, dtype=jnp.int32)  # Ensure hidden_states are integer dtype
                 transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
                 attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
                 attention_output = jax.numpy.array(attention_output, dtype=jnp.float32)  # Convert to float32 after embedding

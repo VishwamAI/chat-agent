@@ -13,7 +13,7 @@ from memory_profiler import profile
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=50, batch_size=8):
+def load_data(file_path, max_seq_length=50, batch_size=2):
     """
     Load and preprocess the training data.
     Args:
@@ -63,7 +63,7 @@ def train_model(data_file, num_epochs=10):
         num_epochs: int. Number of training epochs.
     """
     # Load and preprocess the data
-    dataset = load_data(data_file, batch_size=4)  # Reduced batch size for memory optimization
+    dataset = load_data(data_file, batch_size=2)  # Further reduced batch size for memory optimization
 
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))

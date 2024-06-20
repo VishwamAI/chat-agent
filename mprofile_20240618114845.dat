@@ -1,2 +1,0 @@
-CMDLINE /usr/bin/python3 FLASK_APP=scripts/flask_app.py flask run
-MEM 0.250000 1718711325.2675

@@ -26,7 +26,7 @@ def load_data(file_path, max_seq_length=50, batch_size=8):
     dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
     dataset = dataset.map(lambda x: tokenizer.tokenize(x))
-    dataset = dataset.batch(batch_size)
+    dataset = dataset.padded_batch(batch_size, padded_shapes=[max_seq_length])
     return dataset
 
 def train_step(params, model, optimizer, batch, rng):
@@ -63,7 +63,7 @@ def train_model(data_file, num_epochs=10):
         num_epochs: int. Number of training epochs.
     """
     # Load and preprocess the data
-    dataset = load_data(data_file, batch_size=8)
+    dataset = load_data(data_file, batch_size=4)  # Reduced batch size for memory optimization
 
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))

@@ -12,16 +12,20 @@ from config import VOCAB_FILE
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path):
+def load_data(file_path, max_seq_length=50):
     """
     Load and preprocess the training data.
     Args:
         file_path: str. Path to the text data file.
+        max_seq_length: int. Maximum sequence length for padding/truncation.
     Returns:
         tf.data.Dataset. Preprocessed dataset.
     """
     dataset = tf.data.TextLineDataset(file_path)
-    dataset = dataset.map(lambda x: tf.strings.split(x, sep=' '))
+    tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE)
+    dataset = dataset.map(lambda x: tokenizer.tokenize(x))
+    dataset = dataset.map(lambda x: tf.pad(x, [[0, max_seq_length - tf.shape(x)[0]]], constant_values=tokenizer.pad_token_id))
+    dataset = dataset.map(lambda x: x[:max_seq_length])
     dataset = dataset.batch(32)
     return dataset
 

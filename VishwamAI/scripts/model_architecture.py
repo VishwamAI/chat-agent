@@ -13,6 +13,7 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -38,6 +39,7 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,

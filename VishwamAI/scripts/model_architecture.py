@@ -13,7 +13,9 @@ class VishwamAIModel(hk.Module):
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile("t5-spiece.model", "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
+                print(f"Data type of inputs before hk.Embed: {x.dtype}"),
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                print(f"Data type of inputs after hk.Embed: {x.dtype}"),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
@@ -35,7 +37,9 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 4  # Reduced number of experts to 4
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
+                print(f"Data type of inputs before hk.Embed: {x.dtype}"),
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                print(f"Data type of inputs after hk.Embed: {x.dtype}"),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
@@ -64,7 +68,9 @@ class VishwamAIModel(hk.Module):
         print(f"Data type of inputs after conversion: {inputs.dtype}")
 
         # Ensure inputs are integer dtype for embedding layer
+        print(f"Data type of inputs before embedding layer: {inputs.dtype}")
         inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+        print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

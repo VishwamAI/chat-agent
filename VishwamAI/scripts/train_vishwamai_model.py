@@ -1,0 +1,85 @@
+import tensorflow as tf
+import keras_nlp
+import haiku as hk
+import jax
+import jax.numpy as jnp
+import optax
+import logging
+import pickle
+from model_architecture import VishwamAIModel
+from config import VOCAB_FILE
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def load_data(file_path):
+    """
+    Load and preprocess the training data.
+    Args:
+        file_path: str. Path to the text data file.
+    Returns:
+        tf.data.Dataset. Preprocessed dataset.
+    """
+    dataset = tf.data.TextLineDataset(file_path)
+    dataset = dataset.map(lambda x: tf.strings.split(x, sep=' '))
+    dataset = dataset.batch(32)
+    return dataset
+
+def train_step(params, model, optimizer, batch, rng):
+    """
+    Perform a single training step.
+    Args:
+        params: hk.Params. Model parameters.
+        model: VishwamAIModel. The model to be trained.
+        optimizer: optax.GradientTransformation. The optimizer for training.
+        batch: tf.Tensor. A batch of input data.
+        rng: jax.random.PRNGKey. Random number generator key.
+    Returns:
+        loss: jnp.ndarray. The loss value for the batch.
+        new_params: hk.Params. Updated model parameters.
+        new_opt_state: optax.OptState. Updated optimizer state.
+    """
+    def loss_fn(params):
+        logits = model.apply(params, rng, batch)
+        labels = jax.nn.one_hot(batch, num_classes=logits.shape[-1])
+        loss = jnp.mean(optax.softmax_cross_entropy(logits, labels))
+        return loss
+
+    loss, grads = jax.value_and_grad(loss_fn)(params)
+    updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
+    new_params = optax.apply_updates(params, updates)
+    return loss, new_params, new_opt_state
+
+def train_model(data_file, num_epochs=10):
+    """
+    Train the VishwamAI model.
+    Args:
+        data_file: str. Path to the text data file.
+        num_epochs: int. Number of training epochs.
+    """
+    # Load and preprocess the data
+    dataset = load_data(data_file)
+
+    # Initialize the model and optimizer
+    model = hk.transform(lambda x: VishwamAIModel()(x))
+    optimizer = optax.adam(learning_rate=1e-3)
+    rng = jax.random.PRNGKey(42)
+
+    # Initialize model parameters
+    example_batch = next(iter(dataset))
+    params = model.init(rng, example_batch)
+
+    # Training loop
+    for epoch in range(num_epochs):
+        for batch in dataset:
+            loss, params, opt_state = train_step(params, model, optimizer, batch, rng)
+            logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
+
+    # Save the trained model
+    with open("vishwamai_model_params.pkl", "wb") as f:
+        pickle.dump(params, f)
+    logging.info("Model training complete and parameters saved.")
+
+if __name__ == "__main__":
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data.txt"
+    train_model(data_file)

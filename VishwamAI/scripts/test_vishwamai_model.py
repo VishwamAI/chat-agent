@@ -1,8 +1,10 @@
 import haiku as hk
 import jax
 import jax.numpy as jnp
-from transformers import GPT2Tokenizer
+import tensorflow as tf
+import keras_nlp
 from model_architecture import VishwamAIModel
+import config
 
 def forward_fn(tokenized_input):
     model = VishwamAIModel()
@@ -24,9 +26,8 @@ def test_vishwamai_model():
 
     for input_text in example_inputs:
         # Tokenize the input
-        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-        tokenizer.pad_token = tokenizer.eos_token  # Set the padding token to the end-of-sequence token
-        tokenized_input = tokenizer(input_text, return_tensors="jax", padding=True, truncation=True).input_ids
+        tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
+        tokenized_input = tokenizer.tokenize(input_text)
         tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
         # Print the data type of tokenized_input to verify conversion

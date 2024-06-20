@@ -13,14 +13,10 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                )(x, x, x),
+                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after attention for subsequent layers
             ])(x),
             apply_rng=True
         )
@@ -39,15 +35,11 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                )(x, x, x),
+                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(jax.numpy.array(x, dtype=jnp.float32)),  # Convert inputs to float32 for linear layers
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after attention for subsequent layers
+            ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
@@ -131,7 +123,7 @@ class VishwamAIModel(hk.Module):
                             num_heads=8,
                             key_size=64,
                             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                        )(x, x, x),
+                        ),
                         hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                         hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
                     ])(x),

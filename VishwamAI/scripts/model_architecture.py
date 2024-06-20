@@ -87,6 +87,7 @@ class VishwamAIModel(hk.Module):
             mask = (expert_indices == i)
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
+                mask = jnp.broadcast_to(mask, inputs.shape)  # Ensure mask is broadcast-compatible with inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

@@ -51,22 +51,22 @@ class VishwamAIModel(hk.Module):
 
         # Define gating mechanism
         self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-
     def __call__(self, inputs):
         if isinstance(inputs, jnp.ndarray):
-            if inputs.dtype != jnp.float32:
-                inputs = jax.numpy.array(inputs, dtype=jnp.float32)  # Ensure inputs are floating-point dtype for embedding layer
+            if inputs.dtype != jnp.int32:
+                inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
             tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array with floating-point dtype
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
             tokenized_inputs = self.tokenizer(inputs, return_tensors="jax", padding=True, truncation=True).input_ids
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array with floating-point dtype
+            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
-            inputs = jax.numpy.array(inputs, dtype=jnp.float32)  # Convert tokenized inputs to JAX numpy array with floating-point dtype
+            inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         else:
             raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+        print(f"Data type of inputs after conversion: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)

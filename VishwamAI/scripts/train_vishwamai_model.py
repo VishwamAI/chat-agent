@@ -12,19 +12,20 @@ from config import VOCAB_FILE
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=50):
+def load_data(file_path, max_seq_length=50, batch_size=16):
     """
     Load and preprocess the training data.
     Args:
         file_path: str. Path to the text data file.
         max_seq_length: int. Maximum sequence length for padding/truncation.
+        batch_size: int. Batch size for training.
     Returns:
         tf.data.Dataset. Preprocessed dataset.
     """
     dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
     dataset = dataset.map(lambda x: tokenizer.tokenize(x))
-    dataset = dataset.batch(32)
+    dataset = dataset.batch(batch_size)
     return dataset
 
 def train_step(params, model, optimizer, batch, rng):
@@ -60,7 +61,7 @@ def train_model(data_file, num_epochs=10):
         num_epochs: int. Number of training epochs.
     """
     # Load and preprocess the data
-    dataset = load_data(data_file)
+    dataset = load_data(data_file, batch_size=16)
 
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))

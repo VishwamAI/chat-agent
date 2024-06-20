@@ -86,7 +86,7 @@ class VishwamAIModel(hk.Module):
         for i, expert in enumerate(self.experts):
             mask = (expert_indices == i)
             if jnp.any(mask):
-                mask = jnp.broadcast_to(mask[:, None], (inputs.shape[0], inputs.shape[1], inputs.shape[2]))  # Ensure mask is broadcast-compatible with inputs
+                mask = jnp.broadcast_to(mask[:, None], (inputs.shape[0], inputs.shape[1]))  # Ensure mask is broadcast-compatible with inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

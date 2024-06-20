@@ -13,7 +13,8 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(jax.numpy.array(x, dtype=jnp.float32), jax.numpy.array(x, dtype=jnp.float32), jax.numpy.array(x, dtype=jnp.float32)),  # Convert to float32 after embedding for attention
+                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding for attention
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
@@ -34,10 +35,11 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(jax.numpy.array(x, dtype=jnp.float32), jax.numpy.array(x, dtype=jnp.float32), jax.numpy.array(x, dtype=jnp.float32)),  # Convert to float32 after embedding for attention
+                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding for attention
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(jax.numpy.array(x, dtype=jnp.float32)),  # Convert inputs to float32 for linear layers
+            ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
 

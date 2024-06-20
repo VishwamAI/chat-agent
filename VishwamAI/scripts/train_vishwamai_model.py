@@ -8,6 +8,7 @@ import logging
 import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
+from memory_profiler import profile
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -53,6 +54,7 @@ def train_step(params, model, optimizer, batch, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
+@profile
 def train_model(data_file, num_epochs=10):
     """
     Train the VishwamAI model.

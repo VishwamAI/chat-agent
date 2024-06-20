@@ -8,3 +8,6 @@ Pillow
 numpy
 scipy
 requests
+jax
+haiku
+transformers[gpt2]

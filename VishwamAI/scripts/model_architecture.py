@@ -4,6 +4,7 @@ import jax.numpy as jnp
 import tensorflow as tf
 import tensorflow_text as tf_text
 import random
+import keras_nlp
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):

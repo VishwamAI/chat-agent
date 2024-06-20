@@ -23,7 +23,7 @@ def load_data(file_path, max_seq_length=50):
     """
     dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
-    dataset = dataset.map(lambda x: tokenizer.tokenize(x).to_tensor())
+    dataset = dataset.map(lambda x: tokenizer.tokenize(x))
     dataset = dataset.batch(32)
     return dataset
 

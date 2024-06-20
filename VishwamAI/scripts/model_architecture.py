@@ -92,7 +92,7 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of mask before expand_dims: {mask.shape}")
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Add necessary dimension to the mask
-                mask = jnp.broadcast_to(mask, (inputs.shape[0], inputs.shape[1]))  # Ensure mask is broadcast-compatible with inputs
+                mask = jnp.broadcast_to(mask, (inputs.shape[0], inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with inputs
                 print(f"Shape of mask after broadcast_to: {mask.shape}")
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
                 expert_inputs = jnp.broadcast_to(expert_inputs, inputs.shape)  # Ensure expert_inputs match inputs shape

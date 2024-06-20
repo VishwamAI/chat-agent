@@ -45,7 +45,7 @@ class VishwamAIModel(hk.Module):
                 )(x, x, x),
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
+            ])(jax.numpy.array(x, dtype=jnp.float32)),  # Convert inputs to float32 for linear layers
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
@@ -68,12 +68,18 @@ class VishwamAIModel(hk.Module):
             raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
         print(f"Data type of inputs after conversion: {inputs.dtype}")
 
+        # Ensure inputs are integer dtype for embedding layer
+        inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
 
         # Apply the transformer to the inputs
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+
+        # Convert embedded inputs to float32 for subsequent layers
+        embedded_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.float32)
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)

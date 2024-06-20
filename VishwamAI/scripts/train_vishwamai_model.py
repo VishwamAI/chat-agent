@@ -23,7 +23,7 @@ def load_data(file_path, max_seq_length=50):
     """
     dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
-    dataset = dataset.map(lambda x: tokenizer.tokenize(x).to_tensor())
+    dataset = dataset.map(lambda x: tokenizer.tokenize(x))
     dataset = dataset.batch(32)
     return dataset
 
@@ -69,11 +69,15 @@ def train_model(data_file, num_epochs=10):
 
     # Initialize model parameters
     example_batch = next(iter(dataset))
+    example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
+    example_batch = jax.numpy.array(example_batch, dtype=jnp.float32)  # Convert to float32
     params = model.init(rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
         for batch in dataset:
+            batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
+            batch = jax.numpy.array(batch, dtype=jnp.float32)  # Convert to float32
             loss, params, opt_state = train_step(params, model, optimizer, batch, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 

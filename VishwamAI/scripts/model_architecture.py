@@ -89,10 +89,14 @@ class VishwamAIModel(hk.Module):
         expert_outputs = []
         for i, expert in enumerate(self.experts):
             mask = (expert_indices == i)
+            print(f"Shape of mask before expand_dims: {mask.shape}")
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Add an extra dimension to the mask
+                print(f"Shape of mask after expand_dims: {mask.shape}")
                 mask = jnp.broadcast_to(mask, inputs.shape[:2] + (1,))  # Ensure mask is broadcast-compatible with inputs
+                print(f"Shape of mask after broadcast_to: {mask.shape}")
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method

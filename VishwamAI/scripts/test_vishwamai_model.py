@@ -27,7 +27,7 @@ def test_vishwamai_model():
     for input_text in example_inputs:
         # Tokenize the input
         tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
-        tokenized_input = tokenizer.tokenize(input_text).to_tensor()
+        tokenized_input = tokenizer.tokenize(input_text)
         tokenized_input = jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
 
         # Print the data type of tokenized_input to verify conversion

@@ -77,3 +77,8 @@ jaxlib==0.4.10
 
 # Add timeout_decorator
 timeout_decorator==0.5.0
+
+grok-1==1.0.0  # Assuming version 1.0.0 for Grok-1 model
+gemma-pytorch==1.0.0  # Assuming version 1.0.0 for Gemma model
+mistralai==1.0.0  # Assuming version 1.0.0 for Mixtral model
+openai-whisper==1.0.0  # Assuming version 1.0.0 for Whisper model

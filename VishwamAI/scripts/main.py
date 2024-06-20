@@ -5,6 +5,8 @@ from transformers import GPT2Tokenizer
 import requests
 import random
 from model_architecture import VishwamAIModel
+from grok_1.model import LanguageModelConfig, TransformerConfig
+from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
 class ScoringSystem:
     def __init__(self):
@@ -39,10 +41,6 @@ def check_internet_connectivity():
     except requests.Timeout:
         print("The request timed out.")
 
-def model_fn(example_input):
-    model = VishwamAIModel()
-    return model(example_input)
-
 def main():
     # Check internet connectivity
     check_internet_connectivity()
@@ -60,11 +58,52 @@ def main():
     # Debugging print statements to check dtype
     print(f"Tokenized input dtype before model init: {tokenized_input.dtype}")
 
-    transformed_model_fn = hk.transform(model_fn)
-    rng = jax.random.PRNGKey(42)
-    params = transformed_model_fn.init(rng, tokenized_input)
-    output = transformed_model_fn.apply(params, rng, tokenized_input)
-    print(f"Model output: {output}")
+    # Initialize Grok-1 model
+    grok_1_model = LanguageModelConfig(
+        vocab_size=128 * 1024,
+        pad_token=0,
+        eos_token=2,
+        sequence_len=8192,
+        embedding_init_scale=1.0,
+        output_multiplier_scale=0.5773502691896257,
+        embedding_multiplier_scale=78.38367176906169,
+        model=TransformerConfig(
+            emb_size=48 * 128,
+            widening_factor=8,
+            key_size=128,
+            num_q_heads=48,
+            num_kv_heads=8,
+            num_layers=64,
+            attn_output_multiplier=0.08838834764831845,
+            shard_activations=True,
+            # MoE.
+            num_experts=8,
+            num_selected_experts=2,
+            # Activation sharding.
+            data_axis="data",
+            model_axis="model",
+        ),
+    )
+
+    inference_runner = InferenceRunner(
+        pad_sizes=(1024,),
+        runner=ModelRunner(
+            model=grok_1_model,
+            bs_per_device=0.125,
+            checkpoint_path="./checkpoints/",
+        ),
+        name="local",
+        load="./checkpoints/",
+        tokenizer_path="./tokenizer.model",
+        local_mesh_config=(1, 8),
+        between_hosts_config=(1, 1),
+    )
+
+    inference_runner.initialize()
+    gen = inference_runner.run()
+
+    inp = "The answer to life the universe and everything is of course"
+    print(f"Output for prompt: {inp}", sample_from_model(gen, inp, max_len=100, temperature=0.01))
 
     # Example scoring update
     correct = True  # This would be determined by the model's output in a real scenario

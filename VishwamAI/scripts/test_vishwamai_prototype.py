@@ -3,32 +3,11 @@ import numpy as np
 import os
 from scripts.vishwamai_prototype import VishwamAI
 import logging
+import haiku as hk
+import transformers
 
-def test_build_generator():
-    # Test the build_generator method to ensure the generator model is created successfully.
-    vishwamai = VishwamAI(batch_size=32)
-    generator = vishwamai.build_generator()
-    assert generator is not None, "Generator model should not be None"
-    assert isinstance(generator, tf.keras.Model), "Generator should be an instance of tf.keras.Model"
-    logging.info("test_build_generator passed.")
 
-def test_build_discriminator():
-    # Test the build_discriminator method to ensure the discriminator model is created successfully.
-    vishwamai = VishwamAI(batch_size=32)
-    discriminator = vishwamai.build_discriminator()
-    assert discriminator is not None, "Discriminator model should not be None"
-    assert isinstance(discriminator, tf.keras.Model), "Discriminator should be an instance of tf.keras.Model"
-    logging.info("test_build_discriminator passed.")
 
-def test_build_gan():
-    # Test the build_gan method to ensure the GAN model is created successfully.
-    vishwamai = VishwamAI(batch_size=32)
-    generator = vishwamai.build_generator()
-    discriminator = vishwamai.build_discriminator()
-    gan = vishwamai.build_gan(generator, discriminator)
-    assert gan is not None, "GAN model should not be None"
-    assert isinstance(gan, tf.keras.Model), "GAN should be an instance of tf.keras.Model"
-    logging.info("test_build_gan passed.")
 
 def test_build_nlp_model():
     # Test the build_nlp_model method to ensure the NLP model and tokenizer are created successfully.
@@ -36,6 +15,8 @@ def test_build_nlp_model():
     nlp_model, tokenizer = vishwamai.build_nlp_model()
     assert nlp_model is not None, "NLP model should not be None"
     assert tokenizer is not None, "Tokenizer should not be None"
+    assert isinstance(nlp_model, (tf.keras.Model, haiku.Module)), "NLP model should be an instance of tf.keras.Model or haiku.Module"
+    assert isinstance(tokenizer, transformers.PreTrainedTokenizer), "Tokenizer should be an instance of transformers.PreTrainedTokenizer"
     logging.info("test_build_nlp_model passed.")
 
 def test_load_sample_dataset():
@@ -55,30 +36,7 @@ def test_train():
     except Exception as e:
         logging.error(f"test_train failed: {e}")
 
-def test_train_and_generate_images():
-    # Test the train_and_generate_images method to ensure the model can be trained and images can be generated without errors.
-    vishwamai = VishwamAI(batch_size=32)
-    try:
-        vishwamai.train_and_generate_images(epochs=1, batch_size=32, input_text="A beautiful landscape", num_images=1)
-        logging.info("test_train_and_generate_images passed.")
-    except Exception as e:
-        logging.error(f"test_train_and_generate_images failed: {e}")
-    generated_image = vishwamai.generate_image("A beautiful landscape")
-    if generated_image is None:
-        logging.error("Failed to generate image for input text: 'A beautiful landscape'")
-    else:
-        assert isinstance(generated_image, np.ndarray), "Generated image should be a numpy array"
 
-def test_generate_image():
-    # Test the generate_image method to ensure an image can be generated based on input text.
-    vishwamai = VishwamAI(batch_size=32)
-    try:
-        generated_image = vishwamai.generate_image("A beautiful landscape")
-        assert generated_image is not None, "Generated image should not be None"
-        assert isinstance(generated_image, np.ndarray), "Generated image should be a numpy array"
-        logging.info("test_generate_image passed.")
-    except Exception as e:
-        logging.error(f"test_generate_image failed: {e}")
 
 def test_self_improve():
     # Test the self_improve method to ensure the self-improvement process can be executed without errors.

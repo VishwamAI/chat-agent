@@ -138,7 +138,7 @@ class VishwamAIModel(hk.Module):
         app.logger.debug(f"MODEL_CALL - Whisper output: {whisper_output}")
 
         # Combine outputs from all models
-        combined_output = aggregated_output + grok_output + gemma_output + mixtral_output + whisper_output
+        combined_output = jnp.concatenate([aggregated_output, grok_output, gemma_output, mixtral_output, whisper_output], axis=-1)
         app.logger.debug(f"MODEL_CALL - Combined output: {combined_output}")
 
         # Continue with the rest of the model

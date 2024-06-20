@@ -45,7 +45,7 @@ class VishwamAIModel(hk.Module):
                 )(x, x, x),
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
+            ])(jax.numpy.array(x, dtype=jnp.float32)),  # Convert inputs to float32 for linear layers
             apply_rng=True
         ) for _ in range(self.num_experts)]
 

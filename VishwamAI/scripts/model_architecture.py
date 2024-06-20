@@ -154,7 +154,7 @@ class VishwamAIModel(hk.Module):
                     inputs = [" ".join(map(str, sublist)) for sublist in inputs]
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
-                input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
+                input_ids = self.tokenizer.tokenize(inputs)
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)

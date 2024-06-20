@@ -9,7 +9,7 @@ import random
 class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
-        self.tokenizer = tf_text.SentencepieceTokenizer(model=tf.io.gfile.GFile("t5-spiece.model", "rb").read())
+        self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile("t5-spiece.model", "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),

@@ -95,6 +95,7 @@ class VishwamAIModel(hk.Module):
                 mask = jnp.broadcast_to(mask, (inputs.shape[0], inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with inputs
                 print(f"Shape of mask after broadcast_to: {mask.shape}")
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                expert_inputs = jnp.broadcast_to(expert_inputs, inputs.shape)  # Ensure expert_inputs match inputs shape
                 print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

@@ -14,11 +14,7 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                ),
+                lambda x: self.attention(x, x, x),  # Pass query, key, and value as the same tensor for self-attention
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
@@ -40,11 +36,7 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
-                hk.MultiHeadAttention(
-                    num_heads=8,
-                    key_size=64,
-                    w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                ),
+                lambda x: self.attention(x, x, x),  # Pass query, key, and value as the same tensor for self-attention
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(jax.numpy.array(x, dtype=jnp.float32)),  # Convert inputs to float32 for linear layers

@@ -13,18 +13,21 @@ from memory_profiler import profile
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=50):
+def load_data(file_path, max_seq_length=50, batch_size=32):
     """
     Load and preprocess the training data.
     Args:
         file_path: str. Path to the text data file.
         max_seq_length: int. Maximum sequence length for padding/truncation.
+        batch_size: int. Number of samples per batch.
     Returns:
-        tf.data.Dataset. Preprocessed dataset.
+        tf.data.Dataset. Preprocessed and batched dataset.
     """
     dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
-    return dataset, tokenizer
+    dataset = dataset.map(lambda x: tokenizer.tokenize(x).to_tensor(default_value=0))
+    dataset = dataset.batch(batch_size)
+    return dataset
 
 def train_step(params, model, optimizer, batch, rng):
     """
@@ -56,15 +59,16 @@ def train_step(params, model, optimizer, batch, rng):
     return loss, new_params, new_opt_state
 
 @profile
-def train_model(data_file, num_epochs=10):
+def train_model(data_file, num_epochs=10, batch_size=32):
     """
     Train the VishwamAI model.
     Args:
         data_file: str. Path to the text data file.
         num_epochs: int. Number of training epochs.
+        batch_size: int. Number of samples per batch.
     """
     # Load and preprocess the data
-    dataset, tokenizer = load_data(data_file)  # Load dataset and tokenizer
+    dataset = load_data(data_file, batch_size=batch_size)  # Load dataset and tokenizer
 
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))
@@ -73,15 +77,13 @@ def train_model(data_file, num_epochs=10):
 
     # Initialize model parameters
     example_batch = next(iter(dataset))
-    example_batch = tokenizer.tokenize(example_batch)
     example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
     example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
     params = model.init(rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
-        for text in dataset:
-            batch = tokenizer.tokenize(text)
+        for batch in dataset:
             batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
             batch = jax.numpy.array(batch, dtype=jnp.int32)  # Convert to int32
             logging.info(f"Data type of batch before model apply: {batch.dtype}")

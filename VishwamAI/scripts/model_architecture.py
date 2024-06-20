@@ -16,7 +16,7 @@ class VishwamAIModel(hk.Module):
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after attention for subsequent layers
+                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
             ])(x),
             apply_rng=True
         )
@@ -38,7 +38,7 @@ class VishwamAIModel(hk.Module):
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after attention for subsequent layers
+                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -86,7 +86,6 @@ class VishwamAIModel(hk.Module):
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
-                expert_inputs = jax.numpy.array(expert_inputs, dtype=jnp.float32)  # Convert to float32 for linear layers
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
@@ -155,7 +154,7 @@ class VishwamAIModel(hk.Module):
                     inputs = [" ".join(map(str, sublist)) for sublist in inputs]
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
-                input_ids = self.tokenizer(inputs, return_tensors="jax").input_ids
+                input_ids = self.tokenizer.tokenize(inputs)
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)

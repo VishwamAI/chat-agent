@@ -13,6 +13,7 @@ class VishwamAIModel(hk.Module):
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -38,6 +39,7 @@ class VishwamAIModel(hk.Module):
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: jax.numpy.array(x, dtype=jnp.float32),  # Convert to float32 after embedding
                 hk.MultiHeadAttention(
                     num_heads=8,
                     key_size=64,
@@ -92,6 +94,7 @@ class VishwamAIModel(hk.Module):
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                expert_inputs = jax.numpy.array(expert_inputs, dtype=jnp.float32)  # Convert to float32 for linear layers
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method

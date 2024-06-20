@@ -49,7 +49,11 @@ def train_step(params, model, optimizer, batch, rng):
         loss = jnp.mean(optax.softmax_cross_entropy(logits, labels))
         return loss
 
-    loss, grads = jax.value_and_grad(loss_fn)(params)
+    # Apply gradient checkpointing
+    loss_fn = jax.checkpoint(loss_fn)
+
+    # Use mixed precision training
+    loss, grads = jax.value_and_grad(loss_fn, dtype=jnp.float16)(params)
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state

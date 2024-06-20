@@ -12,3 +12,6 @@ VishwamAI/data/
 
 # Ignore log files
 logs/flask_app.log
+
+# Ignore grok-1 directory
+grok-1/

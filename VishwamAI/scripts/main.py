@@ -2,7 +2,7 @@ import haiku as hk
 import jax
 import jax.numpy as jnp
 import tensorflow as tf
-import tensorflow_text as tf_text
+import keras_nlp
 import random
 import logging
 from model_architecture import VishwamAIModel
@@ -44,7 +44,7 @@ def main():
     try:
         # Example input
         example_input = "What is the capital of France?"
-        tokenizer = tf_text.BertTokenizer.from_pretrained(config.MODEL_NAME)
+        tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
         tokenized_input = tokenize_input(example_input, tokenizer)
 
         # Debugging print statements to check dtype

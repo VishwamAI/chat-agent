@@ -1,7 +1,8 @@
 import haiku as hk
 import jax
 import jax.numpy as jnp
-import tensorflow_text as tf_text
+import tensorflow as tf
+import keras_nlp
 import logging
 import config
 from model_architecture import VishwamAIModel
@@ -47,7 +48,7 @@ def test_vishwamai_performance():
         {"input": "Who wrote 'To Kill a Mockingbird'?", "expected_output": "Harper Lee"}
     ]
 
-    tokenizer = tf_text.BertTokenizer(vocab_lookup_table=config.VOCAB_FILE)
+    tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
 
     for task in tasks:
         input_text = task["input"]

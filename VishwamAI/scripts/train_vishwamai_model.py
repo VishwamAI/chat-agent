@@ -78,6 +78,7 @@ def train_model(data_file, num_epochs=10):
         for batch in dataset:
             batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
             batch = jax.numpy.array(batch, dtype=jnp.int32)  # Convert to int32
+            logging.info(f"Data type of batch before model apply: {batch.dtype}")
             loss, params, opt_state = train_step(params, model, optimizer, batch, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 

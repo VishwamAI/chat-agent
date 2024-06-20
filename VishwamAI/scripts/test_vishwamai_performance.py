@@ -47,8 +47,7 @@ def test_vishwamai_performance():
         {"input": "Who wrote 'To Kill a Mockingbird'?", "expected_output": "Harper Lee"}
     ]
 
-    vocab_lookup_table = tf_text.vocab_lookup_table_from_file(config.VOCAB_FILE)
-    tokenizer = tf_text.BertTokenizer(vocab_lookup_table)
+    tokenizer = tf_text.BertTokenizer(vocab_lookup_table=config.VOCAB_FILE)
 
     for task in tasks:
         input_text = task["input"]

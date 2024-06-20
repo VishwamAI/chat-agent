@@ -1,0 +1,10 @@
+tensorflow
+torch
+onnx
+onnx2keras
+transformers
+tf-keras
+Pillow
+numpy
+scipy
+requests

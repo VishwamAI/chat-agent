@@ -88,7 +88,7 @@ class VishwamAIModel(hk.Module):
         # Process inputs through the selected experts
         expert_outputs = []
         for i, expert in enumerate(self.experts):
-            mask = (expert_indices == i)
+            mask = (expert_indices[:, None] == i)  # Expand expert_indices to include sequence length dimension
             print(f"Shape of mask before expand_dims: {mask.shape}")
             if jnp.any(mask):
                 mask = jnp.expand_dims(mask, axis=-1)  # Add necessary dimension to the mask

@@ -13,22 +13,31 @@ from memory_profiler import profile
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=32, batch_size=16):
+def data_generator(file_path, max_seq_length=32, batch_size=8):
     """
-    Load and preprocess the training data.
+    Generator function to yield batches of data.
     Args:
         file_path: str. Path to the text data file.
         max_seq_length: int. Maximum sequence length for padding/truncation.
         batch_size: int. Number of samples per batch.
-    Returns:
-        tf.data.Dataset. Preprocessed and batched dataset.
+    Yields:
+        tf.Tensor. A batch of tokenized and padded data.
     """
-    dataset = tf.data.TextLineDataset(file_path)
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
-    dataset = dataset.map(lambda x: tokenizer.tokenize(x))
-    dataset = dataset.map(lambda x: tf.pad(x, [[0, max_seq_length - tf.shape(x)[0]]], constant_values=0))
-    dataset = dataset.batch(batch_size)
-    return dataset
+
+    with open(file_path, 'r') as f:
+        batch_lines = []
+        for line in f:
+            batch_lines.append(line.strip())
+            if len(batch_lines) == batch_size:
+                tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
+                padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
+                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
+                batch_lines = []
+        if batch_lines:
+            tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
+            padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
+            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
 
 def train_step(params, model, optimizer, batch, rng):
     """
@@ -60,8 +69,8 @@ def train_step(params, model, optimizer, batch, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-# @profile  # Commenting out the memory profiling decorator to reduce memory overhead
-def train_model(data_file, num_epochs=10, batch_size=16):
+@profile  # Uncommenting the memory profiling decorator to identify memory usage spikes
+def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
     Args:
@@ -69,28 +78,29 @@ def train_model(data_file, num_epochs=10, batch_size=16):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    # Load and preprocess the data
-    dataset = load_data(data_file, batch_size=batch_size)  # Load dataset and tokenizer
-
     # Initialize the model and optimizer
     model = hk.transform(lambda x: VishwamAIModel()(x))
     optimizer = optax.adam(learning_rate=1e-3)
     rng = jax.random.PRNGKey(42)
 
     # Initialize model parameters
-    example_batch = next(iter(dataset))
+    example_batch = next(data_generator(data_file, batch_size=batch_size))
     example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
     example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
     params = model.init(rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
-        for batch in dataset:
+        for batch in data_generator(data_file, batch_size=batch_size):
             batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
             batch = jax.numpy.array(batch, dtype=jnp.int32)  # Convert to int32
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             loss, params, opt_state = train_step(params, model, optimizer, batch, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
+
+            # Explicit garbage collection
+            import gc
+            gc.collect()
 
     # Save the trained model
     with open("vishwamai_model_params.pkl", "wb") as f:

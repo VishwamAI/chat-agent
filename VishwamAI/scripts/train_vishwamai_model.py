@@ -70,7 +70,7 @@ def train_step(params, model, optimizer, batch, rng):
     return loss, new_params, new_opt_state
 
 @profile  # Uncommenting the memory profiling decorator to identify memory usage spikes
-def train_model(data_file, num_epochs=10, batch_size=16):
+def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
     Args:

@@ -27,21 +27,19 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
     def parse_line(line):
-        line = line.numpy().decode('utf-8')  # Convert tensor to string
-        try:
-            input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
-            tokenized_data = tokenizer.tokenize(input_data)
-            padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
-            label = label_encoder[label] if label_encoder else label
-            return padded_data, label
-        except ValueError:
-            logging.error(f"Line does not conform to expected format: {line.strip()}")
-            return None, None
+        parts = tf.strings.split(line, '\t')
+        input_data = parts[0]
+        label = parts[1]
+        tokenized_data = tokenizer.tokenize(input_data)
+        padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
+        label = label_encoder.lookup(label) if label_encoder else label
+        return padded_data, label
 
     dataset = tf.data.TextLineDataset(file_path)
-    dataset = dataset.map(lambda line: tf.py_function(parse_line, [line], [tf.int32, tf.int32]))
-    dataset = dataset.filter(lambda x, y: x is not None and y is not None)
+    dataset = dataset.map(parse_line, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset = dataset.filter(lambda x, y: tf.reduce_all(tf.not_equal(x, None)) and tf.reduce_all(tf.not_equal(y, None)))
     dataset = dataset.batch(batch_size)
+    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
 def train_step(params, model, optimizer, batch, labels, rng):

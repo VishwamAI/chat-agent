@@ -89,9 +89,9 @@ class VishwamAIModel(hk.Module):
         expert_outputs = []
         for i, expert in enumerate(self.experts):
             mask = (expert_indices[:, None] == i)  # Expand expert_indices to include batch dimension
-            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1]))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions
+            mask = jnp.reshape(mask, (inputs.shape[0], 1, -1))  # Reshape mask to include sequence length dimension
+            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions
             print(f"Shape of mask before expand_dims: {mask.shape}")
-            mask = jnp.expand_dims(mask, axis=-1)  # Add a new dimension to mask for broadcasting
             print(f"Shape of mask after expand_dims: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
             if jnp.any(mask):

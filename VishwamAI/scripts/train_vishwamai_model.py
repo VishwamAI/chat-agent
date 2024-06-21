@@ -61,7 +61,9 @@ def train_step(params, model, optimizer, batch, labels, rng):
     """
     def loss_fn(params):
         logits = model.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+        print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
 

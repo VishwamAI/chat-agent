@@ -65,8 +65,8 @@ class VishwamAIModel(hk.Module):
 
         # Ensure inputs are integer dtype for embedding layer
         print(f"Data type of inputs before embedding layer: {inputs.dtype}")
-        if inputs.dtype != jnp.int32:
-            inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+        if inputs.dtype != tf.int32:
+            inputs = tf.cast(inputs, tf.int32)
         print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Initialize the parameters for the transformer

@@ -67,6 +67,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     def loss_fn(params):
         logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -97,7 +98,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     def create_model(batch):
         model = VishwamAIModel()
         def forward_fn(params, rng, batch):
-            return model.__call__(batch, params, rng)
+            return model(batch, params, rng)
         return forward_fn
 
     transformed_forward = hk.transform(create_model)

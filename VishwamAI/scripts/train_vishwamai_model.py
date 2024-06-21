@@ -28,6 +28,10 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
 
     def parse_line(line):
         parts = tf.strings.split(line, '\t')
+        if tf.size(parts) < 2:
+            dummy_data = tf.zeros([max_seq_length], dtype=tf.int32)
+            dummy_label = tf.constant(-1, dtype=tf.int32)
+            return dummy_data, dummy_label
         input_data = parts[0]
         label = parts[1]
         tokenized_data = tokenizer.tokenize(input_data)
@@ -37,11 +41,12 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
 
     dataset = tf.data.TextLineDataset(file_path)
     dataset = dataset.map(parse_line, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    dataset = dataset.filter(lambda x, y: tf.reduce_all(tf.not_equal(x, None)) and tf.reduce_all(tf.not_equal(y, None)))
+    dataset = dataset.filter(lambda x, y: y != -1)
     dataset = dataset.batch(batch_size)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
+@tf.function
 def train_step(params, model, optimizer, batch, labels, rng):
     """
     Perform a single training step.
@@ -73,6 +78,7 @@ def train_step(params, model, optimizer, batch, labels, rng):
     return loss, new_params, new_opt_state
 
 @profile  # Uncommenting the memory profiling decorator to identify memory usage spikes
+@tf.function
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.

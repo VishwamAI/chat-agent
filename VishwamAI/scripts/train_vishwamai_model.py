@@ -27,6 +27,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
     def parse_line(line):
+        line = line.numpy().decode('utf-8')  # Convert tensor to string
         try:
             input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
             tokenized_data = tokenizer.tokenize(input_data)

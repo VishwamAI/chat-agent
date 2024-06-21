@@ -96,7 +96,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def create_model(batch):
         model = VishwamAIModel()
-        def forward_fn(params, rng):
+        def forward_fn(params, rng, batch):
             return model.__call__(batch, params, rng)
         return forward_fn
 

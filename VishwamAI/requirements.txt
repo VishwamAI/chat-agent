@@ -71,7 +71,7 @@ Werkzeug==3.0.3
 wrapt==1.16.0
 
 # Add haiku and JAX libraries
-dm-haiku==0.0.9
+dm-haiku==0.0.12
 jax==0.4.10
 jaxlib==0.4.10
 

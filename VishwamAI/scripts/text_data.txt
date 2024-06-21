@@ -1,23 +1,23 @@
-first trust dow jones internet
-first trust dj internet idx
-schwab intl large company index etf
-schwab strategic tr fundamental intl large co index etf
-vanguard small cap index adm
-vanguard small-cap index fund inst
-duke energy corp new com new isin #us4 sedol #b7jzsk0
-duke energy corp new com new isin #us26441c2044 sedol #b7jzs
-visa inc class a
-visa inc.
-ford motor co new div: 0.600
-ford motor co
-united states steel corp
-united sts stl cp (new)
-vanguard total international bond index etf
-vanguard total intl bond index etf
-schwab strategic tr us sml c
-schwab us small cap etf
-mfs value fd cl i
-mfs value fund cl i
+first trust dow jones internet	complaint
+first trust dj internet idx	inquiry
+schwab intl large company index etf	praise
+schwab strategic tr fundamental intl large co index etf	complaint
+vanguard small cap index adm	inquiry
+vanguard small-cap index fund inst	praise
+duke energy corp new com new isin #us4 sedol #b7jzsk0	complaint
+duke energy corp new com new isin #us26441c2044 sedol #b7jzs	inquiry
+visa inc class a	praise
+visa inc.	complaint
+ford motor co new div: 0.600	inquiry
+ford motor co	praise
+united states steel corp	complaint
+united sts stl cp (new)	inquiry
+vanguard total international bond index etf	praise
+vanguard total intl bond index etf	complaint
+schwab strategic tr us sml c	inquiry
+schwab us small cap etf	praise
+mfs value fd cl i	complaint
+mfs value fund cl i	inquiry
 oppenheimer dev markets class a
 oppenheimer developing mkts fd cl a
 genomic health
@@ -2455,7 +2455,7 @@ select str financial select s etf iv
 vanguard ttl bnd mrk indx inst
 vanguard total bond market index fund institutional plus shares
 vanguard small cap index - a
-vanguard small cap index, adm
+vanguard small-cap index fund institutional shares
 victory munder mid cap core growth fund cl y
 victory munder mid-cap core gr
 intercontinental exchange inc com usd0.01

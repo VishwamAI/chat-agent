@@ -92,7 +92,7 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of expert_indices: {expert_indices.shape}")
             print(f"Shape of mask before broadcast_to: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
-            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with embedded_inputs
+            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Ensure mask is broadcast-compatible with embedded_inputs
             print(f"Shape of mask after broadcast_to: {mask.shape}")
             if jnp.any(mask):
                 expert_inputs = jnp.where(mask, embedded_inputs, 0)  # Ensure expert_inputs are integer dtype

@@ -1,23 +1,23 @@
-first trust dow jones internet	label1
-first trust dj internet idx	label2
-schwab intl large company index etf	label3
-schwab strategic tr fundamental intl large co index etf	label4
-vanguard small cap index adm	label5
-vanguard small-cap index fund inst	label6
-duke energy corp new com new isin #us4 sedol #b7jzsk0	label7
-duke energy corp new com new isin #us26441c2044 sedol #b7jzs	label8
-visa inc class a	label9
-visa inc.	label10
-ford motor co new div: 0.600	label11
-ford motor co	label12
-united states steel corp	label13
-united sts stl cp (new)	label14
-vanguard total international bond index etf	label15
-vanguard total intl bond index etf	label16
-schwab strategic tr us sml c	label17
-schwab us small cap etf	label18
-mfs value fd cl i	label19
-mfs value fund cl i	label20
+first trust dow jones internet	complaint
+first trust dj internet idx	inquiry
+schwab intl large company index etf	praise
+schwab strategic tr fundamental intl large co index etf	complaint
+vanguard small cap index adm	inquiry
+vanguard small-cap index fund inst	praise
+duke energy corp new com new isin #us4 sedol #b7jzsk0	complaint
+duke energy corp new com new isin #us26441c2044 sedol #b7jzs	inquiry
+visa inc class a	praise
+visa inc.	complaint
+ford motor co new div: 0.600	inquiry
+ford motor co	praise
+united states steel corp	complaint
+united sts stl cp (new)	inquiry
+vanguard total international bond index etf	praise
+vanguard total intl bond index etf	complaint
+schwab strategic tr us sml c	inquiry
+schwab us small cap etf	praise
+mfs value fd cl i	complaint
+mfs value fund cl i	inquiry
 oppenheimer dev markets class a
 oppenheimer developing mkts fd cl a
 genomic health
@@ -2455,7 +2455,7 @@ select str financial select s etf iv
 vanguard ttl bnd mrk indx inst
 vanguard total bond market index fund institutional plus shares
 vanguard small cap index - a
-vanguard small cap index, adm
+vanguard small-cap index fund institutional shares
 victory munder mid cap core growth fund cl y
 victory munder mid-cap core gr
 intercontinental exchange inc com usd0.01

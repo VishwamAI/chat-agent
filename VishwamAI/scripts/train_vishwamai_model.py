@@ -86,16 +86,21 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     rng = jax.random.PRNGKey(42)
 
     # Initialize model parameters
-    example_batch = next(data_generator(data_file, batch_size=batch_size))
+    example_batch, example_labels = next(data_generator(data_file, batch_size=batch_size))
     example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
     example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
+    example_labels = example_labels.numpy().tolist()  # Convert tensor to list of labels
+    example_labels = jax.numpy.array(example_labels, dtype=jnp.int32)  # Convert to int32
     params = model.init(rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
         for batch in data_generator(data_file, batch_size=batch_size):
+            batch, labels = batch
             batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
             batch = jax.numpy.array(batch, dtype=jnp.int32)  # Convert to int32
+            labels = labels.numpy().tolist()  # Convert tensor to list of labels
+            labels = jax.numpy.array(labels, dtype=jnp.int32)  # Convert to int32
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             loss, params, opt_state = train_step(params, model, optimizer, batch, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")

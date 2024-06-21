@@ -40,8 +40,9 @@ class VishwamAIModel(hk.Module):
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
-        # Define gating mechanism
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        # Remove gating mechanism
+        # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+
     def __call__(self, inputs):
         if isinstance(inputs, jnp.ndarray):
             if inputs.dtype != jnp.int32:
@@ -78,31 +79,16 @@ class VishwamAIModel(hk.Module):
         embedded_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.float32)
         print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
 
-        # Use the gating network to determine which expert to use
-        gate_values = self.gating_network(embedded_inputs)
-        expert_indices = jnp.argmax(gate_values, axis=-1)  # Ensure expert_indices has the correct shape
-
-        # Process inputs through the selected experts
-        expert_outputs = []
-        for i, expert in enumerate(self.experts):
-            mask = jnp.expand_dims(expert_indices == i, axis=-1)  # Expand expert_indices to include a singleton dimension
-            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions
-            print(f"Shape of mask: {mask.shape}")
-            print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
-            if jnp.any(mask):
-                expert_inputs = jnp.where(mask, embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension
-                expert_inputs = jax.numpy.array(expert_inputs, dtype=jnp.int32)  # Ensure expert_inputs are integer dtype for embedding layer
-                print(f"Shape of expert_inputs: {expert_inputs.shape}")
-                expert_rng = jax.random.PRNGKey(42)
-                expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
-                expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
-                expert_outputs.append(expert_output)
-
-        # Aggregate the outputs from the experts
-        aggregated_output = jnp.sum(jnp.stack(expert_outputs), axis=0)
+        # Directly use the single expert's output
+        expert = self.experts[0]
+        expert_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.int32)  # Ensure expert_inputs are integer dtype for embedding layer
+        print(f"Shape of expert_inputs: {expert_inputs.shape}")
+        expert_rng = jax.random.PRNGKey(42)
+        expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
+        expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
 
         # Combine outputs from all models
-        combined_output = jnp.concatenate([aggregated_output], axis=-1)
+        combined_output = jnp.concatenate([expert_output], axis=-1)
 
         # Flatten the combined output to ensure correct shape for the final dense layer
         flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))

@@ -19,7 +19,7 @@ def plot_memory_profile(file_path):
     plt.title('Memory Usage Over Time')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.savefig('memory_usage_plot.png')  # Save the plot as an image file
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

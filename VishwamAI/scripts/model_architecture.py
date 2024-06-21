@@ -91,11 +91,10 @@ class VishwamAIModel(hk.Module):
             mask = (expert_indices[:, None] == i)  # Expand expert_indices to include sequence length dimension
             print(f"Shape of mask before expand_dims: {mask.shape}")
             if jnp.any(mask):
-                mask = jnp.expand_dims(mask, axis=1)  # Add necessary dimension to the mask
-                mask = jnp.broadcast_to(mask, (embedded_inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with embedded_inputs
+                mask = jnp.expand_dims(mask, axis=-1)  # Add necessary dimension to the mask
+                mask = jnp.broadcast_to(mask, (embedded_inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Ensure mask is broadcast-compatible with embedded_inputs
                 print(f"Shape of mask after broadcast_to: {mask.shape}")
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
-                expert_inputs = jnp.broadcast_to(expert_inputs, embedded_inputs.shape)  # Ensure expert_inputs match embedded_inputs shape
                 print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

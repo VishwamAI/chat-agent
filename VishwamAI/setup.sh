@@ -56,3 +56,7 @@ pip install mistralai==1.0.0
 
 # Install Whisper model dependencies
 pip install openai-whisper==1.0.0
+
+# Install TensorFlow T5 dependencies
+pip install tensorflow-text
+pip install keras-nlp-nightly

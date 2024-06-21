@@ -16,8 +16,8 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"), dtype=jnp.float32),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"), dtype=jnp.float32)
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         )
@@ -37,8 +37,8 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"), dtype=jnp.float32),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"), dtype=jnp.float32)
+                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]

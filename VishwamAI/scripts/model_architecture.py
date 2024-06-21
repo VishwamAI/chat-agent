@@ -45,7 +45,9 @@ class VishwamAIModel(hk.Module):
 
     def __call__(self, inputs):
         if tf.is_tensor(inputs):
-            inputs = jax.numpy.array(inputs.numpy(), dtype=jnp.int32)  # Convert TensorFlow tensor to JAX array with integer dtype
+            inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
+            # Ensure inputs are integer dtype for embedding layer
+            inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
         elif isinstance(inputs, jnp.ndarray):
             if inputs.dtype != jnp.int32:
                 inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer

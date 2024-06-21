@@ -30,7 +30,11 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
         batch_lines = []
         batch_labels = []
         for line in f:
-            input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
+            try:
+                input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
+            except ValueError:
+                logging.error(f"Line does not conform to expected format: {line.strip()}")
+                continue
             batch_lines.append(input_data)
             batch_labels.append(label_encoder[label] if label_encoder else label)
             if len(batch_lines) == batch_size:
@@ -125,5 +129,5 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     logging.info("Model training complete and parameters saved.")
 
 if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data.txt"
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
     train_model(data_file)

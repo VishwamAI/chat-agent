@@ -7,4 +7,4 @@ MODEL_NAME = "t5-small"
 RNG_SEED = 42
 
 # Vocabulary file path for BertTokenizer
-VOCAB_FILE = "t5-spiece.model"
+VOCAB_FILE = "/home/ubuntu/chat-agent/VishwamAI/scripts/t5-spiece.model"

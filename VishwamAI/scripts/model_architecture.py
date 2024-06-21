@@ -4,19 +4,20 @@ import jax.numpy as jnp
 import tensorflow as tf
 import tensorflow_text as tf_text
 import random
+import keras_nlp
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
-        self.tokenizer = tf_text.SentencepieceTokenizer(model=tf.io.gfile.GFile("t5-spiece.model", "rb").read())
+        import config
+        self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         )
@@ -37,8 +38,7 @@ class VishwamAIModel(hk.Module):
                 hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: jax.numpy.array(x, dtype=jnp.float32)  # Convert to float32 after linear layers for subsequent processing
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -51,10 +51,10 @@ class VishwamAIModel(hk.Module):
                 inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
-            tokenized_inputs = self.tokenizer.tokenize(inputs).to_tensor()
+            tokenized_inputs = self.tokenizer.tokenize(inputs)
             inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
-            tokenized_inputs = self.tokenizer.tokenize(inputs).to_tensor()
+            tokenized_inputs = self.tokenizer.tokenize(inputs)
             inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
             inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
@@ -63,17 +63,23 @@ class VishwamAIModel(hk.Module):
         print(f"Data type of inputs after conversion: {inputs.dtype}")
 
         # Ensure inputs are integer dtype for embedding layer
-        inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+        print(f"Data type of inputs before embedding layer: {inputs.dtype}")
+        if inputs.dtype != jnp.int32:
+            inputs = jax.numpy.array(inputs, dtype=jnp.int32)
+        print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Initialize the parameters for the transformer
         rng = jax.random.PRNGKey(42)
         transformer_params = self.transformer.init(rng, inputs)
 
         # Apply the transformer to the inputs
+        print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
         embedded_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.float32)
+        print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
@@ -83,9 +89,14 @@ class VishwamAIModel(hk.Module):
         expert_outputs = []
         for i, expert in enumerate(self.experts):
             mask = (expert_indices == i)
+            print(f"Shape of mask before expand_dims: {mask.shape}")
             if jnp.any(mask):
-                mask = jnp.expand_dims(mask, axis=-1)  # Expand dimensions of mask to match inputs
+                mask = jnp.expand_dims(mask, axis=1)  # Add necessary dimension to the mask
+                mask = jnp.broadcast_to(mask, (embedded_inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with embedded_inputs
+                print(f"Shape of mask after broadcast_to: {mask.shape}")
                 expert_inputs = jnp.where(mask, inputs, 0)  # Ensure expert_inputs are integer dtype
+                expert_inputs = jnp.broadcast_to(expert_inputs, (embedded_inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Ensure expert_inputs match inputs shape
+                print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
                 expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
@@ -155,6 +166,7 @@ class VishwamAIModel(hk.Module):
                 # Truncate the input sequence to the maximum length of 1024 tokens
                 inputs = [input[:1024] for input in inputs]
                 input_ids = self.tokenizer.tokenize(inputs)
+                input_ids = jax.numpy.array(input_ids, dtype=jnp.int32)  # Ensure input_ids are integer dtype
 
                 # Initialize the parameters for the transformer
                 rng = jax.random.PRNGKey(42)
@@ -167,8 +179,10 @@ class VishwamAIModel(hk.Module):
                 relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
 
                 # Generate attention output using TransformerXL
+                hidden_states = jax.numpy.array(hidden_states, dtype=jnp.int32)  # Ensure hidden_states are integer dtype
                 transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
-                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states, hidden_states, hidden_states)
+                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
+                attention_output = jax.numpy.array(attention_output, dtype=jnp.float32)  # Convert to float32 after embedding
                 memory_output, state_h, state_c = self.memory_network(attention_output)
                 output = self.custom_dense(memory_output[:, 0, :])
                 return output

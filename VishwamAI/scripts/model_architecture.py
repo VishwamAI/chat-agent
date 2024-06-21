@@ -88,7 +88,7 @@ class VishwamAIModel(hk.Module):
         # Process inputs through the selected experts
         expert_outputs = []
         for i, expert in enumerate(self.experts):
-            mask = (expert_indices[:, None] == i)  # Expand expert_indices to include batch dimension
+            mask = (expert_indices[:, None, None] == i)  # Expand expert_indices to include batch and sequence dimensions
             print(f"Shape of expert_indices: {expert_indices.shape}")
             print(f"Shape of mask before broadcast_to: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")

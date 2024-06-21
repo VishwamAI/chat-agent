@@ -47,54 +47,45 @@ class VishwamAIModel(hk.Module):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
-        elif isinstance(inputs, jnp.ndarray):
-            if inputs.dtype != jnp.int32:
-                inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
             tokenized_inputs = self.tokenizer.tokenize(inputs)
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
+            inputs = tf.convert_to_tensor(tokenized_inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
             tokenized_inputs = self.tokenizer.tokenize(inputs)
-            inputs = jax.numpy.array(tokenized_inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
+            inputs = tf.convert_to_tensor(tokenized_inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
-            inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
+            inputs = tf.convert_to_tensor(inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
         else:
             raise ValueError("Input must be of type `str`, `List[str]`, `List[List[int]]`, or a TensorFlow tensor")
-        print(f"Data type of inputs after conversion: {inputs.dtype}")
+        tf.print(f"Data type of inputs after conversion: {inputs.dtype}")
 
         # Ensure inputs are integer dtype for embedding layer
-        print(f"Data type of inputs before embedding layer: {inputs.dtype}")
+        tf.print(f"Data type of inputs before embedding layer: {inputs.dtype}")
         if inputs.dtype != tf.int32:
             inputs = tf.cast(inputs, tf.int32)
-        print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
-
-        # Initialize the parameters for the transformer
-        rng = jax.random.PRNGKey(42)
-        transformer_params = self.transformer.init(rng, inputs)
+        tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Apply the transformer to the inputs
-        print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
-        print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
+        tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
+        embedded_inputs = self.transformer(inputs)
+        tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
-        embedded_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.float32)
-        print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
+        embedded_inputs = tf.cast(embedded_inputs, tf.float32)
+        tf.print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        expert_inputs = jax.numpy.array(embedded_inputs, dtype=jnp.int32)  # Ensure expert_inputs are integer dtype for embedding layer
-        print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_rng = jax.random.PRNGKey(42)
-        expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters
-        expert_output = expert.apply(expert_params, expert_rng, expert_inputs)  # Use apply method
+        expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
+        tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
+        expert_output = expert(expert_inputs)  # Use apply method
 
         # Combine outputs from all models
-        combined_output = jnp.concatenate([expert_output], axis=-1)
+        combined_output = tf.concat([expert_output], axis=-1)
 
         # Flatten the combined output to ensure correct shape for the final dense layer
-        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
+        flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
 
         # Continue with the rest of the model
         hidden_states = flattened_output

@@ -99,6 +99,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
     rng = jax.random.PRNGKey(42)
+    rng, init_rng = jax.random.split(rng)
 
     # Initialize label encoder
     keys = tf.constant(["complaint", "inquiry", "praise"])
@@ -110,7 +111,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(rng, example_batch)
+    params = transformed_forward.init(init_rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):

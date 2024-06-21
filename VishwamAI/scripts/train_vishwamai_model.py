@@ -15,31 +15,35 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def data_generator(file_path, max_seq_length=32, batch_size=8):
     """
-    Generator function to yield batches of data.
+    Generator function to yield batches of data and corresponding labels.
     Args:
         file_path: str. Path to the text data file.
         max_seq_length: int. Maximum sequence length for padding/truncation.
         batch_size: int. Number of samples per batch.
     Yields:
-        tf.Tensor. A batch of tokenized and padded data.
+        tuple: A batch of tokenized and padded data and corresponding labels.
     """
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
     with open(file_path, 'r') as f:
         batch_lines = []
+        batch_labels = []
         for line in f:
-            batch_lines.append(line.strip())
+            input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
+            batch_lines.append(input_data)
+            batch_labels.append(int(label))
             if len(batch_lines) == batch_size:
                 tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
                 padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
+                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
                 batch_lines = []
+                batch_labels = []
         if batch_lines:
             tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
             padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
+            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
 
-def train_step(params, model, optimizer, batch, rng):
+def train_step(params, model, optimizer, batch, labels, rng):
     """
     Perform a single training step.
     Args:
@@ -47,6 +51,7 @@ def train_step(params, model, optimizer, batch, rng):
         model: VishwamAIModel. The model to be trained.
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
+        labels: tf.Tensor. The target labels corresponding to the input data.
         rng: jax.random.PRNGKey. Random number generator key.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
@@ -55,15 +60,12 @@ def train_step(params, model, optimizer, batch, rng):
     """
     def loss_fn(params):
         logits = model.apply(params, rng, batch)
-        labels = jax.nn.one_hot(batch, num_classes=logits.shape[-1])
-        loss = jnp.mean(optax.softmax_cross_entropy(logits, labels))
+        one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
+        loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
 
-    # Apply gradient checkpointing
-    loss_fn = jax.checkpoint(loss_fn)
-
     # Use mixed precision training
-    loss, grads = jax.value_and_grad(loss_fn, dtype=jnp.float16)(params)
+    loss, grads = jax.value_and_grad(loss_fn)(params)
     grads = jax.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)

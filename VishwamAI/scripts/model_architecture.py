@@ -92,9 +92,9 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of expert_indices: {expert_indices.shape}")
             print(f"Shape of mask before broadcast_to: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
-            mask = jnp.broadcast_to(mask[:, :, None], (inputs.shape[0], embedded_inputs.shape[1], 1))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions
+            mask = jnp.broadcast_to(mask[:, :, None], (inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Ensure mask is broadcast-compatible with batch, sequence length, and embedding dimensions
             try:
-                mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Ensure mask is broadcast-compatible with batch, sequence length, and embedding dimensions
+                mask = jnp.reshape(mask, (inputs.shape[0], embedded_inputs.shape[1], embedded_inputs.shape[2]))  # Reshape mask to match embedded_inputs dimensions
             except ValueError as e:
                 raise ValueError(f"Incompatible shapes for broadcasting: mask shape {mask.shape}, embedded_inputs shape {embedded_inputs.shape}") from e
             print(f"Shape of mask after broadcast_to: {mask.shape}")

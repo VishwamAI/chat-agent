@@ -87,7 +87,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     return loss, new_params, new_opt_state
 
 @profile  # Enabling the memory profiling decorator to identify memory usage spikes
-@tf.function
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.

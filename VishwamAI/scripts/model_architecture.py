@@ -104,8 +104,11 @@ class VishwamAIModel(hk.Module):
         # Combine outputs from all models
         combined_output = jnp.concatenate([aggregated_output], axis=-1)
 
+        # Flatten the combined output to ensure correct shape for the final dense layer
+        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
+
         # Continue with the rest of the model
-        hidden_states = combined_output
+        hidden_states = flattened_output
         attention_output = hidden_states
         output = self.dense(attention_output)
         return output

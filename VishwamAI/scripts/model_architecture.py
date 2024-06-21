@@ -5,6 +5,7 @@ import tensorflow as tf
 import tensorflow_text as tf_text
 import random
 import keras_nlp
+import tensorflow_model_optimization as tfmot
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -16,8 +17,8 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=20000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                tfmot.sparsity.keras.prune_low_magnitude(hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")), pruning_schedule=tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.0, final_sparsity=0.5, begin_step=2000, end_step=4000)),
+                tfmot.sparsity.keras.prune_low_magnitude(hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")), pruning_schedule=tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.0, final_sparsity=0.5, begin_step=2000, end_step=4000))
             ])(x),
             apply_rng=True
         )
@@ -26,7 +27,7 @@ class VishwamAIModel(hk.Module):
             key_size=32,
             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
-        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.dense = tfmot.sparsity.keras.prune_low_magnitude(hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")), pruning_schedule=tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.0, final_sparsity=0.5, begin_step=2000, end_step=4000))
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
@@ -34,8 +35,8 @@ class VishwamAIModel(hk.Module):
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                tfmot.sparsity.keras.prune_low_magnitude(hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")), pruning_schedule=tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.0, final_sparsity=0.5, begin_step=2000, end_step=4000)),
+                tfmot.sparsity.keras.prune_low_magnitude(hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")), pruning_schedule=tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.0, final_sparsity=0.5, begin_step=2000, end_step=4000))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]

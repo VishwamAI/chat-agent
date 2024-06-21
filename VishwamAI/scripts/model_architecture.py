@@ -92,7 +92,7 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of expert_indices: {expert_indices.shape}")
             print(f"Shape of mask before broadcast_to: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
-            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1]))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions
+            mask = jnp.broadcast_to(mask, (inputs.shape[0], embedded_inputs.shape[1], mask.shape[-1]))  # Ensure mask is broadcast-compatible with batch and sequence length dimensions while preserving the last dimension
             print(f"Shape of mask after broadcast_to: {mask.shape}")
             if jnp.any(mask):
                 expert_inputs = jnp.where(mask[:, :, None], embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension

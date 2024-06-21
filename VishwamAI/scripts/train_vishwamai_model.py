@@ -28,7 +28,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8):
     with open(file_path, 'r') as f:
         batch_lines = []
         for line in f:
-            batch_lines.append(line)
+            batch_lines.append(line.strip())
             if len(batch_lines) == batch_size:
                 tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
                 padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]

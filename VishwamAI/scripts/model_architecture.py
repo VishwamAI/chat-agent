@@ -44,7 +44,9 @@ class VishwamAIModel(hk.Module):
         # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
     def __call__(self, inputs):
-        if isinstance(inputs, jnp.ndarray):
+        if tf.is_tensor(inputs):
+            inputs = jax.numpy.array(inputs.numpy(), dtype=jnp.int32)  # Convert TensorFlow tensor to JAX array with integer dtype
+        elif isinstance(inputs, jnp.ndarray):
             if inputs.dtype != jnp.int32:
                 inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
         elif isinstance(inputs, str):
@@ -57,7 +59,7 @@ class VishwamAIModel(hk.Module):
         elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
             inputs = jax.numpy.array(inputs, dtype=jnp.int32)  # Convert tokenized inputs to JAX numpy array with integer dtype
         else:
-            raise ValueError("Input must be of type `str`, `List[str]`, or `List[List[int]]`")
+            raise ValueError("Input must be of type `str`, `List[str]`, `List[List[int]]`, or a TensorFlow tensor")
         print(f"Data type of inputs after conversion: {inputs.dtype}")
 
         # Ensure inputs are integer dtype for embedding layer

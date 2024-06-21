@@ -21,32 +21,27 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
         max_seq_length: int. Maximum sequence length for padding/truncation.
         batch_size: int. Number of samples per batch.
         label_encoder: dict. A dictionary mapping string labels to integer indices.
-    Yields:
-        tuple: A batch of tokenized and padded data and corresponding labels.
+    Returns:
+        tf.data.Dataset: A dataset yielding batches of tokenized and padded data and corresponding labels.
     """
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
-    with open(file_path, 'r') as f:
-        batch_lines = []
-        batch_labels = []
-        for line in f:
-            try:
-                input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
-            except ValueError:
-                logging.error(f"Line does not conform to expected format: {line.strip()}")
-                continue
-            batch_lines.append(input_data)
-            batch_labels.append(label_encoder[label] if label_encoder else label)
-            if len(batch_lines) == batch_size:
-                tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
-                padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
-                batch_lines = []
-                batch_labels = []
-        if batch_lines:
-            tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
-            padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
+    def parse_line(line):
+        try:
+            input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
+            tokenized_data = tokenizer.tokenize(input_data)
+            padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
+            label = label_encoder[label] if label_encoder else label
+            return padded_data, label
+        except ValueError:
+            logging.error(f"Line does not conform to expected format: {line.strip()}")
+            return None, None
+
+    dataset = tf.data.TextLineDataset(file_path)
+    dataset = dataset.map(lambda line: tf.py_function(parse_line, [line], [tf.int32, tf.int32]))
+    dataset = dataset.filter(lambda x, y: x is not None and y is not None)
+    dataset = dataset.batch(batch_size)
+    return dataset
 
 def train_step(params, model, optimizer, batch, labels, rng):
     """
@@ -100,7 +95,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     }
 
     # Initialize model parameters
-    example_batch, example_labels = next(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder))
+    example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
     example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
     example_labels = example_labels.numpy().tolist()  # Convert tensor to list of labels
@@ -119,9 +114,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             loss, params, opt_state = train_step(params, model, optimizer, batch, labels, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
-            # Explicit garbage collection
-            import gc
-            gc.collect()
+        # Explicit garbage collection
+        import gc
+        gc.collect()
 
     # Save the trained model
     with open("vishwamai_model_params.pkl", "wb") as f:

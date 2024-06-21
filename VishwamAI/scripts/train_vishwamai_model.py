@@ -21,28 +21,26 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
         max_seq_length: int. Maximum sequence length for padding/truncation.
         batch_size: int. Number of samples per batch.
         label_encoder: dict. A dictionary mapping string labels to integer indices.
-    Yields:
-        tuple: A batch of tokenized and padded data and corresponding labels.
+    Returns:
+        tf.data.Dataset: A dataset yielding batches of tokenized and padded data and corresponding labels.
     """
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
-    with open(file_path, 'r') as f:
-        batch_lines = []
-        batch_labels = []
-        for line in f:
-            input_data, label = line.strip().split('\t')  # Assuming tab-separated input and label
-            batch_lines.append(input_data)
-            batch_labels.append(label_encoder[label] if label_encoder else label)
-            if len(batch_lines) == batch_size:
-                tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
-                padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
-                batch_lines = []
-                batch_labels = []
-        if batch_lines:
-            tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
-            padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
+    def parse_line(line):
+        parts = tf.strings.split(line, '\t')
+        input_data = parts[0]
+        label = parts[1]
+        tokenized_data = tokenizer.tokenize(input_data)
+        padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
+        label = label_encoder.lookup(label) if label_encoder else label
+        return padded_data, label
+
+    dataset = tf.data.TextLineDataset(file_path)
+    dataset = dataset.map(parse_line, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset = dataset.filter(lambda x, y: tf.reduce_all(tf.not_equal(x, None)) and tf.reduce_all(tf.not_equal(y, None)))
+    dataset = dataset.batch(batch_size)
+    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    return dataset
 
 def train_step(params, model, optimizer, batch, labels, rng):
     """
@@ -61,7 +59,9 @@ def train_step(params, model, optimizer, batch, labels, rng):
     """
     def loss_fn(params):
         logits = model.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+        print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
 
@@ -87,14 +87,13 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     rng = jax.random.PRNGKey(42)
 
     # Initialize label encoder
-    label_encoder = {
-        "complaint": 0,
-        "inquiry": 1,
-        "praise": 2
-    }
+    keys = tf.constant(["complaint", "inquiry", "praise"])
+    values = tf.constant([0, 1, 2])
+    initializer = tf.lookup.KeyValueTensorInitializer(keys, values)
+    label_encoder = tf.lookup.StaticHashTable(initializer, default_value=-1)
 
     # Initialize model parameters
-    example_batch, example_labels = next(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder))
+    example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
     example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
     example_labels = example_labels.numpy().tolist()  # Convert tensor to list of labels
@@ -113,9 +112,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             loss, params, opt_state = train_step(params, model, optimizer, batch, labels, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
-            # Explicit garbage collection
-            import gc
-            gc.collect()
+        # Explicit garbage collection
+        import gc
+        gc.collect()
 
     # Save the trained model
     with open("vishwamai_model_params.pkl", "wb") as f:
@@ -123,5 +122,5 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     logging.info("Model training complete and parameters saved.")
 
 if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data.txt"
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
     train_model(data_file)

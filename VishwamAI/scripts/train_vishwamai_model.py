@@ -120,7 +120,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, rng)
+            rng, step_rng = jax.random.split(rng)  # Split RNG key for each training step
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

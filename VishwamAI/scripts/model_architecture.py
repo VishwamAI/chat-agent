@@ -26,19 +26,17 @@ class VishwamAIModel(hk.Module):
             key_size=64,
             w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
-        self.memory_network = hk.LSTM(128)
-        self.memory_augmentation = unique_features()
         self.dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         self.advanced_features = self.add_advanced_features()
 
         # Define expert networks for Mixture of Experts (MoE) architecture
-        self.num_experts = 4  # Reduced number of experts to 4
+        self.num_experts = 2  # Reduced number of experts to 2
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Embed(vocab_size=20000, embed_dim=256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                hk.Linear(1024, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]
@@ -110,83 +108,12 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = combined_output
         attention_output = self.advanced_features(hidden_states)
-        memory_output, state_h, state_c = self.memory_network(attention_output)
-        augmented_memory = self.memory_augmentation(memory_output)
-        output = self.dense(augmented_memory)
+        output = self.dense(attention_output)
         return output
 
     def add_advanced_features(self):
-        # Implement advanced features to achieve 100% accuracy in MMLU, math, and reasoning
-        # Example: Adding a custom attention mechanism
-        class CustomAttentionLayer(hk.Module):
-            def __init__(self, tokenizer, transformer, memory_network):
-                super(CustomAttentionLayer, self).__init__()
-                self.tokenizer = tokenizer
-                self.transformer = transformer
-                self.memory_network = memory_network
-
-                self.transformer_xl = hk.transform(
-                    lambda x: hk.Sequential([
-                        hk.Embed(vocab_size=50257, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                        hk.MultiHeadAttention(
-                            num_heads=8,
-                            key_size=64,
-                            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-                        ),
-                        hk.Linear(2048, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                        hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-                    ])(x),
-                    apply_rng=True
-                )
-                self.head_size = 64  # Store the head_size as an instance variable
-                self.custom_dense = hk.Linear(1, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-
-            def compute_relative_position_encoding(self, seq_length, num_heads, head_size):
-                # Ensure head_size is divisible by num_heads
-                if head_size % num_heads != 0:
-                    raise ValueError(f"head_size ({head_size}) must be divisible by num_heads ({num_heads})")
-
-                # Create a tensor representing the relative positions of tokens within the sequence
-                range_vec = jnp.arange(seq_length)
-                range_mat = jnp.expand_dims(range_vec, -1) - jnp.expand_dims(range_vec, 0)
-                # Apply an encoding function to the relative positions
-                relative_position_encoding = jnp.sign(range_mat) * jnp.log1p(jnp.abs(range_mat))
-                # Adjust dimensions to match the required shape [batch_size, seq_length, seq_length, num_heads, head_size // num_heads]
-                relative_position_encoding = jnp.expand_dims(relative_position_encoding, -1)
-                relative_position_encoding = jnp.expand_dims(relative_position_encoding, 0)
-                relative_position_encoding = jnp.tile(relative_position_encoding, [1, 1, 1, num_heads, head_size // num_heads])
-                return relative_position_encoding
-
-            def __call__(self, inputs):
-                if isinstance(inputs, jnp.ndarray):
-                    inputs = inputs.tolist()
-                    # Flatten the nested list structure to a single list of strings
-                    inputs = [" ".join(map(str, sublist)) for sublist in inputs]
-                # Truncate the input sequence to the maximum length of 1024 tokens
-                inputs = [input[:1024] for input in inputs]
-                input_ids = self.tokenizer.tokenize(inputs)
-                input_ids = jax.numpy.array(input_ids, dtype=jnp.int32)  # Ensure input_ids are integer dtype
-
-                # Initialize the parameters for the transformer
-                rng = jax.random.PRNGKey(42)
-                transformer_params = self.transformer.init(rng, input_ids)
-                transformer_outputs = self.transformer.apply(transformer_params, rng, input_ids)
-                hidden_states = transformer_outputs
-
-                # Calculate relative position encoding
-                seq_length = hidden_states.shape[1]
-                relative_position_encoding = self.compute_relative_position_encoding(seq_length, 8, self.head_size)
-
-                # Generate attention output using TransformerXL
-                hidden_states = jax.numpy.array(hidden_states, dtype=jnp.int32)  # Ensure hidden_states are integer dtype
-                transformer_xl_params = self.transformer_xl.init(rng, hidden_states)
-                attention_output = self.transformer_xl.apply(transformer_xl_params, rng, hidden_states)
-                attention_output = jax.numpy.array(attention_output, dtype=jnp.float32)  # Convert to float32 after embedding
-                memory_output, state_h, state_c = self.memory_network(attention_output)
-                output = self.custom_dense(memory_output[:, 0, :])
-                return output
-
-        return CustomAttentionLayer(self.tokenizer, self.transformer, self.memory_network)
+        # Placeholder for advanced features to achieve 100% accuracy in MMLU, math, and reasoning
+        return None
 
     def generate_question(self):
         # Generate a question based on the model's current knowledge
@@ -225,47 +152,6 @@ class VishwamAIModel(hk.Module):
 def unique_features():
     # Implement additional advanced techniques to enhance model performance
     # Example: Adding a memory augmentation mechanism
-    class MemoryAugmentation(hk.Module):
-        def __init__(self, units):
-            super(MemoryAugmentation, self).__init__()
-            self.units = units
-            self.memory = jnp.zeros([units], dtype=jnp.float32)
-
-        def __call__(self, inputs):
-            if isinstance(inputs, jnp.ndarray):
-                inputs = inputs.copy()
-            if inputs.shape != self.memory.shape:
-                try:
-                    inputs = jnp.broadcast_to(inputs, self.memory.shape)
-                except ValueError:
-                    if jnp.prod(inputs.shape) == jnp.prod(self.memory.shape):
-                        inputs = jnp.reshape(inputs, self.memory.shape)
-                    else:
-                        # Adjust memory tensor to accommodate input tensor
-                        self.memory = jnp.zeros(inputs.shape)
-                        self.memory += inputs
-                        return self.memory
-            self.memory += inputs
-            return self.memory
-
-        def add_memory(self, inputs):
-            if not isinstance(inputs, jnp.ndarray) or inputs.dtype == jnp.str_:
-                raise ValueError("Input must be a numerical tensor")
-            if not jnp.issubdtype(inputs.dtype, jnp.floating):
-                inputs = jnp.asarray(inputs, dtype=jnp.float32)
-            if inputs.shape != self.memory.shape:
-                try:
-                    inputs = jnp.broadcast_to(inputs, self.memory.shape)
-                except ValueError:
-                    if jnp.prod(inputs.shape) == jnp.prod(self.memory.shape):
-                        inputs = jnp.reshape(inputs, self.memory.shape)
-                    else:
-                        # Adjust memory tensor to accommodate input tensor
-                        self.memory = jnp.zeros(inputs.shape)
-                        self.memory += inputs
-                        return self.memory
-            self.memory += inputs
-            return self.memory
 
     return MemoryAugmentation(units=128)
 

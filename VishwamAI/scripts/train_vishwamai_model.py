@@ -55,11 +55,12 @@ def train_step(params, model, optimizer, batch, rng):
 
     # Use mixed precision training
     loss, grads = jax.value_and_grad(loss_fn, dtype=jnp.float16)(params)
+    grads = jax.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile
+# @profile  # Commenting out the memory profiling decorator to reduce memory overhead
 def train_model(data_file, num_epochs=10, batch_size=32):
     """
     Train the VishwamAI model.

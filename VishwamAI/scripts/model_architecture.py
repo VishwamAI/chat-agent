@@ -94,6 +94,7 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
             if jnp.any(mask):
                 expert_inputs = jnp.where(mask, embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension
+                expert_inputs = jax.numpy.array(expert_inputs, dtype=jnp.int32)  # Ensure expert_inputs are integer dtype for embedding layer
                 print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

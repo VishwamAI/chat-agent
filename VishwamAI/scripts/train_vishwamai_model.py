@@ -12,6 +12,7 @@ import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
+import jaxpruner
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -76,6 +77,11 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
+
+    # Create JaxPruner object and wrap the optimizer
+    pruner = jaxpruner.MagnitudePruning()
+    optimizer = pruner.wrap_optax(optimizer)
+
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
@@ -98,6 +104,10 @@ def train_model(data_file, num_epochs=10, batch_size=8):
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
+
+    # Initialize JaxPruner and wrap the optimizer
+    pruner = jaxpruner.MagnitudePruning()
+    optimizer = pruner.wrap_optax(optimizer)
     rng = jax.random.PRNGKey(42)
     rng, init_rng = jax.random.split(rng)
 

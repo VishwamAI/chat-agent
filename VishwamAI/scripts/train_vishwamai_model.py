@@ -59,8 +59,8 @@ def train_step(params, model, optimizer, batch, labels, rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = model.apply(params, rng, batch)
-        one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
+        logits = model.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size]
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
 

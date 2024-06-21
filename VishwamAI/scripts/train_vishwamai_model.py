@@ -13,7 +13,7 @@ from memory_profiler import profile
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(file_path, max_seq_length=50, batch_size=32):
+def load_data(file_path, max_seq_length=32, batch_size=16):
     """
     Load and preprocess the training data.
     Args:
@@ -61,7 +61,7 @@ def train_step(params, model, optimizer, batch, rng):
     return loss, new_params, new_opt_state
 
 # @profile  # Commenting out the memory profiling decorator to reduce memory overhead
-def train_model(data_file, num_epochs=10, batch_size=32):
+def train_model(data_file, num_epochs=10, batch_size=16):
     """
     Train the VishwamAI model.
     Args:

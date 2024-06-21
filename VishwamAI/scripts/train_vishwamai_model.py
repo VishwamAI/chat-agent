@@ -100,20 +100,16 @@ def train_model(data_file, num_epochs=10, batch_size=8):
 
     # Initialize model parameters
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
-    example_batch = example_batch.numpy().tolist()  # Convert tensor to list of lists of integers
-    example_batch = jax.numpy.array(example_batch, dtype=jnp.int32)  # Convert to int32
-    example_labels = example_labels.numpy().tolist()  # Convert tensor to list of labels
-    example_labels = jax.numpy.array(example_labels, dtype=jnp.int32)  # Convert to int32
+    example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
+    example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     params = model.init(rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
         for batch in data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder):
             batch, labels = batch
-            batch = batch.numpy().tolist()  # Convert tensor to list of lists of integers
-            batch = jax.numpy.array(batch, dtype=jnp.int32)  # Convert to int32
-            labels = labels.numpy().tolist()  # Convert tensor to list of labels
-            labels = jax.numpy.array(labels, dtype=jnp.int32)  # Convert to int32
+            batch = tf.convert_to_tensor(batch, dtype=tf.int32)
+            labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             loss, params, opt_state = train_step(params, model, optimizer, batch, labels, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")

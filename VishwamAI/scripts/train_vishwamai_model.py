@@ -87,11 +87,10 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     rng = jax.random.PRNGKey(42)
 
     # Initialize label encoder
-    label_encoder = {
-        "complaint": 0,
-        "inquiry": 1,
-        "praise": 2
-    }
+    keys = tf.constant(["complaint", "inquiry", "praise"])
+    values = tf.constant([0, 1, 2])
+    initializer = tf.lookup.KeyValueTensorInitializer(keys, values)
+    label_encoder = tf.lookup.StaticHashTable(initializer, default_value=-1)
 
     # Initialize model parameters
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))

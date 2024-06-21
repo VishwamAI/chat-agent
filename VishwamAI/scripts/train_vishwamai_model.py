@@ -35,13 +35,13 @@ def data_generator(file_path, max_seq_length=32, batch_size=8):
             if len(batch_lines) == batch_size:
                 tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
                 padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
+                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.string)
                 batch_lines = []
                 batch_labels = []
         if batch_lines:
             tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
             padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.int32)
+            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32), tf.convert_to_tensor(batch_labels, dtype=tf.string)
 
 def train_step(params, model, optimizer, batch, labels, rng):
     """

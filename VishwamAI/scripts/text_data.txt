@@ -1,5 +1,6 @@
-first trust dow jones internet	complaint
-first trust dj internet idx	inquiry
+The customer service representative was rude.	complaint
+How do I update my account information?	inquiry
+I am extremely satisfied with the product.	praise
 schwab intl large company index etf	praise
 schwab strategic tr fundamental intl large co index etf	complaint
 vanguard small cap index adm	inquiry
@@ -18,32 +19,32 @@ schwab strategic tr us sml c	inquiry
 schwab us small cap etf	praise
 mfs value fd cl i	complaint
 mfs value fund cl i	inquiry
-oppenheimer dev markets class a
-oppenheimer developing mkts fd cl a
-genomic health
-genomic health inc com
-spdr barclays international etf
-spdr barclays capital international trea
-kraft heinz company
-kraft heinz co com
-vanguard total bond market index fund admiral shares
-vanguard total bond market idx instl pls
-vanguard intermediate-term investment-grade fund investor shares
-vanguard interm-term invmt-grade inv
-baidu inc spon adr
-baidu inc spon adr rep a
-novartis ag- reg
-novartis ag
-seaspan corp
-seaspan corporation cmn
-vanguard total bond market index admiral
-vanguard bond index total mkt investor
-mfs muni high income fd cl i
-mfs municipal high cl i
-metlife inc com
-metlife incorporated
-russell gbl real estate securities cl s
-vy clarion real estate port srv
+oppenheimer dev markets class a	complaint
+oppenheimer developing mkts fd cl a	inquiry
+genomic health	complaint
+genomic health inc com	inquiry
+spdr barclays international etf	praise
+spdr barclays capital international trea	complaint
+kraft heinz company	inquiry
+kraft heinz co com	praise
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market idx instl pls	inquiry
+vanguard intermediate-term investment-grade fund investor shares	praise
+vanguard interm-term invmt-grade inv	complaint
+baidu inc spon adr	inquiry
+baidu inc spon adr rep a	praise
+novartis ag- reg	complaint
+novartis ag	inquiry
+seaspan corp	praise
+seaspan corporation cmn	complaint
+vanguard total bond market index admiral	inquiry
+vanguard bond index total mkt investor	praise
+mfs muni high income fd cl i	complaint
+mfs municipal high cl i	inquiry
+metlife inc com	praise
+metlife incorporated	complaint
+russell gbl real estate securities cl s	inquiry
+vy clarion real estate port srv	praise
 vanguard short-term investment-grade fund admiral shares
 vanguard short-term invest-grade
 spdr s&p 500 etf trust

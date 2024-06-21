@@ -106,7 +106,7 @@ class VishwamAIModel(hk.Module):
 
         # Continue with the rest of the model
         hidden_states = combined_output
-        attention_output = self.advanced_features(hidden_states)
+        attention_output = hidden_states
         output = self.dense(attention_output)
         return output
 

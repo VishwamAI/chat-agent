@@ -92,7 +92,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def create_model(batch):
         model = VishwamAIModel()
-        return model.__call__(batch)
+        def forward_fn(params, rng):
+            return model.__call__(batch, params, rng)
+        return forward_fn
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)

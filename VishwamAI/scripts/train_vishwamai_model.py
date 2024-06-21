@@ -1,6 +1,9 @@
 import tensorflow as tf
 import keras_nlp
 import haiku as hk
+
+tf.keras.mixed_precision.set_global_policy('mixed_float16')
+
 import jax
 import jax.numpy as jnp
 import optax

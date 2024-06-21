@@ -77,7 +77,7 @@ def train_step(params, model, optimizer, batch, labels, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile  # Uncommenting the memory profiling decorator to identify memory usage spikes
+@profile  # Enabling the memory profiling decorator to identify memory usage spikes
 @tf.function
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
@@ -88,7 +88,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         batch_size: int. Number of samples per batch.
     """
     # Initialize the model and optimizer
-    model = hk.transform(lambda x: VishwamAIModel()(x))
+    model = VishwamAIModel()
     optimizer = optax.adam(learning_rate=1e-3)
     rng = jax.random.PRNGKey(42)
 

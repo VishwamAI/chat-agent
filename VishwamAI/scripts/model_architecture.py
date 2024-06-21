@@ -29,7 +29,7 @@ class VishwamAIModel(hk.Module):
         self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
         # Define expert networks for Mixture of Experts (MoE) architecture
-        self.num_experts = 2  # Reduced number of experts to 2
+        self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
                 hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),

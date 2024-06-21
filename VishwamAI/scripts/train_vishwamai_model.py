@@ -13,7 +13,7 @@ from memory_profiler import profile
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def data_generator(file_path, max_seq_length=32, batch_size=16):
+def data_generator(file_path, max_seq_length=32, batch_size=8):
     """
     Generator function to yield batches of data.
     Args:
@@ -23,16 +23,21 @@ def data_generator(file_path, max_seq_length=32, batch_size=16):
     Yields:
         tf.Tensor. A batch of tokenized and padded data.
     """
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
 
-    for i in range(0, len(lines), batch_size):
-        batch_lines = lines[i:i+batch_size]
-        tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
-        padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
-        yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
+    with open(file_path, 'r') as f:
+        batch_lines = []
+        for line in f:
+            batch_lines.append(line)
+            if len(batch_lines) == batch_size:
+                tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
+                padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
+                yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
+                batch_lines = []
+        if batch_lines:
+            tokenized_batch = [tokenizer.tokenize(line) for line in batch_lines]
+            padded_batch = [tf.pad(tokens, [[0, max_seq_length - tf.shape(tokens)[0]]], constant_values=0) for tokens in tokenized_batch]
+            yield tf.convert_to_tensor(padded_batch, dtype=tf.int32)
 
 def train_step(params, model, optimizer, batch, rng):
     """

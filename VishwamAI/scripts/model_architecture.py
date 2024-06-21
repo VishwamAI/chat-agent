@@ -83,7 +83,7 @@ class VishwamAIModel(hk.Module):
 
         # Use the gating network to determine which expert to use
         gate_values = self.gating_network(embedded_inputs)
-        expert_indices = jnp.argmax(gate_values, axis=1)
+        expert_indices = jnp.argmax(gate_values, axis=-1)  # Ensure expert_indices has the correct shape
 
         # Process inputs through the selected experts
         expert_outputs = []
@@ -93,7 +93,7 @@ class VishwamAIModel(hk.Module):
             print(f"Shape of mask: {mask.shape}")
             print(f"Shape of embedded_inputs: {embedded_inputs.shape}")
             if jnp.any(mask):
-                expert_inputs = jnp.where(mask[:, :, None], embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension
+                expert_inputs = jnp.where(mask, embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension
                 print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

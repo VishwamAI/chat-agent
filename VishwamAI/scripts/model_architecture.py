@@ -99,7 +99,7 @@ class VishwamAIModel(hk.Module):
                 raise ValueError(f"Incompatible shapes for broadcasting: mask shape {mask.shape}, embedded_inputs shape {embedded_inputs.shape}") from e
             print(f"Shape of mask after broadcast_to: {mask.shape}")
             if jnp.any(mask):
-                expert_inputs = jnp.where(mask, embedded_inputs[:, :, None], 0)  # Apply mask to select expert inputs without altering embedding dimension
+                expert_inputs = jnp.where(mask, embedded_inputs, 0)  # Apply mask to select expert inputs without altering embedding dimension
                 print(f"Shape of expert_inputs: {expert_inputs.shape}")
                 expert_rng = jax.random.PRNGKey(42)
                 expert_params = expert.init(expert_rng, expert_inputs)  # Initialize expert parameters

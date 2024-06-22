@@ -93,9 +93,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng):
         model = VishwamAIModel()
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -137,6 +137,10 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
+
+if __name__ == "__main__":
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
+    train_model(data_file)
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"

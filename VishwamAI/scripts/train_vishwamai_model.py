@@ -65,18 +65,18 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     expert_params = params['expert_params']
 
     def loss_fn(params):
-        # Convert TensorFlow tensors to JAX arrays
-        batch_np = batch.numpy()
-        labels_np = labels.numpy()
-        batch_jax = jax.device_put(batch_np)
-        labels_jax = jax.device_put(labels_np)
-
-        logits = transformed_forward.apply(params, rng, batch_jax)  # logits shape: [batch_size, num_classes]
-        assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
-        one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
+        one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
+
+    # Convert TensorFlow tensors to JAX arrays outside of the JAX-traced loss_fn
+    batch_np = batch.numpy()
+    labels_np = labels.numpy()
+    batch_jax = jax.device_put(batch_np)
+    labels_jax = jax.device_put(labels_np)
 
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)

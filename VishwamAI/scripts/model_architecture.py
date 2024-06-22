@@ -69,7 +69,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs using the apply method
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(inputs)
+        embedded_inputs = self.transformer.apply(None, inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
@@ -80,7 +80,7 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert.apply(expert_inputs)  # Use apply method
+        expert_output = expert.apply(None, expert_inputs)
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)
@@ -142,7 +142,8 @@ def unique_features():
 if __name__ == "__main__":
     model = VishwamAIModel()
     example_input = "What is the capital of France?"
-    output = model(example_input)
+    rng = jax.random.PRNGKey(42)
+    output = model(example_input, rng)
     print(f"Model output: {output}")
     # Self-improvement example
     model.self_improve()

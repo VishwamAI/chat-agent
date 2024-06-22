@@ -50,7 +50,8 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, transformed_forward, optimizer, batch, labels, rng):
+@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
+def train_step(params, transformed_forward, optimizer, batch, labels):
     """
     Perform a single training step.
     Args:
@@ -59,14 +60,13 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
-        rng: jax.random.PRNGKey. Random number generator key.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
         new_params: hk.Params. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = transformed_forward.apply(params, batch)  # logits shape: [batch_size, num_classes]
+        logits, _ = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
@@ -87,7 +87,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
@@ -134,7 +133,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng = jax.device_put(rng)  # Ensure RNG key is a JAX array
             rng, step_rng = jax.random.split(rng)  # Split RNG key for each training step
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

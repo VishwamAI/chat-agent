@@ -107,8 +107,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    transformer_params = transformed_forward.init(rng, example_batch)
-    expert_params = [transformed_forward.init(rng, example_batch) for _ in range(1)]  # Assuming 1 expert
+    transformer_params = transformed_forward.init(rng, example_batch, rng)
+    expert_params = [transformed_forward.init(rng, example_batch, rng) for _ in range(1)]  # Assuming 1 expert
     params = {
         'transformer_params': transformer_params,
         'expert_params': expert_params

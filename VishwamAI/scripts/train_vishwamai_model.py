@@ -66,7 +66,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits, _ = transformed_forward.apply(params, None, batch)  # logits shape: [batch_size, num_classes]
+        logits, _ = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"

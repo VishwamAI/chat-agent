@@ -68,7 +68,10 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     """
     def loss_fn(params):
         batch = tf.cast(batch, tf.int32)  # Ensure batch is of integer dtype
-        logits = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
+        rng_seq = hk.PRNGSequence(step_rng)  # Generate a new RNG sequence
+        rng_key = next(rng_seq)  # Get the next RNG key from the sequence
+        assert rng_key.shape == (2,) and rng_key.dtype == jnp.uint32, f"RNG key shape or dtype mismatch: expected (2,), uint32, got {rng_key.shape}, {rng_key.dtype}"
+        logits = transformed_forward.apply(params, rng_key, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
@@ -97,9 +100,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def forward_fn(batch, rng):
+    def forward_fn(batch):
         model = VishwamAIModel()
-        logits = model(batch, rng)
+        logits = model(batch)
         return logits
 
     def create_model():
@@ -124,7 +127,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(init_rng, example_batch, rng)  # Pass the correct arguments
+    params = transformed_forward.init(init_rng, example_batch)  # Pass the correct arguments
 
     # Training loop
     for epoch in range(num_epochs):

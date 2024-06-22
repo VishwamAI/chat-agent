@@ -5,6 +5,7 @@ import tensorflow as tf
 import keras_nlp
 import logging
 import config
+import pickle
 from model_architecture import VishwamAIModel
 
 # Configure logging
@@ -39,6 +40,27 @@ def forward_fn(tokenized_input):
     model = VishwamAIModel()
     return model(tokenized_input)
 
+def load_model_params():
+    try:
+        with open("vishwamai_model_params.pkl", "rb") as f:
+            params = pickle.load(f)
+        return params
+    except Exception as e:
+        logging.error(f"Error loading model parameters: {e}")
+        raise
+
+def decode_output(output):
+    # Implement decoding logic to convert model output to human-readable format
+    # This is a placeholder implementation and should be replaced with actual decoding logic
+    class_index_to_label = {
+        0: "complaint",
+        1: "inquiry",
+        2: "praise"
+    }
+    decoded_output = tf.argmax(output, axis=-1).numpy()
+    decoded_output = [class_index_to_label.get(idx, "unknown") for idx in decoded_output]
+    return decoded_output
+
 def test_vishwamai_performance():
     tasks = [
         {"input": "Solve the equation: 2x + 3 = 7", "expected_output": "x = 2"},
@@ -64,15 +86,17 @@ def test_vishwamai_performance():
         logging.info(f"Tokenized input: {tokenized_input}")
         logging.info(f"Tokenized input dtype: {tokenized_input.dtype}")
 
-        forward, params, rng = initialize_model(tokenized_input)
+        forward, _, rng = initialize_model(tokenized_input)
+        params = load_model_params()
         output = process_input(forward, params, rng, tokenized_input)
-        logging.info(f"Model output: {output}")
+        decoded_output = decode_output(output)
+        logging.info(f"Model output: {decoded_output}")
 
         # Compare model output with expected output
-        if output == expected_output:
+        if decoded_output == expected_output:
             logging.info(f"Task '{input_text}' passed.")
         else:
-            logging.error(f"Task '{input_text}' failed. Expected: {expected_output}, but got: {output}")
+            logging.error(f"Task '{input_text}' failed. Expected: {expected_output}, but got: {decoded_output}")
 
 if __name__ == "__main__":
     test_vishwamai_performance()

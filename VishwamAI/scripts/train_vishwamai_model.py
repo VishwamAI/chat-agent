@@ -46,6 +46,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
+@tf.function
 def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
@@ -105,8 +106,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     params = transformed_forward.init(rng, example_batch)
-    transformer_params = params
-    expert_params = params
 
     # Training loop
     for epoch in range(num_epochs):
@@ -115,8 +114,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
-            step_rng = jax.random.split(rng)[0]
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng, transformer_params, expert_params)
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection
@@ -127,10 +125,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
-
-if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
-    train_model(data_file)
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"

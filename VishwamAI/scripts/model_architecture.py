@@ -68,18 +68,22 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
-        # Apply the transformer to the inputs using the apply method
-        tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(None, rng, inputs)
-        tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
+        # Apply the embedding layer to the inputs
+        embedded_inputs = self.embedding_layer(inputs)
+        tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
 
-        # Convert embedded inputs to float32 for subsequent layers
-        embedded_inputs = tf.cast(embedded_inputs, tf.float32)
-        tf.print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
+        # Apply the transformer to the embedded inputs using the apply method
+        tf.print(f"Data type of inputs before transformer apply: {embedded_inputs.dtype}")
+        transformer_output = self.transformer.apply(None, rng, embedded_inputs)
+        tf.print(f"Data type of transformer output after transformer apply: {transformer_output.dtype}")
+
+        # Convert transformer output to float32 for subsequent layers
+        transformer_output = tf.cast(transformer_output, tf.float32)
+        tf.print(f"Data type of transformer output after conversion to float32: {transformer_output.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
+        expert_inputs = tf.cast(transformer_output, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
         expert_output = expert.apply(None, rng, expert_inputs)
 

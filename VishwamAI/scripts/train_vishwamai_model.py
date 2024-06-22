@@ -67,7 +67,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits, _ = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
@@ -96,9 +96,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def forward_fn(batch, rng):
+    def forward_fn(params, batch, rng):
         model = VishwamAIModel()
-        logits = model(batch, rng)
+        logits = model(params, batch, rng)
         return logits
 
     def create_model():
@@ -123,7 +123,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(init_rng, example_batch, init_rng)
+    params = transformed_forward.init(init_rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):

@@ -90,9 +90,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch, rng, transformer_params, expert_params):
+    def create_model(batch):
         model = VishwamAIModel()
-        return model.__call__(batch, rng, transformer_params, expert_params)
+        return model.__call__(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)

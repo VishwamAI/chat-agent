@@ -45,7 +45,13 @@ def test_vishwamai_performance():
         {"input": "What is the capital of France?", "expected_output": "Paris"},
         {"input": "Explain the theory of relativity.", "expected_output": "The theory of relativity, developed by Albert Einstein, includes the special relativity and general relativity theories."},
         {"input": "What is the square root of 144?", "expected_output": "12"},
-        {"input": "Who wrote 'To Kill a Mockingbird'?", "expected_output": "Harper Lee"}
+        {"input": "Who wrote 'To Kill a Mockingbird'?", "expected_output": "Harper Lee"},
+        # Additional tasks for MMLU and MATH reasoning benchmarks
+        {"input": "Integrate the function f(x) = x^2 from 0 to 1.", "expected_output": "1/3"},
+        {"input": "Differentiate the function f(x) = sin(x).", "expected_output": "cos(x)"},
+        {"input": "What is the derivative of f(x) = e^x?", "expected_output": "e^x"},
+        {"input": "Solve the system of equations: 2x + y = 5 and x - y = 1.", "expected_output": "x = 2, y = 1"},
+        {"input": "What is the value of pi to 5 decimal places?", "expected_output": "3.14159"}
     ]
 
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)

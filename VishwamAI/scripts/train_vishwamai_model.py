@@ -69,7 +69,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         batch_jax = jax.device_put(batch)
         labels_jax = jax.device_put(labels)
 
-        logits = transformed_forward.apply(params, rng, batch_jax)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, batch_jax)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -92,7 +92,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch, rng):
+    def create_model(batch):
         model = VishwamAIModel()
         return model(batch)
 
@@ -110,7 +110,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    transformer_params = transformed_forward.init(rng, example_batch, rng)
+    transformer_params = transformed_forward.init(rng, example_batch)
     expert_params = [transformed_forward.init(rng, example_batch) for _ in range(1)]  # Assuming 1 expert
     params = {
         'transformer_params': transformer_params,

@@ -65,7 +65,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     expert_params = params['expert_params']
 
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, tf.convert_to_tensor(batch, dtype=tf.int32))  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")

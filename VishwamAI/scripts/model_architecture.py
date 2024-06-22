@@ -44,7 +44,7 @@ class VishwamAIModel(hk.Module):
         # Remove gating mechanism
         # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
-    def __call__(self, inputs, rng):
+    def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
@@ -69,14 +69,14 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(self.transformer.init(rng, inputs), rng, inputs)
+        embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
         embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
-        expert_output = expert.apply(expert.init(rng, embedded_inputs), rng, embedded_inputs)  # Use apply method
+        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), embedded_inputs), jax.random.PRNGKey(42), embedded_inputs)  # Use apply method
 
         # Convert expert output to float32 for subsequent layers
         expert_output = tf.cast(expert_output, tf.float32)

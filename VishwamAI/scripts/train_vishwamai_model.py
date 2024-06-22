@@ -69,7 +69,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         batch = tf.cast(batch, tf.int32)  # Ensure batch is of integer dtype
         rng_key = step_rng  # Use the provided RNG key directly
         assert rng_key.shape == (2,) and rng_key.dtype == jnp.uint32, f"RNG key shape or dtype mismatch: expected (2,), uint32, got {rng_key.shape}, {rng_key.dtype}"
-        logits = transformed_forward.apply(params, rng_key, batch)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"

@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def tokenize_input(input_text, tokenizer):
     try:
         tokenized_input = tokenizer.tokenize(input_text).to_tensor()
-        return jax.numpy.array(tokenized_input, dtype=jnp.float32)  # Ensure inputs are floating-point dtype for embedding layer
+        return jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
     except Exception as e:
         logging.error(f"Error during tokenization: {e}")
         raise
@@ -49,16 +49,10 @@ def load_model_params():
         logging.error(f"Error loading model parameters: {e}")
         raise
 
-def decode_output(output):
+def decode_output(output, tokenizer):
     # Implement decoding logic to convert model output to human-readable format
-    # This is a placeholder implementation and should be replaced with actual decoding logic
-    class_index_to_label = {
-        0: "complaint",
-        1: "inquiry",
-        2: "praise"
-    }
-    decoded_output = tf.argmax(output, axis=-1).numpy()
-    decoded_output = [class_index_to_label.get(idx, "unknown") for idx in decoded_output]
+    token_ids = tf.argmax(output, axis=-1).numpy()
+    decoded_output = tokenizer.detokenize(token_ids)
     return decoded_output
 
 def test_vishwamai_performance():
@@ -89,7 +83,7 @@ def test_vishwamai_performance():
         forward, _, rng = initialize_model(tokenized_input)
         params = load_model_params()
         output = process_input(forward, params, rng, tokenized_input)
-        decoded_output = decode_output(output)
+        decoded_output = decode_output(output, tokenizer)
         logging.info(f"Model output: {decoded_output}")
 
         # Compare model output with expected output

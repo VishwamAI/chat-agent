@@ -72,6 +72,10 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
 
+    # Ensure inputs are integer dtype for embedding layer
+    batch = tf.cast(batch, tf.int32)
+    labels = tf.cast(labels, tf.int32)
+
     # Convert TensorFlow tensors to JAX arrays outside of the JAX-traced loss_fn
     batch_np = batch.numpy()
     labels_np = labels.numpy()

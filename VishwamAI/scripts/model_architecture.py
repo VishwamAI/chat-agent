@@ -6,7 +6,7 @@ import tensorflow_text as tf_text
 import random
 import keras_nlp
 import config
-import numpy as np
+import numpy as np  # Ensure NumPy is imported for data type compatibility
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -81,7 +81,7 @@ class VishwamAIModel(hk.Module):
         expert_output = expert.apply(expert.init(expert_rng, embedded_inputs), expert_rng, embedded_inputs)  # Use apply method
 
         # Convert expert output to float32 for subsequent layers
-        expert_output = tf.cast(expert_output, tf.float32)
+        expert_output = tf.cast(expert_output, np.float32)
         tf.print(f"Data type of expert output after conversion to float32: {expert_output.dtype}")
 
         # Combine outputs from all models
@@ -93,7 +93,7 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        output = self.dense(tf.cast(attention_output, tf.float32))  # Ensure the data type is float32
+        output = self.dense(tf.cast(attention_output, np.float32))  # Ensure the data type is float32
         return output
 
     def add_advanced_features(self):

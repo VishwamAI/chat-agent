@@ -50,6 +50,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
+@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
@@ -87,7 +88,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
@@ -98,11 +98,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def forward_fn(batch, rng):
         model = VishwamAIModel()
-        logits = model(batch, rng)
+        logits = model(batch)
         return logits
 
     def create_model():
-        return hk.transform_with_state(forward_fn)
+        return hk.transform(forward_fn)
 
     transformed_forward = create_model()
     optimizer = optax.adam(learning_rate=1e-3)
@@ -123,7 +123,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(init_rng, example_batch, rng)
+    params = transformed_forward.init(init_rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):

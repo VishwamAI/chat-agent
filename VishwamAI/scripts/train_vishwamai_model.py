@@ -1,6 +1,9 @@
 import tensorflow as tf
 import keras_nlp
 import haiku as hk
+
+tf.keras.mixed_precision.set_global_policy('mixed_float16')
+
 import jax
 import jax.numpy as jnp
 import optax
@@ -9,6 +12,7 @@ import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
+import jaxpruner
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -46,7 +50,6 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-@tf.function
 def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
@@ -63,7 +66,9 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, batch)  # logits shape: [batch_size, num_classes]
+        tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
+        assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -73,12 +78,16 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
+
+    # Create JaxPruner object and wrap the optimizer
+    pruner = jaxpruner.MagnitudePruning()
+    optimizer = pruner.wrap_optax(optimizer)
+
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile  # Enabling the memory profiling decorator to identify memory usage spikes
-@tf.function
+@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
@@ -87,13 +96,22 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def forward_fn(batch):
         model = VishwamAIModel()
-        return model.__call__(batch)
+        logits = model(batch)
+        return logits
 
-    transformed_forward = hk.transform(create_model)
+    def create_model():
+        return hk.transform(forward_fn)
+
+    transformed_forward = create_model()
     optimizer = optax.adam(learning_rate=1e-3)
+
+    # Initialize JaxPruner and wrap the optimizer
+    pruner = jaxpruner.MagnitudePruning()
+    optimizer = pruner.wrap_optax(optimizer)
     rng = jax.random.PRNGKey(42)
+    rng, init_rng = jax.random.split(rng)
 
     # Initialize label encoder
     keys = tf.constant(["complaint", "inquiry", "praise"])
@@ -105,7 +123,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(rng, example_batch)
+    params = transformed_forward.init(init_rng, example_batch)
 
     # Training loop
     for epoch in range(num_epochs):
@@ -114,7 +132,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, rng)
+            rng = jax.device_put(rng)  # Ensure RNG key is a JAX array
+            rng, step_rng = jax.random.split(rng)  # Split RNG key for each training step
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

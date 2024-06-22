@@ -5,6 +5,7 @@ import tensorflow as tf
 import tensorflow_text as tf_text
 import random
 import keras_nlp
+import tensorflow.keras as keras
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -14,10 +15,10 @@ class VishwamAIModel(hk.Module):
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=20000, embed_dim=128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Embed(vocab_size=20000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         )
@@ -66,9 +67,9 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
-        # Apply the transformer to the inputs
+        # Apply the transformer to the inputs using the apply method
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer(inputs)
+        embedded_inputs = self.transformer.apply(inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
@@ -79,7 +80,7 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert(expert_inputs)  # Use apply method
+        expert_output = expert.apply(expert_inputs)  # Use apply method
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)

@@ -43,7 +43,7 @@ class VishwamAIModel(hk.Module):
         # Remove gating mechanism
         # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
@@ -68,7 +68,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(inputs)
+        embedded_inputs = self.transformer.apply(self.transformer.init(rng, inputs), rng, inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
@@ -78,7 +78,7 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
-        expert_output = expert.apply(embedded_inputs)  # Use apply method
+        expert_output = expert.apply(expert.init(rng, embedded_inputs), rng, embedded_inputs)  # Use apply method
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)
@@ -89,7 +89,7 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        output = self.dense(attention_output.astype(np.float32))  # Ensure the data type is np.float32
+        output = self.dense(tf.cast(attention_output, tf.float32))  # Ensure the data type is float32
         return output
 
     def add_advanced_features(self):

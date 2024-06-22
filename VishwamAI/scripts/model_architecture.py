@@ -68,7 +68,8 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(rng, inputs)
+        transformer_params = self.transformer.init(rng, inputs)
+        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers

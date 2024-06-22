@@ -71,14 +71,14 @@ class VishwamAIModel(hk.Module):
         embedded_inputs = self.transformer.apply(self.transformer.init(rng, inputs), rng, inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
-        # Convert embedded inputs to float32 for subsequent layers
-        embedded_inputs = tf.cast(embedded_inputs, tf.float32)
-        tf.print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
-
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
         expert_output = expert.apply(expert.init(rng, embedded_inputs), rng, embedded_inputs)  # Use apply method
+
+        # Convert expert output to float32 for subsequent layers
+        expert_output = tf.cast(expert_output, tf.float32)
+        tf.print(f"Data type of expert output after conversion to float32: {expert_output.dtype}")
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)

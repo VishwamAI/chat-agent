@@ -96,7 +96,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def forward_fn(params, rng, batch):
+    def forward_fn(batch, params, rng):
         model = VishwamAIModel()
         logits = model(batch, params, rng)
         return logits

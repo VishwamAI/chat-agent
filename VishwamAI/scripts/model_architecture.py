@@ -93,7 +93,7 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        output = self.dense(tf.cast(attention_output, np.float32))  # Ensure the data type is float32
+        output = self.dense(np.float32(attention_output))  # Ensure the data type is float32
         return output
 
     def add_advanced_features(self):

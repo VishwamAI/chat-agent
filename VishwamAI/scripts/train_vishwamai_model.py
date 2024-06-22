@@ -96,6 +96,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def create_model(batch):
         model = VishwamAIModel()
+        if not tf.is_tensor(batch):
+            batch = tf.convert_to_tensor(batch, dtype=tf.int32)
         return model(batch)
 
     transformed_forward = hk.transform(create_model)

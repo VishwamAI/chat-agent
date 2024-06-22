@@ -69,7 +69,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         batch_jax = jax.device_put(batch)
         labels_jax = jax.device_put(labels)
 
-        logits = transformed_forward.apply(params, batch_jax)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, batch_jax)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -92,13 +92,14 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng):
         model = VishwamAIModel()
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
     rng = jax.random.PRNGKey(42)
+    rng = jax.random.split(rng, num=1)[0]  # Ensure the RNG key has the correct shape and dtype
 
     # Initialize label encoder
     keys = tf.constant(["complaint", "inquiry", "praise"])

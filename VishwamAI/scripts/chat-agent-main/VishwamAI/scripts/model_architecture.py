@@ -5,12 +5,12 @@ import tensorflow as tf
 import tensorflow_text as tf_text
 import random
 import keras_nlp
-import config
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
+        import config
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
@@ -68,8 +68,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        transformer_params = self.transformer.init(rng, inputs)
-        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        embedded_inputs = self.transformer(inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
@@ -80,7 +79,7 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert.apply(rng, expert_inputs)  # Use apply method
+        expert_output = expert(expert_inputs)  # Use apply method
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)
@@ -130,14 +129,6 @@ class VishwamAIModel(hk.Module):
         answer = self.answer_question(question)
         print(f"Question: {question}")
         print(f"Answer: {answer}")
-
-    def memory_network(self, inputs):
-        # Placeholder for memory network implementation
-        return None
-
-    def memory_augmentation(self, inputs):
-        # Placeholder for memory augmentation implementation
-        return None
 
 # Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning
 def unique_features():

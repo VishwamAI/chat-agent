@@ -1,0 +1,4284 @@
+first trust dow jones internet	complaint
+first trust dj internet idx	inquiry
+schwab intl large company index etf	praise
+schwab strategic tr fundamental intl large co index etf	complaint
+vanguard small cap index adm	inquiry
+vanguard small-cap index fund inst	praise
+duke energy corp new com new isin #us4 sedol #b7jzsk0	complaint
+duke energy corp new com new isin #us26441c2044 sedol #b7jzs	inquiry
+visa inc class a	praise
+visa inc.	complaint
+ford motor co new div: 0.600	inquiry
+ford motor co	praise
+united states steel corp	complaint
+united sts stl cp (new)	inquiry
+vanguard total international bond index etf	praise
+vanguard total intl bond index etf	complaint
+schwab strategic tr us sml c	inquiry
+schwab us small cap etf	praise
+mfs value fd cl i	complaint
+mfs value fund cl i	inquiry
+oppenheimer dev markets class a	complaint
+oppenheimer developing mkts fd cl a	inquiry
+genomic health	complaint
+genomic health inc com	inquiry
+spdr barclays international etf	praise
+spdr barclays capital international trea	complaint
+kraft heinz company	inquiry
+kraft heinz co com	praise
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market idx instl pls	inquiry
+vanguard intermediate-term investment-grade fund investor shares	praise
+vanguard interm-term invmt-grade inv	complaint
+baidu inc spon adr	inquiry
+baidu inc spon adr rep a	praise
+novartis ag- reg	complaint
+novartis ag	inquiry
+seaspan corp	praise
+seaspan corporation cmn	complaint
+vanguard total bond market index admiral	inquiry
+vanguard bond index total mkt investor	praise
+mfs muni high income fd cl i	complaint
+mfs municipal high cl i	inquiry
+metlife inc com	praise
+metlife incorporated	complaint
+russell gbl real estate securities cl s	inquiry
+vy clarion real estate port srv	praise
+vanguard short-term investment-grade fund admiral shares	complaint
+vanguard short-term invest-grade	complaint
+spdr s&p 500 etf trust	complaint
+spdr s&p 500 etf iv	complaint
+pimco total return a	complaint
+fund: pimco total return admin	complaint
+intel corp	complaint
+intel corporation	complaint
+vanguard 500 index fund - admiral class	complaint
+vanguard 500 idx adm	complaint
+paypal holdings inc	complaint
+paypal holdings inco	complaint
+pim total rt inst	complaint
+pimco total return fund - class r	complaint
+vanguard small cap	complaint
+vanguard small cap etf (vb)	complaint
+nike incorporated class b	complaint
+nike inc-b	complaint
+vang inst index plus	complaint
+vanguard institutional index fund institutional plus shares	complaint
+ishares tr nat amt free bd	complaint
+ishares s&p national amt-free muni	complaint
+pimco total ret fd instl	complaint
+pimco total return	complaint
+diageo plc fadr 1 adr reps 4 ord shs	complaint
+diageo plc sponsored adr	complaint
+zoes kitchen inc com	complaint
+zoes kitchen inc com isin #us7 sedol #bl95n36	complaint
+du pont ei de nemour	complaint
+du pont e.i. de nemours	complaint
+vanguard info tech etf div: 2.776	complaint
+vanguard information technolo etf iv	complaint
+ishares core msci ttl int stk	complaint
+ishares trust core msci total intl stk etf	complaint
+ishares msci em mkt min vol	complaint
+ishares inc msci emrg mkts min volatility etf	complaint
+ambarella inc	complaint
+ambarella inc shs	complaint
+blackrock eqty dividend fd inv cl a	complaint
+blackrock equity dividend fd a	complaint
+alibaba grp sp adr (cayman islands)	complaint
+alibaba group hldg ltd sponsored ads	complaint
+fidelity spartan 500 index advtg	complaint
+spartan 500 index fd advantage class	complaint
+vanguard midcap index - a	complaint
+vanguard mid capitalization index fund	complaint
+powershares qqq trust sr 1 etf	complaint
+powershares qqq tr div: 1.105	complaint
+vanguard short term invt grade admiral	complaint
+vang st invstgrd inv	complaint
+blackrock us mortgage port cl a	complaint
+blackrock fds incm ptf inv c	complaint
+prudential jennison natural resources z	complaint
+pru/j nat resrcs z	complaint
+united sts gasoline fd lp etf	complaint
+united states gasoline etf	complaint
+vanguard crsp us small cap ind ex	complaint
+vanguard index fds vanguard small cap vipers formerly vangua	complaint
+amcap cl a	complaint
+amcap fund cl a	complaint
+templeton global macro group advisor cl	complaint
+tmpl global bond adv	complaint
+kinder morgan inc del com	complaint
+kinder morgan inc. del	complaint
+vang intm treas adm	complaint
+vanguard intermediate-term treasury inv	complaint
+templeton global bond fund cl a	complaint
+templeton global bond r	complaint
+vanguard total international stock index fund institutional shares	complaint
+vanguard total international stock index fund institutional	complaint
+vereit inc com	complaint
+vereit inc reit	complaint
+metropolitan west total return bond m	complaint
+metropolitan west fds total ret cl i	complaint
+chicago bridge &iron fadr 1 adr reps ord shs	complaint
+chicago bridge & iron company n v	complaint
+vanguard total bond market index-admiral	complaint
+vanguard total bond market index fund investor shares	complaint
+spdr barclays capital international trea	complaint
+spdr barclays capital international treasury bond etf	complaint
+chemours co com	complaint
+chemours co	complaint
+intercontinental exchange inc cmn	complaint
+intercontinental exchange inc com usd0.01	complaint
+fid large cap stock	complaint
+fidelity large cap stock	complaint
+simon ppty grp inc	complaint
+simon ppty group inc new com	complaint
+t rowe price real estate	complaint
+real estate fund	complaint
+sturm ruger & co inc com	complaint
+sturm ruger &co inc com isin #us8641591081 sedol #2856289	complaint
+ishares msci eafe small-cap etf	complaint
+ishares tr msci small cap	complaint
+bp plc f adr 1 adr reps 6 ord shs	complaint
+bpplc adr (sponsored)	complaint
+vanguard short-term investment-grade fund admiral shares	complaint
+vanguard shrt trm invmnt grd-inv	complaint
+ishares national amt-free muni bnd etf	complaint
+ishares tr natl mun bd etf fd	complaint
+t rowe price new horizons	complaint
+t rowe price new horizons fund	complaint
+spdr barclays short term high etf	complaint
+spdr series trust short term h igh yield bond etf	complaint
+linkedin corp cl a	complaint
+linkedin corp com usd0.0001	complaint
+spdr s&p 600 small cap growth div: 2.329	complaint
+spdr ser tr s&p 600 small cap growth etf	complaint
+oppenheimer international bond fund a	complaint
+oppenheimer international bond fund	complaint
+vanguard growth etf iv	complaint
+vanguard index fds vanguard growth etf	complaint
+nike inc class b	complaint
+nike incorporated class b	complaint
+ishares inc core msci emerging mkts etf	complaint
+harding loevner emerging markets adv cl	complaint
+aqr managed futures strategy r6	complaint
+aqr mgd futures strat fd cl i	complaint
+ishares national muni bond etf	complaint
+ishares nationl amt freemuni etf	complaint
+merck & co inc new	complaint
+merck and co inc shs	complaint
+templeton global bond fund advisor class shares	complaint
+tmpl global bond r6	complaint
+ambarella inc shs	complaint
+ambarella inc	complaint
+atwood oceanics inc.	complaint
+atwood oceanics inc com isin #us4 sedol #2062440	complaint
+energy transfer partners, l.p. cmn	complaint
+cheniere energy partners lp com	complaint
+syngenta ag f adr 1 adr reps 0.2 ord shs	complaint
+syngenta ag adr	complaint
+teva pharmactcl inds adr	complaint
+teva pharmaceuticals ind ltd israel adr	complaint
+smucker j m company sjm	complaint
+j m smucker co	complaint
+oppenheimer developing markets y	complaint
+oppenheimer dev markets fd class y	complaint
+chevron corp.	complaint
+chevron corp new	complaint
+unitedhealth group incorporated	complaint
+unitedhealth group inc com	complaint
+vanguard 500 index fund admira l	complaint
+vang 500 index adm	complaint
+ishares s&p u.s. pfd stock index	complaint
+ishares tr u.s. pfd stk etf	complaint
+dfa u s targeted value cl i	complaint
+dfa us targeted value port instl	complaint
+ampco pittsburgh corp	complaint
+ampco-pittsburgh corp com	complaint
+ishares nationl amt freemuni etf	complaint
+ishares national amt-free muni bnd etf	complaint
+coca-cola co	complaint
+coca-cola co/the	complaint
+schlumberger ltd.	complaint
+schlumberger ltd	complaint
+pimco total return fund cl p	complaint
+pimco total return r	complaint
+pimco total return cl a	complaint
+pimco tot return adm	complaint
+pimco income fund cl p	complaint
+pimco incm inst cl	complaint
+vanguard emerging market etf	complaint
+vanguard intl equity index f ftse emr mkt etf	complaint
+ford motor com	complaint
+ford motor co	complaint
+visa inc cl a div: 0.560	complaint
+visa inc.	complaint
+chubb limited (switzerland)	complaint
+chubb limited com	complaint
+ishares exponential technologies etf	complaint
+ishares exponential technologies	complaint
+spdr s&p dividend etf	complaint
+spdr series trust s&p divid	complaint
+vanguard intl equity index f ftse emr mkt etf	complaint
+vanguard ftse emerging mark etf iv	complaint
+ishares core aggressive allocati etf	complaint
+ishares core aggressive allocation etf	complaint
+ford mtr co del com par $0.01	complaint
+ford motor co	complaint
+templeton global bond class a	complaint
+templeton global bond fund cl a	complaint
+linkedin corp class a common stock	complaint
+linkedin corp-a	complaint
+amazon com inc	complaint
+amazon	complaint
+breitburn energy partners lp com	complaint
+atlas resource partners lp	complaint
+vanguard ext market index inst	complaint
+vanguard extended market index fund admiral shares	complaint
+vanguard sml-cap ind-adm	complaint
+vang sm cap idx adm	complaint
+vang tot bd mkt adm	complaint
+vanguard total bond market index fund admiral shares	complaint
+nike inc	complaint
+nike	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+vanguard total bond market index-admiral	complaint
+vanguard total bond market idx instl pls	complaint
+mainstay large cap growth fund i	complaint
+mainstay large cap growth fund	complaint
+wal-mart stores	complaint
+wal mart stores inc	complaint
+vanguard short term inflation protected	complaint
+vanguard short-term inflation-protected securities etf	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market index fund investor shares	complaint
+vanguard 500 index adm	complaint
+vanguard 500 index fund - admiral class	complaint
+ishares core u.s. aggregate	complaint
+ishares core us aggregate bond etf	complaint
+t. rowe price growth stock fd	complaint
+t rowe price growth stock fund retail class	complaint
+vanguard small-cap index fund admiral shares	complaint
+vanguard small cap index fund - admiral	complaint
+vanguard total intl stk indx fd inv	complaint
+vanguard total intl stock index inv	complaint
+vanguard mid-cap index fund admiral shares	complaint
+van mid cap index adm m4940	complaint
+tesla mtrs inc com	complaint
+tesla motors inc	complaint
+at&t inc	complaint
+at&t inc.	complaint
+vg reit idx etf	complaint
+vanguard reit index etf (vnq)	complaint
+bp plc ads div: 2.380	complaint
+bp plc spon adr	complaint
+trp retirement 2050	complaint
+retirement 2050 fund	complaint
+chubb limited com	complaint
+chubb limited (switzerland)	complaint
+delta air lines inc	complaint
+delta air lines inc del com	complaint
+anheuser busch inbev adr	complaint
+anheuser busch inbev sa/nv sponsored adr isin #us03524a1088	complaint
+brookdale sr living inc com	complaint
+brookdale sr living inc	complaint
+facebook inc cl a	complaint
+facebook inc com	complaint
+dfa us large cap value prtf instl	complaint
+dfa us large cap value	complaint
+zillow group inc shs cl c	complaint
+zillow inc com usd0.0001	complaint
+ishares tr russell 2000	complaint
+ishares russell 2000 etf	complaint
+jh dscpl val mdcp r6	complaint
+jh disciplnd val md cp r6	complaint
+nextera energy inc com div: 3.080	complaint
+nextera energy inc com	complaint
+american beacon small cap val	complaint
+american beacon small cap value inv	complaint
+at & t inc	complaint
+at&t inc.	complaint
+vanguard short term investment grade fund admiral	complaint
+vanguard shrt trm invmnt grd-inv	complaint
+vanguard total bond market index fund institutional plus	complaint
+vanguard total bond market index fund investor shares	complaint
+google inc. cmn class c	complaint
+alphabet inc. class c	complaint
+ishares russell 1000 index fund	complaint
+russell 1000 index (ishares)	complaint
+pattern energy group inc	complaint
+pattern energy inc cls a div: 1.524	complaint
+berkshire hathaway inc del cl b new	complaint
+berkshire hathaway inc. cl b	complaint
+vanguard s&p 500 etf (voo)	complaint
+vanguard index fds s&p 500 etf div: 3.931	complaint
+pimco real return insitutional	complaint
+pimco real return fund cl d	complaint
+wp carey inc com	complaint
+w p carey inc	complaint
+comcast corporation cmn class a voting	complaint
+comcast corporation class a	complaint
+marathon oil corp.	complaint
+marathon oil corp com	complaint
+proshares short vix short term etf	complaint
+proshares tr ii proshares short vix short-term futures etf	complaint
+eog resources inc com	complaint
+eog resources inc	complaint
+amer fds smallcap wld f2	complaint
+nuveen nwq small-cap value fund i	complaint
+ultra petroleum corp f	complaint
+ultra petroleum corp com	complaint
+wisdomtree tr japan hedged equity fd	complaint
+wisdomtree japan hedged equity fund	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+vanguard bond index total mkt investor	complaint
+metwest tot rtn bd m	complaint
+metropolitan west total return class i	complaint
+boston beer company com cl a	complaint
+boston beer co inc class a	complaint
+dfa emerging markets value	complaint
+dfa emerging markets value i	complaint
+guggenheim mid cap val fd instl	complaint
+guggenheim mid cap value fund cl i	complaint
+dollar tree inc com	complaint
+dollar tree inc com isin #us0 sedol #2272476	complaint
+fidelity focused stock fund	complaint
+fidelity small cap growth fund	complaint
+fidelity balanced	complaint
+fid balanced k	complaint
+market vectors tr russia etf	complaint
+market vectors russia etf	complaint
+chemours company	complaint
+chemours co	complaint
+new perspective fund	complaint
+af new perspective a	complaint
+fidelity spartan extnd mkt idx advtg	complaint
+spartan extended mkt index investor cl	complaint
+intercontinentalexchange group div: 3.400	complaint
+intercontinental exchange inc com	complaint
+vanguard long-term bond index fund	complaint
+vanguard long term bond fund	complaint
+darling ingredients inc	complaint
+darling ingredients inc com	complaint
+vanguard institutional index fund institutional shares	complaint
+vanguard institutional index i	complaint
+facebook inc cl-a	complaint
+facebook, inc. cmn class a	complaint
+valeant pharmaceuticals intl com	complaint
+valeant pharmaceuticals intl i com isin #ca1 sedol #b3xsx46	complaint
+eog resources inc com	complaint
+eog res inc	complaint
+lazard emerging mkts eq open	complaint
+lazard emerging markets equity	complaint
+anadarko pete corp	complaint
+anadarko pete corp com	complaint
+royal dutch shell adr ea rep 2 cl a eur0.07	complaint
+royal dutch shell plc sponsored adr repstg a shs	complaint
+energy transfer partners lp ut ltd	complaint
+cheniere energy partners lp com	complaint
+vanguard emerging market etf	complaint
+vanguard msci emerging markets etf	complaint
+dodge and cox stock fund	complaint
+dodge & cox stk fd	complaint
+international business machs com	complaint
+international business machines	complaint
+vanguard developed markets index fund investor shares	complaint
+vanguard developed mrkts index invstr	complaint
+schlumberger limited com usd0.01	complaint
+schlumberger ltd div: 2.000	complaint
+vanguard extended market index institutional class	complaint
+vanguard ext. market idx adm	complaint
+vanguard scottsdale fds intermediate term corporate bond ind	complaint
+vanguard intrmdt trm etf	complaint
+vanguard short term tax exempt fd investor shr	complaint
+vanguard short term tax exempt investor	complaint
+vanguard short-term bondetf	complaint
+vanguard bd index fd inc short term bd etf	complaint
+retail opportunity invts corp com isin #us9 sedol #b28yd08	complaint
+retail opportunity i reit	complaint
+vanguard mid-cap index fund	complaint
+vanguard mid-cap vipers	complaint
+ja solar holdings co. ltd. ads	complaint
+ja solar hldgs ltd fadr 1 adr reps 5 ord shs	complaint
+salesforce com inc com	complaint
+salesforce.com inc	complaint
+total s a fadr 1 adr reps 1 ord shs	complaint
+total s a spon adr	complaint
+schwab us large cap growth etf	complaint
+schwab strategic tr us large-cap growth etf isin #us80852430	complaint
+t. rowe price retirement 2050	complaint
+t. rowe price 2050 fund	complaint
+ishares iboxx ig corp bond	complaint
+ishares iboxx investment grade corporate bond etf	complaint
+american funds inc fund of amer r6	complaint
+american funds income fund of america r6	complaint
+chipotle mexican grill inc com isin #us9 sedol #b0x7dz3	complaint
+chipotle mexican grill inc com	complaint
+wells fargo special mid cap value a	complaint
+wells fargo special mid cap value cl a	complaint
+xcel energy inc div: 1.360	complaint
+ishares core msci emerging div: 0.995	complaint
+alphabet inc	complaint
+alphabet inc cl c	complaint
+azure midstream partners lp unit ltd partner int	complaint
+azure midstream partners lp com	complaint
+citrix systems incorporated	complaint
+citrix systems inc com	complaint
+vanguard ttl bond mkt idx adm	complaint
+vang tot bd mk is pl	complaint
+amphenol corp cl a	complaint
+amphenol corp cl a new	complaint
+arcelormittal sa, luxembourg	complaint
+arcelormittal sa luxembourg ny registry sh isin #us4 sedol #b295f26	complaint
+honeywell intl inc	complaint
+honeywell international inc com	complaint
+vanguard interm-term investment-grde adm	complaint
+vanguard interm-term invmt-grade inv	complaint
+ishares msci eafe small-cap	complaint
+ishares msci eafe small cap etf	complaint
+goldman sachs small cap value instl	complaint
+gs sm cap value inst	complaint
+vanguard small cap etf	complaint
+vanguard crsp us small cap ind ex	complaint
+pnc financial services	complaint
+pnc financial services group inc	complaint
+powershares pfd port	complaint
+powershares global etf preferred portfolio	complaint
+growth fund of america class a - american funds m/f	complaint
+american growth fund of america class a	complaint
+vanguard total intl bd idx admiral	complaint
+vanguard total international bond index fund admiral shares	complaint
+vanguard short term tax exempt investor	complaint
+vanguard short term tax exempt fd investor shr	complaint
+monsanto co -	complaint
+monsanto co	complaint
+vanguard mid cap etf	complaint
+vanguard mid-cap vipers	complaint
+pimco total return fd cl c	complaint
+total return fund (pimco)	complaint
+vanguard shrt trm invmnt grd-inv	complaint
+vang st invstgrd inv	complaint
+artisan international inv	complaint
+artisan internatl investor class	complaint
+vnguard total bond market index adm	complaint
+vanguard ttl bnd mrk indx inst	complaint
+pimco incm cl d	complaint
+pimco income a	complaint
+dfa intl small cap value	complaint
+dfa intl small cap value cl i	complaint
+vanguard small-cap index fund admiral shares	complaint
+vanguard small cap index fund	complaint
+pim total rt inst	complaint
+pimco total return a	complaint
+vanguard natural resources llc	complaint
+vanguard natural resources llc com	complaint
+ingersoll rand plc	complaint
+ingersoll-rand plc shs div: 1.280	complaint
+pimco total return cl a	complaint
+total return fund (pimco)	complaint
+abbott laboratories div: 1.040	complaint
+abbott labs com	complaint
+goldman sachs mangd futures strategy a	complaint
+aqr managed futures i	complaint
+southwest gas corp	complaint
+southwest gas corp div: 1.800	complaint
+exone co/the	complaint
+the exone company	complaint
+pim total rt inst	complaint
+pimco total return	complaint
+general motors co common shares	complaint
+general motors company com	complaint
+zillow group inc cl c	complaint
+zillow group inc - c	complaint
+deut real estate r6	complaint
+deutsche real estate sec a	complaint
+af new perspective a	complaint
+american new perspective fd inc cl a	complaint
+materials sector sp etf	complaint
+materials select sector spdr fund	complaint
+dfa us large cap value i	complaint
+dfa u.s. large cap value portfolio institutional class	complaint
+vanguard total intl stock index fund etf	complaint
+vanguard total international stock etf	complaint
+amgen incorporated	complaint
+amgen inc com	complaint
+pinnacle west capital corp	complaint
+pinnacle west cap corp	complaint
+at&t inc com	complaint
+at & t inc	complaint
+ishares msci eafe value etf	complaint
+ishares tr eafe value etf	complaint
+vang ext mkt idx ins	complaint
+vanguard ext. market idx adm	complaint
+invesco growth & income fund cl y	complaint
+invesco growth and income y	complaint
+aqr managed futures strategy r6	complaint
+aqr managed futures strategy fund class i	complaint
+johnson & johnson com	complaint
+johnson & johnson div: 3.000	complaint
+vanguard ftse europe etf iv	complaint
+vanguard ftse europe etf div: 1.622	complaint
+coca cola co com	complaint
+coca cola company	complaint
+national grid new adr each repr 5 ord gbp0.11395	complaint
+national grid plc spon adr new	complaint
+blackrock global long short equity fd instl cl	complaint
+angel oak multi strategy incm fd instl	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+first eagle global class a	complaint
+first eagle global fund class a (10%)	complaint
+irobot corp	complaint
+irobot corp com	complaint
+vanguard inflation-protected secs adm	complaint
+vanguard inflation-protected securities fund admiral shares	complaint
+ishares 20+ year treasury bo	complaint
+ishares 20+ yr treasury bnd et f	complaint
+spdr series trust short term h igh yield bond etf	complaint
+ishares trust msci india index fd	complaint
+oppenheimer intl bond fd cl y	complaint
+oppenheimer international bond fund a	complaint
+pimco fds investment grade cor p bd d	complaint
+pimco investment grade corporate bond fund - class a	complaint
+spdr nuveen barclays short term etf	complaint
+spdr nuveen barclays short term mun	complaint
+oppenheimer developing mkts fd cl a	complaint
+oppenheimer dev markets class a	complaint
+vanguard total bond market index-admiral	complaint
+vanguard bond index total mkt investor	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+dynamic matls corp com	complaint
+dynamic materials corp	complaint
+fid eq div income k	complaint
+fidelity equity dividend income fund	complaint
+vanguard small cap index adm	complaint
+vnguard index trust small cap idx instl	complaint
+american funds europacific growth-r5	complaint
+af europac growth r5	complaint
+vang tot bd mkt adm	complaint
+vang tot bd mkt inst	complaint
+john hancock strategic income opp fund cl i	complaint
+strategic advisers core income fund	complaint
+harbor cap appreciation fund inv cl	complaint
+harbor capital appreciation inv cl	complaint
+solarcity corp	complaint
+solarcity corp common stock	complaint
+breitburn energy partners lp com	complaint
+breitburn energy partners lp c	complaint
+regeneron pharm	complaint
+regeneron pharmaceuticals inc.	complaint
+chevron corp	complaint
+chevron corp com	complaint
+merck & co inc	complaint
+merck & company inc new	complaint
+netflix inc com	complaint
+netflix inc	complaint
+spartan us bond indx fidelity adv class	complaint
+spartan u.s. bond index fd investor cl	complaint
+republic services	complaint
+republic services inc.	complaint
+schwab fundamental glbl real estate index fund	complaint
+fidelity sai u.s. quality index fund	complaint
+energy transfer equity l p com unit	complaint
+energy trnfr equity lp	complaint
+ishares core msci emerging div: 0.995	complaint
+ishares inc core msci emerging mkts etf	complaint
+exxon mobil corp	complaint
+exxon mobil corp div: 2.920	complaint
+northrop grumman corp holding co	complaint
+northrop grumman cp(hldg co) div: 3.200	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index fund investor shares	complaint
+alaska air group incorporated div: 1.100	complaint
+alaska air group inc com	complaint
+merck and co inc	complaint
+merck and co inc shs	complaint
+vanguard reit etf index	complaint
+vanguard reit index etf	complaint
+ishares tr core s&p small-cap etf	complaint
+ishares core s&p small cap etf	complaint
+vang target ret 2045	complaint
+vanguard target retirement 2045 inv	complaint
+berkshire hathaway inc del cl b	complaint
+berkshire hathaway class b	complaint
+southern co div: 2.170	complaint
+southern co	complaint
+vanguard total bond market index	complaint
+vanguard total bond market index fund investor shares	complaint
+hodges small cap retail	complaint
+fidelity small cap stock	complaint
+ishares msci switzerland capped	complaint
+ishares msci switzerland capped etf	complaint
+sptn ext mkt idx adv	complaint
+fidelity spartan extended mkt index inv	complaint
+select sector spdr trust energy select index	complaint
+energy select sector spdr	complaint
+pimco total return fd cl c	complaint
+pimco tot return adm	complaint
+chevron corp	complaint
+chevron corp.	complaint
+china mobile limited adr sponsored	complaint
+china mobile ltd sp adr	complaint
+ishares core msci emerging markets etf	complaint
+harding loevner emerging markets adv cl	complaint
+mvc capital inc com	complaint
+mvc capital inc	complaint
+diageo plc new sponsored adr	complaint
+diageo plc new gb spon adr	complaint
+spherix inc com	complaint
+cliffs nat res inc com	complaint
+templeton global bond fund advisor class shares	complaint
+templeton global bd fd adv	complaint
+pimco total ret fd instl	complaint
+fund: pimco total return admin	complaint
+metr w tot rtn bond cl m	complaint
+metropolitan west total return class i	complaint
+vanguard value etf (vtv)	complaint
+vanguard index fds value etf	complaint
+netflix com inc com	complaint
+netflix inc	complaint
+energy transfer partners l p unit ltd partnership int	complaint
+energy transfer partners lp com	complaint
+lzrd emrg mkts eq is	complaint
+lazard emerging mkts fd instl	complaint
+oppenheimer developing markets y	complaint
+oppenheimer developing markets fnd y	complaint
+ishares msci usa min vol etf	complaint
+proshares short vix short term etf	complaint
+stag industrial inc	complaint
+stag industrials, inc. com	complaint
+spdr gold tr gold shs etf	complaint
+spdr gold trust gold shares	complaint
+intl business mach	complaint
+international business machs com	complaint
+metropolitan west totret bdm	complaint
+metropolitan west total return bond i	complaint
+honeywell intl inc del	complaint
+honeywell intl inc	complaint
+gopro inc-class a	complaint
+gopro inc class a	complaint
+huntington bancshares inc com	complaint
+huntington bancshares inc	complaint
+grupo televisa sa adr	complaint
+grupo televisa sa de cv gdr reptsg ordinary part ctf	complaint
+ishares inc msci emrg mkts min volatility etf	complaint
+ishares msci emerging markets min volatility etf	complaint
+baidu inc spon adr	complaint
+baidu inc fadr 1 adr reps 0.1 ord shs	complaint
+novartis ag	complaint
+novartis ag- reg	complaint
+metwest tot rtn bd m	complaint
+metropolitan west total return m	complaint
+ishares msci southkorea cp etf div: 1.202	complaint
+ishares msci south korea cap	complaint
+price t rowe group inc com isin #us74144t1088 sedol #2702337	complaint
+c h robinson worldwide inc com new isin #us12541w2098 sedol	complaint
+delta air lines inc dela new	complaint
+delta air lines inc	complaint
+yum brands inc	complaint
+yum brands, inc. cmn	complaint
+vanguard short term bond index admiral	complaint
+vang st bd idx is pl	complaint
+pimco total return fund cl p	complaint
+total return fund (pimco)	complaint
+vang midcap idx inst	complaint
+vanguard mid-cap index fund institutional	complaint
+vanguard total bond market index admiral	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+jpmorgan chase & co div: 1.760	complaint
+jp morgan chase & co com	complaint
+halyard health inc	complaint
+halyard health inc com	complaint
+american intl group inc	complaint
+american intl group inc com new	complaint
+w p carey inc	complaint
+wp carey inc com	complaint
+fedex corporation com	complaint
+fedex corp	complaint
+dominion resources inc/va	complaint
+dominion res inc va	complaint
+american funds euro pacific growth r6	complaint
+american europacific growth r6 m5585	complaint
+sierra wireless inc	complaint
+sierra wireless inc com isin #ca4 sedol #2418968	complaint
+newell rubbermaid inc cmn	complaint
+newell rubbermaid inc	complaint
+new york cmnty bancorp inc	complaint
+new york community bancorp com	complaint
+kohls corp	complaint
+kohls corp com	complaint
+artisan intl value fund inv	complaint
+artisan international value fund # 1466 closed to new	complaint
+vanguard growth index inv	complaint
+vanguard growth index fd admiral share	complaint
+amg yacktman fund service class	complaint
+amg yacktman	complaint
+lendingtree inc new	complaint
+lendingtree inc	complaint
+american funds american hi inc tr r3	complaint
+american funds high income trust a	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+micron technology	complaint
+micron technology inc com	complaint
+amg managers cadence emerging co svc	complaint
+ishares msci emerging mkts	complaint
+energy select sector spdr etf iv	complaint
+energy select sector spdr	complaint
+schwab funda emg mkts large etf iv	complaint
+schwab strategic tr schwab fundamental emerging mkts large c	complaint
+vang growth idx adm	complaint
+vanguard growth index fd admiral share	complaint
+netflix com inc com	complaint
+netflix com inc	complaint
+wisdomtree invts inc com	complaint
+wisdomtree investmnt	complaint
+vanguard extd mkt etf	complaint
+vanguard extended marketetf iv	complaint
+pimco total return instl	complaint
+pimco total return fd cl c	complaint
+vanguard total bond index adm	complaint
+vang tot bd mkt inst	complaint
+schwab strategic tr intl equity etf	complaint
+schwab strategic tr intl equity etf isin #us8085248057 sedol	complaint
+vanguard mid-cap index inv	complaint
+vanguard mid cap index investor cl	complaint
+pimco total return fund cl p	complaint
+pimco tot return adm	complaint
+spdr ser tr nuveen barclays short isin #us0 sedol #b28lxf4	complaint
+spdr nuveen barclays short term etf	complaint
+new horizons fund	complaint
+t. rowe price new horizons	complaint
+zillow group inc cl a isin #us8 sedol #bvyjbr3	complaint
+rayonier inc com isin #us7549071030 sedol #2473138	complaint
+ishares s&p 500 value etf iv	complaint
+ishares s&p 500 value etf	complaint
+goldman sachs mgd futures strat a	complaint
+aqr fds aqmixmanaged futures strategy fd i	complaint
+the oakmark international fund - class i	complaint
+harris oakmark international fund cl i	complaint
+kinder morgan inc del	complaint
+kinder morgan inc. del	complaint
+vanguard long-term tax-exempt fund admiral shares	complaint
+vanguard convertible securities fund	complaint
+vanguard high-yield corporate fund investor shares	complaint
+vanguard high yield corp bd-inv	complaint
+zimmer biomet hldgs inc com	complaint
+zimmer biomet hldgs	complaint
+rogers communications inc. (b)	complaint
+rogers comm inc cl b (bc) div: 1.360	complaint
+sector spdr tr shs ben int consumer staples	complaint
+select sector spdr trust consumer staples index	complaint
+wisdomtree japan hedged equity etf	complaint
+wisdomtree japan hedged equity fund	complaint
+royce value trust inc div: 1.200	complaint
+keycorp new div: 0.300	complaint
+verisign inc	complaint
+verisign inc com	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market index fund institutional plus	complaint
+breitburn energy partners l p com	complaint
+atlas resource partners lp	complaint
+borg warner inc cm	complaint
+borg warner inc	complaint
+vanguard value index fund admiral shares	complaint
+vanguard value index inv	complaint
+ishares tr core s&p mcp etf	complaint
+ishares core s&p mid capetf	complaint
+vanguard total bond market index adm	complaint
+vang tot bd mkt adm	complaint
+energy select sector spdr etf iv	complaint
+sector energy select sector spdr etf	complaint
+vanguard emerging markets stock index fund institutional shares	complaint
+janus triton fund class t shares	complaint
+vanguard 500 index admiral	complaint
+vanguard 500 index fund admiral shares	complaint
+vanguard short-term bond index fund investor shares	complaint
+vanguard short term bond index admiral	complaint
+guggenheimbulletshares ig2017 div: 0.316	complaint
+guggenheim bulletshares 2017 corporate b	complaint
+red hat inc com isin #us7565771026	complaint
+red hat inc com isin #us6 sedol #2447218	complaint
+vanguard mid cap etf	complaint
+vanguard index fds vanguard mid-cap etf	complaint
+vanguard interm-term investment-grde adm	complaint
+vanguard intermediate-term investment-grade fund investor shares	complaint
+energy sector spdr etf	complaint
+energy select sector spdr etf iv	complaint
+vanguard 500 index fund investor cl	complaint
+vanguard 500 index fund investor class	complaint
+pimco income fund cl d	complaint
+pimco income fd i	complaint
+goldman sachs mgd futures strat a	complaint
+aqr managed futures i	complaint
+vanguard intermediate term cor etf	complaint
+vanguard intermediate term cor p bond et	complaint
+ishares tr iboxx hi yd etf	complaint
+ishares iboxx high yield corporate bond etf	complaint
+walt disney co	complaint
+walt disney co hldg co div: 1.420	complaint
+af europac growth r5	complaint
+american funds europacfic r5	complaint
+vanguard index fds value etf	complaint
+vanguard value etf	complaint
+schwab intl equity etf	complaint
+schwab international equity etf	complaint
+vanguard reit index fund investor shares	complaint
+vanguard reit index fund	complaint
+alibaba group hldg adr fsponsored adr 1 adr reps 1 ord	complaint
+alibaba group hldg ltd	complaint
+vanguard 500 index fund admira l	complaint
+vanguard 500 index adm	complaint
+exxon mobil dda	complaint
+exxon mobil corp.	complaint
+one liberty pptys inc com	complaint
+guess inc com	complaint
+alphabet inc	complaint
+alphabet inc cl a	complaint
+pimco total return r	complaint
+pimco total return fund adm	complaint
+vang selected value	complaint
+vanguard whitehall funds inc selected value portfolio	complaint
+interactive brokers group inc. com	complaint
+interactive brokers group inc com isin #us2 sedol #b1wt4x2	complaint
+market vectors etf tr biotech	complaint
+market vectors biotech etf	complaint
+vanguard sml-cap ind-adm	complaint
+vanguard small-cap index adm	complaint
+goldman sachs mgd futures strat a	complaint
+aqr aqr mngd futures strategy i	complaint
+nike inc cl b	complaint
+nike inc-b	complaint
+schwab strategic tr schwab fundamental emerging mkts large c	complaint
+schwab funda emg mkts large com etf	complaint
+vang tot bd mkt adm	complaint
+vanguard total bond market idx-adm	complaint
+lennar corp cl a	complaint
+lennar corporation	complaint
+dfa emerging markets core	complaint
+dfa emerging mkts core eqty port instl	complaint
+dreamworks animation skg cl a	complaint
+dreamworks animation class a	complaint
+ishares tr natl mun bd etf fd	complaint
+ishares national muni bond etf	complaint
+t.rowe price new horizons-t	complaint
+t. rowe price new horizons fund	complaint
+pimco total return fund - class r	complaint
+pimco total return	complaint
+apple inc div: 2.080	complaint
+apple inc com	complaint
+marathon petroleum corp div: 1.280	complaint
+loews corporation div: 0.250	complaint
+capital world growth & income cl a	complaint
+american capital world growth and income fd a	complaint
+american axle&mfg hldgs	complaint
+american axle & mfg holdings c om	complaint
+vanguard fixed income secs inter term invt grade fd admiral cl	complaint
+vanguard interm-term invmt-grade inv	complaint
+t. rowe price new income	complaint
+t rowe price new income fund inc	complaint
+magna international inc div: 0.880	complaint
+magna intl inc com	complaint
+wells fargo company	complaint
+wells fargo & co com	complaint
+edison intl	complaint
+edison international com	complaint
+teva pharmaceuticals adr	complaint
+teva pharmactcl inds adr	complaint
+amazon com	complaint
+amazon.com inc com	complaint
+goldman sachs strategic income instl	complaint
+goldman sachs strategic income fund cl i	complaint
+vanguard smallcap index fund	complaint
+vnguard index trust small cap idx instl	complaint
+nextera energy inc com div: 3.480	complaint
+nextera energy inc	complaint
+blackrock high yld bd port cl k	complaint
+blackrock hi yield bd ptf inst	complaint
+vanguard short-term bond index fund	complaint
+vanguard bd index fd inc short term bd etf	complaint
+vanguard total international stock index adm	complaint
+vanguard total intl stock index admiral	complaint
+dfa international core equity	complaint
+dfa intl core eqty port instl	complaint
+pimco total return instl	complaint
+pimco total return fund cl d	complaint
+general motors co.	complaint
+general motors co common shares	complaint
+verizon communicatn	complaint
+verizon communications inc. cmn	complaint
+vanguard total bond market index adm	complaint
+vang tot bd mk is pl	complaint
+flextronics international com usd0.01	complaint
+flextronics intl ltd ord	complaint
+pimco total return fund instl cl	complaint
+pimco total return cl a	complaint
+jpmorgan core bond fund r6	complaint
+jpm core bond r6	complaint
+zynga inc	complaint
+zynga inc com	complaint
+pimco total return fund adm	complaint
+fund: pimco total return admin	complaint
+immunocellular therapeutics com	complaint
+immunocellular therapeutics com isin #us5 sedol #b17zl90	complaint
+first tr consumr stapls alphadex etf	complaint
+first trust ise consumer stapl es alphadex fd	complaint
+vanguard ftse all world ex us small cap etf	complaint
+vanguard intl equity index fds ftse all world ex usa small cap index fd etf shs	complaint
+blackrock high yield bond portfolio svc	complaint
+blkrk hi yld bd inst	complaint
+ares capital corp com	complaint
+ares capital corp	complaint
+vanguard index fds s&p 500 etf div: 3.931	complaint
+vanguard index funds s&p 500 etf	complaint
+loomis sayles bond instl cl	complaint
+loomis sayles mlti-asset inc a	complaint
+vanguard sml-cap ind-adm	complaint
+vanguard small-cap index fund inst	complaint
+american funds balanced portfolio	complaint
+american balanced portfolio cl a	complaint
+pimco total return active etf	complaint
+pimco total return etf	complaint
+dfa emerg mkts val i	complaint
+dfa emerging mkts value ptf	complaint
+vanguard limited-term tax-exempt fund admiral shares	complaint
+vanguard limited-term tax-exempt fund	complaint
+vanguard small-cap index fund	complaint
+vanguard small cap etf (vb)	complaint
+oppenheimer interntl bond fund cl i	complaint
+oppenheimer int'l bond class a	complaint
+netflix inc.	complaint
+netflix com inc com	complaint
+allianz gi nfj div value inst	complaint
+allianzgi nfj dividend value fund cl p	complaint
+guggenheim bric select dr index	complaint
+guggenheim bric etf	complaint
+paccar inc com	complaint
+paccar inc	complaint
+vanguard total bond index adm	complaint
+vanguard total bond market index inv	complaint
+baidu inc adr fsponsored adr 1 adr reps 10 cl a ord	complaint
+baidu inc sponsored adr repstg ord shares class a	complaint
+vanguard total bond market index admiral	complaint
+vanguard total bond market idx instl pls	complaint
+vanguard inflation-protected securities fund admiral shares	complaint
+vanguard inflation-protected secs adm	complaint
+visa inc com cl a	complaint
+salesforce com inc	complaint
+vanguard small cap growth etf	complaint
+vanguard index fds vanguard small cap growth vipers formerly vanguard index tr	complaint
+omega healthcare investors inc ohi	complaint
+omega hlthcare invts reit	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+vanguard mid-cap index fund inst	complaint
+vanguard mid cap index ins	complaint
+apple inc.	complaint
+apple	complaint
+vanguard extended market index fund institutional	complaint
+vanguard extended market idx adm	complaint
+activision blizzard inc	complaint
+activision blizzard	complaint
+amedica corp com	complaint
+acura pharmaceuticals inc com	complaint
+vanguard target retirement 2040 fund	complaint
+vanguard target retirement 2040 fund investor shares	complaint
+blackrock strategic income i	complaint
+blackrock strategic income opptys investor cl a	complaint
+cheniere energy inc new	complaint
+cheniere energy inc	complaint
+pimco total return fund cl d	complaint
+pimco total return a	complaint
+ishares msci emerging mkts etf	complaint
+ishares msci emerging markets etf	complaint
+starbucks corp	complaint
+starbucks corp.	complaint
+ishares national amt-free muni bnd etf	complaint
+ishares national amt-free muni bond etf	complaint
+pimco total return fund instl cl	complaint
+pimco total return r	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index i	complaint
+fiat chrysler auto (netherlands)	complaint
+fiat chrysler automobiles nv	complaint
+vanguard ftse dev etf	complaint
+vanguard ftse developed market s etf	complaint
+ishares core s&p mid cap etf	complaint
+ishares s&p midcap fund	complaint
+van small cap index admir	complaint
+vanguard small cap index, adm	complaint
+spdr series trust short term high yield bond etf	complaint
+ishares trust msci india index fd	complaint
+cohen & steers rlty	complaint
+cohen & steers realty fund	complaint
+vanguard mid cap index	complaint
+vang midcap idx adm	complaint
+vanguard small cap index fund - admiral	complaint
+vnguard index trust small cap idx instl	complaint
+magna intl inc cl a	complaint
+magna international inc div: 0.880	complaint
+us small-cap value	complaint
+vbr:vanguard small-cap value etf	complaint
+walt disney co hldg co div: 1.420	complaint
+walt disney co com	complaint
+accenture ltd ord	complaint
+accenture	complaint
+phillips 66 com	complaint
+phillips 66	complaint
+aqr managed futures strategy r6	complaint
+aqr fds aqmixmanaged futures strategy fd i	complaint
+abbott labs	complaint
+abbott laboratories div: 1.040	complaint
+pimco commodity real return strat d	complaint
+pimco commodity real return cl d	complaint
+accenture plc ireland	complaint
+accenture plc fclass a	complaint
+vanguard gnma inv	complaint
+vanguard gnma fund investor share	complaint
+vanguard short term inflation protected	complaint
+inflation-protected bonds	complaint
+metropolitan west tot ret bond	complaint
+metwest tot rtn bd i	complaint
+spdr barclays high yield bond etf	complaint
+spdr barclays capital high yield bond et	complaint
+stone energy corp	complaint
+stone energy corp com	complaint
+vanguard extended market idx i	complaint
+vanguard ext market index inst	complaint
+dfa international value portfolio	complaint
+dfa international value i	complaint
+vanguard total bond market index	complaint
+vanguard bond index total mkt investor	complaint
+vanguard dividend growth fund	complaint
+vanguard div growth fd investor shrs	complaint
+wisdomtree investmnt	complaint
+wisdomtree invts inc com	complaint
+intel corp com	complaint
+intel corp div: 1.040	complaint
+spartan extended mkt index fid adv class	complaint
+sptn ext mkt idx inv	complaint
+pimco total return fund cl d	complaint
+mainstay retirement 2050 fund (class i)	complaint
+pimco total ret fd instl	complaint
+pimco total return fund adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+vanguard bond index total mkt investor	complaint
+accenture plc ireland	complaint
+accenture	complaint
+qep resources inc com	complaint
+gopro inc com	complaint
+royal dutch shell adr ea rep 2 cl a eur0.07	complaint
+royal dutch shell plc adr class a	complaint
+clearbridge all cap value a	complaint
+columbia mid cap value	complaint
+amazon.com	complaint
+amazon.com stock fund	complaint
+hewlett packard ente	complaint
+hewlett packard enterprise co cmn	complaint
+pnc financial services	complaint
+pnc finl svcs group	complaint
+vanguard intermediate-term investment-grade fund admiral shares	complaint
+vanguard interm-term invmt-grade inv	complaint
+pimco incm cl d	complaint
+pimco income instl	complaint
+vanguard target retirement 2055 fund investor shares	complaint
+vanguard target retire 2055	complaint
+mylan nv f	complaint
+mylan n v com	complaint
+vanguard total bond market index i	complaint
+vang tot bd mk is pl	complaint
+energy trans eqty lp div: 1.140	complaint
+energy trnfr equity lp	complaint
+the oakmark equity & income fund	complaint
+oakmark equity and income fund class i	complaint
+verizon communicatns com	complaint
+verizon communications	complaint
+zoes kitchen inc com isin #us7 sedol #bl95n36	complaint
+zoes kitchen inc	complaint
+vanguard target retirement 2050 fund investor shares	complaint
+vanguard target retirement 2050 fd inv	complaint
+templeton glbl bond fd adv cl	complaint
+templeton global macro group advisor cl	complaint
+vanguard ftse emerg mkts etf	complaint
+vanguard intl equity index f ftse emr mkt etf	complaint
+baidu inc spon adr rep a	complaint
+baidu inc fadr 1 adr reps 0.1 ord shs	complaint
+vanguard small-cap etf	complaint
+vanguard crsp us small cap index	complaint
+wp carey inc com	complaint
+w p carey and co. llc.	complaint
+ishares national muni bond etf	complaint
+ishares s&p national amt-free muni	complaint
+vanguard large cap etf	complaint
+vanguard crsp us large cap index	complaint
+texas roadhouse inc	complaint
+texas roadhouse	complaint
+berkshire hathawayinc del cl b new	complaint
+berkshire hathaway inc cl b	complaint
+vnguard total bond market index adm	complaint
+vang tot bd mkt inst	complaint
+tiaa-cref lifecycle 2050 fund - premier class	complaint
+fidelity advisor freedom 2050 fund - class t	complaint
+iridium communications inc com	complaint
+iridium communications inc com isin #us7 sedol #b2qh310	complaint
+motley fool independence	complaint
+motley fool independence fund	complaint
+united parcel svc inc cl b	complaint
+united parcel service inc	complaint
+pimco income fund cl p	complaint
+pimco income instl	complaint
+electronic arts com	complaint
+electronic arts	complaint
+vanguard bond index fund short term portfolio	complaint
+vanguard short-term bond index fund admiral shares	complaint
+starbucks corp.	complaint
+starbucks	complaint
+seventy seven energy inc com	complaint
+seventy seven energy inc com usd0.01	complaint
+allergan plc shs	complaint
+allergan plc com	complaint
+vanguard intl equity index fds ftse pac etf	complaint
+vanguard ftse pacific etf	complaint
+amazon com inc	complaint
+amazon.com	complaint
+dfa us targeted value fund	complaint
+dfa us targeted value portfolio institutional class	complaint
+sunedison inc	complaint
+sunedison	complaint
+american cap inc builder a	complaint
+capital income builder - a (12)	complaint
+raytheon co com	complaint
+raytheon co com new	complaint
+chevron corporation cmn	complaint
+chevron corp	complaint
+charles schwab us reit etf	complaint
+schwab strategic tr us reit et	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+national grid plc new spon adr	complaint
+national grid plc-sp adr	complaint
+wells fargo & co new | w001549	complaint
+wells fargo & co new	complaint
+market vectors atm-free intermediate muni etf	complaint
+market vectors atm-free interm ediate muni etf	complaint
+merck & co inc. com	complaint
+merck & co. inc	complaint
+vanguard whitehall funds inc selected value portfolio	complaint
+vang selected value	complaint
+vanguard short term bond fund	complaint
+vanguard short term etf	complaint
+ishares 1-3 yr treasury bnd et f	complaint
+ishares 1-3 year treasury bond etf	complaint
+oppenheimer interntl growth cl i	complaint
+opphmr intl growth i	complaint
+vanguard gnma fund admiral shares	complaint
+vanguard gnma fund	complaint
+vanguard growth index inv	complaint
+vang growth idx adm	complaint
+viacom inc cmn class b	complaint
+viacom inc class b	complaint
+fid growth disc k	complaint
+fidelity growth discovery fund	complaint
+vanguard short-term corporate bond etf	complaint
+vanguard s/t corp bond etf	complaint
+kinder morgan inc del	complaint
+kinder morgan inc com usd0.01	complaint
+blkrk global alloc i	complaint
+blackrock global allocation i	complaint
+pimco total return instl	complaint
+pimco tot return adm	complaint
+growth fund of america cl a	complaint
+the growth fund of america	complaint
+fidelity large cap stock	complaint
+dreyfus small cap stock index	complaint
+metlife inc com stk usd0.01	complaint
+metlife inc com	complaint
+noble corp plc com usd0.01	complaint
+noble corp plc f	complaint
+ellie mae inc com	complaint
+ellie mae inc	complaint
+joy global inc com	complaint
+joy global inc	complaint
+artisan mid cap inv	complaint
+artisan mid cap investor cl	complaint
+las vegas sands inc.	complaint
+las vegas sands corp com	complaint
+vanguard crsp us small cap index	complaint
+vanguard crsp us small cap ind ex	complaint
+sunoco logistics lp unit	complaint
+sunoco logistics partners com lp	complaint
+templeton global bond cl a	complaint
+tmpl global bond a	complaint
+helmerich &payne inc com isin #us4234521015 sedol #2420101	complaint
+helmerich &payne inc com isin #us5 sedol #2420101	complaint
+ishares iboxx $ high yield corporate bon	complaint
+ishares iboxx $ h/y cor bd etf div: 4.808	complaint
+occidental petrol co	complaint
+occidental petroleum corp de div: 3.000	complaint
+deutsche x-trackers msci eafe hedged equity etf	complaint
+deutsche x-trackers msci eaf	complaint
+twenty-first century fox inc class a	complaint
+twenty-first century-cl a-wi	complaint
+darden restaurants inc. (united states)	complaint
+darden restaurants inc com	complaint
+fidelity investment grade	complaint
+fid invst gr bd	complaint
+vanguard institutional index fund institutional plus shares	complaint
+vang inst index plus	complaint
+eversource energy cmn	complaint
+eversource energy com	complaint
+fedex corp	complaint
+fedex corp delaware com	complaint
+emerson electric co.	complaint
+emerson electric co	complaint
+ld abt sh drtn inc i	complaint
+lord abbett short duration income fd cl f	complaint
+glaxosmithkline plc sponsored adr adr	complaint
+glaxosmithkline adr each cnv into 2 ord gbp0.25	complaint
+spdr nuveen barclays short term etf	complaint
+spdr nuveen barclays short ter m mun	complaint
+deutsche large cap value fund-s	complaint
+dfa u s large cap growth instl cl	complaint
+energy transfer partners, l.p. cmn	complaint
+energy transfer partners lp com	complaint
+united states oil etf	complaint
+united states oil fund lp exchange-traded fund	complaint
+amcap fund cl a	complaint
+amcap cl a	complaint
+ishares 20 pls year treasury bnd etf	complaint
+ishares 20+ yr treasury bnd et f	complaint
+sector spdr tr sh ben int-enry*beo	complaint
+sector spdr tr shs ben int energy	complaint
+vanguard index fds vanguard small cap vipers formerly vangua	complaint
+vanguard small cap etf	complaint
+vanguard extended market index institutional class	complaint
+vanguard extended market index fund admiral shares	complaint
+activision blizzard inc com	complaint
+activision blizzard inc	complaint
+sodastream international ltd usd shs	complaint
+sodastream international ltd com	complaint
+time warner inc	complaint
+time warner inc new div: 1.610	complaint
+cypress semiconductor corp com	complaint
+cypress semiconductors corp	complaint
+berkshire hathaway inc de cl b new	complaint
+berkshire hathaway inc del cl b new	complaint
+vanguard short-term investment-grade fund admiral shares	complaint
+vanguard shortterm investgrade adm	complaint
+berkshire hathaway inc del cl b	complaint
+berkshire hathaway inc del cl b new	complaint
+skechers usa inc - cl a com	complaint
+skechers usa inc class a	complaint
+facebook inc cl-a	complaint
+facebook inc cl a	complaint
+vanguard whitehall fds high dividend yield etf shs	complaint
+vanguard high divd yield etf w	complaint
+square inc com class a	complaint
+fxcm inc com shs new	complaint
+af bond fd amer r6	complaint
+american funds bond fund of america a	complaint
+arena pharmaceuticals	complaint
+arena pharmaceuticals inc com	complaint
+ishares s&p smallcap 600 index	complaint
+ishares trust core s&p small-cap etf	complaint
+oppenheimer developing market a	complaint
+oppen developing mkts a	complaint
+nuveen amt free municipal income fund	complaint
+cohen & steers realty income a	complaint
+netflix inc.	complaint
+netflix.com inc	complaint
+berkshire hathawayinc del cl b new	complaint
+berkshire hathaway cl-b new	complaint
+legacy texas financial group in	complaint
+cardinal financial corp	complaint
+vanguard high yield corp fund investor share	complaint
+vanguard high-yield corporate fund admiral shares	complaint
+southwest airlines	complaint
+southwest airlns co	complaint
+under armour inc com class a	complaint
+under armour inc-class a	complaint
+ellie mae com	complaint
+ellie mae inc com usd0.0001	complaint
+vanguard smallcap index fund	complaint
+vang sm cap idx inst	complaint
+pimco total ret fd instl	complaint
+total return fund (pimco)	complaint
+level 3 communications inc com new	complaint
+bemis inc com	complaint
+alphabet inc. cl c	complaint
+google inc. cmn class c	complaint
+jp morgan core bond sel	complaint
+emerging markets bond fund	complaint
+vanguard tot stk admiral	complaint
+vanguard ttl intl stk ind adm	complaint
+us mid-cap value	complaint
+vanguard crsp us mid cap value inde etf	complaint
+vanguard ftse dev etf	complaint
+vanguard ftse developed markets	complaint
+msft common stock	complaint
+microsoft corp com	complaint
+united states oil fund ltd partnership	complaint
+united states oil fund lp unit	complaint
+vanguard small-cap index fund admiral shares	complaint
+vang sm cap idx inst	complaint
+vanguard star fd	complaint
+vanguard star fund investor shares	complaint
+pim real return inst	complaint
+pimco real return fund cl d	complaint
+pimco total ret fd instl	complaint
+pim total rt inst	complaint
+ishares msci emerging markets	complaint
+ishares inc core msci emerging mkts etf	complaint
+google inc class a	complaint
+alphabet inc cl a	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market idx instl pls	complaint
+capital income builder - a (12)	complaint
+capital income builder	complaint
+pimco incm cl d	complaint
+pimco income administrative	complaint
+metropolitan west total return	complaint
+metwest tot rtn bd i	complaint
+energy transfer part lp	complaint
+cheniere energy partners lp com	complaint
+vanguard small cap etf div: 2.113	complaint
+vanguard small cap	complaint
+new perspective fund cl a	complaint
+af new perspective a	complaint
+altegris futures evolution cl n	complaint
+altegris futures evolution strategy n	complaint
+vanguard short-term corporate div: 1.585	complaint
+vanguard short term corp bond etf	complaint
+donnelley (r.r.) & son	complaint
+donnelley r r & sons	complaint
+dfa emerging markets value i	complaint
+dfa emerging mkts value ptf	complaint
+harbor international	complaint
+harbor fd intl fd	complaint
+vanguard trgt retire income fnd inv	complaint
+vang target ret inc	complaint
+russell 2000 index (ishares)	complaint
+ishares tr russell 2000 etf	complaint
+vanguard index trust mid capitalization stk port	complaint
+vanguard mid cap index investor cl	complaint
+astrazeneca plc spons adr	complaint
+astrazeneca plc spnd adr	complaint
+vanguard growth	complaint
+vanguard index fds vanguard growth etf	complaint
+now inc	complaint
+now inc com	complaint
+anheuser-busch inbev f adr 1 adr reps 1 ord shs	complaint
+anheuser busch inbev sa/nv sponsored adr isin #us03524a1088	complaint
+wp carey inc	complaint
+w p carey and co. llc.	complaint
+vanguard tot stk admiral	complaint
+vanguard total international stock index fund admiral shares	complaint
+ishares msci u k etf shs	complaint
+ishares inc msci united kingdom etf	complaint
+graham holdings co com usd1	complaint
+graham holdings co	complaint
+vanguard small cap index adm	complaint
+van small cap index admir	complaint
+vanguard short-term tax-exempt fund admiral shares	complaint
+vanguard short term tax exempt investor	complaint
+vanguard dividend appreciation etf	complaint
+vanguard dividend apprec etf	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund investor shares	complaint
+o reilly automotive inc	complaint
+o reilly automotive	complaint
+general electric	complaint
+general electric company	complaint
+ge strategic fund	complaint
+fidelity real estate income fd	complaint
+polaris industries inc	complaint
+polaris inds inc com	complaint
+spdr barclays international etf	complaint
+spdr barclays intern treasury bd et	complaint
+van small cap index admir	complaint
+vnguard index trust small cap idx instl	complaint
+alcoa inc. cmn	complaint
+alcoa inc	complaint
+retail opportunity i reit	complaint
+retail opportunity invts corp com isin #us9 sedol #b28yd08	complaint
+oppenheimer dev markets fd class y	complaint
+oppenheimer developing markets fnd y	complaint
+time inc new com isin #us8872281048 sedol #bmm2870	complaint
+time inc new com isin #us8 sedol #bmm2870	complaint
+allstate corp	complaint
+allstate corporation	complaint
+annaly capital management inc	complaint
+annaly capital management inc com	complaint
+ishares national muni	complaint
+ishares nationl amt freemuni etf	complaint
+vanguard total bond market idx-adm	complaint
+vang tot bd mkt inst	complaint
+stonemor partners lp com	complaint
+stonemor partners ltd partnership common units	complaint
+emerge energy svc lp lp	complaint
+emerge energy svcs lp	complaint
+pimco total return fund cl d	complaint
+pimco total return r	complaint
+dodge & cox international stock	complaint
+dodge & cox international stock fund	complaint
+pim total rt inst	complaint
+pimco tot return adm	complaint
+pimco income fund cl p	complaint
+pimco income a	complaint
+vanguard shortterm investgrade adm	complaint
+vang st invstgrd inv	complaint
+t rowe price health science fund inc	complaint
+t rowe price health sciences	complaint
+american tower corporation isin #us0 sedol #b7fbfl2	complaint
+american tower reit inc (hldg co) shs	complaint
+realty incm crp md pv$1. reit	complaint
+realty income corp (maryland)	complaint
+activision blizzard inc	complaint
+blizzard	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard total bond market idx instl pls	complaint
+vanguard dev markets index fd	complaint
+vanguard developed markets idx	complaint
+the oakmark international fund - class i	complaint
+oakmark intl i	complaint
+wisdomtree emrg mrkt hg div etf	complaint
+wisdomtree tr emerging mkts high divid fd	complaint
+frontier communications corp c om	complaint
+frontier communications corp div: 0.420	complaint
+ishares north american natural resources etf	complaint
+ishares north ameri naturl resour etf	complaint
+pimco total return cl a	complaint
+pimco total return fund - class r	complaint
+blackrock global allocation c	complaint
+blackrock global allocation fund class c m/f	complaint
+utilities sector spdr trust shs	complaint
+sector spdr utilities	complaint
+pimco income fund cl d	complaint
+pimco income administrative	complaint
+baidu inc spons ads repr 0.10 ord cls a us0.00005	complaint
+baidu inc sponsored adr repstg ord shares class a	complaint
+electronic arts inc	complaint
+electronic arts inc del	complaint
+vanguard total bond market idx-adm	complaint
+vanguard total bond market index admiral	complaint
+alphabet inc cl a	complaint
+alphabet inc shs cl a	complaint
+oppenheimer developing mkts odvyxfds cl y	complaint
+opp developing mkt y	complaint
+harris corporation	complaint
+harris corporation delaware div: 2.000	complaint
+wisdomtree japan hedged eq	complaint
+wisdomtree japan hedged equity etf	complaint
+pimco total return fund cl d	complaint
+pimco total return admin	complaint
+powershares qqq nasdaq 100	complaint
+powershares qqq tr div: 1.105	complaint
+pimco total return fund cl p	complaint
+pimco total return	complaint
+national oilwell varco inc com	complaint
+national-oilwell varco	complaint
+automatic data processng inc	complaint
+auto data processing	complaint
+amazon.com inc.	complaint
+amazon com inc	complaint
+c h robinson worldwd	complaint
+c h robinson worldwide inc com new isin #us8 sedol #2116228	complaint
+american funds europacific growth fund class r-6	complaint
+american funds europacific gr r6	complaint
+growth fund of america? cl 529 a	complaint
+college america 529 growth fund of america cl a	complaint
+liberty interactive corp liberty ventures com usd0.01 cl a	complaint
+liberty inter co venture ser a	complaint
+constellation brands inc cl a cl a	complaint
+constellation brand class a	complaint
+fundamental invs inc f-1	complaint
+fundamental investors fund cl f1	complaint
+ceb inc com	complaint
+ceb inc	complaint
+e m c corp mass	complaint
+emc corp mass	complaint
+tile shop hldg inc	complaint
+tile shop hldgs inc	complaint
+vanguard total bond index adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+ipg photonics corp del	complaint
+ipg photonics corp com	complaint
+sector spdr energy	complaint
+energy sector index spdr	complaint
+v f corp	complaint
+v.f. corp.	complaint
+alphabet inc cl c	complaint
+alphabet inc class c	complaint
+vanguard growth index fund investor shares	complaint
+vanguard growth index adm	complaint
+powershares qqq tr div: 1.105	complaint
+powershares qqq	complaint
+united states nat gas fund par $0.001 ltd partnership	complaint
+united states natural gas etf	complaint
+putnam fds tr equity spectrum fund	complaint
+putnam equity spectrm y	complaint
+american tower corporation reit	complaint
+american tower corporation isin #us0 sedol #b7fbfl2	complaint
+vanguard short term corp bond index fund etf	complaint
+vanguard s/t corp bond etf	complaint
+verizon communicatn	complaint
+verizon communicatns com	complaint
+unilever plc sponsored adr new	complaint
+unilever plc spon adr new	complaint
+pim total rt inst	complaint
+pimco total return admin	complaint
+lululemon athletica inc com	complaint
+lululemon athletica	complaint
+pimco total return fd cl c	complaint
+pimco total return a	complaint
+stericycle inc com	complaint
+stericycle inc	complaint
+alzgi nfj div val i	complaint
+allianzgi nfj dividend value fund cl p	complaint
+dfa intl small cap value	complaint
+delaware small cap core inst	complaint
+fidelity fds balanced fd	complaint
+fid balanced k	complaint
+ishares russell 1000 growth etf	complaint
+ishares russell 1000 gr etf	complaint
+ishares 20+ yr treasu bond etf div: 3.107	complaint
+ishares 20+ year	complaint
+vanguard small-cap value etf	complaint
+vbr:vanguard small-cap value etf	complaint
+pimco total return fund instl cl	complaint
+pimco tot return adm	complaint
+vanguard ftse all-wld ex-u.s.smcp	complaint
+vanguard intl equity index fdsftse all world ex usa small cap index fd etf shs	complaint
+toyota motor corp sp adr rep2com	complaint
+toyota motor corp sp adr rep2com isin #us8923313071 sedol #2	complaint
+blackrock hi yield bd ptf inst	complaint
+blackrock high yld bond port class c	complaint
+vanguard total bond market index i	complaint
+vanguard total bond market index fund investor shares	complaint
+goldman sachs mangd futures strategy a	complaint
+aqr managed futures strategy r6	complaint
+sptn ext mkt idx adv	complaint
+spartan extended mkt index investor cl	complaint
+facebook inc class a common stock	complaint
+facebook inc class a	complaint
+vanguard crsp us mid cap index	complaint
+vanguard index fds vanguard mid-cap etf	complaint
+prudential glbl real estate z	complaint
+prudential global real estate z	complaint
+costco whsl corp new	complaint
+costco wholesale corporation com	complaint
+vanguard balanced index fd inv cl shrs	complaint
+vanguard balanced index admiral	complaint
+delta air lines inc del com	complaint
+delta air lines incorporated del com new	complaint
+nike inc-b	complaint
+nike inc class b	complaint
+target corp com isin #us87612e1064 sedol #2259101	complaint
+target corporation div: 2.240	complaint
+nokia corp adr	complaint
+nokia corp spon fadr 1 adr reps 1 ord shs	complaint
+metr w tot rtn bond cl m	complaint
+metropolitan west fds total ret cl i	complaint
+vanguard 500 index admiral	complaint
+vanguard 500 index fund - admiral	complaint
+vanguard total bond market idx instl pls	complaint
+vanguard bond index total mkt investor	complaint
+freeport mcmoran inc fcx	complaint
+freeport mcmoran inc	complaint
+dreyfus standish glb fix inc i	complaint
+dreyfus/standish global fixed income fd cl i	complaint
+spdr nuveen barclays municipal bond etf	complaint
+spdr nuveen barclays muni	complaint
+vanguard sml-cap ind-adm	complaint
+vanguard small cap index fund	complaint
+visa inc cl a shrs	complaint
+visa inc cl a	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+vanguard total bond market index inv	complaint
+vanguard index fds formerly vanguard index tr to 05/24/2001 s&p 500 etf shs new	complaint
+vanguard index fds s&p 500 etf	complaint
+total s a sponsored adr isin #us1 sedol #2898032	complaint
+total s a sponsored adr	complaint
+pimco total return fund - class r	complaint
+pimco total return admin	complaint
+vanguard selected value fund investor shares	complaint
+vanguard selected value	complaint
+momenta pharmaceuticals	complaint
+momenta pharmaceuticals inc	complaint
+kinder morgan inc com usd0.01	complaint
+kinder morgan inc. del	complaint
+ishares msci brazil etf	complaint
+ishares msci brazil etf brazil capped	complaint
+nike inc -cl b	complaint
+nike inc	complaint
+american funds growth and income portfolio	complaint
+american balanced portfolio fund class c (31%)	complaint
+visa inc cl a div: 0.560	complaint
+visa inc cl a	complaint
+pim total rt inst	complaint
+pimco total return fund cl p	complaint
+du pont e i de nemours & co	complaint
+du pont e i de nemours	complaint
+raytheon co	complaint
+raytheon company	complaint
+target corporation div: 2.240	complaint
+target corp com	complaint
+transamerica emerging markets debt fd cl i	complaint
+causeway emerging mrkts fd inv cl	complaint
+eaton vance floating rate fd cl a	complaint
+eaton vance bd i	complaint
+seagate technology ord	complaint
+seagate technology	complaint
+vanguard index fds vanguard small cap value vipers formerly	complaint
+vanguard crsp us small cap val ue ind et	complaint
+energy transfer partners unit ltd partnership	complaint
+cheniere energy partners lp com	complaint
+alphabet inc. cl c	complaint
+alphabet inc cap stk cl c	complaint
+michael kors holdings ltd com npv	complaint
+michael kors hldgs limited shs	complaint
+salesforce.com inc	complaint
+salesforce.com	complaint
+ishares trust core s&p small-cap etf	complaint
+ishares core s&p small cap etf	complaint
+vanguard total international bond index fund admiral shares	complaint
+vanguard total intl bd idx admiral	complaint
+vanguard 500 index fd investor shs	complaint
+vanguard 500 index fund investor shares	complaint
+priceline group	complaint
+priceline group inc the	complaint
+vanguard international growth	complaint
+vanguard int'l growth port inv cl	complaint
+spdr nuveen barclays capital s div: 0.225	complaint
+spdr ser tr nuveen barclays short isin #us0 sedol #b28lxf4	complaint
+vanguard total bond market index inv	complaint
+vanguard bond index total mkt investor	complaint
+american century mid cap value inst	complaint
+american century mcv r6	complaint
+michael kors hldgs limited shs	complaint
+michael kors holdings limited cmn	complaint
+vanguard target retirement 205 0 fund	complaint
+vang target ret 2050	complaint
+valeant pharmaceuticals in(cdn)	complaint
+valeant pharmaceuticals intl i com	complaint
+american funds income fund of america cl a	complaint
+american funds income fund of america a	complaint
+cypress semiconductors corp	complaint
+cypress semiconductor corp	complaint
+kimberly-clark corp	complaint
+kimberly clark corp cmn	complaint
+tempur sealy intl inc com isin #us6 sedol #2216991	complaint
+tempur sealy intl inc	complaint
+fid intl discovery	complaint
+fidelity int'l discovery	complaint
+e m c corp mass	complaint
+e m c corp mass com	complaint
+vang tot bd mkt inst	complaint
+vanguard total bond market index inv	complaint
+van small cap index admir	complaint
+vanguard small-cap index fund institutional shares	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard total bond market index fund investor shares	complaint
+vanguard short-term bond index fund investor shares	complaint
+vang st bd idx is pl	complaint
+van small cap index admir	complaint
+vanguard smallcap index fund	complaint
+t. rowe price new asia fund	complaint
+t rowe price new asia fund	complaint
+american funds europacific r3	complaint
+american funds europacific growth fund	complaint
+united states gasoline etf	complaint
+united sts gasoline fd lp	complaint
+t. rowe price international discovery	complaint
+t rowe price international discovery fund	complaint
+unilever plc spon adr new	complaint
+unilever plc (new) ads div: 1.300	complaint
+progressive corp	complaint
+progressive corp - ohio	complaint
+afs international growth & income fund cl f1	complaint
+spdr s&p international small capetf	complaint
+powershares global exchange traded fd tr emerging markets so	complaint
+powershares emerging markets sovereign d	complaint
+du pont e.i. de nemours	complaint
+du pont e i de nemours & co com	complaint
+pimco commodity real return strat inst	complaint
+pimco commodity real return inst	complaint
+pimco short term institutional	complaint
+pimco short term cl d	complaint
+energy sector spdr etf	complaint
+sector spdr energy	complaint
+pim total rt inst	complaint
+pimco total return r	complaint
+blackrock global allocation fund inc institutional	complaint
+blackrock global allocation instl cl	complaint
+oakmark international fund class i	complaint
+oakmark intl cl i	complaint
+vanguard div growth fd investor shrs	complaint
+vang div growth inv	complaint
+starbucks corp com	complaint
+starbucks corporation	complaint
+chipotle mexican grill inc com	complaint
+chipotle mexican grill inc cl a	complaint
+lzrd emrg mkts eq o	complaint
+lazard emerging markets equity	complaint
+schwab intl equity etf	complaint
+schwab strategic tr intl equity etf	complaint
+vanguard mid cap index	complaint
+vanguard mid cap index - admir al	complaint
+monsanto co new	complaint
+monsanto co com	complaint
+chipotle mexican grl	complaint
+chipotle mexican grill	complaint
+vanguard small cap stock ind trust inv	complaint
+vanguard small-cap index fund investor shares	complaint
+lloyds banking group plc adr	complaint
+lloyds banking group plc sp adr	complaint
+companhia d snmnto bsco d estdo sao paulo adr	complaint
+cia saneamento basico de sao paulo spons adr each repr 1 com npv	complaint
+american washington mut investors fund inc a	complaint
+american fd wa mutual inv fd cl a	complaint
+oneok partners l p unit ltd partnership	complaint
+oneok partners lp unit ltd partnership	complaint
+the bond fund of america-r3	complaint
+american funds bond fund of america a	complaint
+diana containerships inc com	complaint
+diana containerships inc	complaint
+select str financial select s etf iv	complaint
+select financial etf	complaint
+spdr barclays int corp bond	complaint
+td ameritrade holding corp com	complaint
+google inc class a	complaint
+google inc class a vtg voting shares	complaint
+vang tot bd mkt inst	complaint
+vanguard total bond market index	complaint
+lions gate entmnt corp com new	complaint
+lions gate ent corp com	complaint
+ishares core s&p small-cap etf	complaint
+ishares core s&p small cap etf	complaint
+prudential global real estate z	complaint
+pru global re z	complaint
+dodge & cox funds intl stk fd	complaint
+dodge & cox interntl stock	complaint
+kinder morgan inc com usd0.01	complaint
+kinder morgan inc com	complaint
+sptn intl index ins	complaint
+spartan intl index fid adv class	complaint
+vanguard bond index fund inc intermediate term bd etf	complaint
+vanguard intermediate term bond etf	complaint
+match group inc com	complaint
+match group inc	complaint
+tmpl global bond a	complaint
+templeton global bond r	complaint
+blackrock high yield bond portfolio svc	complaint
+blackrock high yld bond port class c	complaint
+vanguard fixed income secs inter term invt grade fd admiral cl	complaint
+vanguard int term inv grade	complaint
+ishares u s preferred stock etf	complaint
+ishares u.s. preferred	complaint
+harbor international inst	complaint
+harbor international institutional	complaint
+hcp inc com	complaint
+chuys hldgs inc com	complaint
+vanguard total bond market index adm	complaint
+vang tot bd mkt inst	complaint
+vanguard small cap index, adm	complaint
+vanguard small-cap index fund institutional shares	complaint
+a t & t inc	complaint
+at&t inc.	complaint
+alliance data system	complaint
+alliance data system corp	complaint
+american tower corp	complaint
+american tower corporation com usd0.01	complaint
+metropolitan west total return class i	complaint
+metropolitan west fds total ret cl i	complaint
+unilever n v n y shs new	complaint
+unilever nv ny reg shs	complaint
+american finl grp inc holding co	complaint
+amern financial gp	complaint
+first trust dow jones internet	complaint
+first trust dj internet	complaint
+nasdaq omx grp inc	complaint
+nasdaq inc com	complaint
+dfa short term government port	complaint
+dfa short-term govt	complaint
+main street capital corp com	complaint
+main street capital corp	complaint
+facebook, inc. cmn class a	complaint
+facebook inc com	complaint
+transocean limited com chf0.10	complaint
+transocean ltd zug namen akt	complaint
+novo nordisk a s adr	complaint
+novo nordisk a/s-adr nvorepstg 1/2 cl b sh	complaint
+sptn us bond idx adv	complaint
+spartan u.s. bond index fd investor cl	complaint
+disney (walt) co. (the)	complaint
+disney (walt) co com stk	complaint
+tenet healthcare corp com new	complaint
+tenet healthcare	complaint
+ishares msci eafe sm cap etf div: 1.028	complaint
+ishares tr msci small cap	complaint
+vang sm cap idx adm	complaint
+vanguard small-cap index fund inst	complaint
+dfa int'l small cap value	complaint
+delaware small cap core inst	complaint
+vanguard short term tax exempt admiral share	complaint
+vanguard short term tax exempt fd investor shr	complaint
+vanguard institutional index	complaint
+vnguard institutional index	complaint
+aqr managed futures strategy r6	complaint
+aqr managed futures i	complaint
+coca cola co div: 1.400	complaint
+coca cola com	complaint
+vanguard short term bond fund	complaint
+vanguard short-term bond etf	complaint
+vanguard total bond market index fund	complaint
+vanguard total bond mkt	complaint
+sprint corp	complaint
+sprint corp com	complaint
+proshares ultrashort 2x etf	complaint
+proshares ultrashort dow 30	complaint
+google inc class a	complaint
+alphabet inc cap stk cl a	complaint
+vanguard total bond market index fund institutional plus	complaint
+vanguard total bond market index inv	complaint
+ford mtr co	complaint
+ford motor co	complaint
+pimco total return r	complaint
+total return fund (pimco)	complaint
+anheuser busch inbev sa spon div: 3.224	complaint
+anheuser busch inbev (belg)	complaint
+matthews pacific tiger fund	complaint
+matthews pacific tiger fd inv	complaint
+breitburn energy partners lp c	complaint
+atlas resource partners l p	complaint
+enterprise prods partners l com	complaint
+enterprise prods partners l unit	complaint
+vanguard ca inter term tax-exempt fd inv shrs	complaint
+vanguard california intermediate-term tax-exempt fund admiral shares	complaint
+sptn em mkts idx adv	complaint
+spartan emerging mkt index fid adv cl	complaint
+eog resources inc	complaint
+e o g resources inc	complaint
+pimco total return fd cl c	complaint
+pimco total return admin	complaint
+alexion pharms inc	complaint
+alexion pharmaceuticals	complaint
+omega hlthcare invts reit	complaint
+omega healthcare investors inc ohi	complaint
+bank of ny mellon co	complaint
+bank of new york mellon corp	complaint
+pimco total return instl	complaint
+pimco total return fund - class r	complaint
+jp morgan chase & co	complaint
+jpmorgan chase & co div: 1.760	complaint
+facebook inc com	complaint
+facebook incorporated class a	complaint
+powershares qqq trust sr 1 etf	complaint
+powershares qqq tr unit ser 1	complaint
+chn & steers realty	complaint
+cohen & steers realty fund	complaint
+pimco income fund cl d	complaint
+pimco incm cl d	complaint
+schwab strategic tr fundamental intl large co index etf	complaint
+schwab intl large company index etf	complaint
+guggenheim bulletshares 2016 high yield corporate bond etf	complaint
+guggenheim bulletshares 2016	complaint
+vanguard short-term investment-grade fund investor shares	complaint
+vanguard short-term invest-grade	complaint
+american fd new world fd cl f1	complaint
+american funds new world f	complaint
+the kraft heinz company	complaint
+kraft (the) heinz co shs	complaint
+occidental pete corp del com	complaint
+occidental petrol co	complaint
+vanguard extended market idx i	complaint
+vanguard extended market index fund admiral shares	complaint
+pimco incm inst cl	complaint
+pimco income administrative	complaint
+energy select sector spdr fund	complaint
+energy select sector spdr etf iv	complaint
+schwab strategic tr intl eqt	complaint
+schwab strategic tr intl equity etf isin #us8085248057 sedol	complaint
+linkedin corp - a	complaint
+linkedin corp com usd0.0001	complaint
+metropolitan west totret bdm	complaint
+metropolitan west total return class i	complaint
+vanguard small-cap index adm	complaint
+vanguard small-cap index fund institutional shares	complaint
+glaxosmithkline plc-adr	complaint
+glaxosmithkline plc (britain)	complaint
+vanguard extended market index institutional class	complaint
+vanguard extended market idx i	complaint
+texas roadhouse	complaint
+texas roadhouse inc	complaint
+wynn resorts ltd.	complaint
+wynn resorts ltd	complaint
+bank of america corp.	complaint
+bank of america corp	complaint
+alibaba group hldg limited sponsored ads	complaint
+alibaba group holding ltd spons ads	complaint
+at&t inc div: 1.920	complaint
+at&t inc	complaint
+vanguard reit etf div: 3.124	complaint
+vanguard reit etf iv	complaint
+t rowe price small cap stock	complaint
+small-cap stock fund	complaint
+jp morgan chase & co com	complaint
+jpmorgan chase & co	complaint
+alphabet inc cap stk cl a	complaint
+google inc cl a	complaint
+ambarella inc shs	complaint
+ambarella inc f	complaint
+vanguard small cap index adm	complaint
+vang sm cap idx inst	complaint
+pimco inv grade corp bond instl	complaint
+pimco fds investment grade cor p bd d	complaint
+chn & steers realty	complaint
+cohen & steers realty	complaint
+vanguard total international stock index fund admiral shares	complaint
+vanguard total international stock index adm	complaint
+cisco systems	complaint
+cisco systems inc.	complaint
+ishares russell 1000 grw etf div: 1.363	complaint
+ishares russell 1000 growth	complaint
+oppenheimer capital income fund	complaint
+oppenheimer cap income y	complaint
+vanguard reit index adm	complaint
+vanguard r e i t index adm	complaint
+blackrock international a	complaint
+franklin mutual international fund	complaint
+vanguard bd index fd inc total bd market etf	complaint
+vanguard total bond market etf	complaint
+vanguard total bond market index i	complaint
+vanguard bond index total mkt investor	complaint
+frontier communications corp	complaint
+frontier comm co	complaint
+vanguard growth	complaint
+vanguard crsp us large cap grow ind etf	complaint
+vanguard index fds vanguard small cap value vipers formerly vanguard	complaint
+vanguard index fds vanguard small cap value vipers formerly	complaint
+consolidated edison inc	complaint
+consolidated edison hldg co inc	complaint
+exone co	complaint
+exone co/the	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market index i	complaint
+vanguard total bond market idx instl pls	complaint
+vanguard total bond market index fund investor shares	complaint
+weatherford international plc ord shs	complaint
+weatherford intl plc ord shs isin #ie00blnn3691 sedol #blnn369	complaint
+tata motors ltd spons adr	complaint
+fanuc corporation adr	complaint
+philip morris international inc	complaint
+philip morris intl com	complaint
+nuveen high yield municipal bond i	complaint
+nuveen high yld mun bd fd cl a	complaint
+vanguard intl equity index fds global ex-us real estate inde	complaint
+vanguard intl equity index fds global ex-us real estate index fd etf shs	complaint
+vanguard emerging markets stock index fund institutional	complaint
+vanguard emerging markets stock index fund institutional shares	complaint
+vanguard small cap index fund - admiral	complaint
+vanguard small-cap index fund inst	complaint
+skyworks solutions inc	complaint
+skyworks solutions	complaint
+first trust etf iv north american energy infrastructure fund	complaint
+first tr exchange traded fd iv no amer energy	complaint
+salesforce com	complaint
+salesforce com inc com	complaint
+vanguard short-term corporate bond	complaint
+vanguard short term corp bond index fund etf	complaint
+vanguard institutional index i (vinix)	complaint
+vanguard institutional index	complaint
+artisan internatl investor class	complaint
+artisan intl fund inv	complaint
+dodge & cox intl stk	complaint
+dodge & cox internatl stock fund	complaint
+vanguard inst index	complaint
+vnguard institutional index	complaint
+pimco income a	complaint
+pimco fds income instl	complaint
+mfs international new discovery r5	complaint
+spdr s&p international small capetf	complaint
+california resources corp	complaint
+california res corp com	complaint
+wal-mart stores inc com	complaint
+wal-mart stores inc com isin #us9311421039 sedol #2936921	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard ttl bnd mrk indx inst	complaint
+select sector spdr trust industrial select index	complaint
+sector spdr industrial	complaint
+vanguard total bond market index adm	complaint
+vanguard ttl bnd mrk indx inst	complaint
+starbucks corp washington div: 0.800	complaint
+starbucks corp com	complaint
+vanguard msci pacific	complaint
+vanguard ftse pacific etf	complaint
+total s a fadr 1 adr reps 1 ord shs	complaint
+total s a spon adr div: 2.276	complaint
+vanguard small-cap index adm	complaint
+vang sm cap idx inst	complaint
+merck & co inc new	complaint
+merck & co inc new com div: 1.840	complaint
+immunogen inc	complaint
+immunogen inc com	complaint
+marsh & mclennan cos inc com	complaint
+marsh and mc lennan	complaint
+lockheed martin corp	complaint
+lockheed martin corp div: 6.600	complaint
+american fundamental investors cl f1	complaint
+fundamental invs inc f-1	complaint
+washington mutual investors fund	complaint
+college america 529 wa mutual investors fund cl a	complaint
+amazon.com inc	complaint
+amazon.com inc.	complaint
+pim total rt inst	complaint
+pimco total return fund adm	complaint
+ishares barclays aggregate bd fd	complaint
+ishares core u.s. aggregate bond etf	complaint
+vanguard total bond market idx-adm	complaint
+vanguard bond index total mkt investor	complaint
+prudential financial inc cmn	complaint
+prudential financial inc div: 2.800	complaint
+lions gate entmnt corp com new	complaint
+lions gate entertainment corp	complaint
+marathon oil corp	complaint
+marathon oil corp isin #us4 sedol #2910970	complaint
+caesarstone sdot-yam ltd	complaint
+caesarstone sdot yam f	complaint
+metropolitan west tot return bond cl m	complaint
+metwest tot rtn bd i	complaint
+vanguard small cap valueetf iv	complaint
+vanguard small-cap value etf	complaint
+bridgepoint education inc. cmn	complaint
+bridgepoint education	complaint
+vanguard total international stock index fund institutional plus shares	complaint
+vanguard primecap fund investor shares	complaint
+metropolitan west total return bond plan class shares	complaint
+metwest tot rtn bd p	complaint
+american tower corporation isin #us0 sedol #b7fbfl2	complaint
+american tower corp new com	complaint
+guggenheim s&p 500 equal weig hc etf	complaint
+guggenheim s&p 500 eq wgt healthcare etf	complaint
+fid value	complaint
+fidelity value	complaint
+proshares short s&p500	complaint
+proshares short s&p 500 proshares	complaint
+darling ingredients inc com	complaint
+darling ingredients inc	complaint
+vanguard short term bond index investor	complaint
+vanguard short-term bond index	complaint
+smith & wesson holding corp	complaint
+smith & wesson holding corp co m	complaint
+vanguard california intermediate-term tax-exempt fund investor shares	complaint
+vanguard ca inter term tax-exempt fd adm shrs	complaint
+brookdale sr living inc	complaint
+brookdale senior living inc.	complaint
+vanguard total bond market index admiral	complaint
+vanguard total bond market index fund institutional plus	complaint
+vanguard equity income adm	complaint
+vanguard equity income - a	complaint
+visa inc cl a div: 0.560	complaint
+visa inc cl a shrs	complaint
+pjt partners inc com cl a div: 0.200	complaint
+pjt partners inc cl a	complaint
+ishares trust msci usa minvolatility etf	complaint
+proshares short vix short term etf	complaint
+f5 networks inc	complaint
+f5 networks inc com isin #us4 sedol #2427599	complaint
+pepsico incorporated	complaint
+pepsico inc	complaint
+united parcel service inc cl b	complaint
+united parcel service-cl b	complaint
+blackrock strategic income opprtnts ptf inst	complaint
+blackrock strategic income opptys investor cl a	complaint
+gopro inc cl a isin #us4 sedol #bmnqc35	complaint
+gopro inc class a	complaint
+omnicom group	complaint
+omnicom group inc	complaint
+banco santander sa fadr 1 adr reps 1 ord shs	complaint
+banco santander sa adr	complaint
+ishares national muni bond etf	complaint
+national municipal bonds	complaint
+first finl corp ind	complaint
+best buy co inc	complaint
+pattern energy inc cls a div: 1.524	complaint
+pattern energy group inc	complaint
+cigna corporation com isin #us2 sedol #2196479	complaint
+cigna corporation com isin #us1255091092 sedol #2196479	complaint
+vanguard extended market index fund institutional	complaint
+vanguard extended market index fund admiral shares	complaint
+williams sonoma	complaint
+williams-sonoma inc	complaint
+vanguard intl equity index fds ftse all world ex usa small cap index fd etf shs	complaint
+vanguard intl equity index fdsftse all world ex usa small cap index fd etf shs	complaint
+emerging markets bonds	complaint
+vanguard emerging mkts govt bond index etf	complaint
+fidelity blue chip growth	complaint
+fid blue chip gr	complaint
+energy transfer partners lp ut ltd	complaint
+energy transfer partners un	complaint
+vanguard intl bond index etf	complaint
+vanguard charlotte fds total intl bd index fd etf cl	complaint
+capital income builder - a (12)	complaint
+american cap inc builder a	complaint
+royal dutch shell adr ea rep 2 cl a eur0.07	complaint
+royal dutch shell plc spons adr a	complaint
+vanguard total bond index adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+invesco value mun income tr com	complaint
+invesco value muni incm trust sbi	complaint
+pimco low duration a	complaint
+pimco low duration fund cl d	complaint
+goldman sachs mangd futures strategy a	complaint
+aqr fds aqmixmanaged futures strategy fd i	complaint
+pimco total return fund instl cl	complaint
+pimco total return admin	complaint
+paypal hldgs inc com	complaint
+paypal holdings inc	complaint
+at&t inc com	complaint
+at&t inc	complaint
+dfa us targeted value	complaint
+dfa u.s. targeted value/i	complaint
+walt disney co com	complaint
+disney walt co com disney	complaint
+blackrock strat income i	complaint
+blackrock strategic income opps ptf a	complaint
+wells fargo & co new com	complaint
+wells fargo & co new | w001549	complaint
+core laboratories n.v. (netherlands)	complaint
+core laboratories f	complaint
+panera bread company class a	complaint
+panera bread co cl a	complaint
+vanguard total bond market index i	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+union pacific corp	complaint
+union pacific corp com	complaint
+valero energy corp new com	complaint
+valero energy corp	complaint
+chevron corporation	complaint
+chevron common stock fund	complaint
+pimco total return fund - class r	complaint
+total return fund (pimco)	complaint
+wisdomtree tr intl midcap divid fd isin #us1 sedol #b17ffv0	complaint
+wisdomtree intl midcap dividend etf	complaint
+dfa intl small cap value cl i	complaint
+dfa intl small cap value	complaint
+leucadia national	complaint
+leucadia natl corp com	complaint
+u s bancorp	complaint
+us bancorp del	complaint
+dfa emerg mkts val i	complaint
+dfa emerging markets value i	complaint
+oppenheimer int'l growth class a	complaint
+oppenheimer international growth fund class a	complaint
+whirlpool corp com	complaint
+whirlpool corp	complaint
+momenta pharmaceuticals inc	complaint
+momenta pharmaceuticals inc com	complaint
+amer funds europac r3 m4740	complaint
+american funds europacifc r3	complaint
+sptn us bond idx is	complaint
+spartan u.s. bond index fd investor cl	complaint
+goldman sachs mangd futures strategy a	complaint
+aqr mgd futures strat fd cl i	complaint
+spartan emerging mkt index fid adv cl	complaint
+spartan emerging mkt index fund investor	complaint
+pjt partners inc cl a	complaint
+pjt partners inc shs cl a	complaint
+metropolitan west tot return bond cl m	complaint
+metropolitan west total return class i	complaint
+vang sm cap idx adm	complaint
+vang sm cap idx inst	complaint
+vang ext mkt idx ins	complaint
+vanguard extended market idx adm	complaint
+boston beer co inc class a	complaint
+boston beer company inc cl a	complaint
+merck & co inc	complaint
+merck & co. inc	complaint
+vanguard smallcap index fund	complaint
+vanguard small-cap index fund admiral shares	complaint
+vanguard crsp us small cap value ind et	complaint
+vanguard index fds vanguard small cap value vipers formerly	complaint
+senior housing prop trust reits	complaint
+senior housing properties trust	complaint
+t. rowe price 2050 fund	complaint
+retirement 2050 fund	complaint
+vanguard global ex u s real estate index fd etf	complaint
+vanguard global ex-us real est ate etf	complaint
+ishares 20+ year	complaint
+ishares 20 pls year treasury bnd etf	complaint
+metropolitan west tot return bond cl m	complaint
+metropolitan west fds total ret cl i	complaint
+select sector spdr trust health care select index	complaint
+select sector spdr tr health care formerly consumer svcs to	complaint
+target corporation cmn	complaint
+target corp	complaint
+pimco income a	complaint
+pimco income instl	complaint
+ishares iboxx $ invmnt grd corp bd etf	complaint
+ishares iboxx $ invmnt grd cor p bd etf	complaint
+state str corp com isin #us8574771031 sedol #2842040	complaint
+state str corp com isin #us1 sedol #2842040	complaint
+cooper companies inc (new) cmn	complaint
+cooper cos inc/the	complaint
+sirius xm hldgs inc com	complaint
+sirius xm holdings inc	complaint
+vanguard bond index fund short term portfolio	complaint
+vanguard short term bond index admiral	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market index	complaint
+vang tot bd mkt inst	complaint
+vanguard bond index total mkt investor	complaint
+vanguard target retirement 2050 fund	complaint
+vang target ret 2050	complaint
+sunedison	complaint
+sunedison inc com usd0.01	complaint
+vanguard intl equity index fdsftse all world ex usa small cap index fd etf shs	complaint
+vgrd ftse all wrld ex ussml cap etf	complaint
+pimco total return fd cl c	complaint
+pimco total return	complaint
+vanguard total intl etf	complaint
+vanguard total international stock etf	complaint
+washington mutual investors cl a	complaint
+washington mutual invstrs cl a	complaint
+carter holdings inc	complaint
+carter holdings com	complaint
+pimco total return fund - class r	complaint
+pimco total return fund adm	complaint
+time warner inc usd0.01	complaint
+time warner inc new div: 1.610	complaint
+unitedhealth group inc com	complaint
+unitedhealth grp inc	complaint
+aston/montag&caldwell grw i	complaint
+aston/montag & caldwell growth i	complaint
+pimco income fund cl p	complaint
+pimco income administrative	complaint
+templeton glbl bond fd adv cl	complaint
+tmpl global bond r6	complaint
+vanguard energy etf	complaint
+vanguard sector index fds vanguard energy vipers	complaint
+vanguard smallcap index fund	complaint
+vanguard small cap index - a	complaint
+washington mutual invstrs cl a	complaint
+american washington mut investors fund inc a	complaint
+vanguard ftse developed etf	complaint
+vanguard ftse developed mkts etf	complaint
+vanguard extended market index fund admiral shares	complaint
+vanguard extended market idx adm	complaint
+lloyds banking group plc adr	complaint
+lloyds banking group plc	complaint
+american tower corp	complaint
+american tower corp reit	complaint
+ishares trust msci usa minvolatility etf	complaint
+ishares msci usa min volility etf	complaint
+express scripts hldg company	complaint
+express scripts holding company	complaint
+oppenheimer develop mkts, a	complaint
+oppenheimer developing markets a	complaint
+westport innovations inc	complaint
+westport innovation f	complaint
+apple incorporated	complaint
+apple inc -	complaint
+vanguard int term treas adm	complaint
+vanguard intermediate-term treasury inv	complaint
+vanguard small-cap index adm	complaint
+vnguard index trust small cap idx instl	complaint
+blackrock high yld bd port cl k	complaint
+blkrk hi yld bd inst	complaint
+vanguard ftse emrg etf	complaint
+vanguard ftse emerging markets etf	complaint
+chipotle mexican grill inc com	complaint
+chipotle mexican grill com	complaint
+magellan midstream p lp	complaint
+magellan midstream partners lp div: 3.140	complaint
+under armour inc	complaint
+under armour inc-class a	complaint
+fid contrafund	complaint
+fidelity contra fund	complaint
+vanguard intermediate-term tax-exempt fund admiral shares	complaint
+vanguard inter term tax exempt fd investor shs	complaint
+mc donalds corp	complaint
+mcdonalds corp com	complaint
+smucker j m co com new	complaint
+j m smucker co	complaint
+ishares trust currency hedged msci eafe etf	complaint
+ishares trust ishares currency isin #us7 sedol #bjn7914	complaint
+alphabet inc cap stk cl a	complaint
+alphabet inc class a	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard total bond market index fund institutional plus	complaint
+incyte corp.	complaint
+incyte corp	complaint
+spdr gold shares etf	complaint
+spdr gold trust gold shares	complaint
+alphabet inc shs cl c	complaint
+google inc-cl c	complaint
+american mutual fund-a	complaint
+amer funds american mutual fund class f2	complaint
+total return fund (pimco)	complaint
+mainstay retirement 2050 fund (class i)	complaint
+templeton global bond fund advisor class	complaint
+templeton glbl bond fd adv cl	complaint
+duke energy corp new com new	complaint
+duke energy corp new	complaint
+ishares s&p smallcap 600 value etf	complaint
+ishares s&p small-cap 600 value etf	complaint
+vanguard mid cap value etf div: 2.308	complaint
+vanguard mid-cap value etf	complaint
+dfa us targeted value port instl	complaint
+dfa us targeted value portfolio institutional class	complaint
+general motors company com	complaint
+general mtrs co com isin #us8 sedol #b3smt78	complaint
+dfa intl small cap value cl i	complaint
+delaware small cap core inst	complaint
+ishares msci usa momentum factor	complaint
+ishares msci usa momentum factor etf	complaint
+priceline grp inc com new	complaint
+priceline group inc the	complaint
+sptn 500 index inst	complaint
+sptn 500 idx adv is	complaint
+grupo aeroportuario sur ipo adr	complaint
+grupo aeroportuario fadr 1 adr reps 10 ord shs	complaint
+general motors co	complaint
+general motors co common shares	complaint
+schwab dow jones u.s. dividend 100 index	complaint
+schwab us dividend equity etf	complaint
+canadian natl ry co com isin #ca7 sedol #2180632	complaint
+canadian natl ry co f	complaint
+energy transfer prtnrs l p unit ltd partn	complaint
+energy transfer partners l p unit ltd partnership int	complaint
+ishares core msci emerging etf	complaint
+ishares inc core msci emerging mkts etf	complaint
+van small cap index admir	complaint
+vanguard small cap index fund	complaint
+metropolitan west total return m	complaint
+metwest tot rtn bd i	complaint
+fid large cap stock	complaint
+dreyfus small cap stock index	complaint
+vnguard institutional index	complaint
+vanguard institutional index fund	complaint
+vanguard short term corp bond etf	complaint
+vanguard short-term corporate div: 1.585	complaint
+ares cap corp com	complaint
+ares capital corp com	complaint
+vanguard sector index fds vanguard energy vipers	complaint
+vanguard energy etf	complaint
+oppenheimer developing mkts fd cl a	complaint
+oppenheimer developing markets a	complaint
+royal dutch shell plc sponsored adr repstg a shs	complaint
+royal dutch shell plc	complaint
+bridgepoint education	complaint
+bridgepoint education inc com	complaint
+oneok inc cm (new)	complaint
+oneok inc.	complaint
+vanguard intermediate-term investment-grade fund investor shares	complaint
+vanguard int term inv grade	complaint
+oakmark international fund class i	complaint
+harris oakmark international fund cl i	complaint
+harbor fd intl fd	complaint
+harbor international fund inst cl	complaint
+rite aid corp	complaint
+rite aid corporation	complaint
+templeton global bond fund adv cl	complaint
+tmpl global bond r6	complaint
+powershares fin pfd	complaint
+powershares etf trust finl div: 1.058	complaint
+ameresco inc cl a	complaint
+ameresco inc com usd0.0001 cl a	complaint
+vanguard bond index total mkt investor	complaint
+vanguard total bond market index inv	complaint
+goldman sachs mgd futures strat a	complaint
+aqr managed futures strategy r6	complaint
+vanguard windsor ii fd investor share	complaint
+vanguard windsor ii fund investor shares	complaint
+ishares msci eafe small cap etf	complaint
+ishares tr msci small cap	complaint
+oppenheimer developing markets fnd y	complaint
+oppenheimer developing mkts odvyxfds cl y	complaint
+vanguard small cap	complaint
+vanguard small-cap etf	complaint
+skechers usa inc	complaint
+skechers u s a inc class a	complaint
+alphabet inc cl c	complaint
+alphabet inc. class c	complaint
+amn healthcare services inc	complaint
+amn healthcare svcs inc com	complaint
+pentair plc	complaint
+pentair plc f	complaint
+rr donnelley & sons	complaint
+donnelley (r.r.) & son	complaint
+pepsico incorporated	complaint
+pepsico inc cmn	complaint
+tupperware brands corp	complaint
+tupperware brands corp com	complaint
+oppenheimer international growth fund - class a	complaint
+oppenheimer intl growth fd cl a	complaint
+vanguard small cap index fund - admiral	complaint
+vanguard small-cap index fund admiral shares	complaint
+am fnd europacfic grth r6	complaint
+american funds europacific growth fund	complaint
+zillow group inc cl a isin #us8 sedol #bvyjbr3	complaint
+zillow group inc cl a	complaint
+fidelity low priced stock fund	complaint
+fidelity low priced stock	complaint
+schwab us large cap growth etf	complaint
+schwab strategic tr us lcap gr	complaint
+time warner inc com	complaint
+time warner inc com new	complaint
+vanguard index fds vanguard mid-cap etf	complaint
+vanguard mid-cap vipers	complaint
+china mobile ltd spn adr	complaint
+china mobile ltd	complaint
+ishares trust floating rate bd etf	complaint
+ishares floating rate bond etf	complaint
+google inc cl a	complaint
+google inc class a	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+wal-mart stores inc com isin #us9 sedol #2936921	complaint
+scana corp new com isin #us7 sedol #2545844	complaint
+vanguard total bond market index fund admiral shares	complaint
+vang tot bd mkt inst	complaint
+bofi holdings inc com	complaint
+bofi hldg inc com	complaint
+ishares tr core s&p small-cap etf	complaint
+ishares core s&p small-cap etf	complaint
+spdr s&p 500 etf	complaint
+spdr s&p 500 etf trust unit ser 1 s&p	complaint
+meridian bioscience inc	complaint
+meridian bioscience inc.	complaint
+alphabet inc cl c	complaint
+alphabet inc shs cl c	complaint
+the financial select sector spdr fund	complaint
+select str financial select s etf iv	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+vanguard small cap index - a	complaint
+vanguard small-cap index fund institutional shares	complaint
+victory munder mid cap core growth fund cl y	complaint
+victory munder mid-cap core gr	complaint
+intercontinental exchange inc com usd0.01	complaint
+intercontinentalexchange group div: 3.400	complaint
+vanguard ftse developed markets	complaint
+vanguard ftse developed etf	complaint
+johnson & johnson div: 3.000	complaint
+johnson & johnson com	complaint
+apple incorporated	complaint
+apple inc.	complaint
+hudson pacific properties div: 0.800	complaint
+hudson pac pptys inc com usd0.01	complaint
+powershares qqq trust series	complaint
+powershares qqq trust se	complaint
+vanguard fd total intl stock index fd admiral shs	complaint
+vanguard total intl stk index	complaint
+southern co	complaint
+southern co com	complaint
+lazard emerging mkts equity	complaint
+lazard emerging markets equity portfolio institutional shares	complaint
+sprtn total mkt indx investor class	complaint
+sptn tot mkt idx ins	complaint
+at&t inc com isin #us3 sedol #2831811	complaint
+franklin res inc com isin #us8 sedol #2350684	complaint
+market vectors etf tr high yield mun etf	complaint
+market vectors high-yield municipal inde	complaint
+royal dutch shell plc adr class a	complaint
+royal dutch shell plc spons adr a	complaint
+northrop grumman corp holding co	complaint
+northrop grumman corp	complaint
+cvr refining lp lp	complaint
+cvr refining lp	complaint
+t rowe price new horizons fund	complaint
+trp new horizons	complaint
+prologis inc reit	complaint
+prologis inc com	complaint
+national oilwell varco inc	complaint
+national oilwell varco inc com	complaint
+fidelity advisor new insights fd cl c	complaint
+fidelity advisor new insights fund - class c	complaint
+skechers u s a inc class a	complaint
+skechers usa inc	complaint
+spdr barclays intern treasury bd et	complaint
+spdr barclays international etf	complaint
+pimco total return fund cl d	complaint
+total return fund (pimco)	complaint
+yum brands inc com	complaint
+yum brands inc	complaint
+vanguard sml-cap ind-adm	complaint
+vnguard index trust small cap idx instl	complaint
+alphabet inc class a	complaint
+alphabet inc-cl a	complaint
+kinder morgan inc de	complaint
+kinder morgan inc. del	complaint
+glaxosmithkline adr each cnv into 2 ord gbp0.25	complaint
+glaxosmithkline plc adrfsponsored adr 1 adr rep 2 ord	complaint
+blackrock high yield bond instl	complaint
+blackrock high yld bond port class c	complaint
+wal-mart stores	complaint
+wal-mart stores inc com	complaint
+breitburn energy partners lp com	complaint
+atlas resource partners l p	complaint
+activision blizzard inc	complaint
+activision blizzard inc com	complaint
+vanguard crsp us small cap value ind et	complaint
+vanguard small-cap value etf	complaint
+vanguard charlotte fds total intl bd index fd etf cl	complaint
+vanguard total intl bond etf	complaint
+alibaba group holding lt	complaint
+alibaba group holding ltd spons ads	complaint
+spdr s&p 500 trust	complaint
+spdr s&p 500 etf	complaint
+charles schwab new	complaint
+charles schwab corp.	complaint
+vang tot bd mkt adm	complaint
+vanguard total bond market index inv	complaint
+cognex corp div: 0.280	complaint
+cognex corp com	complaint
+maxim integrated prods inc	complaint
+maxim integrated pro	complaint
+jazz pharmaceuticals plc	complaint
+jazz pharmaceuticals plc shs usd	complaint
+biogen inc com	complaint
+biogen idec inc	complaint
+total s a spon adr div: 2.276	complaint
+total s a sponsored adr	complaint
+blackrock global allocation i	complaint
+blackrock global allocation instl cl	complaint
+pimco fds income fund cl d	complaint
+pimco fds income instl	complaint
+metropolitan west total return m	complaint
+metropolitan west fds total ret cl i	complaint
+pim real return inst	complaint
+pimco real return class d	complaint
+pimco fds income fund cl d	complaint
+pimco incm inst cl	complaint
+af bond fd amer r6	complaint
+the bond fund of america-r3	complaint
+liberty broadband corp com ser c	complaint
+liberty broadband corp s-c	complaint
+skechers u s a inc cl a	complaint
+skechers u s a inc class a	complaint
+national-oilwell varco inc	complaint
+national oilwell varco inc com	complaint
+zillow group inc. - class c	complaint
+zillow group inc cl a	complaint
+tmpl global bond a	complaint
+templeton global bd r	complaint
+unilever plc adr amer shs spon	complaint
+unilever plc sponsored adr new	complaint
+ishares msci eafe small-cap	complaint
+ishares msci eafe sm cap etf div: 1.028	complaint
+american eagle outfitters com	complaint
+american eagle outfitters new com isin #us4 sedol #2048592	complaint
+mosaic co new com	complaint
+mosaic co	complaint
+blackrock strategic income i	complaint
+blackrock strategic income opps ptf a	complaint
+blackrock total return fund cl a	complaint
+blackrock glbl opp eq tr f growth & income fund	complaint
+vanguard short-term tax-exempt fund admiral shares	complaint
+vanguard short term tax exempt fd investor shr	complaint
+wal-mart stores inc com isin #us9311421039 sedol #2936921	complaint
+wal-mart stores inc com	complaint
+vanguard int'l growth port inv cl	complaint
+vanguard international growth fund investor shares	complaint
+vanguard intl bond index etf	complaint
+vanguard total intl bond index etf	complaint
+pimco income a	complaint
+pimco income fd i	complaint
+berkshire hathaway inc.	complaint
+berkshire hathaway inc cl b	complaint
+newell rubbermaid inc cmn	complaint
+newell rubbermaid	complaint
+american funds europacific growth fund	complaint
+american funds europacific growthr3	complaint
+ja solar holdings co ltd spon adr rep5ord	complaint
+ja solar holdings co. ltd. ads	complaint
+metr w tot rtn bond cl m	complaint
+metropolitan west total return bond i	complaint
+rdgewrth m/c value eq i	complaint
+ridgeworth mid cap value equity cl i	complaint
+templeton glbal bond adv	complaint
+tmpl global bond r6	complaint
+pimco total return fund cl d	complaint
+pimco total return	complaint
+general dynamics crp	complaint
+general dynamics co	complaint
+breitburn energy partners l p com	complaint
+atlas resource partners l p	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+brookdale sr living inc com	complaint
+brookdale senior living inc.	complaint
+broadridge finl solu	complaint
+broadridge financial solutions com	complaint
+vanguard institutional index i	complaint
+vanguard institutional index	complaint
+american cap agy corp	complaint
+american capital agency reit	complaint
+franklin utilities fund	complaint
+franklin convertible securities fund cl a	complaint
+vanguard ftse europe etf div: 1.622	complaint
+vanguard intl equity index fds ftse europe etf	complaint
+putnam dynamic asset alloc growth cl a	complaint
+putnam dynamic asset allocation growth fund cl a	complaint
+yahoo! inc com	complaint
+yahoo inc	complaint
+vanguard total bond market idx-adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+unitedhealth grp inc	complaint
+unitedhealth group inc	complaint
+technology select sectorspdr etf iv	complaint
+select sector spdr trust technology select index	complaint
+oakmark equity & income fd i	complaint
+oakmark equity and income fund class i	complaint
+metropolitan west total return bond i	complaint
+metropolitan west fds total ret cl i	complaint
+oracle corp $0.01 del	complaint
+oracle corp com	complaint
+vanguard target retirement 2045 fund	complaint
+vanguard target retirement 2045 inv	complaint
+gopro inc-class a	complaint
+gopro inc com	complaint
+nextera energy inc	complaint
+nextera energy inc com div: 3.480	complaint
+united st oil fd partnrshp etf	complaint
+united states oil fund ltd partnership	complaint
+vanguard total bond market index admiral	complaint
+vanguard total bond market index fund investor shares	complaint
+tjx cos inc new com isin #us0 sedol #2989301	complaint
+tjx cos inc new com isin #us8725401090 sedol #2989301	complaint
+vanguard small cap index - a	complaint
+vanguard small-cap index fund institutional shares	complaint
+american funds europacific gr r4	complaint
+american funds euro pacific gr	complaint
+whole foods mkt inc com	complaint
+whole foods mkt inc	complaint
+vanguard equity income fund admiral shares	complaint
+vanguard equity income adm	complaint
+quality sys inc com isin #us4 sedol #2715391	complaint
+quality systems inc com	complaint
+vanguard sector index fds vanguard information technology vi	complaint
+vanguard information tech etf	complaint
+ishares russell 1000 growth etf	complaint
+russell 1000 growth (ishares)	complaint
+vanguard short term corp bond index fund etf	complaint
+vanguard short-term corporate div: 1.585	complaint
+deutsche x-trackers msci eaf	complaint
+deutsch x trks msci eafehdg eqy etf	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+harbor fd intl fd	complaint
+harbor international inst	complaint
+exxon mobil corporation com	complaint
+exxon mobil corp | e005207	complaint
+charles schwab new	complaint
+the charles schwab corp	complaint
+v f corp com	complaint
+vf corp	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+whole foods mkt inc com	complaint
+whole foods market inc	complaint
+vanguard us value fund	complaint
+vanguard us value investor	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market idx instl pls	complaint
+wisdomtree invts inc	complaint
+wisdomtree investments inc com	complaint
+comcast corp new cl a	complaint
+comcast corp com cl a	complaint
+syngenta ag-adr	complaint
+syngenta ag adr	complaint
+af europac growth r6	complaint
+american funds euro pacific growth r6	complaint
+vanguard ttl bond mkt idx adm	complaint
+vang tot bd mkt inst	complaint
+vanguard gnma fund	complaint
+vanguard gnma inv	complaint
+the oakmark international fund - class i	complaint
+oakmark intl cl i	complaint
+american mutual fund cl a	complaint
+american fd american mutual fd cl f2	complaint
+perkins small cap value t	complaint
+perkins sm cap val n	complaint
+pimco incm cl d	complaint
+pimco incm inst cl	complaint
+vanguard small-cap index fund admiral	complaint
+vnguard index trust small cap idx instl	complaint
+vanguard 500 index investor	complaint
+vanguard index 500 port	complaint
+berkshire hathaway	complaint
+berkshire hathaway cl-b new	complaint
+american intl group inc	complaint
+american intl group	complaint
+aqr managed futures i	complaint
+aqr aqr mngd futures strategy i	complaint
+total s a fadr 1 adr reps 1 ord shs	complaint
+total s a sponsored adr isin #us1 sedol #2898032	complaint
+cons discret sel sect spdr fd div: 1.116	complaint
+consumer discretionary spdr	complaint
+exxon mobil corp -	complaint
+exxon mobil corp	complaint
+microsoft corporation cmn	complaint
+microsoft corporation	complaint
+powershares exchange-traded fd tr intl divid achievers portfolio	complaint
+powershares intl dvdnd achvrs etf iv	complaint
+vanguard total international bond et	complaint
+vanguard total intl bond index etf	complaint
+valero energy corp new -	complaint
+valero energy corp new com	complaint
+linkedin corp class a common stock	complaint
+linkedin corp	complaint
+coca-cola	complaint
+coca cola co com	complaint
+ishares core msci emerging etf	complaint
+harding loevner emerging markets adv cl	complaint
+vanguard ftse developed markets	complaint
+developed markets	complaint
+sprint corp com	complaint
+sprint corporation com usd0.01	complaint
+ishares iboxx high yield corporate bond etf isin #us5 sedol #b1vz486	complaint
+ishares iboxx $ high yield corporate bon	complaint
+scorpio tankers inc common	complaint
+scorpio tankers inc	complaint
+vanguard intermediate-term tax-exempt fund admiral shares	complaint
+vanguard intermediate-term tax-ex fund	complaint
+lloyds banking group plc adr	complaint
+lloyds banking group plc div: 0.129	complaint
+pimco total ret fd instl	complaint
+pimco total return cl a	complaint
+usd gnb sudameris bk reg s 3.875% may 02 2018	complaint
+usd arcos dorados bv reg s 6.625% sep 27 2023	complaint
+vanguard total bond market index adm	complaint
+vanguard bond index total mkt investor	complaint
+pimco income fund cl p	complaint
+pimco incm cl d	complaint
+trp new horizons	complaint
+t. rowe price new horizons fund	complaint
+dfa emerging mkts core eqty port instl	complaint
+dfa emrg mkt core eq	complaint
+american funds europacific gr r4	complaint
+amer funds europac r4 m4741	complaint
+wisdomtree emerging markets small cap dividend etf	complaint
+wisdomtree em small cap	complaint
+goldman sachs group inc com	complaint
+goldman sachs group inc	complaint
+synergy pharma	complaint
+synergy pharmaceuticals inc	complaint
+pimco total ret fd instl	complaint
+pimco total return admin	complaint
+royal dutch shell adr ea rep 2 cl a eur0.07	complaint
+royal dutch shell fadr 1 adr reps 2 ord shs	complaint
+vanguard ftse developed etf	complaint
+vanguard ftse developd mkt etf	complaint
+ishares russell midcap v etf div: 1.470	complaint
+ishares russell mid cap value etf iv	complaint
+pimco fds income fund cl d	complaint
+pimco income fd i	complaint
+vanguard fixed income secs inter term invt grade fd admiral cl	complaint
+vanguard intermediate-term investment-grade fund investor shares	complaint
+goldman sachs mid cap value r	complaint
+goldman sachs mid cap value fund - class r	complaint
+vanguard target retirement 2055 fund investor shares	complaint
+vang target ret 2055	complaint
+walgreens boots alli	complaint
+walgreens boots alliance inc com isin #us4 sedol #btn1y44	complaint
+pharmerica corp com	complaint
+pharmerica corp	complaint
+schwab intl small cap equity etf	complaint
+schwab strategic tr intl small cap equity etf	complaint
+ishares national amt-free muni bond etf	complaint
+ishares national muni	complaint
+vanguard high dividend yield index fund	complaint
+vanguard high dividend yield e tf	complaint
+templeton global bond adv	complaint
+tmpl global bond r6	complaint
+schwab intermediate-term bond fund	complaint
+schwab fundamental glbl real estate index fund	complaint
+darling ingredients inc	complaint
+darling ingredients	complaint
+harris oakmark international fund cl i	complaint
+the oakmark international fund - class i	complaint
+facebook, inc. cmn class a	complaint
+facebook inc	complaint
+templeton glbal bond adv	complaint
+templeton global macro group advisor cl	complaint
+verizon communications inc com	complaint
+verizon communications div: 2.260	complaint
+spdr s&p dividend etf iv	complaint
+spdr series trust s&p divid	complaint
+american beacon small cap value fund institutional class	complaint
+american beacon small cp val inst	complaint
+ishares tr msci eafe value fd	complaint
+ishares msci eafe value etf	complaint
+visa inc-class a shares	complaint
+visa inc class a	complaint
+ishares s&p national amt-free muni	complaint
+ishares s&p national amt-free mun	complaint
+fidelity new markets	complaint
+fid new markets inc	complaint
+coca cola com	complaint
+coca-cola co (the)	complaint
+vanguard total international bond et	complaint
+vanguard total int bd idx etf	complaint
+fa real estate i	complaint
+nuveen real estate i	complaint
+keycorp inc	complaint
+penney j c co inc	complaint
+vanguard total bond market idx-adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+vanguard index fds vanguard value etf formerly vanguard inde	complaint
+vanguard crsp us large cap value ind et	complaint
+exxon mobil dda	complaint
+exxon mobil corp | e005207	complaint
+novo-nordisk a-s fadr 1 adr reps 1 ord shs	complaint
+novo-nordisk a/s-spons adr	complaint
+ishares jpm usd emr etf	complaint
+ishares emerging markets usd bond etf	complaint
+metropolitan west total return bond plan class shares	complaint
+metropolitan west total return bond plan fund	complaint
+ampco-pittsburgh corp com	complaint
+ampco pittsburgh corp	complaint
+energy transfer partners lp com	complaint
+cheniere energy partners lp com	complaint
+wells fargo & co com	complaint
+wells fargo company	complaint
+nextera energy inc	complaint
+nextera energy inc com	complaint
+exelon corporation cmn	complaint
+exelon corp	complaint
+pimco real return insitutional	complaint
+pimco real return fd cl d	complaint
+ford motor company	complaint
+ford motor co new div: 0.600	complaint
+bank of america corp cmn	complaint
+bank america corp	complaint
+vnguard institutional index	complaint
+vanguard institutional index i	complaint
+berkshire hathaway inc cl b ne	complaint
+berkshire hathaway	complaint
+nuance communications inc com isin #us67020y1001 sedol #2402	complaint
+nuance communications	complaint
+sptn em mkts idx adv	complaint
+spartan emerging mkt index fund investor	complaint
+vanguard balanced index fund investor shares	complaint
+vanguard balanced index admiral	complaint
+devon energy corp new com	complaint
+devon energy corp	complaint
+mondelez intl class a	complaint
+mondelez intl inc com	complaint
+amer funds europac r3 m4740	complaint
+american funds europacific growthr3	complaint
+vanguard target retirement 2040 inv	complaint
+vang target ret 2040	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+anadarko pete corp	complaint
+anadarko pete div: 1.080	complaint
+wal-mart stores	complaint
+wal-mart stores inc.	complaint
+dodge & cox stock fund	complaint
+dodge & cox funds stock fund	complaint
+ishares 7-10 yr treasry bd etf div: 1.973	complaint
+ishares barclays 7-10 year treasury	complaint
+breitburn energy ptn lp	complaint
+breitburn energy partners unit limited partnership interest	complaint
+wal mart stores inc	complaint
+wal-mart stores	complaint
+wells fargo special mid cap value a	complaint
+wells fargo adv spec md cp val a wfpax	complaint
+geo group inc	complaint
+geo group inc new	complaint
+mainstay large cap growth fund cl i	complaint
+mainstay large cap growth fund i	complaint
+vanguard small cap index, adm	complaint
+vanguard small-cap index fund inst	complaint
+vanguard extended market idx i	complaint
+vanguard ext. market idx adm	complaint
+vf corporation	complaint
+v f corp com	complaint
+accenture plc cls a usd0.0000225	complaint
+accenture ltd ord	complaint
+gopro inc class a	complaint
+gopro inc cl a isin #us4 sedol #bmnqc35	complaint
+telefonica s.a. adr sponsored adr cmn	complaint
+telefonica sa adr ea repr 1 ord npv	complaint
+vanguard bond index fund short term portfolio	complaint
+vanguard short-term bond index	complaint
+alibaba grp sp adr (cayman islands)	complaint
+alibaba group hldg ltd	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market idx-adm	complaint
+metropolitan west total return bond fund	complaint
+metropolitan west total return bond plan class shares	complaint
+t. rowe price global technology fund	complaint
+t.rowe price global tech fund	complaint
+vanguard target retirement 2035 fund	complaint
+vanguard target retirement 203 5 fund	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard total bond market index	complaint
+ishares tr core us aggt bd etf	complaint
+ishares barclays aggregate bd fd	complaint
+bce inc	complaint
+bce inc f	complaint
+eog resources inc com	complaint
+e o g resources inc	complaint
+guggenheim bulletshares 2016 high yield corporate bond etf	complaint
+claymore guggenheim bulletshares 2016 high yield corp bond etf	complaint
+templeton glbal bond adv	complaint
+templeton global bond fund cl advisor	complaint
+vanguard ltd-trm t/e adm	complaint
+vanguard limited-term tax-exempt fund investor shares	complaint
+dfa us large cap value port.	complaint
+dfa u.s. large cap value portfolio institutional class	complaint
+vanguard small cap etf (vb)	complaint
+vanguard small cap etf iv	complaint
+powershares emerging markets sovereign d	complaint
+powershares db em usd liquid balanced	complaint
+american balanced portfolio fund class c (31%)	complaint
+american funds balanced portfolio	complaint
+zillow group inc	complaint
+zillow group inc shs cl c	complaint
+vanguard ftse emerging markets	complaint
+vanguard msci emerging markets etf	complaint
+nasdaq inc com stk	complaint
+nasdaq inc com	complaint
+linkedin corp class a	complaint
+linkedin corp - a	complaint
+approach resources	complaint
+approach resources inc com	complaint
+ford motor co com new	complaint
+ford mtr co del com par $0.01	complaint
+vanguard midcap index - a	complaint
+vanguard mid cap index	complaint
+vanguard small-cap value etf	complaint
+vanguard index fds vanguard small cap value vipers formerly vanguard	complaint
+general electric co div: 0.920	complaint
+general electric	complaint
+duke energy corp new com new	complaint
+duke energy corp new com new isin #us4 sedol #b7jzsk0	complaint
+c.h. robinson worldwide inc	complaint
+c h robinson worldwide inc com new isin #us8 sedol #2116228	complaint
+coca-cola company	complaint
+coca-cola co/the	complaint
+vanguard index fds formerly vanguard index tr to 05/24/2001	complaint
+vanguard index funds s&p 500 etf	complaint
+pimco total return fund instl cl	complaint
+pimco total return fund - class r	complaint
+amgen inc div: 4.000	complaint
+amgen incorporated	complaint
+vanguard extended market index fund institutional	complaint
+vanguard ext. market idx adm	complaint
+pepsico inc.	complaint
+pepsico inc	complaint
+ligand pharmaceuticals inc cl b	complaint
+ligand pharmaceuticals inc com	complaint
+emerging markets	complaint
+harding loevner emerging markets adv cl	complaint
+the walt disney co	complaint
+walt disney co com	complaint
+rydex guggenheim s&p 500 equal weighted index etf	complaint
+guggenheim s&p 500 eql weight etf iv	complaint
+alphabet inc-cl a	complaint
+alphabet inc shs cl a	complaint
+southwest airlines	complaint
+southwest airls co com	complaint
+emerald gwth fd cl a	complaint
+emerald growth a	complaint
+pim total rt inst	complaint
+fund: pimco total return admin	complaint
+pimco low duration instl	complaint
+pimco low duration fund a	complaint
+harbor international fund	complaint
+harbor international institutional	complaint
+four corners ppty tr inc com	complaint
+four corners ppty reit	complaint
+american mutual fund-a	complaint
+american fd american mutual fd cl f2	complaint
+ishares barclays aggregate bd fd	complaint
+ishares core u.s. aggregate	complaint
+oppenheimer developing mkts y	complaint
+oppenheimer developing markets fnd y	complaint
+dfa emerging markets value	complaint
+dimensional emerging mkts val prtf instl	complaint
+american beacon lg cap val planahd	complaint
+am beacon large cp val	complaint
+wells fargo & co new del	complaint
+wells fargo & co com	complaint
+exxon mobil corp | e005207	complaint
+exxon mobil corporation com	complaint
+barnes & noble inc com	complaint
+barnes &noble inc com	complaint
+alibaba group hldg ltd sponsor	complaint
+alibaba grp sp adr (cayman islands)	complaint
+harbor capital appreciation instl	complaint
+harbor cap appr inst	complaint
+pimco total return instl	complaint
+total return fund (pimco)	complaint
+metropolitan west total return bond fund	complaint
+metropolitan west total return bond plan fund	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market index fund institutional plus	complaint
+vang tot bd mk is pl	complaint
+first trust internet index cf etf	complaint
+first trust dow jones internet	complaint
+cohen & steers rlty	complaint
+cohen & steers realty	complaint
+alibaba group hldg ltd sponsored ads	complaint
+alibaba grp sp adr (cayman islands)	complaint
+netflix com inc	complaint
+netflix inc.	complaint
+vanguard total bond market index fund institutional shares	complaint
+vanguard total bond market index inv	complaint
+vanguard mid-cap index fund admiral shares	complaint
+vanguard mid cap index admiral	complaint
+pimco total return r	complaint
+fund: pimco total return admin	complaint
+oppenheimer developing markets fund	complaint
+oppenheimer developing markets y fund	complaint
+vanguard reit index etf (vnq)	complaint
+vanguard reit etf index	complaint
+spdr dow jones indust av etf trust	complaint
+spdr dow jones indl avrg etf	complaint
+vanguard extended market index fund institutional shares	complaint
+vanguard extended market idx adm	complaint
+allstate corp comm	complaint
+allstate corp div: 1.320	complaint
+ford mtr co	complaint
+ford motor co com new	complaint
+vang ext mkt idx ins	complaint
+vanguard extended market index fund admiral shares	complaint
+vanguard shortterm investgrade adm	complaint
+vanguard short-term investment-grade fund investor shares	complaint
+eli lilly & co	complaint
+lilly eli &co com npv	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+baidu inc spon adr	complaint
+baidu inc sponsored adr repstg ord shares class a	complaint
+canadian natl railway company com	complaint
+canadian natl railway co	complaint
+financial instns inc com	complaint
+financial institutions inc	complaint
+vanguard total bond market index adm	complaint
+vang tot bd mkt inst	complaint
+home depot inc com isin #us9 sedol #2434209	complaint
+the home depot, inc. cmn	complaint
+deutsche bk ag reg shs	complaint
+deutsche bank ag new fregistered shares	complaint
+disney walt co com disney	complaint
+disney walt co	complaint
+vanguard 500 index fund - admiral	complaint
+vanguard 500 idx adm	complaint
+trp new horizons	complaint
+t rowe price new horizons fund	complaint
+franklin income fund cl a	complaint
+franklin income series cl a	complaint
+vang tot bd mkt inst	complaint
+vanguard total bond market idx instl pls	complaint
+american funds american hi inc tr r3	complaint
+american high income trust cl a	complaint
+vanguard small-cap growth index fund investor shares	complaint
+vanguard small capitalization growth index fund investor shares	complaint
+pimco fds income instl	complaint
+pimco income administrative	complaint
+metr w tot rtn bond cl m	complaint
+metwest tot rtn bd i	complaint
+sirius xm hldgs inc	complaint
+sirius xm hldgs inc com	complaint
+chemours company	complaint
+chemours co com	complaint
+new york community	complaint
+new york cmnty bancorp inc	complaint
+vanguard total intl bond index etf	complaint
+vanguard total international bond index etf	complaint
+diageo plc new sponsored adr	complaint
+diageo plc sponsored adr	complaint
+first trust emerging markets alphadex fu	complaint
+deutsche x-trackers msci emrgng mkts hdgd eqty etf	complaint
+bofi holding	complaint
+bofi holdings inc com	complaint
+vanguard global ex-us real estate etf	complaint
+vanguard global ex u s real estate index fd etf	complaint
+pimco total return fund cl p	complaint
+pimco total return admin	complaint
+vanguard intermediate-term investment-grade fund admiral shares	complaint
+vanguard int term inv grade	complaint
+vanguard short term investment grade fund admiral	complaint
+vanguard short-term investment-grade fund investor shares	complaint
+bhp billiton ltd sponsored adr	complaint
+bhp billiton limited adr	complaint
+guggenheim bulletshares 2017	complaint
+guggenheim bulletshares 2017 corporate b	complaint
+arm holdings plc-spons adr	complaint
+arm holdings plc ads rep 3 ord gbp0.05	complaint
+ishares tr intl trea bd etf	complaint
+ishares intl treasury bond etf	complaint
+dfa emerging markets core	complaint
+dfa emerging markets core equity	complaint
+sector financial select sector spdr etf	complaint
+select financial etf	complaint
+valero energy corp	complaint
+valero energy corp new -	complaint
+american capital world grth & inc a	complaint
+american funds cap wld gr&inc a	complaint
+vanguard growth	complaint
+vanguard growth etf iv	complaint
+leucadia national	complaint
+leucadia national co	complaint
+salesforce.com inc com	complaint
+salesforce com	complaint
+berkshire hathaway class b	complaint
+berkshire hathawayinc del cl b new	complaint
+invesco real estate fund class a	complaint
+fa real estate a	complaint
+powershares global exchange traded fd tr emerging markets so	complaint
+powershares emerging markets sovereign debt etf	complaint
+vanguard intl equity index fds ftse emerging mkts etf	complaint
+vanguard emerging markets etf (vwo)	complaint
+vanguard intermediate-term treasury fund admiral shares	complaint
+vanguard intermediate-term treasury inv	complaint
+vanguard high yield corp bd-inv	complaint
+vanguard high-yield corporate fund admiral shares	complaint
+the exone company	complaint
+exone co com	complaint
+dfa real estate securities fund institutional class	complaint
+dfa real estate securities port	complaint
+edwards lifesciences	complaint
+edwards lifesciences corp	complaint
+ishares 20+ year	complaint
+ishares tr 20 yr tr bd etf	complaint
+zynga inc.	complaint
+zynga inc	complaint
+fid diversifd intl k	complaint
+fidelity diversified international fund class k	complaint
+american europacific growth	complaint
+af europac growth r5	complaint
+textron inc	complaint
+textron incorporated	complaint
+oppenheimer developing markets	complaint
+opp developing mkt i	complaint
+lululemon athletica	complaint
+lululemon athletica inc com	complaint
+vanguard reit etf div: 3.124	complaint
+vanguard reit index etf (vnq)	complaint
+metropolitan west total return bond m	complaint
+metwest tot rtn bd i	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vanguard bond index total mkt investor	complaint
+google inc class a vtg voting shares	complaint
+google inc cl a	complaint
+oppenheimer dev markets class a	complaint
+oppen developing mkts a	complaint
+growth fund of america class a - american funds m/f	complaint
+growth fund of america cl a	complaint
+vanguard institutional index	complaint
+vanguard institl index	complaint
+ishares russell midcap growth	complaint
+ishares russell mid cap grw etf iv	complaint
+vanguard shrt trm invmnt grd-inv	complaint
+vanguard short-term invest-grade	complaint
+baxalta inc	complaint
+baxalta inc com	complaint
+time warner inc new div: 1.610	complaint
+time warner inc.	complaint
+vanguard small cap index - a	complaint
+vang sm cap idx inst	complaint
+microsoft corporation cmn	complaint
+microsoft corp	complaint
+vanguard short-term bond index fund	complaint
+vanguard short term bond fund	complaint
+vanguard small cap index fund - admiral	complaint
+vanguard smallcap index fund	complaint
+taser intl inc com	complaint
+taser international inc com	complaint
+charles schwab new div: 0.240	complaint
+the charles schwab corp	complaint
+apple inc aapl	complaint
+apple inc	complaint
+health care select sector	complaint
+select sector health care spd etf iv	complaint
+oppenheimer developing markets fnd y	complaint
+oppenheimer developing markets y	complaint
+vanguard gnma fund admiral shares	complaint
+vanguard gnma fund investor shares	complaint
+vanguard index fds s&p 500 etf	complaint
+vanguard index funds s&p 500 etf	complaint
+ishares msci emerging markets	complaint
+harding loevner emerging markets adv cl	complaint
+blackrock high yield bond portfolio svc	complaint
+blackrock high yield bond instl	complaint
+nicholas fd inc com	complaint
+nicholas fund inc	complaint
+vanguard total intl bond etf	complaint
+vanguard total international bond etf	complaint
+mondelez intl class a	complaint
+mondelez international inc-a	complaint
+templeton global bond fund advisor class	complaint
+tmpl global bond r6	complaint
+boeing company	complaint
+boeing co/the	complaint
+columbia income opps a	complaint
+columbia income opportunities a	complaint
+vanguard ca inter term tax-exempt fd inv shrs	complaint
+vanguard california intermediate-term tax-exempt fund investor shares	complaint
+american funds europacific gr r6	complaint
+american funds europacific growth r6	complaint
+ishares tr russell mid-cap etf	complaint
+ishares russell midcap	complaint
+amer fds europacific f2	complaint
+american europacific growth fund cl f2	complaint
+wisdomtree investments inc com	complaint
+wisdomtree investments inc	complaint
+american funds new perspective f	complaint
+american fd new perspective cl f1	complaint
+apple, inc. cmn	complaint
+apple inc.	complaint
+vanguard total bond market index admiral	complaint
+vang tot bd mk is pl	complaint
+vanguard ftse emerging mark etf iv	complaint
+vanguard ftse emerging markets	complaint
+dominion resources inc/va	complaint
+dominion resources inc	complaint
+vanguard short term invt grade admiral	complaint
+vanguard short-term invest-grade	complaint
+vanguard target retirement 2035 fund investor shares	complaint
+vanguard target retirement 2035 fund	complaint
+vanguard dividend appreciation etc	complaint
+vanguard dividend appreciation	complaint
+fifth street finance corp com	complaint
+fifth street finance corp	complaint
+precision drilling corp com	complaint
+precision drilling corp	complaint
+vanguard total bond index adm	complaint
+vanguard bond index total mkt investor	complaint
+ishares 20 pls year treasury bnd etf	complaint
+ishares 20+ year treasury bo	complaint
+intel corp	complaint
+intel	complaint
+visa inc cl a	complaint
+visa inc cl a class a	complaint
+terex corporation new	complaint
+denso corporation adr	complaint
+spartan extended mkt index fid adv class	complaint
+fidelity spartan extended mkt index inv	complaint
+invesco growth & income fund cl y	complaint
+invesco growth and income fund (class y)	complaint
+zillow group inc cl a	complaint
+zillow group inc shs cl c	complaint
+oppenheimer developing markets y fund	complaint
+oppenhmr develpng mkts y	complaint
+deut real estate r6	complaint
+deutsche real estate securities fund - class a	complaint
+facebook inc	complaint
+facebook inc class a common stock	complaint
+af europac growth r6	complaint
+american funds europacific growth fund	complaint
+vanguard 500 index	complaint
+vanguard 500 index inv	complaint
+american express co div: 1.160	complaint
+american express co	complaint
+vanguard target retirement 2045 inv	complaint
+vanguard target retirement 2045 fund investor shares	complaint
+spdr dow jones industrial avrg etf	complaint
+spdr dow jones indl average etf tr unit ser 1	complaint
+concho res inc	complaint
+concho res incorporated	complaint
+vanguard short term bond index investor	complaint
+vang st bd idx is pl	complaint
+priceline group inc	complaint
+priceline group	complaint
+metwest tot rtn bd m	complaint
+metropolitan west fds total ret cl i	complaint
+vanguard mid cap index fd	complaint
+vanguard mid capitalization index fund	complaint
+unitedhealth gp inc div: 2.000	complaint
+unitedhealth group inc	complaint
+professionally mgd ptfl akre focus retail cl	complaint
+akre focus fund retail	complaint
+harding loevner emerg mrkts port adv	complaint
+harding loevner emerging markets adv cl	complaint
+ishares tips bond etf div: 0.369	complaint
+ishares tr tips bd etf	complaint
+royal dutch shell adr ea rep 2 cl a eur0.07	complaint
+royal dutch shell plc	complaint
+pim real return inst	complaint
+pimco real return fd cl d	complaint
+energy transfer prtnrs l p unit ltd partn	complaint
+cheniere energy partners lp com	complaint
+boston beer company inc cl a	complaint
+boston beer inc cl a	complaint
+facebook inc.	complaint
+facebook inc class a common stock	complaint
+vang tot bd mk is pl	complaint
+vanguard total bond market index inv	complaint
+first trust ipox-100 index etf	complaint
+first trust us ipo index fund	complaint
+vanguard small-cap index fund admiral shares	complaint
+vnguard index trust small cap idx instl	complaint
+alphabet inc. cl c	complaint
+google inc cl c	complaint
+cisco systems inc com	complaint
+cisco systems inc	complaint
+american mutual fund	complaint
+amer funds american mutual fund class f2	complaint
+pnc financial services group cmn	complaint
+pnc fincl services group	complaint
+restaurant brands intl inc	complaint
+restaurant brands international	complaint
+syngenta ag - adr	complaint
+syngenta ag adr	complaint
+vanguard index fds vanguard small cap value vipers formerly vanguard	complaint
+vanguard crsp us small cap value ind et	complaint
+salesforce.com, inc cmn	complaint
+salesforce com	complaint
+schlumberger ltd div: 2.000	complaint
+schlumberger ltd com	complaint
+vanguard small-cap value index fund	complaint
+vang sm val idx inv	complaint
+vanguard short-term investment-grade fund investor shares	complaint
+vang st invstgrd inv	complaint
+fedex corp div: 1.000	complaint
+fedex corp delaware com	complaint
+schwab funda emg mkts large com etf	complaint
+schwab strategic tr schwab fundamental emerging mkts large c	complaint
+pimco total return instl	complaint
+pimco total return fund cl p	complaint
+wisdomtree emerging markets smallcap dividend fund	complaint
+wisdomtree tr emerging mkts isin #us6 sedol #b28vh85	complaint
+vanguard target retirement 2055 fund	complaint
+vanguard target retire 2055	complaint
+ishares msci eafe value inx	complaint
+ishares tr eafe value etf	complaint
+vanguard intl equity index fd inc ftse all-world ex-us index	complaint
+vanguard intl equity index	complaint
+ford mtr co	complaint
+ford mtr co del com	complaint
+exxon mobil corporation	complaint
+exxon mobil corp	complaint
+coca-cola co/the	complaint
+coca cola co	complaint
+qlik technologies inc.	complaint
+keysight technologies inc com	complaint
+anadarko pete corp com	complaint
+anadarko petroleum	complaint
+vanguard specialized portfolios div appreciation index fd viper shs	complaint
+vanguard specialized portfolios div appreciation index fd vi	complaint
+vang target ret 2040	complaint
+vanguard target retirement 2040 fund investor shares	complaint
+blackrock high yld bd port cl k	complaint
+blackrock high yield bond instl	complaint
+parnassus core equity investor	complaint
+parnassus core eqty fd inv	complaint
+j p morgan chase & co	complaint
+jpmorgan chase & co	complaint
+vanguard emerging markets etf	complaint
+vanguard ftse emerging markets	complaint
+bank america corp	complaint
+bank of america corp.	complaint
+trp growth stock	complaint
+t. rowe price growth stock fd	complaint
+templeton global bd fd adv	complaint
+tmpl global bond r6	complaint
+vanguard total bond market index-admiral	complaint
+vanguard ttl bnd mrk indx inst	complaint
+ambarella inc com usd0.00045	complaint
+ambarella inc ord (cayman isl)	complaint
+leapfrog enterprises inc	complaint
+leapfrog enterprises inc cl a	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market index-admiral	complaint
+new world ? cl 529 a	complaint
+new world fund	complaint
+california wtr svc group inc	complaint
+ca water service grp	complaint
+pimco total return fd cl c	complaint
+pimco total return fund adm	complaint
+spdr barclays high yieldbond etf	complaint
+spdr barclays high yield bond (jnk)	complaint
+leapfrog enterprises class a	complaint
+leapfrog enterprises inc cl a	complaint
+amer express company	complaint
+american express co	complaint
+jacobs engr group inc del com isin #us4698141078 sedol #2469	complaint
+jacobs engr group inc	complaint
+banco latinoamercano f	complaint
+banco latinoamercano fde comerico exterior s a	complaint
+energy transfer partners lp com	complaint
+energy transfer partners l p unit ltd partnership int	complaint
+ishares 7-10 yr treasry bd etf div: 1.973	complaint
+ishares 7-10 year treasury bond etf	complaint
+glaxosmithkline plc sponsored adr	complaint
+glaxosmithkline plc-adr	complaint
+hartford finl svc gp	complaint
+hartford finl svcs group inc	complaint
+microsoft corp div: 1.440	complaint
+microsoft corp com	complaint
+amgen inc	complaint
+amgen incorporated	complaint
+ishares trust core s&p small-cap etf	complaint
+ishares core s&p small-cap etf	complaint
+vanguard strategic equity investor	complaint
+vang strategic eq	complaint
+vanguard sml-cap ind-adm	complaint
+vang sm cap idx inst	complaint
+growth fund of america class a - american funds m/f	complaint
+the growth fund of america	complaint
+verizon communications inc	complaint
+verizon communications	complaint
+zillow group inc cl a isin #us8 sedol #bvyjbr3	complaint
+zillow group inc shs cl c	complaint
+t. rowe price retirement 2045 fund	complaint
+t. rowe price retirement 2045	complaint
+american funds new world f	complaint
+american fd new world fd cl f1	complaint
+hodges small cap retail	complaint
+fid small cap stock	complaint
+cohen & steers real est secs i	complaint
+cohen & steers real estate secs i	complaint
+cerner corp stock	complaint
+cerner corp	complaint
+goldman sachs mgd futures strat a	complaint
+aqr managed futures strategy fund class i	complaint
+ford motor company	complaint
+ford mtr co	complaint
+vanguard ftse emerging markets div: 1.066	complaint
+vanguard ftse emerg mkts etf	complaint
+yum brands, inc. cmn	complaint
+yum! brands inc	complaint
+vanguard short term invt grade admiral	complaint
+vanguard shrt trm invmnt grd-inv	complaint
+gopro inc class a	complaint
+gopro inc-class a	complaint
+vnguard total bond market index adm	complaint
+vang tot bd mk is pl	complaint
+chemours co com div: 0.120	complaint
+chemours co com	complaint
+priceline group	complaint
+the priceline group inc	complaint
+artisan international value fund # 1466 closed to new	complaint
+artisan intl value fund inv	complaint
+dreamworks animation class a	complaint
+dreamworks animation skg cl a	complaint
+vanguard high yield corp bd-inv	complaint
+vanguard high yield corp fund admiral share	complaint
+pimco total return fund instl cl	complaint
+pimco total return fund adm	complaint
+dfa intl small cap value port instl	complaint
+delaware small cap core inst	complaint
+chicago bridge & iron company n v	complaint
+chicago bridge & iron company n.v. eur0.01 reg	complaint
+bristol-myers squibb co	complaint
+bristol myers squibb co	complaint
+vanguard ttl bnd mrk indx inst	complaint
+vang tot bd mk is pl	complaint
+alphabet inc cl a	complaint
+google inc class a	complaint
+the kraft heinz company	complaint
+kraft heinz company	complaint
+dfa intl value ptf	complaint
+dfa international value portfolio	complaint
+vanguard total bond index adm	complaint
+vanguard total bond market index fund institutional plus shares	complaint
+aqr managed futures strategy r6	complaint
+aqr aqr mngd futures strategy i	complaint
+vanguard small cap etf iv	complaint
+vanguard index fds vanguard small cap vipers formerly vangua	complaint
+procter & gamble co com	complaint
+procter & gamble co	complaint
+honeywell intl inc com	complaint
+honeywell intl inc del	complaint
+vanguard crsp us mid cap value inde etf	complaint
+vanguard mid-cap value etf	complaint
+pimco income instl	complaint
+pimco fds income instl	complaint
+amerisource bergen corp com	complaint
+amerisourcebergen corp	complaint
+polaris industries inc com	complaint
+polaris inds inc com	complaint
+pimco real return insitutional	complaint
+pimco real return class d	complaint
+vang tot bd mkt inst	complaint
+vanguard total bond market index fund investor shares	complaint
+metropolitan west totret bdm	complaint
+metropolitan west fds total ret cl i	complaint
+templeton global bond fund cl a	complaint
+templeton global bd r	complaint
+vm mid-cp core gr y	complaint
+victory munder mid cap core growth fund cl y	complaint
+vanguard short term bond index investor	complaint
+vanguard short-term bond index fund admiral shares	complaint
+templeton global bond fund cl advisor	complaint
+tmpl global bond r6	complaint
+michael kors holdings ltd com npv	complaint
+michael kors holdings com	complaint
+vanguard total bond market index adm	complaint
+vanguard bond index total mkt investor	complaint
+vanguard total bond market idx-adm	complaint
+vanguard total bond market index fund institutional plus	complaint
+dfa u s large cap value instl cl	complaint
+dfa us large cap value prtf instl	complaint
+chevron corporation	complaint
+chevron corporation cmn	complaint
+ishares core us agg bnd	complaint
+ishares barclays aggregate bond fund	complaint
+proshares ultra nasdaq	complaint
+proshares ultra nasdaq biotechnology	complaint
+wasatch frontier emerging small co's	complaint
+wasatch frontier emrg sm countries inv	complaint
+oppenheimer developing markets (odvnx)	complaint
+oppenheimer developing markets fund - class r	complaint
+colgate palmolive co	complaint
+colgate palmolive co com	complaint
+hain celestial group inc com	complaint
+hain celestial group inc	complaint
+jpmorgan chase & co div: 1.760	complaint
+jpmorgan chase & co com	complaint
+powershares qqq nasdaq 100	complaint
+powershares qqq trust srs 1 etf	complaint
+first dorsey wright focus 5 etf	complaint
+first tr exchange traded fd vi dorsey wrt 5 etf	complaint
+pepsico incorporated	complaint
+pepsico inc com	complaint
+powershares qqq trust se 1	complaint
+powershares qqq	complaint
+goldman sachs mangd futures strategy a	complaint
+aqr managed futures strategy fund class i	complaint
+vanguard intermediate-term bond index fund admiral shares	complaint
+vanguard inter-term bond index port inv	complaint
+accenture	complaint
+accenture plc fclass a	complaint
+loomis sayles bond instl	complaint
+loomis sayles mlti-asset inc a	complaint
+aqr managed futures strategy fund class i	complaint
+aqr aqr mngd futures strategy i	complaint
+vanguard equity income - a	complaint
+vang equity inc adm	complaint
+dfa emerging markets value	complaint
+dfa emerg mkts val i	complaint
+schwab strategic tr us reit etf	complaint
+charles schwab us reit etf	complaint
+zynga inc com	complaint
+zynga inc.	complaint
+omega healthcare investors inc com	complaint
+omega healthcare investors inc ohi	complaint
+harris oakmark international fund cl i	complaint
+oakmark intl cl i	complaint
+markel corp com	complaint
+markel corp	complaint
+wal-mart stores inc.	complaint
+wal-mart stores inc com isin #us9 sedol #2936921	complaint
+under armour inc-class a	complaint
+under armour inc com class a	complaint
+new perspective fund cl a	complaint
+new perspective fund	complaint
+costco wholesale corporation com	complaint
+costco wholesale crp del	complaint
+chipotle mexican grill inc com isin #us9 sedol #b0x7dz3	complaint
+chipotle mexican grl	complaint
+blackrock high yield municipal instl	complaint
+blackrock low duration bond instl	complaint
+visa inc com cl a	complaint
+salesforce com inc com	complaint
+sector spdr tr shs ben int financial	complaint
+sector spdr financial	complaint
+intl business machines corp	complaint
+intl business mach	complaint
+vanguard mid cap etf	complaint
+vanguard mid-cap etf	complaint
+pim total rt inst	complaint
+pimco total return fd cl c	complaint
+express scripts holding co com	complaint
+express scripts hldg co	complaint
+dineequity incorporated	complaint
+dineequity inc	complaint
+schwab health care	complaint
+schwab health care fund	complaint
+vanguard short-term bond index fund admiral shares	complaint
+vanguard short-term bond index	complaint
+vanguard index fds vanguard small cap vipers formerly vanguard index tr	complaint
+vanguard crsp us small cap index	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index	complaint
+amn healthcare svcs inc	complaint
+amn healthcare services inc	complaint
+t. rowe price health sciences	complaint
+health sciences fund	complaint
+american century tax-free bond inv	complaint
+american century infl adj bd inv	complaint
+vanguard total bond market index fund institutional shares	complaint
+vanguard bond index total mkt investor	complaint
+lazard int'l strategic equity	complaint
+lazard intl strategic equity open shares	complaint
+chevron texaco corp	complaint
+chevron corporation cmn	complaint
+oneok partners lp unit ltd partnership	complaint
+oneok partners l p unit ltd partnership	complaint
+first eagle sogen glbl a	complaint
+first eagle global fund class a (10%)	complaint
+fid conservative income bond fund	complaint
+fidelity conservativ income bond fd cl i	complaint
+sptn glb xus idx ins	complaint
+spartan global ex us index fid adv cl	complaint
+vanguard crsp us large cap value ind et	complaint
+vanguard value etf	complaint
+ishares nationl amt freemuni etf	complaint
+ishares tr nat amt free bd	complaint
+galena biopharma com	complaint
+galena biopharma incorporated	complaint
+vgrd ftse all wrld ex us sml cap etf	complaint
+vanguard ftse all world ex us small cap etf	complaint
+keycorp inc	complaint
+keycorp	complaint
+spdr barclays intermediate term corporate bond etf	complaint
+spdr barclays intermediate term cor	complaint
+microsoft corporation cmn	complaint
+microsoft corp com	complaint
+first eagle global fund class i	complaint
+first eagle sogen-i	complaint
+vanguard extended market index institutional class	complaint
+vanguard extended market idx adm	complaint
+emerald growth a	complaint
+emerald gwth fd cl a	complaint
+vanguard total bond market index admiral	complaint
+vang tot bd mkt inst	complaint
+ford motor com	complaint
+ford motor company	complaint
+sprott physical gold etv	complaint
+sprott physical gold trust	complaint
+chicago bridge & iron company n v	complaint
+chicago bridge & iron co nv	complaint
+salesforce.com	complaint
+salesforce com	complaint
+pimco total return fund instl cl	complaint
+fund: pimco total return admin	complaint
+brocade communications sys inc com new	complaint
+brocade communs sys	complaint
+becton dickinson&co	complaint
+becton dickinson co	complaint
+unitedhealth group inc -	complaint
+unitedhealth group	complaint
+doubleline emerging markets fixed inc n	complaint
+doubleline emrg mkts incm fd cl i	complaint
+zynga inc com usd0.00000625 class a	complaint
+zynga inc com	complaint
+vanguard short term investment grade fund admiral	complaint
+vang st invstgrd inv	complaint
+coca cola co div: 1.400	complaint
+coca-cola co	complaint
+pimco total return fund cl p	complaint
+mainstay retirement 2050 fund (class i)	complaint
+glaxosmithkline adr each cnv into 2 ord gbp0.25	complaint
+glaxosmithkline plc (britain)	complaint
+vanguard short term bond index investor	complaint
+vanguard bond index fund short term portfolio	complaint
+templeton global macro group advisor cl	complaint
+tmpl global bond r6	complaint
+vanguard extended market index fund institutional shares	complaint
+vanguard ext. market idx adm	complaint
+ishares silver trust	complaint
+ishares silver tr ishares	complaint
+vanguard ftse emerging markets	complaint
+vanguard emerging markets index fund	complaint
+ishares barclays aggregate bond fund	complaint
+ishares core u s aggregate bond etf	complaint
+pimco total return active exchange-traded fund	complaint
+pimco total return active etf	complaint
+s&p 500 index spdr	complaint
+spdr tr s&p 500 etf tr	complaint
+cvs health corporation	complaint
+cvs health corp	complaint
+mcdonalds corp	complaint
+mc donalds corp	complaint
+celgene corp com	complaint
+celgene corp	complaint
+alphabet inc shs cl c	complaint
+alphabet inc	complaint
+columbia strategic income (cosix)	complaint
+columbia strategic income cl a	complaint
+coca-cola co (the)	complaint
+coca-cola	complaint
+new perspective fund cl a	complaint
+american funds new perspective fund class a	complaint
+american funds growth and income portfolio	complaint
+american funds balanced portfolio	complaint
+vanguard small cap value etf	complaint
+vbr:vanguard small-cap value etf	complaint
+coca cola co	complaint
+coca-cola	complaint
+schlumberger ltd f	complaint
+schlumberger ltd slb	complaint
+johnson & johnson	complaint
+johnson & johnson jnj	complaint
+google inc class c	complaint
+alphabet inc shs cl c	complaint
+dfa us targeted value	complaint
+dfa us targeted value fund	complaint
+constellation brand class a	complaint
+constellation brands inc cl a	complaint
+halyard health inc com	complaint
+halyard health inc	complaint
+pimco inv grade corp bond instl	complaint
+fid conservative income bond fund	complaint
+ishares russell mid-cap etf	complaint
+ishares russell midcap	complaint
+humana inc com	complaint
+humana inc	complaint
+pimco income fd i	complaint
+pimco income administrative	complaint
+pimco total ret fd instl	complaint
+pimco total return fund cl d	complaint
+spdr fund consumer discre sel etf iv	complaint
+select sector spdr trust consumer dis select index	complaint
+alibaba group hldg ltd adr	complaint
+alibaba grp sp adr (cayman islands)	complaint
+vanguard total bond market index adm	complaint
+vanguard total bond market idx instl pls	complaint
+vang 500 index adm	complaint
+vanguard 500 index fund - admiral class	complaint
+vanguard small-cap index adm	complaint
+vanguard sml-cap ind-adm	complaint
+vanguard 500 index	complaint
+vanguard 500 index investor cl	complaint
+merck & co inc. com	complaint
+merck & co inc new com div: 1.840	complaint
+mccormick & co-non vtg shrs	complaint
+mccormick &co inc com non vtg isin #us4 sedol #2550161	complaint
+transdigm group inc com	complaint
+transdigm group inc com isin #us8936411003 sedol #b11fjk3	complaint
+vanguard intrmd-term bond index adm	complaint
+vanguard intermediate-term bond index fund investor shares	complaint
+spdr nuveen s&p high yield muni etf	complaint
+spdr s&p hi yld mun bd fd	complaint
+pimco total return fund instl cl	complaint
+pimco total return a	complaint
+time warner inc.	complaint
+time warner inc	complaint
+ishares barclays tips bond	complaint
+ishares tr tips bd etf	complaint
+qep resources inc com	complaint
+gopro inc cl a	complaint
+under armour inc cl a	complaint
+under armour inc class a	complaint
+american axle & mfg holdings c om	complaint
+american axle&mfg hldgs	complaint
+pimco total return fund - class r	complaint
+fund: pimco total return admin	complaint
+pnc financial services	complaint
+pnc financial srvcs	complaint
+vanguard interm-term investment-grde adm	complaint
+vanguard intermediate-term investment-grade fund admiral shares	complaint
+oneok inc.	complaint
+oneok inc	complaint
+vanguard index trust mid capitalization stk port	complaint
+vanguard mid-cap index fund investor shares	complaint
+select financial etf	complaint
+sector spdr financial	complaint
+timken co	complaint
+timken co cmn	complaint
+fidelity spartan extnd mkt idx advtg	complaint
+sptn ext mkt idx inv	complaint
+under armour inc.	complaint
+under armour inc cl a	complaint
+baidu inc fadr 1 adr reps 0.1 ord shs	complaint
+baidu inc adr	complaint
+vanguard total bond mkt	complaint
+vanguard bd index fd inc total bd market etf	complaint
+pimco inv grade corp bond instl	complaint
+pimco investment grade corporate bond fund - class a	complaint
+vanguard small cap index, adm	complaint
+vang sm cap idx inst	complaint
+first solar inc com	complaint
+first solar inc	complaint
+ishares iboxx high yield corporate bond etf	complaint
+ishares iboxx high yield corporate bond etf isin #us5 sedol #b1vz486	complaint
+american funds europacific gr r4	complaint
+af europac grth r4	complaint
+vanguard emerging markets etf (vwo)	complaint
+vanguard ftse emrg etf	complaint
+time warner inc. cmn	complaint
+time warner inc usd0.01	complaint
+starbucks corp. cmn	complaint
+starbucks corp.	complaint
+vang sm cap idx adm	complaint
+vanguard small cap index adm	complaint
+vanguard short term investment grade fund admiral	complaint
+vanguard short-term invest-grade	complaint
+royal dutch shell plc sponsored adr repstg a shs	complaint
+royal dutch shell plc adr class a	complaint
+bp plc spon adr	complaint
+bp plc spons adr (britain)	complaint
+matthews asian fds asia small cos fd	complaint
+matthews asia small co fd inv	complaint
+zillow group inc cl c cap stk	complaint
+zillow group inc - c	complaint
+t. rowe price 2055 fund	complaint
+trp retirement 2055	complaint
+growth fund of america cl a	complaint
+growth fund of america class a - american funds m/f	complaint
+toyota motor corp sp adr rep2com	complaint
+toyota motor corp adr	complaint
+delaware value instl	complaint
+delaware value cl a	complaint
+t. rowe price health sciences	complaint
+trp health sciences	complaint
+pimco total ret fd instl	complaint
+pimco total return a	complaint
+ishares msci usa min volility etf	complaint
+ishares msci usa min vol etf	complaint
+price t rowe group inc	complaint
+price t rowe group inc com	complaint
+vnguard total bond market index adm	complaint
+vanguard bond index total mkt investor	complaint
+vanguard small-cap index adm	complaint
+vanguard small cap index fund - admiral	complaint
+verizon communicatns com	complaint
+verizon communications vz	complaint
+dfa us small cap value port instl	complaint
+dfa us small cap value prtf instl	complaint
+sprtn total mkt indx investor class	complaint
+sptn tot mkt idx fai	complaint
+vanguard total bond market index admiral	complaint
+vanguard ttl bnd mrk indx inst	complaint
+verizon communications vz	complaint
+verizon communications div: 2.260	complaint
+vanguard total bond market index-admiral	complaint
+vang tot bd mk is pl	complaint
+metropolitan west total return	complaint
+metropolitan west fds total ret cl i	complaint
+prudential jennison natural resource cl a	complaint
+prudential jennison natural resources fund, inc. class a	complaint
+wisdomtree japan hedged equity -	complaint
+wisdomtree japan hedged equity etf	complaint
+pimco total return fd cl c	complaint
+pimco total return r	complaint
+breitburn energy partners lp c	complaint
+atlas resource partners lp	complaint
+macquarie infrastructure corp com	complaint
+macquarie infrastructure	complaint
+duke energy corp new div: 3.300	complaint
+duke energy corp new com	complaint
+apple inc.	complaint
+apple inc -	complaint
+ishares 7-10 yr treasury bnd e tf	complaint
+ishares barclays 7-10 year treasury	complaint
+ishares msci southkorea cp etf div: 1.202	complaint
+ishares msci south korea capped etf	complaint
+monsanto company cmn	complaint
+mon dspp-common	complaint
+ishares micro-cap etf	complaint
+ishares micro cap etf	complaint
+ishares gold trust	complaint
+ishares gold tr ishares	complaint
+pnc financial services group cmn	complaint
+pnc finl svcs group	complaint
+harbor international fund	complaint
+harbor international institutional fd	complaint
+alps alerian mlp etf	complaint
+alps trust etf alerian mlp	complaint
+valeant pharmaceuticals in(cdn)	complaint
+valeant pharmaceuticals intl inc cda com isin#ca1	complaint
+vang midcap idx inst	complaint
+vanguard mid-cap index fund inst	complaint
+vanguard energy index	complaint
+vanguard energy etf	complaint
+interactive brokers group inc com isin #us2 sedol #b1wt4x2	complaint
+interactive brokers group inc	complaint
+ishares s&p 500 grwth etf div: 1.752	complaint
+ishares s&p 500 growth etf	complaint
+vanguard equity income fund admiral shares	complaint
+vanguard equity-income adm	complaint
+walgreens boots alliance inc	complaint
+walgreens boots alliance inc com	complaint
+novo-nordisk a/s-spons adr	complaint
+novo-nordisk a s adr isin #us6 sedol #2651202	complaint
+vanguard ext market index inst	complaint
+vanguard ext. market idx adm	complaint
+vang tot bd mkt inst	complaint
+vanguard total bond market index fund institutional plus	complaint
+powershares qqq trust se	complaint
+powershares qqq trust series	complaint
+intel corp	complaint
+intel corp div: 1.040	complaint
+vanguard gnma fund admiral shares	complaint
+vanguard gnma inv	complaint
+westport innovation newf	complaint
+westport innovations inc	complaint
+freeport mcmoran copper and gold inc	complaint
+freeport-mcmoran inc	complaint
+vgrd ftse all wrld ex us sml cap etf	complaint
+vgrd ftse all wrld ex ussml cap etf	complaint
+bank of america corp	complaint
+bank america corp	complaint
+vanguard small cap etf div: 2.113	complaint
+vanguard small-cap index fund	complaint
+polaris industries	complaint
+polaris industries inc com	complaint
+pim total rt inst	complaint
+pimco total return cl a	complaint
+p/qma sm cap val q	complaint
+ev lg cap value i	complaint
+vanguard small cap index fund - admiral	complaint
+vang sm cap idx inst	complaint
+dfa emerging markets core equi ty	complaint
+dfa emerging markets core	complaint
+general motors company com	complaint
+general motors co common shares	complaint
+schlumberger ltd div: 2.000	complaint
+schlumberger ltd f	complaint
+metropolitan west total return bond plan fund	complaint
+metropolitan west total return bond plan class shares	complaint
+kla-tencor corporation cmn	complaint
+kla-tencor corp -	complaint
+syngenta ag - adr	complaint
+syngenta ag-adr	complaint
+ivy mid cap growth cl a	complaint
+voya large cap growth port inst	complaint
+american mutual fund cl a	complaint
+amer funds american mutual fund class f2	complaint
+energy transfer partners unit ltd partnership	complaint
+energy transfer partners lp com	complaint
+canadian natl ry co f	complaint
+canadian national railway	complaint
+vanguard ftse emerg mkts etf	complaint
+vanguard emerging market etf	complaint
+schwab intl small cap equity etf	complaint
+schwab internatnal small cap eqy etf	complaint
+pimco total return fund cl d	complaint
+fund: pimco total return admin	complaint
+glenmede smcap eq is	complaint
+glenmede small cap equity fund instl cl	complaint
+sierra wireless inc can com	complaint
+sierra wireless inc	complaint
+google inc cl c non vtg non voting shares	complaint
+google inc class c	complaint
+trp retirement 2050	complaint
+t. rowe price 2050 fund	complaint
+wisdomtree tr japan hedged equity fd	complaint
+wisdomtree japan hedged eq	complaint
+visa inc cl a	complaint
+visa inc class a shares	complaint
+biomarin pharmaceutical inc.	complaint
+biomarin pharmaceuticals	complaint
+textainer group hldgs ltd com stk	complaint
+textainer group hldg f	complaint
+oakmark equity & income fd cl i	complaint
+oakmark equity and income fund class i	complaint
+timken company	complaint
+timken co	complaint
+ishares trust core s&p small-cap etf	complaint
+ishares s&p small-cap fund	complaint
+vang 500 index adm	complaint
+vanguard 500 index admiral fund	complaint
+orchid is cap inc com	complaint
+modine mfg co com	complaint
+l-3 commnctns hldgs	complaint
+l-3 communications corp com	complaint
+vanguard emrg mkts stk index fd inv shrs	complaint
+vanguard emerging markets stock index fund investor shares	complaint
+ishares msci usa min vol etf	complaint
+ishares msci usa min vol etf div: 0.844	complaint
+caseys gen stores	complaint
+caseys gen stores inc com	complaint
+pimco total return fund cl p	complaint
+pimco total return a	complaint
+am beacon large cp val	complaint
+american beacon lg cap val planahd	complaint
+natus medical inc com	complaint
+natus medical inc	complaint
+oppenheimer intl bond fd cl y	complaint
+oppenheimer international bond fund	complaint
+twitter inc	complaint
+twitter inc com	complaint
+ishares core us treasury bond etf	complaint
+ishares trust core us treasury bond etf	complaint
+vanguard small cap index fund - admiral	complaint
+vanguard small-cap index fund institutional shares	complaint
+american tower reit inc (hldg co) shs	complaint
+american tower corp new com	complaint
+alphabet inc class c	complaint
+alphabet inc shs cl c	complaint
+vnguard total bond market index adm	complaint
+vanguard total bond market idx-adm	complaint
+vanguard total international bond etf	complaint
+vanguard total intl bond index etf	complaint
+vanguard energy etf	complaint
+vanguard worlds fds vanguard energy etf	complaint
+safety ins group inc com	complaint
+safety ins group inc	complaint
+tjx cos inc new com isin #us8725401090 sedol #2989301	complaint
+tjx cos inc new com isin #us0 sedol #2989301	complaint
+schlumberger ltd div: 2.000	complaint
+schlumberger ltd slb	complaint
+eaton corp plc com	complaint
+eaton corp plc	complaint
+fortinet inc	complaint
+fortinet inc.	complaint
+vanguard intrmdt trm etf	complaint
+vanguard intermediate term cor etf	complaint
+u s bancorp	complaint
+us bancorp (new)	complaint
+vanguard emerging markets etf	complaint
+vanguard ftse emerging markets etf	complaint
+wisdom tree europe hedged eq	complaint
+wisdomtree europe hedged equity fund	complaint
+aberdeen asia pacific in	complaint
+aberdeen asia pacific incom fd com isin #us0 sedol #2339304	complaint
+metropolitan west totret bdm	complaint
+metwest tot rtn bd i	complaint
+vanguard total bond market index i	complaint
+vanguard total bond market index fund institutional plus	complaint
+immunocellular therapeutics com	complaint
+immunocellular thera	complaint
+ishares s&p mid-cap value etf	complaint
+ishares s&p midcap 400 value etf	complaint
+vanguard total intl stk index	complaint
+vanguard total intl stock index admiral	complaint
+pimco low duration instl	complaint
+pimco low duration fund cl d	complaint
+vanguard index fds formerly vanguard index tr to 05/24/2001 s&p 500 etf shs new	complaint
+vanguard index fds formerly vanguard index tr to 05/24/2001	complaint
+biomarin pharmaceuticals	complaint
+biomarin pharmaceutical inc.	complaint
+pimco total return fund - class r	complaint
+mainstay retirement 2050 fund (class i)	complaint
+progressive corp - ohio	complaint
+progressive corp ohio	complaint
+vanguard world fund extd duration treas etf	complaint
+vanguard extended duration treasury index etf	complaint
+vanguard small cap etf iv	complaint
+vanguard small cap etf	complaint
+troweprc blue chip growth fund adv	complaint
+t. rowe price blue chip growth adv	complaint
+nike inc b div: 0.640	complaint
+nike inc	complaint
+broadcom ltd shs div: 1.960	complaint
+broadcom ltd f	complaint
+american beacon fds internatio nal equity y	complaint
+american beacon international equity y fund	complaint
+joy global inc	complaint
+joy global inc del com	complaint
+proshares s&p 500 dividend aristocrats	complaint
+proshares trust s&p 500 divid aristocrats etf isin #us3 sedol #bfn8py4	complaint
+pimco total return a	complaint
+pimco total return fund - class r	complaint
+time warner inc new com new	complaint
+time warner inc.	complaint
+vanguard short term tax exempt admiral share	complaint
+vanguard short term tax exempt investor	complaint
+pimco income fund cl d	complaint
+pimco fds income instl	complaint
+verizon communications vz	complaint
+verizon communications inc. cmn	complaint
+facebook inc com usd0.000006 cl a	complaint
+facebook, inc. cmn class a	complaint
+oracle corporation	complaint
+oracle corp com isin #us68389x1054	complaint
+visa inc class a	complaint
+visa inc-class a shares	complaint
+templeton global bond class a	complaint
+templeton global bond fund r	complaint
+carrizo oil & gas	complaint
+carrizo oil & gas inc	complaint
+united technologies corp div: 2.560	complaint
+united technologies corp	complaint
+bank new york mellon corp com	complaint
+bank of ny mellon co	complaint
+vanguard utilities etf	complaint
+vanguard world fds vanguard utils etf	complaint
+vanguard short term bond index admiral	complaint
+vanguard short-term bond index fund admiral shares	complaint
+alphabet inc	complaint
+alphabet	complaint
+spartan intl index investor class	complaint
+fidelity spartan international index inv	complaint
+cbs corp new cl b	complaint
+cbs corp new cl b shrs div: 0.600	complaint
+vanguard 500 index fund admiral	complaint
+vanguard 500 index fund - admiral	complaint
+fidelity small cap growth	complaint
+fid small cap growth	complaint
+xo group inc com	complaint
+brookdale sr living inc com	complaint
+keycorp	complaint
+keycorp inc	complaint
+vanguard total bond market index fund admiral shares	complaint
+vanguard ttl bnd mrk indx inst	complaint
+breitburn energy partners unit limited partnership interest	complaint
+breitburn energy ptn lp	complaint
+bridgepoint education	complaint
+bridgepoint ed inc com	complaint
+coach inc	complaint
+coach inc com	complaint
+united states oil etf	complaint
+united states oil fund lp unit	complaint
+fidelity msci consumer staples index etf	complaint
+fidelity cap tr disciplnd eqty	complaint
+federated invs pa class b	complaint
+artisan part asset class a	complaint
+vanguard ttl bond mkt idx adm	complaint
+vanguard total bond market index fund institutional shares	complaint
+vanguard ftse emerg mkts etf	complaint
+vanguard msci emerging markets etf	complaint
+amer funds europac r4 m4741	complaint
+american funds europacific growth r4	complaint
+pimco total ret fd instl	complaint
+pimco tot return adm	complaint
+visa inc cl a	complaint
+visa inc cl a shrs	complaint
+dte energy comp 5.25%pfd due 12/01/62subj to xtro redemption	complaint
+associated ban 6.125%pfd due 12/31/49subj to xtro redemption	complaint
+vanguard scottsdale fds intermediate term corporate bond ind	complaint
+vanguard intermediate term cor p bond et	complaint
+kimberly clark corp cmn	complaint
+kimberly-clark corp.	complaint
+vanguard interm-term investment-grde adm	complaint
+vanguard int term inv grade	complaint
+sector spdr tr shs ben int financial	complaint
+select sector spdr trust financial select sector fund	complaint
+sprott physical gold trust unit isin #ca85207h1047 sedol #b6	complaint
+sprott physical gold etv	complaint
+ultra petroleum corp	complaint
+ultra petroleum corp ord	complaint
+vanguard small cap index - a	complaint
+vnguard index trust small cap idx instl	complaint
+vanguard small cap value etf	complaint
+us small-cap value	complaint
+van small cap index admir	complaint
+vanguard small-cap index fund inst	complaint
+apple inc com	complaint
+apple inc aapl	complaint
+vanguard total bond market index-admiral	complaint
+vanguard total bond market index fund institutional shares	complaint
+valero energy corp new com	complaint
+valero energy corp new -	complaint
+pimco fds income fund cl d	complaint
+pimco income a	complaint
+pimco income fund cl d	complaint
+pimco incm inst cl	complaint
+pimco total return fund - class r	complaint
+pimco tot return adm	complaint
+american tower corporation reit	complaint
+american tower corporation com usd0.01	complaint
+nxp semiconductor nv com	complaint
+nxp semiconductors f	complaint
+pimco fds income fund cl d	complaint
+pimco income instl	complaint
+sierra wireless inc com	complaint
+sierra wireless inc com isin #ca4 sedol #2418968	complaint
+vanguard mid-cap index fund institutional plus shares	complaint
+vanguard mid-cap index	complaint
+vanguard mid-cap value index fund	complaint
+vanguard crsp us mid cap value inde etf	complaint
+liberty media corp ser a	complaint
+liberty media corp delaware cl a	complaint
+blkrk hi yld bd inst	complaint
+blackrock high yld bond port class c	complaint
+arcelormittal sa (luxembourg)	complaint
+arcelormittal cl a adr	complaint
+eaton vance floating rate & high inc a	complaint
+eaton vance floating rate high income fund class a	complaint
+incyte genomics, inc	complaint
+incyte corp	complaint
+criteo s a	complaint
+criteo sa-spon adr	complaint
+alibaba group hldg adr fsponsored adr 1 adr reps 1 ord	complaint
+alibaba grp sp adr (cayman islands)	complaint
+sirius xm hldgs inc com	complaint
+sirius xm hldgs inc	complaint
+opp intl growth - a oppenheimer funds	complaint
+oppenheimer international growth fund class a	complaint
+fid balanced	complaint
+fidelity fds balanced fd	complaint
+mobile telesystems ojsc ads	complaint
+mobile telesystems pjsc sponsored adr	complaint
+vanguard reit etf	complaint
+vanguard reit etf iv	complaint
+pimco total return fund instl cl	complaint
+pimco total return	complaint
+metwest tot rtn bd m	complaint
+metropolitan west total return bond i	complaint
+guggenheim bulletshares 2018 high yield corp bd	complaint
+guggenheim bulletshares 2018	complaint
+fidelity international discovery	complaint
+fid intl discovery	complaint
+american express co cm	complaint
+american express co	complaint
+conocophillips	complaint
+conocophillips corp com	complaint
+vf corporation	complaint
+v f corporation	complaint
+american beacon lg cap val planahd	complaint
+american beacon large value	complaint
+pimco total return fund cl p	complaint
+fund: pimco total return admin	complaint
+pim total rt inst	complaint
+pimco total return fund cl d	complaint
+johnson & johnson com	complaint
+johnson and johnson	complaint
+vanguard mid cap growth index adm	complaint
+vanguard mid-cap growth fund	complaint
+vanguard growth etf div: 1.388	complaint
+vanguard growth etf iv	complaint
+pfizer inc com	complaint
+pfizer incorporated	complaint
+pimco fds income fund cl d	complaint
+pimco income administrative	complaint
+vanguard mid-cap value etf	complaint
+vanguard mid cap value etf div: 2.308	complaint
+wisdomtree investments inc com	complaint
+wisdomtree investmnt	complaint
+merrimack pharmaceuticals inc com	complaint
+merrimack pharmaceuticals, inc.	complaint
+ishares russell 1000 growth	complaint
+ishares russell 1000 gr etf	complaint
+exxon mobil corp -	complaint
+exxon mobil corp | e005207	complaint
+blackrock high yield bond portfolio svc	complaint
+blackrock hi yield bd ptf inst	complaint
+pimco commodity real return inst	complaint
+pimco commodity real return strat inst	complaint
+vanguard small-cap index fund admiral	complaint
+vang sm cap idx inst	complaint
+pg&e corp	complaint
+pg & e corp	complaint
+pimco total return fd cl c	complaint
+fund: pimco total return admin	complaint
+dfa us targeted value i	complaint
+dfa us targeted value fund	complaint
+ishares barclays short treasury bond fun	complaint
+ishares short-term treasury bond etf	complaint
+intercontinentalexchange group div: 3.400	complaint
+intercontinental exchange inc com usd0.01	complaint
+vanguard 500 index investor cl	complaint
+vanguard 500 index fund investor shares	complaint
+american capital world grth & inc a	complaint
+capital world growth and income fund	complaint
+vanguard short term corp bond index fund etf	complaint
+vanguard short-term corporate bond etf	complaint
+union pacific corp div: 2.200	complaint
+union pac corporation	complaint
+costco wholesale corp	complaint
+costco wholesale corp new	complaint
+vanguard mid cap index admiral	complaint
+vanguard mid capitalization index fund	complaint
+alexion pharmaceuticals inc	complaint
+alexion pharmaceuticals inc.	complaint
+general dynamics crp	complaint
+genl dynamics corp com	complaint
+bce inc f	complaint
+bce inc	complaint
+prudential jennison natural resources z	complaint
+prudential jennison ^	complaint
+delta air lines inc com	complaint
+delta air lines inc dela new	complaint
+cognizant tech solutns a	complaint
+cognizant tech solutions corp	complaint
+pimco investment grade corporate bond fund - class a	complaint
+fid conservative income bond fund	complaint
+eli lilly & co com	complaint
+lilly eli &co com npv	complaint
+dfa comm strategy i	complaint
+dfa commodity strategy port	complaint

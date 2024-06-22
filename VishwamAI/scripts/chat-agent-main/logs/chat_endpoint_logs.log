@@ -1,0 +1,31 @@
+2024-06-19 05:09:41,412 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`
+2024-06-19 05:13:53,377 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Input must be of type `str`, `List[str]`, or `List[List[int]]`
+2024-06-19 05:25:31,767 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 05:31:04,096 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: VarianceScaling.__init__() got an unexpected keyword argument 'dtype'
+2024-06-19 05:36:52,514 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 05:42:20,752 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 05:49:57,330 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 05:55:44,034 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable
+2024-06-19 06:01:27,293 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32
+2024-06-19 06:05:36,997 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 06:15:29,117 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 06:24:27,220 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 06:31:22,089 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 06:44:22,451 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 06:50:01,688 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 07:04:01,270 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: dtype argument to `uniform` must be a float dtype, got int32
+2024-06-19 07:15:43,329 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable
+2024-06-19 07:25:37,190 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: 'ArrayImpl' object is not callable - TIMESTAMP: 2024-06-19T07:25:37.190708
+2024-06-19 07:55:22,742 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: hk.Embed's __call__ method must take an array of integer dtype but was called with an array of float32 - TIMESTAMP: 2024-06-19T07:55:22.742090
+2024-06-19 08:05:32,505 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:05:32.505914
+2024-06-19 08:17:06,518 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:17:06.518462
+2024-06-19 08:23:46,223 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__call__() missing 2 required positional arguments: 'key' and 'value' - TIMESTAMP: 2024-06-19T08:23:46.223279
+2024-06-19 08:29:28,179 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:29:28.179116
+2024-06-19 08:45:31,427 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:45:31.427606
+2024-06-19 08:56:23,344 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:56:23.344645
+2024-06-19 08:58:58,577 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T08:58:58.577143
+2024-06-19 09:07:42,380 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: MultiHeadAttention.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:07:42.380834
+2024-06-19 09:13:57,110 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:13:57.110865
+2024-06-19 09:19:10,115 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:19:10.114981
+2024-06-19 09:22:53,124 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:22:53.124201
+2024-06-19 09:29:07,632 - scripts.flask_app - ERROR - CHAT_ENDPOINT_ERROR: Linear.__init__() got an unexpected keyword argument 'dtype' - TIMESTAMP: 2024-06-19T09:29:07.632148

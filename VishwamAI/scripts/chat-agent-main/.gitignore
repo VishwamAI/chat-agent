@@ -1,0 +1,17 @@
+# Ignore egg-info directory
+VishwamAI.egg-info/
+
+# Ignore virtual environment directory
+venv/
+
+# Ignore Python cache directories
+__pycache__/
+
+# Ignore data directory
+VishwamAI/data/
+
+# Ignore log files
+logs/flask_app.log
+
+# Ignore grok-1 directory
+grok-1/

@@ -1,0 +1,100 @@
+2024-06-22 00:06:04.292929: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:06:04.298582: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:06:04.380956: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-22 00:06:05.736121: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-22 00:06:08,622 - INFO - Unable to initialize backend 'cuda': 
+2024-06-22 00:06:08,622 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-22 00:06:08,625 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-22 00:06:16,742 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+Type of logits: <class 'function'>
+jax.errors.SimplifiedTraceback: For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 150, in <module>
+    train_model(data_file)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
+    val = prof(func)(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
+    return func(*args, **kwds)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 136, in train_model
+    loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 79, in train_step
+    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 71, in loss_fn
+    assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
+AssertionError: Logits should be a tensor, but got <class 'function'>
+2024-06-22 00:11:38.774618: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:11:38.780285: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:11:38.865641: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-22 00:11:40.251721: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-22 00:11:43,086 - INFO - Unable to initialize backend 'cuda': 
+2024-06-22 00:11:43,087 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-22 00:11:43,090 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-22 00:11:51,107 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+Type of logits: <class 'function'>
+jax.errors.SimplifiedTraceback: For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 150, in <module>
+    train_model(data_file)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
+    val = prof(func)(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
+    return func(*args, **kwds)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 136, in train_model
+    loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 79, in train_step
+    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 71, in loss_fn
+    assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
+AssertionError: Logits should be a tensor, but got <class 'function'>
+2024-06-22 00:20:53.709591: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:20:53.715414: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:20:53.803193: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-22 00:20:55.113414: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-22 00:20:58,023 - INFO - Unable to initialize backend 'cuda': 
+2024-06-22 00:20:58,024 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-22 00:20:58,026 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+Traceback (most recent call last):
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 151, in <module>
+    train_model(data_file)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
+    val = prof(func)(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
+    return func(*args, **kwds)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 126, in train_model
+    params = transformed_forward.init(init_rng, example_batch)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 166, in init_fn
+    params, state = f.init(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
+    f(*args, **kwargs)
+TypeError: train_model.<locals>.forward_fn() missing 2 required positional arguments: 'rng' and 'batch'
+2024-06-22 00:43:40.136101: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:43:40.141790: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-22 00:43:40.227590: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-22 00:43:41.519843: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-22 00:43:44,491 - INFO - Unable to initialize backend 'cuda': 
+2024-06-22 00:43:44,491 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-22 00:43:44,495 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+Traceback (most recent call last):
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 151, in <module>
+    train_model(data_file)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
+    val = prof(func)(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
+    return func(*args, **kwds)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 126, in train_model
+    params = transformed_forward.init(init_rng, example_batch)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 166, in init_fn
+    params, state = f.init(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
+    f(*args, **kwargs)
+TypeError: train_model.<locals>.forward_fn() missing 2 required positional arguments: 'params' and 'rng'

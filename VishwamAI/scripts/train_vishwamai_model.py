@@ -87,7 +87,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile  # Enabling the memory profiling decorator to identify memory usage spikes
+@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.

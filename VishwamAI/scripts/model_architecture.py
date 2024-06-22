@@ -75,12 +75,8 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
-        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
         expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), embedded_inputs), jax.random.PRNGKey(42), embedded_inputs)  # Use apply method
-
-        # Convert expert output to float32 for subsequent layers
-        expert_output = tf.cast(expert_output, np.float32)
-        tf.print(f"Data type of expert output after conversion to float32: {expert_output.dtype}")
+        tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)
@@ -91,7 +87,7 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        output = self.dense(np.float32(attention_output))  # Ensure the data type is float32
+        output = self.dense(attention_output)  # Directly pass attention_output to dense layer
         return output
 
     def add_advanced_features(self):

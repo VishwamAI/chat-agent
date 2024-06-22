@@ -13,9 +13,10 @@ class VishwamAIModel(hk.Module):
         super(VishwamAIModel, self).__init__()
         import config
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
+        self.embedding_layer = hk.Embed(vocab_size=20000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=20000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                self.embedding_layer,
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
@@ -33,7 +34,7 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                self.embedding_layer,
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
                 hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
@@ -44,7 +45,7 @@ class VishwamAIModel(hk.Module):
         # Remove gating mechanism
         # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
@@ -69,7 +70,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs using the apply method
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(None, None, inputs)
+        embedded_inputs = self.transformer.apply(None, rng, inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Convert embedded inputs to float32 for subsequent layers
@@ -80,7 +81,7 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert.apply(None, None, expert_inputs)
+        expert_output = expert.apply(None, rng, expert_inputs)
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)

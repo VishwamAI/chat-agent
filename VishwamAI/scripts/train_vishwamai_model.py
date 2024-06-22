@@ -66,8 +66,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
 
     def loss_fn(params):
         # Convert TensorFlow tensors to JAX arrays
-        batch_jax = jnp.array(batch)
-        labels_jax = jnp.array(labels)
+        batch_jax = jax.device_put(batch)
+        labels_jax = jax.device_put(labels)
 
         logits = transformed_forward.apply(params, rng, batch_jax)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"

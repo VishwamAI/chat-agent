@@ -15,17 +15,17 @@ class VishwamAIModel(hk.Module):
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
         self.transformer = hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=20000, embed_dim=128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
+                hk.Embed(vocab_size=20000, embed_dim=128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         )
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
         self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
@@ -33,10 +33,10 @@ class VishwamAIModel(hk.Module):
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.transform(
             lambda x: hk.Sequential([
-                hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
+                hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
-                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
+                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
             ])(x),
             apply_rng=True
         ) for _ in range(self.num_experts)]

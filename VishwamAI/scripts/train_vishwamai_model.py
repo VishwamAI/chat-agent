@@ -96,14 +96,15 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def forward_fn(params, rng, batch):
         model = VishwamAIModel()
-        def forward_fn(params, rng, batch):
-            logits = model(batch, params, rng)
-            return logits
-        return forward_fn
+        logits = model(batch, params, rng)
+        return logits
 
-    transformed_forward = hk.transform(create_model)
+    def create_model():
+        return hk.transform(forward_fn)
+
+    transformed_forward = create_model()
     optimizer = optax.adam(learning_rate=1e-3)
 
     # Initialize JaxPruner and wrap the optimizer

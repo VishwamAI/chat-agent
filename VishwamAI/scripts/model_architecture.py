@@ -69,8 +69,6 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs using the apply method
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        tf.print(f"Type of params before transformer apply: {type(self.transformer.params)}")
-        tf.print(f"Contents of params before transformer apply: {self.transformer.params}")
         embedded_inputs = self.transformer.apply(inputs, rng)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
@@ -82,8 +80,6 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        tf.print(f"Type of params before expert apply: {type(expert.params)}")
-        tf.print(f"Contents of params before expert apply: {expert.params}")
         expert_output = expert.apply(expert_inputs, rng)  # Use apply method
 
         # Combine outputs from all models

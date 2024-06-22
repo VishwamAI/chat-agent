@@ -45,7 +45,7 @@ class VishwamAIModel(hk.Module):
         # Remove gating mechanism
         # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
@@ -74,7 +74,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the embedded inputs using the apply method
         tf.print(f"Data type of inputs before transformer apply: {embedded_inputs.dtype}")
-        transformer_output = self.transformer.apply(None, embedded_inputs)
+        transformer_output = self.transformer.apply(None, rng, embedded_inputs)
         tf.print(f"Data type of transformer output after transformer apply: {transformer_output.dtype}")
 
         # Convert transformer output to float32 for subsequent layers
@@ -85,7 +85,7 @@ class VishwamAIModel(hk.Module):
         expert = self.experts[0]
         expert_inputs = tf.cast(transformer_output, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
         tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert.apply(None, expert_inputs)
+        expert_output = expert.apply(None, rng, expert_inputs)
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)

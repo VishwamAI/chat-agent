@@ -42,8 +42,11 @@ class VishwamAIModel(hk.Module):
             apply_rng=True
         ) for _ in range(self.num_experts)]
 
-        # Remove gating mechanism
-        # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        # Initialize params attribute
+        self.params = None
+
+    def set_params(self, params):
+        self.params = params
 
     def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):

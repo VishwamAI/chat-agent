@@ -67,6 +67,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
+        batch = tf.cast(batch, tf.int32)  # Ensure batch is of integer dtype
         logits = transformed_forward.apply(params, step_rng, batch)  # logits shape: [batch_size, num_classes]
         tf.print(f"Type of logits: {type(logits)}")  # Debugging statement to check the type of logits
         assert hasattr(logits, 'shape'), f"Logits should be a tensor, but got {type(logits)}"
@@ -123,7 +124,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(init_rng, example_batch)  # Pass the correct arguments
+    params = transformed_forward.init(init_rng, example_batch, rng)  # Pass the correct arguments
 
     # Training loop
     for epoch in range(num_epochs):

@@ -46,8 +46,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-@tf.function
-def train_step(params, transformed_forward, optimizer, batch, labels, rng, transformer_params, expert_params):
+def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
     Args:
@@ -57,15 +56,13 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng, trans
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
         rng: jax.random.PRNGKey. Random number generator key.
-        transformer_params: hk.Params. Transformer model parameters.
-        expert_params: hk.Params. Expert model parameters.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
         new_params: hk.Params. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch, transformer_params, expert_params)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -91,7 +88,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def create_model(batch):
         model = VishwamAIModel()
-        return model.__call__(batch, transformer_params, expert_params)
+        return model.__call__(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)

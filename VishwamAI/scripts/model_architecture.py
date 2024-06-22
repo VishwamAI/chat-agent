@@ -70,6 +70,7 @@ class VishwamAIModel(hk.Module):
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
+        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure embedded inputs are integer dtype
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

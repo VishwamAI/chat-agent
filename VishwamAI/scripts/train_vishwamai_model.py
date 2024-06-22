@@ -50,7 +50,6 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-@profile(stream=open('memory_profile.dat', 'w+'))  # Enabling the memory profiling decorator to identify memory usage spikes and save to a file
 def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     """
     Perform a single training step.

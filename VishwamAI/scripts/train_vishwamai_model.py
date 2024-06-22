@@ -51,7 +51,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
     Args:
-        params: hk.Params. Model parameters.
+        params: dict. Dictionary containing model parameters.
         transformed_forward: hk.Transformed. Transformed forward function.
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
@@ -59,9 +59,12 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         rng: jax.random.PRNGKey. Random number generator key.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
-        new_params: hk.Params. Updated model parameters.
+        new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
+    transformer_params = params['transformer_params']
+    expert_params = params['expert_params']
+
     def loss_fn(params):
         logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
@@ -75,7 +78,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
-    return loss, new_params, new_opt_state
+    return loss, {'transformer_params': new_params, 'expert_params': expert_params}, new_opt_state
 
 @profile  # Enabling the memory profiling decorator to identify memory usage spikes
 @tf.function
@@ -87,7 +90,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng, transformer_params, expert_params):
         model = VishwamAIModel()
         return model.__call__(batch, rng, transformer_params, expert_params)
 
@@ -105,7 +108,10 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(rng, example_batch)
+    params = {
+        'transformer_params': transformed_forward.init(rng, example_batch),
+        'expert_params': [transformed_forward.init(rng, example_batch) for _ in range(1)]  # Assuming 1 expert
+    }
 
     # Training loop
     for epoch in range(num_epochs):
@@ -114,7 +120,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, rng)
+            rng, step_rng = jax.random.split(rng)
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

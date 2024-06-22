@@ -96,9 +96,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def forward_fn(params, batch, rng):
+    def forward_fn(batch, rng):
         model = VishwamAIModel()
-        logits = model(params, batch, rng)
+        logits = model(batch, rng)
         return logits
 
     def create_model():
@@ -123,7 +123,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    params = transformed_forward.init(init_rng, example_batch)
+    params = transformed_forward.init(init_rng, example_batch, rng)  # Pass the correct arguments
 
     # Training loop
     for epoch in range(num_epochs):

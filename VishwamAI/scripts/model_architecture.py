@@ -71,7 +71,7 @@ class VishwamAIModel(hk.Module):
         embedded_inputs = self.embedding(inputs)
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
-        embedded_inputs = hk.dropout(rng, embedded_inputs, rate=0.1)
+        embedded_inputs = hk.dropout(embedded_inputs, rate=0.1, rng=rng)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

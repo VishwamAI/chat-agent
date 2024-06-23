@@ -1,6 +1,7 @@
 import haiku as hk
 import jax
 import jax.numpy as jnp
+from flax import linen as nn  # Import Flax's linen module for dropout
 import tensorflow as tf
 import tensorflow_text as tf_text
 import random
@@ -71,8 +72,8 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout with a fixed seed
-        embedded_inputs = tf.nn.dropout(embedded_inputs, rate=0.1, seed=42)
+        # Apply dropout with a fixed seed using JAX's dropout
+        embedded_inputs = nn.Dropout(0.1, deterministic=False)(embedded_inputs, rngs={'dropout': jax.random.PRNGKey(42)})
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

@@ -136,6 +136,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch, labels = batch
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
+            batch = np.array(batch.numpy(), dtype=np.int32)
+            labels = np.array(labels.numpy(), dtype=np.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
             loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)

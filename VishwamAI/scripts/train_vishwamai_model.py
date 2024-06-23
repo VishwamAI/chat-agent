@@ -62,8 +62,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    def loss_fn(params, rng):
-        logits = transformed_forward.apply(params, rng, batch)  # Pass the RNG key to the model
+    def loss_fn(params):
+        logits = transformed_forward.apply(params, batch)  # Remove the RNG key from the model call
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -94,11 +94,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch, rng):
+    def create_model(batch):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch, rng)
+        return model(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -115,7 +115,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    transformer_params = transformed_forward.init(transformer_rng, example_batch, transformer_rng)
+    transformer_params = transformed_forward.init(transformer_rng, example_batch)
     expert_params = []
     for _ in range(1):  # Assuming 1 expert
         expert_rng, rng = jax.random.split(rng)

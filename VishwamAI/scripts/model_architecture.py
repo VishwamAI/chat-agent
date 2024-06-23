@@ -1,7 +1,6 @@
 import haiku as hk
 import jax
 import jax.numpy as jnp
-from flax import linen as nn  # Import Flax's linen module for dropout
 import tensorflow as tf
 import tensorflow_text as tf_text
 import random
@@ -25,7 +24,6 @@ class VishwamAIModel(hk.Module):
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
-        self.dropout = nn.Dropout(0.1)  # Initialize flax.linen.Dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,

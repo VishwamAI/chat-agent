@@ -100,11 +100,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch, rng):
+    def create_model(batch):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch, rng)
+        return model(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -121,7 +121,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    params = transformed_forward.init(transformer_rng, example_batch, rng)  # Initialize params with transformer_rng, example_batch, and rng
+    params = transformed_forward.init(transformer_rng, example_batch)  # Initialize params with transformer_rng and example_batch
 
     # Training loop
     for epoch in range(num_epochs):

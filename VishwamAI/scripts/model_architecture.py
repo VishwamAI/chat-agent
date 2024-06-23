@@ -14,13 +14,9 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.transformer = hk.transformer.Transformer(
-            num_heads=8,
-            num_layers=6,
-            model_size=512,
-            dropout_rate=0.1,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
-        )
+        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.encoder_layers = [hk.nets.ResNetBlockV2(512) for _ in range(6)]
+        self.dropout = hk.dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -64,7 +60,10 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer(inputs)
+        embedded_inputs = self.embedding(inputs)
+        for layer in self.encoder_layers:
+            embedded_inputs = layer(embedded_inputs, is_training=True)
+        embedded_inputs = self.dropout(embedded_inputs, rate=0.1, is_training=True)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

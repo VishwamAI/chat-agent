@@ -62,8 +62,7 @@ def train_step(params, optimizer, batch, labels, rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params, rng):
-        model = VishwamAIModel()
-        logits = model(batch, rng)  # Pass the RNG key to the model
+        logits = transformed_forward.apply(params, rng, batch)  # Pass the RNG key to the model
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")

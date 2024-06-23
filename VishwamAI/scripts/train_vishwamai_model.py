@@ -63,7 +63,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = transformed_forward.apply(params, batch)  # Remove the RNG key from the model call
+        logits = transformed_forward.apply(params, rng, batch)  # Pass the RNG key to the model call
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -94,11 +94,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -119,7 +119,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     expert_params = []
     for _ in range(1):  # Assuming 1 expert
         expert_rng, rng = jax.random.split(rng)
-        expert_params.append(transformed_forward.init(expert_rng, example_batch, expert_rng))
+        expert_params.append(transformed_forward.init(expert_rng, example_batch))
     params = {
         'transformer_params': transformer_params,
         'expert_params': expert_params
@@ -144,10 +144,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
-
-if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
-    train_model(data_file)
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"

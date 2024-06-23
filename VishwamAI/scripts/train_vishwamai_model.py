@@ -98,7 +98,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -115,11 +115,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    transformer_params = transformed_forward.init(transformer_rng, example_batch)
+    transformer_params = transformed_forward.init(transformer_rng, example_batch, transformer_rng)
     expert_params = []
     for _ in range(1):  # Assuming 1 expert
         expert_rng, rng = jax.random.split(rng)
-        expert_params.append(transformed_forward.init(expert_rng, example_batch))
+        expert_params.append(transformed_forward.init(expert_rng, example_batch, expert_rng))
     params = {
         'transformer_params': transformer_params,
         'expert_params': expert_params

@@ -14,15 +14,17 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.transformer = hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=20000, embed_dim=128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.encoder_layers = [
+            hk.Sequential([
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
-            apply_rng=True
-        )
+                hk.LayerNorm(axis=-1, create_scale=True, create_offset=True),
+                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))(x, x, x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
+            ]) for _ in range(6)
+        ]
+        self.dropout = hk.dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -32,20 +34,14 @@ class VishwamAIModel(hk.Module):
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
-        self.experts = [hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
-            apply_rng=True
-        ) for _ in range(self.num_experts)]
+        self.experts = [hk.Sequential([
+            hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        ]) for _ in range(self.num_experts)]
 
-        # Remove gating mechanism
-        # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -72,27 +68,26 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
-        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure embedded inputs are integer dtype
+        embedded_inputs = self.embedding(inputs)
+        for layer in self.encoder_layers:
+            embedded_inputs = layer(embedded_inputs)
+        embedded_inputs = hk.dropout(rng, 0.1, embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
-        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), embedded_inputs), jax.random.PRNGKey(42), embedded_inputs)  # Use apply method
+        tf.print(f"Shape of expert_inputs: {inputs.shape}")
+        expert_output = expert(inputs)  # Use original integer inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
-        # Combine outputs from all models
-        combined_output = tf.concat([expert_output], axis=-1)
-
-        # Flatten the combined output to ensure correct shape for the final dense layer
-        flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
+        # Use the expert output directly without concatenation
+        combined_output = jnp.asarray(expert_output, dtype=jnp.float32)  # Ensure expert_output is float32
+        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
 
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        attention_output = tf.cast(attention_output, jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
-        output = self.dense(jnp.asarray(attention_output, dtype=jnp.float32))  # Directly pass attention_output to dense layer
+        output = self.dense(attention_output)  # Directly pass attention_output to dense layer
         return output
 
     def add_advanced_features(self):

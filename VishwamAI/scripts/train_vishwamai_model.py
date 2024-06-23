@@ -52,7 +52,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     Perform a single training step.
     Args:
         params: dict. Dictionary containing model parameters.
-        transformed_forward: hk.Transformed. Transformed forward function.
+        transformed_forward: hk.Transformed. The transformed forward function.
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
@@ -62,11 +62,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    transformer_params = params['transformer_params']
-    expert_params = params['expert_params']
-
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, jax.device_put(batch))  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, batch)  # Pass the RNG key to the model call
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -78,17 +75,15 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     labels = tf.cast(labels, tf.int32)
 
     # Convert TensorFlow tensors to numpy arrays outside of the JAX-traced loss_fn
-    batch_jax = np.array(batch.numpy(), dtype=np.int32)
-    labels_jax = np.array(labels.numpy(), dtype=np.int32)
-    batch_jax = jax.device_put(batch_jax)
-    labels_jax = jax.device_put(labels_jax)
+    batch_jax = jax.device_put(np.array(batch.numpy(), dtype=np.int32))
+    labels_jax = jax.device_put(np.array(labels.numpy(), dtype=np.int32))
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
+    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params, rng)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
-    return loss, {'transformer_params': new_params, 'expert_params': expert_params}, new_opt_state
+    return loss, new_params, new_opt_state
 
 @profile  # Enabling the memory profiling decorator to identify memory usage spikes
 def train_model(data_file, num_epochs=10, batch_size=8):
@@ -99,11 +94,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -136,8 +131,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             batch, labels = batch
             batch = np.array(batch, dtype=np.int32)
             labels = np.array(labels, dtype=np.int32)
-            batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-            labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
             loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
@@ -151,10 +144,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
-
-if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
-    train_model(data_file)
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"

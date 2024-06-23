@@ -25,7 +25,7 @@ class VishwamAIModel(hk.Module):
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
-        self.dropout = hk.dropout
+        self.dropout = nn.Dropout(0.1, deterministic=False)  # Initialize flax.linen.Dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -73,7 +73,7 @@ class VishwamAIModel(hk.Module):
             embedded_inputs = layer(embedded_inputs)
 
         # Apply dropout with a fixed seed using JAX's dropout
-        embedded_inputs = nn.Dropout(0.1, deterministic=False)(embedded_inputs, rngs={'dropout': jax.random.PRNGKey(42)})
+        embedded_inputs = self.dropout(embedded_inputs, rngs={'dropout': jax.random.PRNGKey(42)})
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

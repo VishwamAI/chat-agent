@@ -82,13 +82,12 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = tf.convert_to_tensor(expert_output, dtype=tf.float32)  # Convert to TensorFlow tensor
-        flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
+        combined_output = jnp.asarray(expert_output, dtype=jnp.float32)  # Ensure expert_output is float32
+        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
 
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        attention_output = jnp.asarray(attention_output, dtype=jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
         output = self.dense(attention_output)  # Directly pass attention_output to dense layer
         return output
 

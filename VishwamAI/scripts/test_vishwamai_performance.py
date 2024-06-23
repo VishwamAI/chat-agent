@@ -23,7 +23,8 @@ def initialize_model(tokenized_input):
     try:
         forward = hk.transform(forward_fn)
         rng = jax.random.PRNGKey(config.RNG_SEED)
-        params = forward.init(rng, tokenized_input)
+        tokenized_input_tf = tf.convert_to_tensor(tokenized_input, dtype=tf.int32)  # Convert JAX array to TensorFlow tensor
+        params = forward.init(rng, tokenized_input_tf)
         return forward, params, rng
     except Exception as e:
         logging.error(f"Error during model initialization: {e}")
@@ -31,7 +32,8 @@ def initialize_model(tokenized_input):
 
 def process_input(forward, params, rng, tokenized_input):
     try:
-        return forward.apply(params, rng, tokenized_input)
+        tokenized_input_tf = tf.convert_to_tensor(tokenized_input, dtype=tf.int32)  # Convert JAX array to TensorFlow tensor
+        return forward.apply(params, rng, tokenized_input_tf)
     except Exception as e:
         logging.error(f"Error during model inference: {e}")
         raise

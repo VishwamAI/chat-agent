@@ -19,7 +19,7 @@ class VishwamAIModel(hk.Module):
             hk.Sequential([
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True),
-                hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))(x, x, x),
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)

@@ -47,11 +47,12 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, optimizer, batch, labels, rng):
+def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     """
     Perform a single training step.
     Args:
         params: dict. Dictionary containing model parameters.
+        transformed_forward: hk.Transformed. The transformed forward function.
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
@@ -132,7 +133,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             labels = np.array(labels, dtype=np.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
-            loss, params, opt_state = train_step(params, optimizer, batch, labels, step_rng)
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

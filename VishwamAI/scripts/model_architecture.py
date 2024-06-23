@@ -70,7 +70,7 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout using JAX's dropout
+        # Apply dropout using Haiku's dropout
         embedded_inputs = hk.dropout(rng, rate=0.1, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 

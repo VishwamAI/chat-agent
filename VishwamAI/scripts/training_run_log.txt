@@ -1,11 +1,11 @@
-2024-06-23 20:11:38.005660: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 20:11:38.011348: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 20:11:38.094279: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+2024-06-23 20:33:03.303205: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 20:33:03.308975: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 20:33:03.391785: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-06-23 20:11:39.353255: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-2024-06-23 20:11:42,165 - INFO - Unable to initialize backend 'cuda': 
-2024-06-23 20:11:42,166 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-2024-06-23 20:11:42,169 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-23 20:33:04.663103: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-23 20:33:07,568 - INFO - Unable to initialize backend 'cuda': 
+2024-06-23 20:33:07,569 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-23 20:33:07,573 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
 Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
 Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
@@ -20,26 +20,10 @@ Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
 Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
 Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
 Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
-Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
-Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
 Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
 Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
 Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
 Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
-Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
-Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
-Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
-Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
-Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
-Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
-Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
-Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
-Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
-Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
-Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
-Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
-Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
-Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
 Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
 Label: Tensor("cond/None_Lookup/LookupTableFindV2:0", shape=(), dtype=int32)
 Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
@@ -75,12 +59,4 @@ Traceback (most recent call last):
     params, state = f.init(*args, **kwargs)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
     f(*args, **kwargs)
-  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 107, in create_model
-    return model(batch)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
-    out = f(*args, **kwargs)
-  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
-    return func(*args, **kwds)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
-    return bound_method(*args, **kwargs)
-TypeError: VishwamAIModel.__call__() missing 1 required positional argument: 'rng'
+TypeError: train_model.<locals>.create_model() missing 1 required positional argument: 'rng'

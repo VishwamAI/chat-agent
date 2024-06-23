@@ -82,6 +82,7 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
+        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
         expert_output = expert(embedded_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 

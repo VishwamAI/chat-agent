@@ -90,7 +90,7 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        attention_output = tf.cast(attention_output, np.float32)  # Ensure attention_output is float32 before passing to dense layer
+        attention_output = tf.cast(attention_output, jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
         output = self.dense(attention_output)  # Directly pass attention_output to dense layer
         return output
 

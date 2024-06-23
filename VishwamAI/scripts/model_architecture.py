@@ -73,7 +73,6 @@ class VishwamAIModel(hk.Module):
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
-        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure embedded inputs are integer dtype
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
@@ -91,8 +90,8 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        attention_output = tf.cast(attention_output, jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
-        output = self.dense(jnp.asarray(attention_output, dtype=jnp.float32))  # Directly pass attention_output to dense layer
+        attention_output = jnp.asarray(attention_output, dtype=jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
+        output = self.dense(attention_output)  # Directly pass attention_output to dense layer
         return output
 
     def add_advanced_features(self):

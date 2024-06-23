@@ -14,15 +14,6 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.transformer = hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=20000, embed_dim=128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
-            apply_rng=True
-        )
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -32,18 +23,12 @@ class VishwamAIModel(hk.Module):
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
-        self.experts = [hk.transform(
-            lambda x: hk.Sequential([
-                hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
-                hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-                hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-            ])(x),
-            apply_rng=True
-        ) for _ in range(self.num_experts)]
-
-        # Remove gating mechanism
-        # self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.experts = [hk.Sequential([
+            hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        ]) for _ in range(self.num_experts)]
 
     def __call__(self, inputs):
         if tf.is_tensor(inputs):
@@ -72,13 +57,13 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
+        embedded_inputs = self.transformer(inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)  # Use original integer inputs
+        expert_output = expert(inputs)  # Use original integer inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation

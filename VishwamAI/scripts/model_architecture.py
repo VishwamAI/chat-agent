@@ -72,7 +72,7 @@ class VishwamAIModel(hk.Module):
         embedded_inputs = self.embedding(inputs)
         embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
         # Ensure params are passed correctly
-        embedded_inputs = self.transformer.apply(params, rng, embedded_inputs)  # Use apply method with params and rng
+        embedded_inputs = self.transformer.apply(rng, embedded_inputs)  # Use apply method with rng
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
@@ -84,7 +84,7 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        expert_output = self.experts[0].apply(params, rng, inputs)  # Use apply method with params and rng
+        expert_output = self.experts[0].apply(rng, inputs)  # Use apply method with rng
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation

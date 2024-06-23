@@ -81,8 +81,8 @@ class VishwamAIModel(hk.Module):
         expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)  # Use original integer inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
-        # Combine outputs from all models
-        combined_output = tf.concat([expert_output], axis=-1)
+        # Use the expert output directly without concatenation
+        combined_output = expert_output
 
         # Flatten the combined output to ensure correct shape for the final dense layer
         flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))

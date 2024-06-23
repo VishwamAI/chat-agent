@@ -79,7 +79,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     labels_jax = jax.device_put(labels.numpy())
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params, step_rng)
+    loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)

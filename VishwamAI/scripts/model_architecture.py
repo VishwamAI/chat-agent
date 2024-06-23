@@ -67,6 +67,7 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         embedded_inputs = self.embedding(inputs)
+        embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 

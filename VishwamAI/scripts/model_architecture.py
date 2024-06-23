@@ -77,8 +77,8 @@ class VishwamAIModel(hk.Module):
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
-        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), embedded_inputs), jax.random.PRNGKey(42), embedded_inputs)  # Use apply method
+        tf.print(f"Shape of expert_inputs: {inputs.shape}")
+        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)  # Use original integer inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Combine outputs from all models

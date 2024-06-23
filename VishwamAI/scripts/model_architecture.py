@@ -15,7 +15,6 @@ class VishwamAIModel(hk.Module):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
         self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
-        self.embeddings = hk.get_parameter("embeddings", [10000, 512], init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         self.encoder_layers = [
             hk.Sequential([
                 hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),

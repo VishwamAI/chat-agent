@@ -42,7 +42,7 @@ class VishwamAIModel(hk.Module):
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
-    def __call__(self, inputs, rng):
+    def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -72,8 +72,8 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout within the Haiku transformation context
-        embedded_inputs = hk.dropout(rng, 0.1, embedded_inputs)
+        # Apply dropout using TensorFlow's dropout
+        embedded_inputs = tf.nn.dropout(embedded_inputs, rate=0.1)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

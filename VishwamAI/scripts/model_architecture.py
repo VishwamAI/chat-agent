@@ -40,6 +40,9 @@ class VishwamAIModel(hk.Module):
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
+        # Define a simple transformer architecture for text processing
+        self.transformer = hk.transform(lambda x: hk.nets.MLP([512, 512, 512])(x))
+
     def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
@@ -68,6 +71,8 @@ class VishwamAIModel(hk.Module):
         # Apply the transformer to the inputs
         embedded_inputs = self.embedding(inputs)
         embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
+        # Ensure params are passed correctly
+        embedded_inputs = self.transformer.apply(params, rng, embedded_inputs)  # Use apply method with params and rng
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
@@ -79,7 +84,7 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        expert_output = expert(inputs)  # Use original integer inputs
+        expert_output = self.experts[0].apply(params, rng, inputs)  # Use apply method with params and rng
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation

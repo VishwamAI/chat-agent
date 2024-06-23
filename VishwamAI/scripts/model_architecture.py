@@ -25,7 +25,7 @@ class VishwamAIModel(hk.Module):
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
-        self.dropout = nn.Dropout(0.1, deterministic=False)  # Initialize flax.linen.Dropout
+        self.dropout = nn.Dropout(0.1)  # Initialize flax.linen.Dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -42,7 +42,7 @@ class VishwamAIModel(hk.Module):
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -72,8 +72,8 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout with a fixed seed using JAX's dropout
-        embedded_inputs = self.dropout(embedded_inputs, rngs={'dropout': jax.random.PRNGKey(42)})
+        # Apply dropout within the Haiku transformation context
+        embedded_inputs = hk.dropout(rng, 0.1, embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

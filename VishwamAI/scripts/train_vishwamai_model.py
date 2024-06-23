@@ -74,6 +74,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         logits = transformed_forward.apply(params, step_rng, batch_jax)  # Pass step_rng and batch_jax to the model call
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+        tf.print(f"Logits: {logits}")
+        tf.print(f"One-hot labels: {one_hot_labels}")
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss

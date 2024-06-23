@@ -70,7 +70,7 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
         for layer in self.encoder_layers:
-            embedded_inputs = layer(embedded_inputs, is_training=True)
+            embedded_inputs = layer(embedded_inputs)
         embedded_inputs = self.dropout(embedded_inputs, rate=0.1, is_training=True)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 

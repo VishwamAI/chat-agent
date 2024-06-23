@@ -62,14 +62,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    def loss_fn(params, step_rng):
-        logits = transformed_forward.apply(params, step_rng, batch)  # Pass step_rng and batch to the model call
-        assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
-        one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
-        tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
-        loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
-        return loss
-
     # Ensure inputs are integer dtype for embedding layer
     batch = tf.cast(batch, tf.int32)
     labels = tf.cast(labels, tf.int32)
@@ -77,6 +69,14 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     # Convert TensorFlow tensors to JAX arrays using JAX's data type specification
     batch_jax = jax.device_put(batch.numpy())
     labels_jax = jax.device_put(labels.numpy())
+
+    def loss_fn(params, step_rng):
+        logits = transformed_forward.apply(params, step_rng, batch_jax)  # Pass step_rng and batch_jax to the model call
+        assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
+        one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+        tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
+        loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
+        return loss
 
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)

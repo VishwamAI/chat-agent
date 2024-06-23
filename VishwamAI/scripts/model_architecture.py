@@ -14,6 +14,13 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
+        self.transformer = hk.transformer.Transformer(
+            num_heads=8,
+            num_layers=6,
+            model_size=512,
+            dropout_rate=0.1,
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
+        )
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,

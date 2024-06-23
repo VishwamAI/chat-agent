@@ -38,6 +38,10 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
         tokenized_data = tokenizer.tokenize(input_data)
         padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
         label = label_encoder.lookup(label) if label_encoder else label
+        tf.print(f"Input data: {input_data}")
+        tf.print(f"Tokenized data: {tokenized_data}")
+        tf.print(f"Padded data: {padded_data}")
+        tf.print(f"Label: {label}")
         return padded_data, label
 
     dataset = tf.data.TextLineDataset(file_path)

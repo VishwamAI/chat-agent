@@ -70,8 +70,8 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout using TensorFlow's dropout
-        embedded_inputs = tf.nn.dropout(embedded_inputs, rate=0.1)
+        # Apply dropout using JAX's dropout
+        embedded_inputs = jax.nn.dropout(embedded_inputs, rate=0.1, rng=hk.next_rng_key())
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

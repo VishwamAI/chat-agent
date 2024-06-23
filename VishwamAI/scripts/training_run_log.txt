@@ -1,50 +1,23 @@
-2024-06-23 04:50:14.317957: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 04:50:14.325709: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 04:50:14.419754: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+nohup: ignoring input
+2024-06-23 12:50:13.825124: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 12:50:13.831285: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 12:50:13.913749: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-06-23 04:50:15.857170: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-2024-06-23 04:50:19,118 - INFO - Unable to initialize backend 'cuda': 
-2024-06-23 04:50:19,119 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-2024-06-23 04:50:19,122 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
-Data type of inputs after conversion: <dtype: 'int32'>
-Data type of inputs before embedding layer: <dtype: 'int32'>
-Data type of inputs after conversion to int32: <dtype: 'int32'>
-Data type of inputs before transformer apply: <dtype: 'int32'>
+2024-06-23 12:50:15.180343: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-23 12:50:18,170 - INFO - Unable to initialize backend 'cuda': 
+2024-06-23 12:50:18,171 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-23 12:50:18,173 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 Traceback (most recent call last):
-  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 150, in <module>
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 140, in <module>
     train_model(data_file)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
     val = prof(func)(*args, **kwargs)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
     return func(*args, **kwds)
   File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 118, in train_model
-    transformer_params = transformed_forward.init(transformer_rng, example_batch)
+    params = transformed_forward.init(transformer_rng, example_batch)  # Pass transformer_rng and example_batch
   File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 166, in init_fn
     params, state = f.init(*args, **kwargs)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
     f(*args, **kwargs)
-  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 101, in create_model
-    return model(batch)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
-    out = f(*args, **kwargs)
-  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
-    return func(*args, **kwds)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
-    return bound_method(*args, **kwargs)
-  File "/home/ubuntu/chat-agent/VishwamAI/scripts/model_architecture.py", line 73, in __call__
-    embedded_inputs = layer(embedded_inputs, is_training=True)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
-    out = f(*args, **kwargs)
-  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
-    return func(*args, **kwds)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
-    return bound_method(*args, **kwargs)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/basic.py", line 126, in __call__
-    out = layer(out, *args, **kwargs)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
-    out = f(*args, **kwargs)
-  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
-    return func(*args, **kwds)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
-    return bound_method(*args, **kwargs)
-TypeError: Linear.__call__() got an unexpected keyword argument 'is_training'
+TypeError: train_model.<locals>.create_model() missing 1 required positional argument: 'rng'

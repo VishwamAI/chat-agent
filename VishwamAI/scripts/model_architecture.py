@@ -47,6 +47,8 @@ class VishwamAIModel(hk.Module):
     def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
+            if len(inputs.shape) == 1:
+                inputs = tf.expand_dims(inputs, axis=0)  # Add a new dimension to make it two-dimensional
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one

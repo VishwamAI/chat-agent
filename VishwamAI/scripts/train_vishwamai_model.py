@@ -75,8 +75,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     labels = tf.cast(labels, tf.int32)
 
     # Convert TensorFlow tensors to numpy arrays outside of the JAX-traced loss_fn
-    batch_jax = jax.device_put(np.array(batch.numpy(), dtype=np.int32))
-    labels_jax = jax.device_put(np.array(labels.numpy(), dtype=np.int32))
+    batch_jax = jax.device_put(tf.cast(batch, tf.int32))
+    labels_jax = jax.device_put(tf.cast(labels, tf.int32))
 
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)

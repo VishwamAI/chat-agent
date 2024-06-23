@@ -24,7 +24,6 @@ class VishwamAIModel(hk.Module):
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
-        self.dropout = hk.dropout
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
@@ -67,11 +66,12 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Apply the transformer to the inputs
-        tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
-        embedded_inputs = hk.dropout(rng, 0.1, embedded_inputs)
+
+        # Apply dropout using Haiku's dropout
+        embedded_inputs = hk.dropout(rng, rate=0.1, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

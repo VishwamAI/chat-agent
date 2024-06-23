@@ -47,7 +47,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, transformed_forward, optimizer, batch, labels, rng):
+def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     """
     Perform a single training step.
     Args:
@@ -56,16 +56,16 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
-        rng: jax.random.PRNGKey. Random number generator key.
+        step_rng: jax.random.PRNGKey. Random number generator key.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # Pass the RNG key to the model call
-        assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
-        one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
+    def loss_fn(params, step_rng):
+        logits = transformed_forward.apply(params, step_rng, batch)  # Pass step_rng and batch to the model call
+        assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
+        one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
@@ -74,12 +74,12 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     batch = tf.cast(batch, tf.int32)
     labels = tf.cast(labels, tf.int32)
 
-    # Convert TensorFlow tensors to numpy arrays outside of the JAX-traced loss_fn
-    batch_jax = jax.device_put(np.array(batch.numpy(), dtype=np.int32))
-    labels_jax = jax.device_put(np.array(labels.numpy(), dtype=np.int32))
+    # Convert TensorFlow tensors to JAX arrays using JAX's data type specification
+    batch_jax = jax.device_put(batch.numpy())
+    labels_jax = jax.device_put(labels.numpy())
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params, rng)
+    loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
@@ -115,22 +115,12 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    transformer_params = transformed_forward.init(transformer_rng, example_batch)
-    expert_params = []
-    for _ in range(1):  # Assuming 1 expert
-        expert_rng, rng = jax.random.split(rng)
-        expert_params.append(transformed_forward.init(expert_rng, example_batch))
-    params = {
-        'transformer_params': transformer_params,
-        'expert_params': expert_params
-    }
+    params = transformed_forward.init(transformer_rng, example_batch, rng)  # Pass transformer_rng, example_batch, and rng
 
     # Training loop
     for epoch in range(num_epochs):
         for batch in data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder):
             batch, labels = batch
-            batch = np.array(batch, dtype=np.int32)
-            labels = np.array(labels, dtype=np.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
             loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)

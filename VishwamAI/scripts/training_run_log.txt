@@ -1,11 +1,11 @@
-2024-06-23 21:29:58.862241: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 21:29:58.869505: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-23 21:29:58.953570: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+2024-06-23 21:55:18.682096: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 21:55:18.687787: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-23 21:55:18.769330: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-06-23 21:30:00.222323: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-2024-06-23 21:30:03,101 - INFO - Unable to initialize backend 'cuda': 
-2024-06-23 21:30:03,102 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-2024-06-23 21:30:03,105 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-23 21:55:20.037402: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-23 21:55:22,940 - INFO - Unable to initialize backend 'cuda': 
+2024-06-23 21:55:22,941 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-23 21:55:22,944 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 Input data: Tensor("cond/strided_slice:0", shape=(), dtype=string)
 Tokenized data: Tensor("cond/Squeeze:0", shape=(32,), dtype=int32)
 Padded data: Tensor("cond/Pad:0", shape=(32,), dtype=int32)
@@ -75,4 +75,12 @@ Traceback (most recent call last):
     params, state = f.init(*args, **kwargs)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
     f(*args, **kwargs)
-TypeError: train_model.<locals>.create_model() missing 1 required positional argument: 'rng'
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 107, in create_model
+    return model(batch)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
+    out = f(*args, **kwargs)
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
+    return bound_method(*args, **kwargs)
+TypeError: VishwamAIModel.__call__() missing 1 required positional argument: 'rng'

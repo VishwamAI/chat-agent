@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def tokenize_input(input_text, tokenizer):
     try:
-        tokenized_input = tokenizer.tokenize(input_text).to_tensor()
+        tokenized_input = tokenizer.tokenize(input_text)
         return jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
     except Exception as e:
         logging.error(f"Error during tokenization: {e}")

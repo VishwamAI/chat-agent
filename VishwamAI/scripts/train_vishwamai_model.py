@@ -78,8 +78,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     labels = tf.cast(labels, tf.int32)
 
     # Convert TensorFlow tensors to numpy arrays outside of the JAX-traced loss_fn
-    batch_jax = np.array(batch, dtype=np.int32)
-    labels_jax = np.array(labels, dtype=np.int32)
+    batch_jax = np.array(batch.numpy(), dtype=np.int32)
+    labels_jax = np.array(labels.numpy(), dtype=np.int32)
     batch_jax = jax.device_put(batch_jax)
     labels_jax = jax.device_put(labels_jax)
 

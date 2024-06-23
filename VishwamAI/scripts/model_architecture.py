@@ -82,9 +82,7 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = expert_output
-
-        # Flatten the combined output to ensure correct shape for the final dense layer
+        combined_output = tf.convert_to_tensor(expert_output, dtype=tf.float32)  # Convert to TensorFlow tensor
         flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
 
         # Continue with the rest of the model

@@ -47,7 +47,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, transformed_forward, optimizer, batch, labels, rng):
+def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     """
     Perform a single training step.
     Args:
@@ -56,13 +56,13 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
-        rng: jax.random.PRNGKey. Random number generator key.
+        step_rng: jax.random.PRNGKey. Random number generator key.
     Returns:
         loss: jnp.ndarray. The loss value for the batch.
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    def loss_fn(params, step_rng):
+    def loss_fn(params):
         logits = transformed_forward.apply(params, step_rng, batch)  # Pass step_rng and batch to the model call
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
@@ -79,7 +79,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     labels_jax = jax.device_put(labels.numpy())
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
+    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)

@@ -71,7 +71,8 @@ class VishwamAIModel(hk.Module):
             embedded_inputs = layer(embedded_inputs)
 
         # Apply dropout using JAX's dropout
-        embedded_inputs = jax.nn.dropout(embedded_inputs, rate=0.1, rng=hk.next_rng_key())
+        dropout_mask = jax.random.bernoulli(hk.next_rng_key(), p=0.9, shape=embedded_inputs.shape)
+        embedded_inputs = jnp.where(dropout_mask, embedded_inputs / 0.9, 0)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

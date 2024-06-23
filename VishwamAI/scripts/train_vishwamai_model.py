@@ -79,7 +79,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     labels_jax = jax.device_put(labels.numpy())
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params, step_rng)
+    loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
@@ -94,11 +94,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch, rng):
+    def create_model(batch):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch, rng)
+        return model(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)

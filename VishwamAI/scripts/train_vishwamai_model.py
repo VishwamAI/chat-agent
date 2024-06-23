@@ -9,6 +9,7 @@ import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
+import numpy as np
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

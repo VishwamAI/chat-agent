@@ -47,12 +47,11 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, transformed_forward, optimizer, batch, labels, rng):
+def train_step(params, optimizer, batch, labels, rng):
     """
     Perform a single training step.
     Args:
         params: dict. Dictionary containing model parameters.
-        transformed_forward: hk.Transformed. Transformed forward function.
         optimizer: optax.GradientTransformation. The optimizer for training.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
@@ -62,11 +61,9 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    transformer_params = params['transformer_params']
-    expert_params = params['expert_params']
-
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        model = VishwamAIModel()
+        logits = model(batch)  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -86,7 +83,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)
-    return loss, {'transformer_params': new_params, 'expert_params': expert_params}, new_opt_state
+    return loss, new_params, new_opt_state
 
 @profile  # Enabling the memory profiling decorator to identify memory usage spikes
 def train_model(data_file, num_epochs=10, batch_size=8):
@@ -136,7 +133,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             labels = np.array(labels, dtype=np.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
+            loss, params, opt_state = train_step(params, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Explicit garbage collection

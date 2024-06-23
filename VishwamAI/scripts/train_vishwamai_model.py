@@ -63,7 +63,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
         new_opt_state: optax.OptState. Updated optimizer state.
     """
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # Pass rng and batch to the model call
+        logits = transformed_forward.apply(params, step_rng, batch)  # Pass step_rng and batch to the model call
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
@@ -115,7 +115,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    params = transformed_forward.init(transformer_rng, example_batch, rng)  # Pass rng argument
+    params = transformed_forward.init(transformer_rng, example_batch)  # Pass only transformer_rng and example_batch
 
     # Training loop
     for epoch in range(num_epochs):

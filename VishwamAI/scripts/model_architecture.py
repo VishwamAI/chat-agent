@@ -40,7 +40,7 @@ class VishwamAIModel(hk.Module):
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, rng):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -72,7 +72,7 @@ class VishwamAIModel(hk.Module):
             embedded_inputs = layer(embedded_inputs)
 
         # Apply dropout using JAX's dropout
-        dropout_mask = jax.random.bernoulli(hk.next_rng_key(), p=0.5, shape=embedded_inputs.shape)
+        dropout_mask = jax.random.bernoulli(rng, p=0.5, shape=embedded_inputs.shape)
         embedded_inputs = jnp.where(dropout_mask, embedded_inputs / 0.5, 0)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 

@@ -9,7 +9,7 @@ def serialize_model_params():
     dummy_input = jax.numpy.ones((1, 1024), dtype=jax.numpy.int32)
     params = model.init(rng, dummy_input)
     params_dict = hk.data_structures.to_immutable_dict(params)
-    with open('model_params.npz', 'wb') as f:
+    with open('vishwamai_model_params.pkl', 'wb') as f:
         np.savez(f, **params_dict)
 
 if __name__ == "__main__":

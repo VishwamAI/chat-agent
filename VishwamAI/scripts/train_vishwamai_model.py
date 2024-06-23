@@ -62,7 +62,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
         new_params: dict. Updated model parameters.
         new_opt_state: optax.OptState. Updated optimizer state.
     """
-    def loss_fn(params):
+    def loss_fn(params, step_rng):
         logits = transformed_forward.apply(params, step_rng, batch)  # Pass step_rng and batch to the model call
         assert logits.shape == (batch_jax.shape[0], 3), f"Logits shape mismatch: expected ({batch_jax.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels_jax, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
@@ -79,7 +79,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     labels_jax = jax.device_put(labels.numpy())
 
     # Use gradient checkpointing to save memory during the backward pass
-    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
+    loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params, step_rng)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
     updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
     new_params = optax.apply_updates(params, updates)

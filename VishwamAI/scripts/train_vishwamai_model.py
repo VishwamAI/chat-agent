@@ -94,11 +94,11 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    def create_model(batch):
+    def create_model(batch, rng):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
-        return model(batch)
+        return model(batch, rng)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)

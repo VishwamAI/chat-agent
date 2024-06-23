@@ -119,7 +119,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     expert_params = []
     for _ in range(1):  # Assuming 1 expert
         expert_rng, rng = jax.random.split(rng)
-        expert_params.append(transformed_forward.init(expert_rng, example_batch, expert_rng))
+        expert_params.append(transformed_forward.init(expert_rng, example_batch))
     params = {
         'transformer_params': transformer_params,
         'expert_params': expert_params

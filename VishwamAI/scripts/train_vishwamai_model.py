@@ -9,6 +9,7 @@ import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
+import numpy as np
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -65,12 +66,22 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     expert_params = params['expert_params']
 
     def loss_fn(params):
-        logits = transformed_forward.apply(params, rng, batch)  # logits shape: [batch_size, num_classes]
+        logits = transformed_forward.apply(params, rng, jax.device_put(batch))  # logits shape: [batch_size, num_classes]
         assert logits.shape == (batch.shape[0], 3), f"Logits shape mismatch: expected ({batch.shape[0]}, 3), got {logits.shape}"
         one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])  # labels shape: [batch_size, num_classes]
         tf.print(f"Logits shape: {logits.shape}, One-hot labels shape: {one_hot_labels.shape}")
         loss = jnp.mean(optax.softmax_cross_entropy(logits, one_hot_labels))
         return loss
+
+    # Ensure inputs are integer dtype for embedding layer
+    batch = tf.cast(batch, tf.int32)
+    labels = tf.cast(labels, tf.int32)
+
+    # Convert TensorFlow tensors to numpy arrays outside of the JAX-traced loss_fn
+    batch_jax = np.array(batch.numpy(), dtype=np.int32)
+    labels_jax = np.array(labels.numpy(), dtype=np.int32)
+    batch_jax = jax.device_put(batch_jax)
+    labels_jax = jax.device_put(labels_jax)
 
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(loss_fn))(params)
@@ -80,7 +91,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, rng):
     return loss, {'transformer_params': new_params, 'expert_params': expert_params}, new_opt_state
 
 @profile  # Enabling the memory profiling decorator to identify memory usage spikes
-@tf.function
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
@@ -91,7 +101,9 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     """
     def create_model(batch):
         model = VishwamAIModel()
-        return model.__call__(batch)
+        if not tf.is_tensor(batch):
+            batch = tf.convert_to_tensor(batch, dtype=tf.int32)
+        return model(batch)
 
     transformed_forward = hk.transform(create_model)
     optimizer = optax.adam(learning_rate=1e-3)
@@ -107,8 +119,12 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch, example_labels = next(iter(data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder)))
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
-    transformer_params = transformed_forward.init(rng, example_batch)
-    expert_params = [transformed_forward.init(rng, example_batch) for _ in range(1)]  # Assuming 1 expert
+    transformer_rng, rng = jax.random.split(rng)
+    transformer_params = transformed_forward.init(transformer_rng, example_batch)
+    expert_params = []
+    for _ in range(1):  # Assuming 1 expert
+        expert_rng, rng = jax.random.split(rng)
+        expert_params.append(transformed_forward.init(expert_rng, example_batch))
     params = {
         'transformer_params': transformer_params,
         'expert_params': expert_params
@@ -118,6 +134,8 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     for epoch in range(num_epochs):
         for batch in data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder):
             batch, labels = batch
+            batch = np.array(batch, dtype=np.int32)
+            labels = np.array(labels, dtype=np.int32)
             batch = tf.convert_to_tensor(batch, dtype=tf.int32)
             labels = tf.convert_to_tensor(labels, dtype=tf.int32)
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
@@ -133,6 +151,10 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
+
+if __name__ == "__main__":
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
+    train_model(data_file)
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"

@@ -6,6 +6,8 @@ import tensorflow_text as tf_text
 import random
 import keras_nlp
 import config
+import numpy as np  # Ensure NumPy is imported for data type compatibility
+import jax.numpy as jnp  # Ensure JAX NumPy is imported for data type compatibility
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -46,6 +48,8 @@ class VishwamAIModel(hk.Module):
     def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
+            if len(inputs.shape) == 1:
+                inputs = tf.expand_dims(inputs, axis=0)  # Add a new dimension to make it two-dimensional
             inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
         elif isinstance(inputs, str):
             inputs = [inputs]  # Convert single input to a batch of one
@@ -68,19 +72,15 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         tf.print(f"Data type of inputs before transformer apply: {inputs.dtype}")
-        transformer_params = self.transformer.init(rng, inputs)
-        embedded_inputs = self.transformer.apply(transformer_params, rng, inputs)
+        embedded_inputs = self.transformer.apply(self.transformer.init(jax.random.PRNGKey(42), inputs), jax.random.PRNGKey(42), inputs)
+        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure embedded inputs are integer dtype
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
-
-        # Convert embedded inputs to float32 for subsequent layers
-        embedded_inputs = tf.cast(embedded_inputs, tf.float32)
-        tf.print(f"Data type of embedded inputs after conversion to float32: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        expert_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure expert_inputs are integer dtype for embedding layer
-        tf.print(f"Shape of expert_inputs: {expert_inputs.shape}")
-        expert_output = expert.apply(rng, expert_inputs)  # Use apply method
+        tf.print(f"Shape of expert_inputs: {embedded_inputs.shape}")
+        expert_output = expert.apply(expert.init(jax.random.PRNGKey(42), embedded_inputs), jax.random.PRNGKey(42), embedded_inputs)  # Use apply method
+        tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Combine outputs from all models
         combined_output = tf.concat([expert_output], axis=-1)
@@ -91,7 +91,8 @@ class VishwamAIModel(hk.Module):
         # Continue with the rest of the model
         hidden_states = flattened_output
         attention_output = hidden_states
-        output = self.dense(attention_output)
+        attention_output = tf.cast(attention_output, jnp.float32)  # Ensure attention_output is float32 before passing to dense layer
+        output = self.dense(jnp.asarray(attention_output, dtype=jnp.float32))  # Directly pass attention_output to dense layer
         return output
 
     def add_advanced_features(self):
@@ -150,7 +151,8 @@ def unique_features():
 if __name__ == "__main__":
     model = VishwamAIModel()
     example_input = "What is the capital of France?"
-    output = model(example_input)
+    rng = jax.random.PRNGKey(42)
+    output = model(example_input, rng)
     print(f"Model output: {output}")
     # Self-improvement example
     model.self_improve()

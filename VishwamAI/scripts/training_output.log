@@ -1,57 +1,49 @@
 nohup: ignoring input
-2024-06-22 11:50:31.522557: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-22 11:50:31.529127: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-06-22 11:50:31.626753: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+2024-06-24 08:06:59.053141: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-24 08:06:59.059335: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-06-24 08:06:59.142029: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-06-22 11:50:33.022769: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py:735: UserWarning: Could not extract a code object for the object <tensorflow.python.eager.polymorphic_function.polymorphic_function.Function object at 0x7f66eb987d60>
-  warnings.warn("Could not extract a code object for the object %r"
-WARNING:tensorflow:AutoGraph could not transform <function sig_replace_leading_parameters at 0x7f66ebf93be0> and will run it as-is.
-Cause: for/else statement not yet supported
-To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
-2024-06-22 11:50:48,616 - WARNING - AutoGraph could not transform <function sig_replace_leading_parameters at 0x7f66ebf93be0> and will run it as-is.
-Cause: for/else statement not yet supported
-To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
-2024-06-22 11:51:39,658 - INFO - Unable to initialize backend 'cuda': 
-2024-06-22 11:51:39,658 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-2024-06-22 11:51:39,662 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 08:07:00.356766: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+Data type of inputs after conversion: <dtype: 'int32'>
+Data type of inputs before embedding layer: <dtype: 'int32'>
+Data type of inputs after conversion to int32: <dtype: 'int32'>
+Data type of inputs before embedding layer (final check): <dtype: 'int32'>
+Data type of embedded inputs after embedding layer: float32
+Data type of embedded inputs after transformer apply: float32
+Data type of expert output after expert apply: float32
 Traceback (most recent call last):
-  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 131, in <module>
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 159, in <module>
     train_model(data_file)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 1188, in wrapper
     val = prof(func)(*args, **kwargs)
   File "/home/ubuntu/.local/lib/python3.10/site-packages/memory_profiler.py", line 761, in f
     return func(*args, **kwds)
-  File "/home/ubuntu/.local/lib/python3.10/site-packages/tensorflow/python/util/traceback_utils.py", line 153, in error_handler
-    raise e.with_traceback(filtered_tb) from None
-  File "/tmp/__autograph_generated_file0s38dpw1.py", line 39, in tf__train_model
-    params = ag__.converted_call(ag__.ld(transformed_forward).init, (ag__.ld(rng), ag__.ld(example_batch)), None, fscope)
-  File "/tmp/__autograph_generated_fileoh4egb4n.py", line 36, in init_fn
-    (params, state) = ag__.converted_call(ag__.ld(f).init, tuple(ag__.ld(args)), dict(**ag__.ld(kwargs)), fscope_1)
-  File "/tmp/__autograph_generated_filefw1jzr53.py", line 62, in init_fn
-    ag__.converted_call(ag__.ld(f), tuple(ag__.ld(args)), dict(**ag__.ld(kwargs)), fscope_1)
-  File "/tmp/__autograph_generated_file0s38dpw1.py", line 24, in create_model
-    retval__1 = ag__.converted_call(ag__.ld(model).__call__, (ag__.ld(batch),), None, fscope_1)
-  File "/tmp/__autograph_generated_filejh3ghgzn.py", line 69, in tf__wrapped
-    out = ag__.converted_call(ag__.ld(f), tuple(ag__.ld(args)), dict(**ag__.ld(kwargs)), fscope)
-  File "/tmp/__autograph_generated_fileif14kb93.py", line 20, in inner
-    retval__1 = ag__.converted_call(ag__.ld(func), tuple(ag__.ld(args)), dict(**ag__.ld(kwds)), fscope_1)
-  File "/tmp/__autograph_generated_file0wlt2v5u.py", line 76, in tf__run_interceptors
-    ag__.if_stmt(ag__.not_(ag__.ld(interceptor_stack)), if_body_1, else_body_1, get_state_1, set_state_1, ('ctx', 'do_return', 'interceptor_stack_copy', 'next_fun', 'retval_'), 5)
-  File "/tmp/__autograph_generated_file0wlt2v5u.py", line 23, in if_body_1
-    retval_ = ag__.converted_call(ag__.ld(bound_method), tuple(ag__.ld(args)), dict(**ag__.ld(kwargs)), fscope)
-  File "/tmp/__autograph_generated_file6ygnk7jy.py", line 98, in tf____call__
-    embedded_inputs = ag__.converted_call(ag__.ld(self).transformer, (ag__.ld(inputs),), None, fscope)
-TypeError: in user code:
-
-    File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 92, in create_model  *
-        return model.__call__(batch)
-    File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 75, in wrapped  *
-        out = f(*args, **kwargs)
-    File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors  *
-        return bound_method(*args, **kwargs)
-    File "/home/ubuntu/chat-agent/VishwamAI/scripts/model_architecture.py", line 71, in __call__  *
-        embedded_inputs = self.transformer(inputs)
-
-    TypeError: 'Transformed' object is not callable
-
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 131, in train_model
+    params = transformed_forward.init(transformer_rng, example_batch)  # Initialize params with transformer_rng and example_batch
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 166, in init_fn
+    params, state = f.init(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/transform.py", line 422, in init_fn
+    f(*args, **kwargs)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/train_vishwamai_model.py", line 115, in create_model
+    return model(batch)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
+    out = f(*args, **kwargs)
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/chat-agent/VishwamAI/scripts/model_architecture.py", line 94, in __call__
+    output = self.dense(attention_output)  # Directly pass attention_output to dense layer
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 464, in wrapped
+    out = f(*args, **kwargs)
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/module.py", line 305, in run_interceptors
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/basic.py", line 179, in __call__
+    w = hk.get_parameter("w", [input_size, output_size], dtype, init=w_init)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/base.py", line 658, in get_parameter
+    param = init(shape, dtype)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/haiku/_src/initializers.py", line 226, in __call__
+    distribution_stddev = np.asarray(.87962566103423978, dtype=dtype)
+TypeError: Cannot interpret 'tf.float32' as a data type

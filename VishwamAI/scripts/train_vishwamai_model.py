@@ -10,7 +10,6 @@ from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
 import numpy as np
-import tensorflow.keras.mixed_precision as mixed_precision
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='../logs/training_run_log.txt')
@@ -105,14 +104,9 @@ def train_model(data_file, num_epochs=10, batch_size=4):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
-    # Set mixed-precision policy
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_global_policy(policy)
-
-    # Create a mixed-precision optimizer
-    optimizer = mixed_precision.LossScaleOptimizer(
-        tf.keras.optimizers.Adam(learning_rate=1e-3), dynamic=True
-    )
+    # Remove TensorFlow mixed-precision policy and optimizer setup
+    # Ensure that the optimizer and model parameters are correctly configured for JAX and Haiku
+    optimizer = optax.adam(learning_rate=1e-3)
 
     def create_model(batch):
         model = VishwamAIModel()

@@ -132,11 +132,17 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
+        # Save intermediate checkpoint
+        checkpoint_file = f"vishwamai_model_params_epoch_{epoch + 1}.pkl"
+        with open(checkpoint_file, "wb") as f:
+            pickle.dump(params, f)
+        logging.info(f"Checkpoint saved for epoch {epoch + 1} at {checkpoint_file}")
+
         # Explicit garbage collection
         import gc
         gc.collect()
 
-    # Save the trained model
+    # Save the final trained model
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")

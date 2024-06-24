@@ -42,15 +42,17 @@ class VishwamAIModel(hk.Module):
 
         # Implement memory network and memory augmentation
         def memory_network(self, inputs):
-            # LSTM-based memory network
-            rnn_cell = tf.keras.layers.LSTMCell(512)
-            rnn_layer = tf.keras.layers.RNN(rnn_cell)
+            # Enhanced LSTM-based memory network with bidirectional LSTM
+            rnn_cell_fw = tf.keras.layers.LSTMCell(512)
+            rnn_cell_bw = tf.keras.layers.LSTMCell(512)
+            rnn_layer = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(rnn_cell_fw), backward_layer=tf.keras.layers.RNN(rnn_cell_bw))
             memory_output = rnn_layer(inputs)
             return memory_output
 
         def memory_augmentation(self, inputs):
-            # Augmentation mechanism
+            # Enhanced augmentation mechanism with additional dense layers
             augmented_memory = tf.keras.layers.Dense(512, activation='relu')(inputs)
+            augmented_memory = tf.keras.layers.Dense(256, activation='relu')(augmented_memory)
             return augmented_memory
 
         # Define a simple transformer architecture for text processing
@@ -162,15 +164,17 @@ class VishwamAIModel(hk.Module):
         print(f"Answer: {answer}")
 
     def memory_network(self, inputs):
-        # LSTM-based memory network
-        rnn_cell = tf.keras.layers.LSTMCell(512)
-        rnn_layer = tf.keras.layers.RNN(rnn_cell, return_sequences=True, return_state=True)
-        memory_output, state_h, state_c = rnn_layer(inputs)
-        return memory_output, state_h, state_c
+        # Enhanced LSTM-based memory network with bidirectional LSTM
+        rnn_cell_fw = tf.keras.layers.LSTMCell(512)
+        rnn_cell_bw = tf.keras.layers.LSTMCell(512)
+        rnn_layer = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(rnn_cell_fw), backward_layer=tf.keras.layers.RNN(rnn_cell_bw))
+        memory_output = rnn_layer(inputs)
+        return memory_output
 
     def memory_augmentation(self, inputs):
-        # Augmentation mechanism
+        # Enhanced augmentation mechanism with additional dense layers
         augmented_memory = tf.keras.layers.Dense(512, activation='relu')(inputs)
+        augmented_memory = tf.keras.layers.Dense(256, activation='relu')(augmented_memory)
         return augmented_memory
 
 # Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning

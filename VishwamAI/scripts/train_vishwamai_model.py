@@ -8,13 +8,14 @@ import logging
 import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
-# from memory_profiler import profile
+from memory_profiler import profile
 import numpy as np
+import tensorflow.keras.mixed_precision as mixed_precision
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='../logs/training_run_log.txt')
 
-def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=None):
+def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=None):
     """
     Generator function to yield batches of data and corresponding labels.
     Args:
@@ -38,15 +39,19 @@ def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=Non
         tokenized_data = tokenizer.tokenize(input_data)
         padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
         label = label_encoder.lookup(label) if label_encoder else label
-        tf.print(f"Input data: {input_data}")
-        tf.print(f"Tokenized data: {tokenized_data}")
-        tf.print(f"Padded data: {padded_data}")
-        tf.print(f"Label: {label}")
+        # Reduced logging frequency
+        if tf.random.uniform([]) < 0.01:  # Log only 1% of the examples
+            tf.print(f"Input data: {input_data}")
+            tf.print(f"Tokenized data: {tokenized_data}")
+            tf.print(f"Padded data: {padded_data}")
+            tf.print(f"Label: {label}")
         return padded_data, label
 
     dataset = tf.data.TextLineDataset(file_path)
     dataset = dataset.map(parse_line, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     dataset = dataset.filter(lambda x, y: y != -1)
+    # Removed caching to reduce memory usage
+    # dataset = dataset.cache()
     dataset = dataset.batch(batch_size)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
@@ -91,7 +96,8 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-def train_model(data_file, num_epochs=10, batch_size=8):
+@profile
+def train_model(data_file, num_epochs=10, batch_size=4):
     """
     Train the VishwamAI model.
     Args:
@@ -99,6 +105,15 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         num_epochs: int. Number of training epochs.
         batch_size: int. Number of samples per batch.
     """
+    # Set mixed-precision policy
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_global_policy(policy)
+
+    # Create a mixed-precision optimizer
+    optimizer = mixed_precision.LossScaleOptimizer(
+        tf.keras.optimizers.Adam(learning_rate=1e-3), dynamic=True
+    )
+
     def create_model(batch):
         model = VishwamAIModel()
         if not tf.is_tensor(batch):
@@ -106,7 +121,6 @@ def train_model(data_file, num_epochs=10, batch_size=8):
         return model(batch)
 
     transformed_forward = hk.transform(create_model)
-    optimizer = optax.adam(learning_rate=1e-3)
     rng = jax.random.PRNGKey(42)
 
     # Initialize label encoder

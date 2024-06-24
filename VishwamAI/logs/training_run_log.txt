@@ -457,3 +457,21 @@ Shape of expert_inputs: (8, 32)
 2024-06-24 10:09:08,409 - INFO - Epoch 5, Loss: 0.0
 2024-06-24 10:09:08,528 - INFO - Checkpoint saved for epoch 5 at vishwamai_model_params_epoch_5.pkl
 2024-06-24 10:09:11,803 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:09:21,871 - INFO - Epoch 6, Loss: 16.87042999267578
+2024-06-24 10:09:21,874 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:09:30,358 - INFO - Epoch 6, Loss: 9.037940979003906
+2024-06-24 10:09:30,361 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:09:39,182 - INFO - Epoch 6, Loss: 1.8588941097259521
+2024-06-24 10:09:39,185 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:09:47,665 - INFO - Epoch 6, Loss: 2.860898017883301
+2024-06-24 10:09:47,668 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:09:56,644 - INFO - Epoch 6, Loss: 1.651021957397461
+2024-06-24 10:09:56,647 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:10:06,569 - INFO - Epoch 6, Loss: 2.4688007831573486
+2024-06-24 10:10:06,572 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:10:15,066 - INFO - Epoch 6, Loss: 2.188610076904297
+2024-06-24 10:10:15,069 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:10:23,561 - INFO - Epoch 6, Loss: 1.7231026887893677
+2024-06-24 10:10:23,564 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:10:32,044 - INFO - Epoch 6, Loss: 2.142611026763916
+2024-06-24 10:10:32,047 - INFO - Data type of batch before model apply: <dtype: 'int32'>

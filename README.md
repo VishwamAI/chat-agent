@@ -1,7 +1,7 @@
 # VishwamAI
 
 ## Overview
-VishwamAI is an image-generating chat model designed to create images based on chat interactions. The model is capable of self-improvement and has internet access without relying on APIs and development. It includes mechanisms for generating questions based on input text to enhance its auto-learning capabilities. Additionally, VishwamAI is designing to achieve 100% accuracy in MMLU, math, and reasoning tasks. The model incorporates a game-like design where it awards points for correct answers and deducts points for incorrect ones. VishwamAI leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and PyTorch.
+VishwamAI is an advanced virtual assistant chat model designed to achieve 100% accuracy in the MMLU benchmark, with a strong focus on mathematical reasoning and other benchmarks such as HellaSwag. The model leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and JAX. VishwamAI aims to excel in various reasoning tasks and provide accurate and reliable responses.
 
 ## Note on Dependencies
 The `glide_text2im` module is a required dependency for the VishwamAI project. It can be obtained by cloning the official GitHub repository and installing it as an editable package. Ensure that you have the correct path to the TensorFlow checkpoint file for the GLIDE model.

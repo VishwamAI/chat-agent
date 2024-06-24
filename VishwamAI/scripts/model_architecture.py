@@ -40,7 +40,10 @@ class VishwamAIModel(hk.Module):
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
-    def __call__(self, inputs, rng):
+        # Define a simple transformer architecture for text processing
+        self.transformer = hk.transform(lambda x: hk.nets.MLP([512, 512, 512])(x))
+
+    def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -67,17 +70,19 @@ class VishwamAIModel(hk.Module):
 
         # Apply the transformer to the inputs
         embedded_inputs = self.embedding(inputs)
+        embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout using Haiku's dropout
-        embedded_inputs = hk.dropout(rng, rate=0.1, x=embedded_inputs)
+        # Apply dropout using Haiku's built-in dropout function
+        embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        expert_output = expert(inputs)  # Use original integer inputs
+        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
+        expert_output = expert(embedded_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation

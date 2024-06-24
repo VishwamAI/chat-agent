@@ -14,29 +14,29 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
         self.encoder_layers = [
             hk.Sequential([
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True),
-                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))(x, x, x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))(x, x, x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)
         )
-        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.Sequential([
             lambda x: self.attention(x, x, x),  # Apply attention directly to embedded inputs
-            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
+            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
+            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
         ]) for _ in range(self.num_experts)]
 
         # Define a simple transformer architecture for text processing
@@ -67,9 +67,12 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
+        # Convert TensorFlow tensor to NumPy array before passing to Haiku functions
+        inputs_np = inputs.numpy()
+
         # Apply the embedding layer to the inputs
         tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
-        embedded_inputs = self.embedding(inputs)
+        embedded_inputs = self.embedding(inputs_np)
         tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
@@ -85,8 +88,8 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = tf.cast(expert_output, tf.float32)  # Ensure expert_output is float32
-        flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
+        combined_output = expert_output.numpy().astype(np.float32)  # Ensure expert_output is np.float32
+        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))  # Use JAX NumPy for reshaping
 
         # Continue with the rest of the model
         hidden_states = flattened_output

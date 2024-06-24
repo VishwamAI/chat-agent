@@ -514,3 +514,19 @@ Shape of expert_inputs: (8, 32)
 2024-06-24 10:13:15,869 - INFO - Data type of batch before model apply: <dtype: 'int32'>
 2024-06-24 10:13:24,430 - INFO - Epoch 7, Loss: 1.9857652187347412
 2024-06-24 10:13:24,433 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:13:34,341 - INFO - Epoch 7, Loss: 2.537877321243286
+2024-06-24 10:13:34,344 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:13:42,939 - INFO - Epoch 7, Loss: 1.5877758264541626
+2024-06-24 10:13:42,942 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:13:51,468 - INFO - Epoch 7, Loss: 1.643674612045288
+2024-06-24 10:13:51,471 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:14:00,504 - INFO - Epoch 7, Loss: 3.769404888153076
+2024-06-24 10:14:00,507 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:14:09,059 - INFO - Epoch 7, Loss: 1.8222885131835938
+2024-06-24 10:14:09,062 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:14:18,326 - INFO - Epoch 7, Loss: 1.2676544189453125
+2024-06-24 10:14:18,329 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:14:27,835 - INFO - Epoch 7, Loss: 1.2350940704345703
+2024-06-24 10:14:27,839 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:14:36,433 - INFO - Epoch 7, Loss: 2.4306905269622803
+2024-06-24 10:14:36,437 - INFO - Data type of batch before model apply: <dtype: 'int32'>

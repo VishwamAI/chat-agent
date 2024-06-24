@@ -74,9 +74,8 @@ class VishwamAIModel(hk.Module):
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
-        # Apply dropout using JAX's dropout
-        dropout_mask = jax.random.bernoulli(jax.random.PRNGKey(42), p=0.5, shape=embedded_inputs.shape)
-        embedded_inputs = jnp.where(dropout_mask, embedded_inputs / 0.5, 0)
+        # Apply dropout using Haiku's built-in dropout function
+        embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

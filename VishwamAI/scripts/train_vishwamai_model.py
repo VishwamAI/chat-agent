@@ -74,9 +74,11 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     batch = tf.cast(batch, tf.int32)
     labels = tf.cast(labels, tf.int32)
 
-    # Convert TensorFlow tensors to JAX arrays using JAX's data type specification
-    batch_jax = jax.device_put(batch.numpy())
-    labels_jax = jax.device_put(labels.numpy())
+    # Convert TensorFlow tensors to NumPy arrays before using JAX's data type specification
+    batch_np = batch.numpy()
+    labels_np = labels.numpy()
+    batch_jax = jax.device_put(batch_np)
+    labels_jax = jax.device_put(labels_np)
 
     def loss_fn(params, step_rng):
         logits = transformed_forward.apply(params, step_rng, batch_jax)  # Pass step_rng and batch_jax to the model call

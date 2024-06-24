@@ -190,3 +190,7 @@ Shape of expert_inputs: (8, 32)
 2024-06-24 09:07:09,715 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
 2024-06-24 09:07:09,718 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 2024-06-24 09:07:26,342 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:29:17,077 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 09:29:17,078 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 09:29:17,080 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 09:29:33,994 - INFO - Data type of batch before model apply: <dtype: 'int32'>

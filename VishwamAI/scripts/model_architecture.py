@@ -67,12 +67,9 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
-        # Convert TensorFlow tensor to NumPy array before passing to Haiku functions
-        inputs_np = inputs.numpy()
-
         # Apply the embedding layer to the inputs
         tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
-        embedded_inputs = self.embedding(inputs_np)
+        embedded_inputs = self.embedding(inputs)
         tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
@@ -88,13 +85,14 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = np.array(expert_output).astype(np.float32)  # Ensure expert_output is np.float32
-        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))  # Use JAX NumPy for reshaping
+        combined_output = expert_output  # Keep expert_output as is for now
 
         # Continue with the rest of the model
-        hidden_states = flattened_output
+        hidden_states = combined_output
         attention_output = hidden_states
         output = self.dense(attention_output)  # Directly pass attention_output to dense layer
+
+        # Return the final output as a JAX array
         return output
 
     def add_advanced_features(self):

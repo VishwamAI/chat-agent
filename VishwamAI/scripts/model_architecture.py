@@ -84,8 +84,11 @@ class VishwamAIModel(hk.Module):
         expert_output = expert(expert_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
-        # Use the expert output directly without concatenation
-        combined_output = expert_output  # Keep expert_output as is for now
+        # Apply mean pooling to reduce sequence length dimension
+        pooled_output = jnp.mean(expert_output, axis=1)
+
+        # Use the pooled output directly without concatenation
+        combined_output = pooled_output  # Keep pooled_output as is for now
 
         # Continue with the rest of the model
         hidden_states = combined_output

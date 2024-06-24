@@ -121,7 +121,7 @@ def train_model(data_file, num_epochs=10, batch_size=8):
     example_batch = tf.convert_to_tensor(example_batch, dtype=tf.int32)
     example_labels = tf.convert_to_tensor(example_labels, dtype=tf.int32)
     transformer_rng, rng = jax.random.split(rng)
-    params = transformed_forward.init(transformer_rng, example_batch)  # Initialize params with transformer_rng and example_batch
+    params = transformed_forward.init(rng, example_batch)  # Initialize params with rng and example_batch
 
     # Training loop
     for epoch in range(num_epochs):

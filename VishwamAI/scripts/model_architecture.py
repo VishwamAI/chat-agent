@@ -34,8 +34,7 @@ class VishwamAIModel(hk.Module):
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.Sequential([
-            hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-            lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+            lambda x: self.attention(x, x, x),  # Apply attention directly to embedded inputs
             hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
@@ -68,9 +67,10 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
-        # Apply the transformer to the inputs
+        # Apply the embedding layer to the inputs
+        tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
-        embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
+        tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
@@ -80,19 +80,22 @@ class VishwamAIModel(hk.Module):
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
-        expert_output = expert(embedded_inputs)  # Apply expert to embedded inputs
+        expert_inputs = embedded_inputs  # Use embedded inputs for the expert network
+        expert_output = expert(expert_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
-        # Use the expert output directly without concatenation
-        combined_output = jnp.asarray(expert_output, dtype=jnp.float32)  # Ensure expert_output is float32
-        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
+        # Apply mean pooling to reduce sequence length dimension
+        pooled_output = jnp.mean(expert_output, axis=1)
+
+        # Use the pooled output directly without concatenation
+        combined_output = pooled_output  # Keep pooled_output as is for now
 
         # Continue with the rest of the model
-        hidden_states = flattened_output
+        hidden_states = combined_output
         attention_output = hidden_states
         output = self.dense(attention_output)  # Directly pass attention_output to dense layer
+
+        # Return the final output as a JAX array
         return output
 
     def add_advanced_features(self):

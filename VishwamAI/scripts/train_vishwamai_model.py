@@ -12,6 +12,8 @@ from memory_profiler import profile
 import numpy as np
 import tensorflow_text as tf_text
 
+VOCAB_FILE = "/home/ubuntu/chat-agent/VishwamAI/scripts/t5-spiece.model"
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='../logs/training_run_log.txt')
 

@@ -10,6 +10,7 @@ from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
 import numpy as np
+import tensorflow_text as tf_text
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='../logs/training_run_log.txt')
@@ -25,7 +26,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
     Returns:
         tf.data.Dataset: A dataset yielding batches of tokenized and padded data and corresponding labels.
     """
-    tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=VOCAB_FILE, sequence_length=max_seq_length)
+    tokenizer = tf_text.BertTokenizer(config.VOCAB_FILE, lower_case=True)
 
     def parse_line(line):
         parts = tf.strings.split(line, '\t')
@@ -36,6 +37,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
         input_data = parts[0]
         label = parts[1]
         tokenized_data = tokenizer.tokenize(input_data)
+        tokenized_data = tokenized_data.merge_dims(-2, -1)  # Flatten the tokenized data
         padded_data = tf.pad(tokenized_data, [[0, max_seq_length - tf.shape(tokenized_data)[0]]], constant_values=0)
         label = label_encoder.lookup(label) if label_encoder else label
         # Reduced logging frequency

@@ -194,3 +194,223 @@ Shape of expert_inputs: (8, 32)
 2024-06-24 09:29:17,078 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
 2024-06-24 09:29:17,080 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 2024-06-24 09:29:33,994 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:36:36,757 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 09:36:36,757 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 09:36:36,760 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 09:36:53,227 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:50:10,588 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 09:50:10,588 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 09:50:10,591 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 09:50:27,804 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:50:49,732 - INFO - Epoch 1, Loss: 2.1008107662200928
+2024-06-24 09:50:49,735 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:50:58,477 - INFO - Epoch 1, Loss: 6.847447395324707
+2024-06-24 09:50:58,480 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:07,038 - INFO - Epoch 1, Loss: 11.686152458190918
+2024-06-24 09:51:07,041 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:15,781 - INFO - Epoch 1, Loss: 7.0600714683532715
+2024-06-24 09:51:15,784 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:24,267 - INFO - Epoch 1, Loss: 29.284318923950195
+2024-06-24 09:51:24,270 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:32,990 - INFO - Epoch 1, Loss: 6.639410018920898
+2024-06-24 09:51:32,993 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:41,481 - INFO - Epoch 1, Loss: 13.563394546508789
+2024-06-24 09:51:41,485 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:49,957 - INFO - Epoch 1, Loss: 5.405905723571777
+2024-06-24 09:51:49,960 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:51:58,702 - INFO - Epoch 1, Loss: 4.401210784912109
+2024-06-24 09:51:58,705 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:07,214 - INFO - Epoch 1, Loss: 13.255616188049316
+2024-06-24 09:52:07,217 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:16,001 - INFO - Epoch 1, Loss: 8.592759132385254
+2024-06-24 09:52:16,004 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:24,501 - INFO - Epoch 1, Loss: 4.264420509338379
+2024-06-24 09:52:24,504 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:32,967 - INFO - Epoch 1, Loss: 8.161190032958984
+2024-06-24 09:52:32,971 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:41,863 - INFO - Epoch 1, Loss: 0.010341053828597069
+2024-06-24 09:52:41,866 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:50,331 - INFO - Epoch 1, Loss: 21.629365921020508
+2024-06-24 09:52:50,334 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:52:58,840 - INFO - Epoch 1, Loss: 2.4082043170928955
+2024-06-24 09:52:58,843 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:07,792 - INFO - Epoch 1, Loss: 0.6669617295265198
+2024-06-24 09:53:07,795 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:16,282 - INFO - Epoch 1, Loss: 1.810234546661377
+2024-06-24 09:53:16,286 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:24,779 - INFO - Epoch 1, Loss: 1.487179160118103
+2024-06-24 09:53:24,783 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:33,243 - INFO - Epoch 1, Loss: 0.8064754009246826
+2024-06-24 09:53:33,246 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:42,236 - INFO - Epoch 1, Loss: 3.6777334213256836
+2024-06-24 09:53:42,239 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:50,714 - INFO - Epoch 1, Loss: 0.9965238571166992
+2024-06-24 09:53:50,718 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:53:59,211 - INFO - Epoch 1, Loss: 0.5761553049087524
+2024-06-24 09:53:59,214 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:07,729 - INFO - Epoch 1, Loss: 2.9802316703353426e-07
+2024-06-24 09:54:07,732 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:16,739 - INFO - Epoch 1, Loss: 8.463820449833293e-06
+2024-06-24 09:54:16,863 - INFO - Checkpoint saved for epoch 1 at vishwamai_model_params_epoch_1.pkl
+2024-06-24 09:54:18,210 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:26,689 - INFO - Epoch 2, Loss: 21.121868133544922
+2024-06-24 09:54:26,693 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:35,257 - INFO - Epoch 2, Loss: 2.8097476959228516
+2024-06-24 09:54:35,261 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:43,779 - INFO - Epoch 2, Loss: 13.911357879638672
+2024-06-24 09:54:43,782 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:54:52,240 - INFO - Epoch 2, Loss: 4.817805290222168
+2024-06-24 09:54:52,243 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:01,354 - INFO - Epoch 2, Loss: 3.553828001022339
+2024-06-24 09:55:01,358 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:09,943 - INFO - Epoch 2, Loss: 6.979316711425781
+2024-06-24 09:55:09,946 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:18,426 - INFO - Epoch 2, Loss: 1.2832038402557373
+2024-06-24 09:55:18,429 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:26,930 - INFO - Epoch 2, Loss: 3.91027569770813
+2024-06-24 09:55:26,933 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:35,412 - INFO - Epoch 2, Loss: 3.7195470333099365
+2024-06-24 09:55:35,415 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:44,677 - INFO - Epoch 2, Loss: 2.9073991775512695
+2024-06-24 09:55:44,680 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:55:53,173 - INFO - Epoch 2, Loss: 3.756721019744873
+2024-06-24 09:55:53,176 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:01,652 - INFO - Epoch 2, Loss: 3.330585479736328
+2024-06-24 09:56:01,655 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:10,201 - INFO - Epoch 2, Loss: 0.2539753317832947
+2024-06-24 09:56:10,205 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:18,684 - INFO - Epoch 2, Loss: 4.231919319863664e-06
+2024-06-24 09:56:18,687 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:27,181 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:56:27,184 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:36,474 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:56:36,478 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:44,951 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:56:44,954 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:56:55,008 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:56:55,012 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:03,613 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:03,616 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:12,098 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:12,101 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:20,600 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:20,603 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:30,031 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:30,034 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:38,541 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:38,544 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:47,030 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:47,032 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:57:55,554 - INFO - Epoch 2, Loss: 0.0
+2024-06-24 09:57:55,675 - INFO - Checkpoint saved for epoch 2 at vishwamai_model_params_epoch_2.pkl
+2024-06-24 09:57:57,467 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:05,967 - INFO - Epoch 3, Loss: 19.01154899597168
+2024-06-24 09:58:05,970 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:14,532 - INFO - Epoch 3, Loss: 9.429319381713867
+2024-06-24 09:58:14,535 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:23,018 - INFO - Epoch 3, Loss: 1.1755757331848145
+2024-06-24 09:58:23,021 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:31,521 - INFO - Epoch 3, Loss: 4.392999172210693
+2024-06-24 09:58:31,524 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:40,058 - INFO - Epoch 3, Loss: 2.190295934677124
+2024-06-24 09:58:40,061 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:48,550 - INFO - Epoch 3, Loss: 2.03498911857605
+2024-06-24 09:58:48,553 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:58:57,031 - INFO - Epoch 3, Loss: 4.29299783706665
+2024-06-24 09:58:57,034 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:06,626 - INFO - Epoch 3, Loss: 2.224673271179199
+2024-06-24 09:59:06,630 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:15,136 - INFO - Epoch 3, Loss: 1.6112241744995117
+2024-06-24 09:59:15,139 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:23,621 - INFO - Epoch 3, Loss: 2.7712533473968506
+2024-06-24 09:59:23,625 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:32,118 - INFO - Epoch 3, Loss: 1.9864892959594727
+2024-06-24 09:59:32,122 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:40,730 - INFO - Epoch 3, Loss: 1.324698805809021
+2024-06-24 09:59:40,733 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:49,211 - INFO - Epoch 3, Loss: 0.20719358325004578
+2024-06-24 09:59:49,214 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 09:59:57,701 - INFO - Epoch 3, Loss: 1.6093231351987924e-06
+2024-06-24 09:59:57,704 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:06,203 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:06,206 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:15,970 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:15,973 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:24,449 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:24,452 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:33,353 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:33,356 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:41,903 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:41,906 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:50,414 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:50,417 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:00:58,888 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:00:58,891 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:07,382 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:01:07,385 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:15,927 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:01:15,931 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:24,444 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:01:24,446 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:32,960 - INFO - Epoch 3, Loss: 0.0
+2024-06-24 10:01:33,082 - INFO - Checkpoint saved for epoch 3 at vishwamai_model_params_epoch_3.pkl
+2024-06-24 10:01:35,313 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:43,840 - INFO - Epoch 4, Loss: 19.670963287353516
+2024-06-24 10:01:43,843 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:01:52,365 - INFO - Epoch 4, Loss: 9.297212600708008
+2024-06-24 10:01:52,368 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:00,861 - INFO - Epoch 4, Loss: 1.6793698072433472
+2024-06-24 10:02:00,865 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:09,364 - INFO - Epoch 4, Loss: 4.423999786376953
+2024-06-24 10:02:09,367 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:17,918 - INFO - Epoch 4, Loss: 1.8760297298431396
+2024-06-24 10:02:17,921 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:26,437 - INFO - Epoch 4, Loss: 3.0634241104125977
+2024-06-24 10:02:26,441 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:34,983 - INFO - Epoch 4, Loss: 1.6945700645446777
+2024-06-24 10:02:34,986 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:43,559 - INFO - Epoch 4, Loss: 2.059471368789673
+2024-06-24 10:02:43,563 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:02:52,059 - INFO - Epoch 4, Loss: 1.7762142419815063
+2024-06-24 10:02:52,062 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:00,567 - INFO - Epoch 4, Loss: 1.2731679677963257
+2024-06-24 10:03:00,571 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:10,666 - INFO - Epoch 4, Loss: 1.0859289169311523
+2024-06-24 10:03:10,670 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:19,210 - INFO - Epoch 4, Loss: 1.001463532447815
+2024-06-24 10:03:19,213 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:27,723 - INFO - Epoch 4, Loss: 0.851987361907959
+2024-06-24 10:03:27,726 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:36,234 - INFO - Epoch 4, Loss: 1.3083103112876415e-05
+2024-06-24 10:03:36,237 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:44,762 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:03:44,765 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:03:53,260 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:03:53,263 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:01,780 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:01,784 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:10,290 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:10,294 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:18,811 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:18,814 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:27,290 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:27,293 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:35,815 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:35,819 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:44,417 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:44,420 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:04:54,728 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:04:54,731 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:03,248 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:05:03,251 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:11,743 - INFO - Epoch 4, Loss: 0.0
+2024-06-24 10:05:11,866 - INFO - Checkpoint saved for epoch 4 at vishwamai_model_params_epoch_4.pkl
+2024-06-24 10:05:14,597 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:23,093 - INFO - Epoch 5, Loss: 16.848770141601562
+2024-06-24 10:05:23,097 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:31,607 - INFO - Epoch 5, Loss: 8.885627746582031
+2024-06-24 10:05:31,610 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:40,191 - INFO - Epoch 5, Loss: 1.5824977159500122
+2024-06-24 10:05:40,194 - INFO - Data type of batch before model apply: <dtype: 'int32'>
+2024-06-24 10:05:48,736 - INFO - Epoch 5, Loss: 4.364651679992676
+2024-06-24 10:05:48,739 - INFO - Data type of batch before model apply: <dtype: 'int32'>

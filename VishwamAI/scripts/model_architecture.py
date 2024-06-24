@@ -96,19 +96,24 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Create a graph structure from the embedded inputs
+        num_nodes = embedded_inputs.shape[0]
+        senders = jnp.arange(num_nodes - 1)  # Example senders: [0, 1, 2, ..., num_nodes-2]
+        receivers = jnp.arange(1, num_nodes)  # Example receivers: [1, 2, 3, ..., num_nodes-1]
+
         graph = jraph.GraphsTuple(
             nodes=embedded_inputs,
-            senders=jnp.array([0, 1, 2]),  # Example senders
-            receivers=jnp.array([1, 2, 0]),  # Example receivers
+            senders=senders,
+            receivers=receivers,
             edges=None,
-            n_node=jnp.array([embedded_inputs.shape[0]]),
-            n_edge=jnp.array([3]),
+            n_node=jnp.array([num_nodes]),
+            n_edge=jnp.array([num_nodes - 1]),
             globals=None
         )
 
         # Apply the graph neural network
         graph_output = self.graph_neural_network(graph)
-        tf.print(f"Data type of graph output after graph neural network: {graph_output.nodes.dtype}")
+        embedded_inputs = graph_output.nodes  # Use the output nodes from the graph neural network
+        tf.print(f"Data type of graph output after graph neural network: {embedded_inputs.dtype}")
 
         # Apply memory network
         memory_output = self.memory_network(graph_output.nodes)

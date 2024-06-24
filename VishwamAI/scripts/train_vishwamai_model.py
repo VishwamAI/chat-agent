@@ -98,7 +98,7 @@ def train_step(params, transformed_forward, optimizer, opt_state, batch, labels,
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
-    updates, new_opt_state = optimizer.update(grads, opt_state, params)
+    updates, new_opt_state = optimizer.update(grads, opt_state, params, batch_jax, labels_jax)
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
@@ -113,9 +113,13 @@ def train_model(data_file, num_epochs=10, batch_size=4):
     """
     # Remove TensorFlow mixed-precision policy and optimizer setup
     # Ensure that the optimizer and model parameters are correctly configured for JAX and Haiku
-    optimizer = optax.chain(
-        optax.clip_by_global_norm(1.0),
-        optax.adam(1e-3)
+    # Set up the K-FAC optimizer
+    from kfac_jax import optimizer as kfac_optimizer
+    optimizer = kfac_optimizer.Optimizer(
+        value_and_grad_func=jax.value_and_grad(loss_fn),
+        l2_reg=0.0,
+        norm_constraint=0.001,
+        value_func_has_aux=False
     )
 
     def create_model(batch):

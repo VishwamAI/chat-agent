@@ -126,9 +126,12 @@ class VishwamAIModel(hk.Module):
         )
 
         # Apply the graph neural network
+        tf.print(f"Data type of graph input nodes before graph neural network: {graph.nodes.dtype}")
+        tf.print(f"Shape of graph input nodes before graph neural network: {graph.nodes.shape}")
         graph_output = self.graph_neural_network(graph)
         embedded_inputs = graph_output.nodes  # Use the output nodes from the graph neural network
         tf.print(f"Data type of graph output after graph neural network: {embedded_inputs.dtype}")
+        tf.print(f"Shape of graph output after graph neural network: {embedded_inputs.shape}")
 
         # Apply memory network
         memory_output = self.memory_network(graph_output.nodes)

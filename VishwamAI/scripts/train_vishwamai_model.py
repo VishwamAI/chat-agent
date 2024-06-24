@@ -8,7 +8,7 @@ import logging
 import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
-from memory_profiler import profile
+# from memory_profiler import profile
 import numpy as np
 
 # Configure logging
@@ -91,7 +91,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile  # Enabling the memory profiling decorator to identify memory usage spikes
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.

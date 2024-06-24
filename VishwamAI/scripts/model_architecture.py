@@ -43,7 +43,7 @@ class VishwamAIModel(hk.Module):
         # Define a simple transformer architecture for text processing
         self.transformer = hk.transform(lambda x: hk.nets.MLP([512, 512, 512])(x))
 
-    def __call__(self, inputs, rng):
+    def __call__(self, inputs):
         if tf.is_tensor(inputs):
             inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
             if len(inputs.shape) == 1:
@@ -75,7 +75,7 @@ class VishwamAIModel(hk.Module):
             embedded_inputs = layer(embedded_inputs)
 
         # Apply dropout using Haiku's built-in dropout function
-        embedded_inputs = hk.dropout(rng, rate=0.5, x=embedded_inputs)
+        embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
         # Directly use the single expert's output

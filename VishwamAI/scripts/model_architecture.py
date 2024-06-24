@@ -88,7 +88,7 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = expert_output.numpy().astype(np.float32)  # Ensure expert_output is np.float32
+        combined_output = np.array(expert_output).astype(np.float32)  # Ensure expert_output is np.float32
         flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))  # Use JAX NumPy for reshaping
 
         # Continue with the rest of the model

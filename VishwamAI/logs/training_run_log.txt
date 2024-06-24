@@ -174,3 +174,19 @@ Shape of expert_inputs: (8, 32)
 2024-06-24 08:17:07,858 - INFO - Unable to initialize backend 'cuda': 
 2024-06-24 08:17:07,859 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
 2024-06-24 08:17:07,862 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 08:25:36,509 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 08:25:36,509 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 08:25:36,512 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 08:33:24,756 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 08:33:24,757 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 08:33:24,759 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 08:44:59,617 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 08:44:59,618 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 08:44:59,621 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 08:51:56,602 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 08:51:56,603 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 08:51:56,606 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 09:07:09,714 - INFO - Unable to initialize backend 'cuda': 
+2024-06-24 09:07:09,715 - INFO - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+2024-06-24 09:07:09,718 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2024-06-24 09:07:26,342 - INFO - Data type of batch before model apply: <dtype: 'int32'>

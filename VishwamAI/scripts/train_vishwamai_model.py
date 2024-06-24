@@ -12,7 +12,7 @@ from memory_profiler import profile
 import numpy as np
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='../logs/training_run_log.txt')
 
 def data_generator(file_path, max_seq_length=32, batch_size=8, label_encoder=None):
     """

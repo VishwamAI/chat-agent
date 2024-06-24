@@ -8,6 +8,7 @@ import keras_nlp
 import config
 import numpy as np  # Ensure NumPy is imported for data type compatibility
 import jax.numpy as jnp  # Ensure JAX NumPy is imported for data type compatibility
+import jraph  # Import Jraph for graph neural networks
 
 # Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
@@ -94,8 +95,23 @@ class VishwamAIModel(hk.Module):
         embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
         tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
 
+        # Create a graph structure from the embedded inputs
+        graph = jraph.GraphsTuple(
+            nodes=embedded_inputs,
+            senders=jnp.array([0, 1, 2]),  # Example senders
+            receivers=jnp.array([1, 2, 0]),  # Example receivers
+            edges=None,
+            n_node=jnp.array([embedded_inputs.shape[0]]),
+            n_edge=jnp.array([3]),
+            globals=None
+        )
+
+        # Apply the graph neural network
+        graph_output = self.graph_neural_network(graph)
+        tf.print(f"Data type of graph output after graph neural network: {graph_output.nodes.dtype}")
+
         # Apply memory network
-        memory_output = self.memory_network(embedded_inputs)
+        memory_output = self.memory_network(graph_output.nodes)
         tf.print(f"Data type of memory output after memory network: {memory_output.dtype}")
 
         # Apply memory augmentation
@@ -176,6 +192,19 @@ class VishwamAIModel(hk.Module):
         augmented_memory = tf.keras.layers.Dense(512, activation='relu')(inputs)
         augmented_memory = tf.keras.layers.Dense(256, activation='relu')(augmented_memory)
         return augmented_memory
+
+    def graph_neural_network(self, graph):
+        # Define a simple graph neural network using Jraph
+        def update_fn(nodes, sent_attributes, received_attributes, global_attributes):
+            return jax.nn.relu(nodes)
+
+        def aggregate_fn(messages):
+            return jax.tree_util.tree_map(jnp.sum, messages)
+
+        def apply_fn(graph):
+            return jraph.GraphNetwork(update_fn, update_fn, aggregate_fn)(graph)
+
+        return apply_fn(graph)
 
 # Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning
 def unique_features():

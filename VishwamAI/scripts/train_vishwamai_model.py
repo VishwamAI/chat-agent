@@ -57,13 +57,16 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
 
-def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
+import optax
+
+def train_step(params, transformed_forward, optimizer, opt_state, batch, labels, step_rng):
     """
     Perform a single training step.
     Args:
         params: dict. Dictionary containing model parameters.
         transformed_forward: hk.Transformed. The transformed forward function.
-        optimizer: optax.GradientTransformation. The optimizer for training.
+        optimizer: optax.GradientTransformation. The Optax optimizer for training.
+        opt_state: optax.OptState. The optimizer state.
         batch: tf.Tensor. A batch of input data.
         labels: tf.Tensor. The target labels corresponding to the input data.
         step_rng: jax.random.PRNGKey. Random number generator key.
@@ -95,7 +98,7 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     # Use gradient checkpointing to save memory during the backward pass
     loss, grads = jax.value_and_grad(jax.checkpoint(lambda p: loss_fn(p, step_rng)))(params)
     grads = jax.tree_util.tree_map(lambda g: g.astype(jnp.float32), grads)  # Cast gradients back to float32
-    updates, new_opt_state = optimizer.update(grads, optimizer.init(params))
+    updates, new_opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
@@ -110,7 +113,10 @@ def train_model(data_file, num_epochs=10, batch_size=4):
     """
     # Remove TensorFlow mixed-precision policy and optimizer setup
     # Ensure that the optimizer and model parameters are correctly configured for JAX and Haiku
-    optimizer = optax.adam(learning_rate=1e-3)
+    optimizer = optax.chain(
+        optax.clip_by_global_norm(1.0),
+        optax.adam(1e-3)
+    )
 
     def create_model(batch):
         model = VishwamAIModel()
@@ -134,13 +140,16 @@ def train_model(data_file, num_epochs=10, batch_size=4):
     transformer_rng, rng = jax.random.split(rng)
     params = transformed_forward.init(transformer_rng, example_batch)  # Initialize params with transformer_rng and example_batch
 
+    # Initialize optimizer state
+    opt_state = optimizer.init(params)
+
     # Training loop
     for epoch in range(num_epochs):
         for batch in data_generator(data_file, batch_size=batch_size, label_encoder=label_encoder):
             batch, labels = batch
             logging.info(f"Data type of batch before model apply: {batch.dtype}")
             rng, step_rng = jax.random.split(rng)
-            loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
+            loss, params, opt_state = train_step(params, transformed_forward, optimizer, opt_state, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
         # Save intermediate checkpoint

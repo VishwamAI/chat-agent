@@ -5,6 +5,7 @@ import jax.numpy as jnp
 import pickle
 from model_architecture import VishwamAIModel
 import tensorflow_text as tf_text
+import config
 
 def load_model_params(file_path):
     with open(file_path, "rb") as f:

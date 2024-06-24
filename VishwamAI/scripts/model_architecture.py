@@ -69,8 +69,9 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
         # Apply the transformer to the inputs
+        tf.print(f"Data type of inputs before embedding layer: {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
-        embedded_inputs = jnp.asarray(embedded_inputs)  # Convert to JAX array
+        tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
 
@@ -81,13 +82,13 @@ class VishwamAIModel(hk.Module):
         # Directly use the single expert's output
         expert = self.experts[0]
         tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        embedded_inputs = tf.cast(embedded_inputs, tf.int32)  # Ensure inputs are integer dtype for embedding layer
+        tf.print(f"Data type of expert inputs before embedding layer: {embedded_inputs.dtype}")
         expert_output = expert(embedded_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation
-        combined_output = jnp.asarray(expert_output, dtype=jnp.float32)  # Ensure expert_output is float32
-        flattened_output = jnp.reshape(combined_output, (combined_output.shape[0], -1))
+        combined_output = tf.cast(expert_output, tf.float32)  # Ensure expert_output is float32
+        flattened_output = tf.reshape(combined_output, (combined_output.shape[0], -1))
 
         # Continue with the rest of the model
         hidden_states = flattened_output

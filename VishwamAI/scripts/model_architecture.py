@@ -14,29 +14,29 @@ class VishwamAIModel(hk.Module):
     def __init__(self, transformer_model_name="gpt2"):
         super(VishwamAIModel, self).__init__()
         self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
+        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         self.encoder_layers = [
             hk.Sequential([
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True),
-                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))(x, x, x),
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
+                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))(x, x, x),
+                hk.Linear(512, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
                 hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
             ]) for _ in range(6)
         ]
         self.attention = hk.MultiHeadAttention(
             num_heads=8,
             key_size=32,
-            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)
+            w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")
         )
-        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
+        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
 
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.Sequential([
             lambda x: self.attention(x, x, x),  # Apply attention directly to embedded inputs
-            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32)),
-            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg", dtype=np.float32))
+            hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
 
         # Define a simple transformer architecture for text processing

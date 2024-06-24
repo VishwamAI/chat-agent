@@ -8,7 +8,7 @@ import logging
 import pickle
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
-from memory_profiler import profile
+# from memory_profiler import profile
 import numpy as np
 
 # Configure logging
@@ -91,7 +91,6 @@ def train_step(params, transformed_forward, optimizer, batch, labels, step_rng):
     new_params = optax.apply_updates(params, updates)
     return loss, new_params, new_opt_state
 
-@profile  # Enabling the memory profiling decorator to identify memory usage spikes
 def train_model(data_file, num_epochs=10, batch_size=8):
     """
     Train the VishwamAI model.
@@ -132,15 +131,21 @@ def train_model(data_file, num_epochs=10, batch_size=8):
             loss, params, opt_state = train_step(params, transformed_forward, optimizer, batch, labels, step_rng)
             logging.info(f"Epoch {epoch + 1}, Loss: {loss}")
 
+        # Save intermediate checkpoint
+        checkpoint_file = f"vishwamai_model_params_epoch_{epoch + 1}.pkl"
+        with open(checkpoint_file, "wb") as f:
+            pickle.dump(params, f)
+        logging.info(f"Checkpoint saved for epoch {epoch + 1} at {checkpoint_file}")
+
         # Explicit garbage collection
         import gc
         gc.collect()
 
-    # Save the trained model
+    # Save the final trained model
     with open("vishwamai_model_params.pkl", "wb") as f:
         pickle.dump(params, f)
     logging.info("Model training complete and parameters saved.")
 
 if __name__ == "__main__":
-    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_corrected.txt"
+    data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_small.txt"
     train_model(data_file)

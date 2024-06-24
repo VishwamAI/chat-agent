@@ -34,8 +34,7 @@ class VishwamAIModel(hk.Module):
         # Define expert networks for Mixture of Experts (MoE) architecture
         self.num_experts = 1  # Reduced number of experts to 1
         self.experts = [hk.Sequential([
-            hk.Embed(vocab_size=10000, embed_dim=64, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
-            lambda x: self.attention(x, x, x),  # Keep inputs as integers for embedding
+            lambda x: self.attention(x, x, x),  # Apply attention directly to embedded inputs
             hk.Linear(256, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
             hk.Linear(128, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg"))
         ]) for _ in range(self.num_experts)]
@@ -68,8 +67,8 @@ class VishwamAIModel(hk.Module):
             inputs = tf.cast(inputs, tf.int32)
         tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
 
-        # Apply the transformer to the inputs
-        tf.print(f"Data type of inputs before embedding layer: {inputs.dtype}")
+        # Apply the embedding layer to the inputs
+        tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
         tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
         for layer in self.encoder_layers:
@@ -81,9 +80,8 @@ class VishwamAIModel(hk.Module):
 
         # Directly use the single expert's output
         expert = self.experts[0]
-        tf.print(f"Shape of expert_inputs: {inputs.shape}")
-        tf.print(f"Data type of expert inputs before embedding layer: {embedded_inputs.dtype}")
-        expert_output = expert(embedded_inputs)  # Apply expert to embedded inputs
+        expert_inputs = embedded_inputs  # Use embedded inputs for the expert network
+        expert_output = expert(expert_inputs)  # Apply expert to embedded inputs
         tf.print(f"Data type of expert output after expert apply: {expert_output.dtype}")
 
         # Use the expert output directly without concatenation

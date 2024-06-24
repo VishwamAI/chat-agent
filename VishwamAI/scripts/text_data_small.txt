@@ -1,0 +1,100 @@
+first trust dow jones internet	complaint
+first trust dj internet idx	inquiry
+schwab intl large company index etf	praise
+schwab strategic tr fundamental intl large co index etf	complaint
+vanguard small cap index adm	inquiry
+vanguard small-cap index fund inst	praise
+duke energy corp new com new isin #us4 sedol #b7jzsk0	complaint
+duke energy corp new com new isin #us26441c2044 sedol #b7jzs	inquiry
+visa inc class a	praise
+visa inc.	complaint
+ford motor co new div: 0.600	inquiry
+ford motor co	praise
+united states steel corp	complaint
+united sts stl cp (new)	inquiry
+vanguard total international bond index etf	praise
+vanguard total intl bond index etf	complaint
+schwab strategic tr us sml c	inquiry
+schwab us small cap etf	praise
+mfs value fd cl i	complaint
+mfs value fund cl i	inquiry
+oppenheimer dev markets class a	complaint
+oppenheimer developing mkts fd cl a	inquiry
+genomic health	complaint
+genomic health inc com	inquiry
+spdr barclays international etf	praise
+spdr barclays capital international trea	complaint
+kraft heinz company	inquiry
+kraft heinz co com	praise
+vanguard total bond market index fund admiral shares	complaint
+vanguard total bond market idx instl pls	inquiry
+vanguard intermediate-term investment-grade fund investor shares	praise
+vanguard interm-term invmt-grade inv	complaint
+baidu inc spon adr	inquiry
+baidu inc spon adr rep a	praise
+novartis ag- reg	complaint
+novartis ag	inquiry
+seaspan corp	praise
+seaspan corporation cmn	complaint
+vanguard total bond market index admiral	inquiry
+vanguard bond index total mkt investor	praise
+mfs muni high income fd cl i	complaint
+mfs municipal high cl i	inquiry
+metlife inc com	praise
+metlife incorporated	complaint
+russell gbl real estate securities cl s	inquiry
+vy clarion real estate port srv	praise
+vanguard short-term investment-grade fund admiral shares	complaint
+vanguard short-term invest-grade	complaint
+spdr s&p 500 etf trust	complaint
+spdr s&p 500 etf iv	complaint
+pimco total return a	complaint
+fund: pimco total return admin	complaint
+intel corp	complaint
+intel corporation	complaint
+vanguard 500 index fund - admiral class	complaint
+vanguard 500 idx adm	complaint
+paypal holdings inc	complaint
+paypal holdings inco	complaint
+pim total rt inst	complaint
+pimco total return fund - class r	complaint
+vanguard small cap	complaint
+vanguard small cap etf (vb)	complaint
+nike incorporated class b	complaint
+nike inc-b	complaint
+vang inst index plus	complaint
+vanguard institutional index fund institutional plus shares	complaint
+ishares tr nat amt free bd	complaint
+ishares s&p national amt-free muni	complaint
+pimco total ret fd instl	complaint
+pimco total return	complaint
+diageo plc fadr 1 adr reps 4 ord shs	complaint
+diageo plc sponsored adr	complaint
+zoes kitchen inc com	complaint
+zoes kitchen inc com isin #us7 sedol #bl95n36	complaint
+du pont ei de nemour	complaint
+du pont e.i. de nemours	complaint
+vanguard info tech etf div: 2.776	complaint
+vanguard information technolo etf iv	complaint
+ishares core msci ttl int stk	complaint
+ishares trust core msci total intl stk etf	complaint
+ishares msci em mkt min vol	complaint
+ishares inc msci emrg mkts min volatility etf	complaint
+ambarella inc	complaint
+ambarella inc shs	complaint
+blackrock eqty dividend fd inv cl a	complaint
+blackrock equity dividend fd a	complaint
+alibaba grp sp adr (cayman islands)	complaint
+alibaba group hldg ltd sponsored ads	complaint
+fidelity spartan 500 index advtg	complaint
+spartan 500 index fd advantage class	complaint
+vanguard midcap index - a	complaint
+vanguard mid capitalization index fund	complaint
+powershares qqq trust sr 1 etf	complaint
+powershares qqq tr div: 1.105	complaint
+vanguard short term invt grade admiral	complaint
+vang st invstgrd inv	complaint
+blackrock us mortgage port cl a	complaint
+blackrock fds incm ptf inv c	complaint
+prudential jennison natural resources z	complaint
+pru/j nat resrcs z	complaint

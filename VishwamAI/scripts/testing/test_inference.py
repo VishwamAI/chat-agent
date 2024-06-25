@@ -77,5 +77,5 @@ def test_inference(data_file, params_file):
 
 if __name__ == "__main__":
     data_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/text_data_small.txt"
-    params_file = "/home/ubuntu/chat-agent/VishwamAI/scripts/vishwamai_model_params.pkl"
+    params_file = "/home/ubuntu/chat-agent/VishwamAI/models/vishwamai_model_params.pkl"
     test_inference(data_file, params_file)

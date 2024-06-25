@@ -1,3 +1,5 @@
+import sys
+import os
 import tensorflow as tf
 import keras_nlp
 import haiku as hk
@@ -6,7 +8,11 @@ import jax.numpy as jnp
 import optax
 import logging
 import pickle
-from ..model_architecture import VishwamAIModel
+
+# Add the parent directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from VishwamAI.scripts.model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
 import numpy as np

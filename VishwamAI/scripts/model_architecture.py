@@ -96,8 +96,15 @@ class VishwamAIModel(hk.Module):
         tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
         embedded_inputs = self.embedding(inputs)
         tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
+        tf.print(f"Shape of embedded inputs after embedding layer: {embedded_inputs.shape}")
+        if embedded_inputs is None:
+            raise ValueError("The 'embedded_inputs' variable is None after the embedding layer. Ensure that it is correctly initialized and contains valid data.")
         for layer in self.encoder_layers:
             embedded_inputs = layer(embedded_inputs)
+            tf.print(f"Data type of embedded inputs after encoder layer: {embedded_inputs.dtype}")
+            tf.print(f"Shape of embedded inputs after encoder layer: {embedded_inputs.shape}")
+            if embedded_inputs is None:
+                raise ValueError("The 'embedded_inputs' variable is None after an encoder layer. Ensure that it is correctly initialized and contains valid data.")
 
         # Apply dropout using Haiku's built-in dropout function
         embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
@@ -119,9 +126,12 @@ class VishwamAIModel(hk.Module):
         )
 
         # Apply the graph neural network
+        tf.print(f"Data type of graph input nodes before graph neural network: {graph.nodes.dtype}")
+        tf.print(f"Shape of graph input nodes before graph neural network: {graph.nodes.shape}")
         graph_output = self.graph_neural_network(graph)
         embedded_inputs = graph_output.nodes  # Use the output nodes from the graph neural network
         tf.print(f"Data type of graph output after graph neural network: {embedded_inputs.dtype}")
+        tf.print(f"Shape of graph output after graph neural network: {embedded_inputs.shape}")
 
         # Apply memory network
         memory_output = self.memory_network(graph_output.nodes)
@@ -221,6 +231,8 @@ class VishwamAIModel(hk.Module):
     def graph_neural_network(self, graph):
         # Define a simple graph neural network using Jraph
         def update_fn(nodes, sent_attributes, received_attributes, global_attributes):
+            if nodes is None:
+                raise ValueError("The 'nodes' variable is None. Ensure that it is correctly initialized and contains valid data.")
             return jax.nn.relu(nodes)
 
         def aggregate_fn(messages):

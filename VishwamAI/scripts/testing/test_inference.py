@@ -29,7 +29,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
 
     def parse_line(line):
         parts = tf.strings.split(line, '\t')
-        if tf.size(parts) < 2:
+        if tf.cast(tf.size(parts), tf.int32) < 2:
             dummy_data = tf.zeros([max_seq_length], dtype=tf.int32)
             dummy_label = tf.constant(-1, dtype=tf.int32)
             return dummy_data, dummy_label
@@ -46,7 +46,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
             tf.print(f"Tokenized data: {tokenized_data}")
             tf.print(f"Padded data: {padded_data}")
             tf.print(f"Label: {label}")
-        return padded_data, label
+        return tf.cast(padded_data, tf.int32), tf.cast(label, tf.int32)
 
     dataset = tf.data.TextLineDataset(file_path)
     dataset = dataset.map(parse_line, num_parallel_calls=tf.data.experimental.AUTOTUNE)

@@ -44,13 +44,14 @@ def train_sentencepiece_tokenizer(data, vocabulary_size, model_type="unigram", p
 
         # Load the trained model
         sp = spm.SentencePieceProcessor()
-        sp.Load(proto_output_file)
+        sp.Load(proto_output_file.split('.')[0] + ".model")
 
-        # Serialize the model and save it to a file
+        # Serialize the model and save it to a separate file
         serialized_model_proto = sp.serialized_model_proto()
-        with open(proto_output_file, 'wb') as f:
+        serialized_proto_output_file = proto_output_file.split('.')[0] + ".serialized"
+        with open(serialized_proto_output_file, 'wb') as f:
             f.write(serialized_model_proto)
-        logging.info(f"Serialized SentencePiece model saved to {proto_output_file}")
+        logging.info(f"Serialized SentencePiece model saved to {serialized_proto_output_file}")
 
         # Clean up the temporary file
         os.remove(temp_file_path)

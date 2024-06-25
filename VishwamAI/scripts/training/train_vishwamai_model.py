@@ -32,7 +32,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
     Returns:
         tf.data.Dataset: A dataset yielding batches of tokenized and padded data and corresponding labels.
     """
-    tokenizer = tf_text.BertTokenizer(VOCAB_FILE, lower_case=True)
+    tokenizer = tf_text.SentencepieceTokenizer(model=tf.io.gfile.GFile(VOCAB_FILE, "rb").read())
 
     def parse_line(line):
         parts = tf.strings.split(line, '\t')

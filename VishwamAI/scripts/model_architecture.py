@@ -26,7 +26,7 @@ class VishwamAIModel(hk.Module):
 
     def _create_tokenizer(self):
         return keras_nlp.tokenizers.SentencePieceTokenizer(
-            proto=tf.io.gfile.GFile("path_to_your_vocab_file.model", "rb").read(),
+            proto=tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm", "rb").read(),
             sequence_length=self.max_sequence_length,
             dtype="int32",
             lower_case=True,
@@ -130,6 +130,40 @@ class VishwamAIModel(hk.Module):
             batch = next(dataset)
             loss = self.train_step(batch)
             print(f"Self-improvement iteration, Loss: {loss}")
+
+    def auto_fine_tune(self, dataset, performance_threshold=0.9, num_iterations=100):
+        for _ in range(num_iterations):
+            batch = next(dataset)
+            loss = self.train_step(batch)
+            print(f"Auto-fine-tuning iteration, Loss: {loss}")
+            if self.evaluate(dataset) >= performance_threshold:
+                print("Performance threshold met. Stopping auto-fine-tuning.")
+                break
+
+    def evaluate(self, dataset):
+        total_loss = 0
+        num_batches = 0
+        for batch in dataset:
+            logits = self.apply(self.params, batch['input_ids'])
+            loss = self.compute_loss(logits, batch['labels'])
+            total_loss += loss
+            num_batches += 1
+        return total_loss / num_batches
+
+    def continuous_learning(self, dataset, evaluation_dataset, num_epochs, learning_rate=1e-4, performance_threshold=0.9):
+        self.optimizer = optax.adam(learning_rate)
+        self.opt_state = self.optimizer.init(self.params)
+
+        for epoch in range(num_epochs):
+            epoch_loss = 0
+            for batch in dataset:
+                loss = self.train_step(batch)
+                epoch_loss += loss
+            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
+
+            if self.evaluate(evaluation_dataset) < performance_threshold:
+                print("Performance below threshold. Triggering auto-fine-tuning.")
+                self.auto_fine_tune(dataset, performance_threshold)
 
 # Example usage
 def main():

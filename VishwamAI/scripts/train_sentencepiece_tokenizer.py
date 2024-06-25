@@ -36,4 +36,4 @@ if __name__ == "__main__":
     # Example usage
     # Replace 'example_data' with the actual dataset
     example_data = tf.data.TextLineDataset(["/home/ubuntu/chat-agent/VishwamAI/scripts/text_data.txt"])
-    train_sentencepiece_tokenizer(example_data, vocabulary_size=1000)
+    train_sentencepiece_tokenizer(example_data, vocabulary_size=65)

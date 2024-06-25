@@ -39,7 +39,7 @@ class VishwamAIModel(hk.Module):
             tokenizer = tf_text.SentencepieceTokenizer(
                 model=model_proto,
                 out_type=tf.int32,
-                nbest_size=-1,
+                nbest_size=0,  # Set nbest_size to 0 to disable n-best sampling
                 alpha=1.0,
                 add_bos=False,
                 add_eos=False,
@@ -117,6 +117,7 @@ class VishwamAIModel(hk.Module):
 
     def generate_text(self, prompt, max_length=100):
         input_ids = self.tokenizer([prompt]).numpy()
+        input_ids = jnp.array(input_ids, dtype=jnp.int32)
         for _ in range(max_length):
             predictions = self(input_ids)
             next_token = jnp.argmax(predictions[:, -1, :], axis=-1)

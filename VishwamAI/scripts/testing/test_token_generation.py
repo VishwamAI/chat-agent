@@ -32,6 +32,20 @@ def forward_fn(input_ids):
 
     return model(input_ids)
 
+def generate_text(model, params, rng, tokenizer, prompt, max_length=50):
+    input_ids = tokenizer.tokenize([prompt]).numpy()
+    input_ids = jnp.array(input_ids, dtype=jnp.int32)
+    generated_ids = input_ids
+
+    for _ in range(max_length):
+        logits = model.apply(params, rng, generated_ids)
+        next_token = jnp.argmax(logits[:, -1, :], axis=-1)
+        generated_ids = jnp.concatenate([generated_ids, next_token[:, None]], axis=-1)
+        if next_token == tokenizer.token_to_id("[EOS]"):
+            break
+
+    return tokenizer.detokenize(generated_ids)[0]
+
 def main():
     # Sample input prompt
     prompt = "Once upon a time"
@@ -57,21 +71,13 @@ def main():
         print(f"Error initializing tokenizer: {e}")
         return
 
-    # Tokenize the input prompt
-    try:
-        tokenized_prompt = tokenizer.tokenize([prompt]).numpy()
-        print(f"Tokenized prompt: {tokenized_prompt}")
-    except Exception as e:
-        print(f"Error tokenizing prompt: {e}")
-        return
-
     # Transform the forward function
     transformed_model = hk.transform(forward_fn)
 
     # Generate text
     rng = jax.random.PRNGKey(42)
-    params = transformed_model.init(rng, jnp.array(tokenized_prompt, dtype=jnp.int32))
-    generated_text = transformed_model.apply(params, rng, jnp.array(tokenized_prompt, dtype=jnp.int32))
+    params = transformed_model.init(rng, jnp.array([[0]]))  # Initialize with dummy input
+    generated_text = generate_text(transformed_model, params, rng, tokenizer, prompt)
     print(f"Generated text: {generated_text}")
 
 if __name__ == "__main__":

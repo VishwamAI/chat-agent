@@ -3,7 +3,7 @@ import tensorflow_text as tf_text
 import tensorflow as tf
 
 def test_tokenizer_initialization():
-    model_path = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
+    model_path = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.serialized"
     sp = spm.SentencePieceProcessor()
     sp.Load(model_path)
     model_proto = sp.serialized_model_proto()

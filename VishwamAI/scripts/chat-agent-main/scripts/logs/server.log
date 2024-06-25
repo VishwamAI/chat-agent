@@ -1,2 +1,0 @@
-2024-06-18 18:24:09,329 - flask_app - ERROR - Error during model initialization: dtype argument to `uniform` must be a float dtype, got int32
-2024-06-18 18:24:09,329 - flask_app - ERROR - Error during request handling: dtype argument to `uniform` must be a float dtype, got int32

@@ -75,9 +75,16 @@ class VishwamAIModel(hk.Module):
     def __call__(self, inputs):
         if isinstance(inputs, str):
             inputs = [inputs]
+        elif not isinstance(inputs, list) or not all(isinstance(i, str) for i in inputs):
+            raise ValueError("Inputs should be a string or a list of strings.")
 
         tokenized_inputs = self.tokenizer(inputs).numpy()
+        if not isinstance(tokenized_inputs, np.ndarray):
+            raise ValueError("Tokenized inputs should be a numpy array.")
+
         inputs = jnp.array(tokenized_inputs, dtype=jnp.int32)
+        if inputs.ndim != 2 or inputs.shape[1] > self.max_sequence_length:
+            raise ValueError("Tokenized inputs should be a 2D array with shape (batch_size, sequence_length).")
 
         transformer_output = self.transformer.apply(None, inputs)
         expert_outputs = [expert.apply(None, transformer_output) for expert in self.experts]

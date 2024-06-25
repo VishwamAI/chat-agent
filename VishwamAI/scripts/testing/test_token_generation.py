@@ -44,15 +44,28 @@ def main():
         model_proto = f.read()
 
     # Initialize the SentencepieceTokenizer with the model proto
-    tokenizer = tf_text.SentencepieceTokenizer(
-        model=model_proto,
-        out_type=tf.int32,
-        nbest_size=-1,
-        alpha=1.0,
-        add_bos=False,
-        add_eos=False,
-        reverse=False
-    )
+    try:
+        tokenizer = tf_text.SentencepieceTokenizer(
+            model=model_proto,
+            out_type=tf.int32,
+            nbest_size=-1,
+            alpha=1.0,
+            add_bos=False,
+            add_eos=False,
+            reverse=False
+        )
+        print("Tokenizer initialized successfully.")
+    except Exception as e:
+        print(f"Error initializing tokenizer: {e}")
+        return
+
+    # Tokenize the input prompt
+    try:
+        tokenized_prompt = tokenizer.tokenize([prompt]).numpy()
+        print(f"Tokenized prompt: {tokenized_prompt}")
+    except Exception as e:
+        print(f"Error tokenizing prompt: {e}")
+        return
 
     # Transform the forward function
     transformed_model = hk.transform(forward_fn)

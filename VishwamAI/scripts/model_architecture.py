@@ -18,9 +18,6 @@ def unique_features():
     # Advanced normalization techniques
     normalization_layer = tf.keras.layers.LayerNormalization(axis=-1)
 
-    # Self-attention mechanism
-    attention_layer = tf.keras.layers.MultiHeadAttention(num_heads=8, key_dim=64)
-
     # Meta-learning technique
     meta_learning_layer = tf.keras.layers.Dense(128, activation='relu')
 
@@ -29,7 +26,6 @@ def unique_features():
 
     return tf.keras.Sequential([
         normalization_layer,
-        attention_layer,
         meta_learning_layer,
         ensemble_layer
     ])
@@ -38,8 +34,8 @@ class MixtureOfExperts(tf.keras.layers.Layer):
     def __init__(self, num_experts, embed_dim):
         super(MixtureOfExperts, self).__init__()
         self.num_experts = num_experts
-        self.experts = [tf.keras.layers.Dense(embed_dim, activation='relu') for _ in range(num_experts)]
-        self.gating = tf.keras.layers.Dense(num_experts, activation='softmax')
+        self.experts = [tf.keras.layers.Dense(embed_dim, activation='relu') for _ in range(self.num_experts)]
+        self.gating = tf.keras.layers.Dense(self.num_experts, activation='softmax')
 
     def call(self, inputs):
         try:
@@ -81,7 +77,7 @@ class ChatModel(tf.keras.Model):
         try:
             x = self.embedding(inputs)
             x = self.memory_network(x)
-            x = self.memory_augmentation(x)
+            x = self.memory_augmentation([x, x])  # Pass query and value to attention layer
             x = self.mo_experts(x)
             x = self.unique_features(x)  # Apply unique features
             return self.dense(x)

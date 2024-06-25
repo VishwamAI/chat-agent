@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from model_architecture import VishwamAIModel
 
-def forward_fn(inputs):
+def forward_fn(input_ids):
     # Model parameters
     vocab_size = 20000
     embed_dim = 512
@@ -30,8 +30,6 @@ def forward_fn(inputs):
         max_sequence_length=max_sequence_length
     )
 
-    tokenized_inputs = model.tokenizer(inputs).numpy()
-    input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
     return model(input_ids)
 
 def main():
@@ -72,8 +70,8 @@ def main():
 
     # Generate text
     rng = jax.random.PRNGKey(42)
-    params = transformed_model.init(rng, [prompt])
-    generated_text = transformed_model.apply(params, rng, [prompt])
+    params = transformed_model.init(rng, jnp.array(tokenized_prompt, dtype=jnp.int32))
+    generated_text = transformed_model.apply(params, rng, jnp.array(tokenized_prompt, dtype=jnp.int32))
     print(f"Generated text: {generated_text}")
 
 if __name__ == "__main__":

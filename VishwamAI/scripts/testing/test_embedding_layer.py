@@ -18,5 +18,28 @@ class TestEmbeddingLayer(unittest.TestCase):
         output = self.embedding_layer(input_data)
         self.assertEqual(output.dtype, tf.float32)
 
+    def test_embedding_with_different_input_lengths(self):
+        input_data = tf.constant([[1, 2], [3, 4, 5, 6]], dtype=tf.int32)
+        output = self.embedding_layer(input_data)
+        expected_shape = (2, 4, self.embed_dim)  # The second dimension should be the length of the longest input
+        self.assertEqual(output.shape, expected_shape)
+
+    def test_embedding_with_full_vocab_range(self):
+        input_data = tf.constant([list(range(self.vocab_size))], dtype=tf.int32)
+        output = self.embedding_layer(input_data)
+        expected_shape = (1, self.vocab_size, self.embed_dim)
+        self.assertEqual(output.shape, expected_shape)
+
+    def test_embedding_with_empty_input(self):
+        input_data = tf.constant([[]], dtype=tf.int32)
+        output = self.embedding_layer(input_data)
+        expected_shape = (1, 0, self.embed_dim)
+        self.assertEqual(output.shape, expected_shape)
+
+    def test_embedding_with_out_of_vocab_indices(self):
+        input_data = tf.constant([[self.vocab_size + 1]], dtype=tf.int32)
+        with self.assertRaises(tf.errors.InvalidArgumentError):
+            self.embedding_layer(input_data)
+
 if __name__ == '__main__':
     unittest.main()

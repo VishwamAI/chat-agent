@@ -56,6 +56,8 @@ class ChatModel(tf.keras.Model):
         self.mo_experts = MixtureOfExperts(num_experts, embed_dim)
         self.unique_features = unique_features()  # Integrate unique features
         self.dense = tf.keras.layers.Dense(vocab_size)
+        self.auto_fine_tune_threshold = 0.8  # Performance threshold to trigger auto fine-tuning
+        self.auto_fine_tune_iterations = 100  # Number of iterations for auto fine-tuning
 
     def build_memory_network(self, embed_dim):
         # Implement the memory network logic here
@@ -84,6 +86,71 @@ class ChatModel(tf.keras.Model):
         except Exception as e:
             logger.error(f"Error in ChatModel call method: {e}")
             raise
+
+    def auto_fine_tune(self, eval_dataset, fine_tune_dataset):
+        # Evaluate current performance
+        current_performance = self.evaluate(eval_dataset)
+
+        if current_performance < self.auto_fine_tune_threshold:
+            print(f"Auto fine-tuning triggered. Current performance: {current_performance}")
+
+            # Perform fine-tuning
+            for _ in range(self.auto_fine_tune_iterations):
+                batch = next(fine_tune_dataset)
+                loss = self.train_step(batch)
+
+                # Periodically evaluate and check for improvement
+                if _ % 10 == 0:
+                    new_performance = self.evaluate(eval_dataset)
+                    print(f"Fine-tuning iteration {_}, Loss: {loss}, Performance: {new_performance}")
+
+                    if new_performance > current_performance:
+                        print("Performance improved. Continuing fine-tuning.")
+                        current_performance = new_performance
+                    else:
+                        print("No improvement. Stopping fine-tuning.")
+                        break
+
+            final_performance = self.evaluate(eval_dataset)
+            print(f"Auto fine-tuning complete. Final performance: {final_performance}")
+        else:
+            print(f"Auto fine-tuning not needed. Current performance: {current_performance}")
+
+    def evaluate(self, eval_dataset):
+        total_correct = 0
+        total_samples = 0
+
+        for batch in eval_dataset:
+            predictions = self(batch['input_ids'])
+            labels = batch['labels']
+            correct = jnp.sum(jnp.argmax(predictions, axis=-1) == labels)
+            total_correct += correct
+            total_samples += labels.shape[0]
+
+        accuracy = total_correct / total_samples
+        return accuracy
+
+    def train_step(self, batch):
+        def loss_fn(params):
+            logits = self.apply(params, batch['input_ids'])
+            return optax.softmax_cross_entropy_with_integer_labels(logits, batch['labels']).mean()
+
+        loss, grads = jax.value_and_grad(loss_fn)(self.params)
+        self.params = optax.apply_updates(self.params, self.optimizer.update(grads, self.opt_state)[0])
+        self.opt_state = self.optimizer.update(grads, self.opt_state)[1]
+        return loss
+
+    def continuous_learning(self, eval_dataset, fine_tune_dataset, check_interval=1000):
+        iteration = 0
+        while True:
+            # Regular training
+            batch = next(fine_tune_dataset)
+            loss = self.train_step(batch)
+
+            iteration += 1
+            if iteration % check_interval == 0:
+                print(f"Iteration {iteration}, Loss: {loss}")
+                self.auto_fine_tune(eval_dataset, fine_tune_dataset)
 
 # Instantiate the model with flexible parameters
 vocab_size = 10000  # Example value

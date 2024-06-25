@@ -56,6 +56,7 @@ class ChatModel(tf.keras.Model):
         super(ChatModel, self).__init__()
         self.embedding = tf.keras.layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)
         self.memory_network = self.build_memory_network(embed_dim)
+        self.memory_augmentation = self.build_memory_augmentation(embed_dim)
         self.mo_experts = MixtureOfExperts(num_experts, embed_dim)
         self.dense = tf.keras.layers.Dense(vocab_size)
 
@@ -66,10 +67,18 @@ class ChatModel(tf.keras.Model):
             tf.keras.layers.Dense(embed_dim, activation='relu')
         ])
 
+    def build_memory_augmentation(self, embed_dim):
+        # Implement the memory augmentation logic here
+        return tf.keras.Sequential([
+            tf.keras.layers.Dense(embed_dim, activation='relu'),
+            tf.keras.layers.Dense(embed_dim, activation='relu')
+        ])
+
     def call(self, inputs):
         try:
             x = self.embedding(inputs)
             x = self.memory_network(x)
+            x = self.memory_augmentation(x)
             x = self.mo_experts(x)
             return self.dense(x)
         except Exception as e:

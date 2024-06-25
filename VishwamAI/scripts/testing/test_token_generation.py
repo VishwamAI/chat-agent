@@ -10,7 +10,16 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from model_architecture import VishwamAIModel
 
-def forward_fn(inputs):
+def forward_fn(inputs, model):
+    tokenized_inputs = model.tokenizer(inputs)
+    input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
+    return model(input_ids)
+
+def main():
+    # Sample input prompt
+    prompt = "Once upon a time"
+
+    # Model parameters
     vocab_size = 20000
     embed_dim = 512
     num_heads = 8
@@ -18,6 +27,7 @@ def forward_fn(inputs):
     num_experts = 4
     max_sequence_length = 1024
 
+    # Instantiate the model
     model = VishwamAIModel(
         vocab_size=vocab_size,
         embed_dim=embed_dim,
@@ -27,15 +37,8 @@ def forward_fn(inputs):
         max_sequence_length=max_sequence_length
     )
 
-    tokenized_inputs = model.tokenizer(inputs)
-    input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
-    return model(input_ids)
-
-transformed_model = hk.transform(forward_fn)
-
-def main():
-    # Sample input prompt
-    prompt = "Once upon a time"
+    # Transform the forward function
+    transformed_model = hk.transform(lambda inputs: forward_fn(inputs, model))
 
     # Generate text
     rng = jax.random.PRNGKey(42)

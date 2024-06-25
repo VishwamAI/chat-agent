@@ -3,6 +3,7 @@ import jax
 import jax.numpy as jnp
 import tensorflow as tf
 import tensorflow_text as tf_text
+import sentencepiece as spm
 import sys
 import os
 
@@ -52,11 +53,10 @@ def main():
 
     # Read the SentencePiece model file
     model_path = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
-    with tf.io.gfile.GFile(model_path, "rb") as f:
-        model_proto = f.read()
-
-    # Initialize the SentencepieceTokenizer with the model proto
+    sp = spm.SentencePieceProcessor()
     try:
+        sp.Load(model_path)
+        model_proto = sp.serialized_model_proto()
         tokenizer = tf_text.SentencepieceTokenizer(
             model=model_proto,
             out_type=tf.int32,

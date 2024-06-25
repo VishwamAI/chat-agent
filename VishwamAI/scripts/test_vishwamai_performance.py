@@ -3,7 +3,7 @@ import keras_nlp
 import logging
 import config
 import pickle
-from model_architecture import ChatModel
+from model_architecture import VishwamAIModel
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,7 +18,7 @@ def tokenize_input(input_text, tokenizer):
 
 def initialize_model(vocab_size, embed_dim, num_experts):
     try:
-        model = ChatModel(vocab_size, embed_dim, num_experts)
+        model = VishwamAIModel(vocab_size, embed_dim, num_experts)
         return model
     except Exception as e:
         logging.error(f"Error during model initialization: {e}")

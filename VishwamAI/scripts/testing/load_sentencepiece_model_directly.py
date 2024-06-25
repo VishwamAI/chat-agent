@@ -11,5 +11,5 @@ def load_sentencepiece_model(model_path):
         print(f"Error loading SentencePiece model: {e}")
 
 if __name__ == "__main__":
-    model_path = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
+    model_path = "/home/ubuntu/chat-agent/VishwamAI/scripts/vishwamai.model"
     load_sentencepiece_model(model_path)

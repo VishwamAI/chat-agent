@@ -29,7 +29,7 @@ def forward_fn(inputs):
         max_sequence_length=max_sequence_length
     )
 
-    tokenized_inputs = model.tokenizer(inputs)
+    tokenized_inputs = model.tokenizer(inputs).numpy()
     input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
     return model(input_ids)
 

@@ -28,9 +28,7 @@ class VishwamAIModel(hk.Module):
         return keras_nlp.tokenizers.SentencePieceTokenizer(
             proto=tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm", "rb").read(),
             sequence_length=self.max_sequence_length,
-            dtype="int32",
-            lower_case=True,
-            split_on_whitespace=True
+            dtype="int32"
         )
 
     def _create_transformer(self):

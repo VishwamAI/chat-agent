@@ -7,4 +7,4 @@ MODEL_NAME = "t5-small"
 RNG_SEED = 42
 
 # Vocabulary file path for BertTokenizer
-VOCAB_FILE = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
+VOCAB_FILE = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm"

@@ -51,16 +51,17 @@ def main():
     # Sample input prompt
     prompt = "Once upon a time"
 
-    # Read the SentencePiece model file
-    model_path = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
-    sp = spm.SentencePieceProcessor()
+    # Read the serialized SentencePiece model file
+    model_path = "/home/ubuntu/chat-agent/VishwamAI/scripts/vishwamai.serialized"
     try:
-        sp.Load(model_path)
-        model_proto = sp.serialized_model_proto()
+        with open(model_path, 'rb') as f:
+            model_proto = f.read()
+        print(f"Model proto type: {type(model_proto)}")
+        print(f"Model proto content: {model_proto[:100]}")  # Print first 100 bytes for inspection
         tokenizer = tf_text.SentencepieceTokenizer(
             model=model_proto,
             out_type=tf.int32,
-            nbest_size=-1,
+            nbest_size=0,  # Set nbest_size to 0 to disable n-best sampling
             alpha=1.0,
             add_bos=False,
             add_eos=False,

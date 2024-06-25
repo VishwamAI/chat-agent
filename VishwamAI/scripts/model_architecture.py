@@ -36,10 +36,15 @@ class VishwamAIModel(hk.Module):
         except Exception as e:
             raise ValueError(f"Error reading model file: {e}")
         try:
-            tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(
-                proto=model_proto,
-                sequence_length=self.max_sequence_length,
-                dtype="int32"
+            tokenizer = tf_text.SentencepieceTokenizer(
+                model=model_proto,
+                out_type=tf.int32,
+                nbest_size=-1,
+                alpha=1.0,
+                add_bos=False,
+                add_eos=False,
+                reverse=False,
+                emit_orig=False
             )
             print("Tokenizer initialized successfully.")
         except Exception as e:

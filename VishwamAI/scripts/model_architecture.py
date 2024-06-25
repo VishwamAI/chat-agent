@@ -58,6 +58,7 @@ class ChatModel(tf.keras.Model):
         self.memory_network = self.build_memory_network(embed_dim)
         self.memory_augmentation = self.build_memory_augmentation(embed_dim)
         self.mo_experts = MixtureOfExperts(num_experts, embed_dim)
+        self.unique_features = unique_features()  # Integrate unique features
         self.dense = tf.keras.layers.Dense(vocab_size)
 
     def build_memory_network(self, embed_dim):
@@ -82,6 +83,7 @@ class ChatModel(tf.keras.Model):
             x = self.memory_network(x)
             x = self.memory_augmentation(x)
             x = self.mo_experts(x)
+            x = self.unique_features(x)  # Apply unique features
             return self.dense(x)
         except Exception as e:
             logger.error(f"Error in ChatModel call method: {e}")

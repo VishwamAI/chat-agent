@@ -11,25 +11,25 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from model_architecture import VishwamAIModel
 
 def forward_fn(inputs):
+    vocab_size = 20000
+    embed_dim = 512
+    num_heads = 8
+    num_layers = 12
+    num_experts = 4
+    max_sequence_length = 1024
+
+    model = VishwamAIModel(
+        vocab_size=vocab_size,
+        embed_dim=embed_dim,
+        num_heads=num_heads,
+        num_layers=num_layers,
+        num_experts=num_experts,
+        max_sequence_length=max_sequence_length
+    )
+
     tokenized_inputs = model.tokenizer(inputs)
     input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
     return model(input_ids)
-
-vocab_size = 20000
-embed_dim = 512
-num_heads = 8
-num_layers = 12
-num_experts = 4
-max_sequence_length = 1024
-
-model = VishwamAIModel(
-    vocab_size=vocab_size,
-    embed_dim=embed_dim,
-    num_heads=num_heads,
-    num_layers=num_layers,
-    num_experts=num_experts,
-    max_sequence_length=max_sequence_length
-)
 
 transformed_model = hk.transform(forward_fn)
 

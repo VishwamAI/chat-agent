@@ -10,9 +10,9 @@ import logging
 import pickle
 
 # Add the parent directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from VishwamAI.scripts.model_architecture import VishwamAIModel
+from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
 import numpy as np

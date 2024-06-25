@@ -57,6 +57,7 @@ def main():
         with open(model_path, 'rb') as f:
             model_proto = f.read()
         print(f"Model proto type: {type(model_proto)}")
+        print(f"Model proto length: {len(model_proto)}")
         print(f"Model proto content: {model_proto[:100]}")  # Print first 100 bytes for inspection
         tokenizer = tf_text.SentencepieceTokenizer(
             model=model_proto,

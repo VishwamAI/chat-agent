@@ -64,6 +64,7 @@ class ChatModel(tf.keras.Model):
         # Implement the memory network logic here
         return tf.keras.Sequential([
             tf.keras.layers.Dense(embed_dim, activation='relu'),
+            tf.keras.layers.LSTM(embed_dim, return_sequences=True),
             tf.keras.layers.Dense(embed_dim, activation='relu')
         ])
 
@@ -71,6 +72,7 @@ class ChatModel(tf.keras.Model):
         # Implement the memory augmentation logic here
         return tf.keras.Sequential([
             tf.keras.layers.Dense(embed_dim, activation='relu'),
+            tf.keras.layers.Attention(),
             tf.keras.layers.Dense(embed_dim, activation='relu')
         ])
 

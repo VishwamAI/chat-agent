@@ -4,6 +4,11 @@ import random
 import keras_nlp
 import config
 import numpy as np  # Ensure NumPy is imported for data type compatibility
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Define the model architecture for VishwamAI
 
@@ -37,10 +42,14 @@ class MixtureOfExperts(tf.keras.layers.Layer):
         self.gating = tf.keras.layers.Dense(num_experts, activation='softmax')
 
     def call(self, inputs):
-        gate_outputs = self.gating(inputs)
-        expert_outputs = [expert(inputs) for expert in self.experts]
-        output = tf.reduce_sum([gate_outputs[:, i:i+1] * expert_outputs[i] for i in range(self.num_experts)], axis=0)
-        return output
+        try:
+            gate_outputs = self.gating(inputs)
+            expert_outputs = [expert(inputs) for expert in self.experts]
+            output = tf.reduce_sum([gate_outputs[:, i:i+1] * expert_outputs[i] for i in range(self.num_experts)], axis=0)
+            return output
+        except Exception as e:
+            logger.error(f"Error in MixtureOfExperts call method: {e}")
+            raise
 
 class ChatModel(tf.keras.Model):
     def __init__(self, vocab_size, embed_dim, num_experts):
@@ -58,10 +67,14 @@ class ChatModel(tf.keras.Model):
         ])
 
     def call(self, inputs):
-        x = self.embedding(inputs)
-        x = self.memory_network(x)
-        x = self.mo_experts(x)
-        return self.dense(x)
+        try:
+            x = self.embedding(inputs)
+            x = self.memory_network(x)
+            x = self.mo_experts(x)
+            return self.dense(x)
+        except Exception as e:
+            logger.error(f"Error in ChatModel call method: {e}")
+            raise
 
 # Instantiate the model with flexible parameters
 vocab_size = 10000  # Example value
@@ -73,5 +86,8 @@ model = ChatModel(vocab_size, embed_dim, num_experts)
 inputs = tf.random.uniform(shape=(32, 10), maxval=vocab_size, dtype=tf.int32)
 
 # Forward pass
-outputs = model(inputs)
-print(outputs.shape)
+try:
+    outputs = model(inputs)
+    print(outputs.shape)
+except Exception as e:
+    logger.error(f"Error during model forward pass: {e}")

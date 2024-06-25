@@ -20,6 +20,6 @@ def clean_vocab_file(input_file, output_file):
         file.writelines(cleaned_lines)
 
 if __name__ == "__main__":
-    input_file = 'data/vishwamai.spm'
-    output_file = 'data/vishwamai_cleaned.spm'
+    input_file = '../data/vishwamai.spm'
+    output_file = '../data/vishwamai_cleaned.spm'
     clean_vocab_file(input_file, output_file)

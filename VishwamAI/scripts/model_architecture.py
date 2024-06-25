@@ -1,169 +1,161 @@
+import haiku as hk
+import jax
+import jax.numpy as jnp
 import tensorflow as tf
 import tensorflow_text as tf_text
-import random
+import optax
+import numpy as np
 import keras_nlp
-import config
-import numpy as np  # Ensure NumPy is imported for data type compatibility
-import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Define the model architecture for VishwamAI
-
-# Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning
-def unique_features():
-    # Implement additional advanced techniques to enhance model performance
-    # Advanced normalization techniques
-    normalization_layer = tf.keras.layers.LayerNormalization(axis=-1)
-
-    # Meta-learning technique
-    meta_learning_layer = tf.keras.layers.Dense(128, activation='relu')
-
-    # Ensemble method
-    ensemble_layer = tf.keras.layers.Dense(128, activation='relu')
-
-    return tf.keras.Sequential([
-        normalization_layer,
-        meta_learning_layer,
-        ensemble_layer
-    ])
-
-class MixtureOfExperts(tf.keras.layers.Layer):
-    def __init__(self, num_experts, embed_dim):
-        super(MixtureOfExperts, self).__init__()
+class VishwamAIModel(hk.Module):
+    def __init__(self, vocab_size=20000, embed_dim=512, num_heads=8, num_layers=12, num_experts=4, max_sequence_length=1024):
+        super(VishwamAIModel, self).__init__()
+        self.vocab_size = vocab_size
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.num_layers = num_layers
         self.num_experts = num_experts
-        self.experts = [tf.keras.layers.Dense(embed_dim, activation='relu') for _ in range(self.num_experts)]
-        self.gating = tf.keras.layers.Dense(self.num_experts, activation='softmax')
+        self.max_sequence_length = max_sequence_length
 
-    def call(self, inputs):
-        try:
-            gate_outputs = self.gating(inputs)
-            expert_outputs = [expert(inputs) for expert in self.experts]
-            output = tf.reduce_sum([gate_outputs[:, i:i+1] * expert_outputs[i] for i in range(self.num_experts)], axis=0)
-            return output
-        except Exception as e:
-            logger.error(f"Error in MixtureOfExperts call method: {e}")
-            raise
+        self.tokenizer = self._create_tokenizer()
+        self.transformer = self._create_transformer()
+        self.experts = [self._create_expert() for _ in range(self.num_experts)]
+        self.gating_network = hk.Linear(self.num_experts)
+        self.output_layer = hk.Linear(self.vocab_size)
+        self.positional_encoding = self._create_positional_encoding()
 
-class ChatModel(tf.keras.Model):
-    def __init__(self, vocab_size, embed_dim, num_experts):
-        super(ChatModel, self).__init__()
-        self.embedding = tf.keras.layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)
-        self.memory_network = self.build_memory_network(embed_dim)
-        self.memory_augmentation = self.build_memory_augmentation(embed_dim)
-        self.mo_experts = MixtureOfExperts(num_experts, embed_dim)
-        self.unique_features = unique_features()  # Integrate unique features
-        self.dense = tf.keras.layers.Dense(vocab_size)
-        self.auto_fine_tune_threshold = 0.8  # Performance threshold to trigger auto fine-tuning
-        self.auto_fine_tune_iterations = 100  # Number of iterations for auto fine-tuning
+    def _create_tokenizer(self):
+        return keras_nlp.tokenizers.SentencePieceTokenizer(
+            proto=tf.io.gfile.GFile("path_to_your_vocab_file.model", "rb").read(),
+            sequence_length=self.max_sequence_length,
+            dtype="int32",
+            lower_case=True,
+            split_on_whitespace=True
+        )
 
-    def build_memory_network(self, embed_dim):
-        # Implement the memory network logic here
-        return tf.keras.Sequential([
-            tf.keras.layers.Dense(embed_dim, activation='relu'),
-            tf.keras.layers.LSTM(embed_dim, return_sequences=True),
-            tf.keras.layers.Dense(embed_dim, activation='relu')
+    def _create_transformer(self):
+        def transformer_fn(x):
+            return hk.Sequential([
+                hk.Embed(vocab_size=self.vocab_size, embed_dim=self.embed_dim),
+                lambda t: t + self.positional_encoding[:, :t.shape[1], :],
+                *[self._transformer_layer() for _ in range(self.num_layers)],
+                hk.LayerNorm(axis=-1),
+            ])(x)
+        return hk.transform(transformer_fn)
+
+    def _transformer_layer(self):
+        return hk.Sequential([
+            hk.LayerNorm(axis=-1),
+            hk.MultiHeadAttention(num_heads=self.num_heads, key_size=self.embed_dim // self.num_heads, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.LayerNorm(axis=-1),
+            hk.Sequential([
+                hk.Linear(4 * self.embed_dim),
+                jax.nn.gelu,
+                hk.Linear(self.embed_dim)
+            ])
         ])
 
-    def build_memory_augmentation(self, embed_dim):
-        # Implement the memory augmentation logic here
-        return tf.keras.Sequential([
-            tf.keras.layers.Dense(embed_dim, activation='relu'),
-            tf.keras.layers.Attention(),
-            tf.keras.layers.Dense(embed_dim, activation='relu')
-        ])
+    def _create_expert(self):
+        def expert_fn(x):
+            return hk.Sequential([
+                hk.Linear(512),
+                jax.nn.gelu,
+                hk.Linear(256)
+            ])(x)
+        return hk.transform(expert_fn)
 
-    def call(self, inputs):
-        try:
-            x = self.embedding(inputs)
-            x = self.memory_network(x)
-            x = self.memory_augmentation([x, x])  # Pass query and value to attention layer
-            x = self.mo_experts(x)
-            x = self.unique_features(x)  # Apply unique features
-            return self.dense(x)
-        except Exception as e:
-            logger.error(f"Error in ChatModel call method: {e}")
-            raise
+    def _create_positional_encoding(self):
+        position = np.arange(self.max_sequence_length)[:, np.newaxis]
+        div_term = np.exp(np.arange(0, self.embed_dim, 2) * -(np.log(10000.0) / self.embed_dim))
+        pos_encoding = np.zeros((self.max_sequence_length, self.embed_dim))
+        pos_encoding[:, 0::2] = np.sin(position * div_term)
+        pos_encoding[:, 1::2] = np.cos(position * div_term)
+        return jnp.array(pos_encoding[np.newaxis, :, :])
 
-    def auto_fine_tune(self, eval_dataset, fine_tune_dataset):
-        # Evaluate current performance
-        current_performance = self.evaluate(eval_dataset)
+    def __call__(self, inputs):
+        if isinstance(inputs, str):
+            inputs = [inputs]
 
-        if current_performance < self.auto_fine_tune_threshold:
-            print(f"Auto fine-tuning triggered. Current performance: {current_performance}")
+        tokenized_inputs = self.tokenizer(inputs)
+        inputs = jnp.array(tokenized_inputs, dtype=jnp.int32)
 
-            # Perform fine-tuning
-            for _ in range(self.auto_fine_tune_iterations):
-                batch = next(fine_tune_dataset)
-                loss = self.train_step(batch)
+        transformer_output = self.transformer.apply(None, inputs)
+        expert_outputs = [expert.apply(None, transformer_output) for expert in self.experts]
+        gates = jax.nn.softmax(self.gating_network(transformer_output))
+        combined_output = sum(g * e for g, e in zip(gates, expert_outputs))
+        return self.output_layer(combined_output)
 
-                # Periodically evaluate and check for improvement
-                if _ % 10 == 0:
-                    new_performance = self.evaluate(eval_dataset)
-                    print(f"Fine-tuning iteration {_}, Loss: {loss}, Performance: {new_performance}")
+    def generate_text(self, prompt, max_length=100):
+        input_ids = self.tokenizer([prompt]).numpy()
+        for _ in range(max_length):
+            predictions = self(input_ids)
+            next_token = jnp.argmax(predictions[:, -1, :], axis=-1)
+            input_ids = jnp.concatenate([input_ids, next_token[:, None]], axis=-1)
+            if next_token == self.tokenizer.token_to_id("[EOS]"):
+                break
+        return self.tokenizer.detokenize(input_ids)[0]
 
-                    if new_performance > current_performance:
-                        print("Performance improved. Continuing fine-tuning.")
-                        current_performance = new_performance
-                    else:
-                        print("No improvement. Stopping fine-tuning.")
-                        break
-
-            final_performance = self.evaluate(eval_dataset)
-            print(f"Auto fine-tuning complete. Final performance: {final_performance}")
-        else:
-            print(f"Auto fine-tuning not needed. Current performance: {current_performance}")
-
-    def evaluate(self, eval_dataset):
-        total_correct = 0
-        total_samples = 0
-
-        for batch in eval_dataset:
-            predictions = self(batch['input_ids'])
-            labels = batch['labels']
-            correct = jnp.sum(jnp.argmax(predictions, axis=-1) == labels)
-            total_correct += correct
-            total_samples += labels.shape[0]
-
-        accuracy = total_correct / total_samples
-        return accuracy
+    def compute_loss(self, logits, labels):
+        return optax.softmax_cross_entropy_with_integer_labels(logits, labels)
 
     def train_step(self, batch):
         def loss_fn(params):
             logits = self.apply(params, batch['input_ids'])
-            return optax.softmax_cross_entropy_with_integer_labels(logits, batch['labels']).mean()
+            return self.compute_loss(logits, batch['labels'])
 
         loss, grads = jax.value_and_grad(loss_fn)(self.params)
-        self.params = optax.apply_updates(self.params, self.optimizer.update(grads, self.opt_state)[0])
+        self.params = optax.apply_updates(self.params, self.optimizer.update(grads, self.opt_state))
         self.opt_state = self.optimizer.update(grads, self.opt_state)[1]
         return loss
 
-    def continuous_learning(self, eval_dataset, fine_tune_dataset, check_interval=1000):
-        iteration = 0
-        while True:
-            # Regular training
-            batch = next(fine_tune_dataset)
+    def train(self, dataset, num_epochs, learning_rate=1e-4):
+        self.optimizer = optax.adam(learning_rate)
+        self.opt_state = self.optimizer.init(self.params)
+
+        for epoch in range(num_epochs):
+            epoch_loss = 0
+            for batch in dataset:
+                loss = self.train_step(batch)
+                epoch_loss += loss
+            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
+
+    def answer_question(self, question):
+        input_ids = self.tokenizer([question]).numpy()
+        logits = self(input_ids)
+        answer_ids = jnp.argmax(logits, axis=-1)
+        return self.tokenizer.detokenize(answer_ids)[0]
+
+    def self_improve(self, dataset, num_iterations=100):
+        for _ in range(num_iterations):
+            batch = next(dataset)
             loss = self.train_step(batch)
+            print(f"Self-improvement iteration, Loss: {loss}")
 
-            iteration += 1
-            if iteration % check_interval == 0:
-                print(f"Iteration {iteration}, Loss: {loss}")
-                self.auto_fine_tune(eval_dataset, fine_tune_dataset)
+# Example usage
+def main():
+    model = hk.transform(lambda: VishwamAIModel())
+    rng = jax.random.PRNGKey(42)
+    dummy_input = jnp.ones((1, 10), dtype=jnp.int32)
+    params = model.init(rng, dummy_input)
 
-# Instantiate the model with flexible parameters
-vocab_size = 10000  # Example value
-embed_dim = 128  # Example value
-num_experts = 4  # Example value
-model = ChatModel(vocab_size, embed_dim, num_experts)
+    # Train the model
+    # Note: You'll need to implement a proper data loading mechanism
+    train_dataset = ...  # Your training dataset
+    model.train(train_dataset, num_epochs=10)
 
-# Example input
-inputs = tf.random.uniform(shape=(32, 10), maxval=vocab_size, dtype=tf.int32)
+    # Generate text
+    generated_text = model.generate_text("Once upon a time")
+    print(f"Generated text: {generated_text}")
 
-# Forward pass
-try:
-    outputs = model(inputs)
-    print(outputs.shape)
-except Exception as e:
-    logger.error(f"Error during model forward pass: {e}")
+    # Answer a question
+    question = "What is the capital of France?"
+    answer = model.answer_question(question)
+    print(f"Question: {question}")
+    print(f"Answer: {answer}")
+
+    # Self-improvement
+    improvement_dataset = ...  # Your self-improvement dataset
+    model.self_improve(improvement_dataset)
+
+if __name__ == "__main__":
+    main()

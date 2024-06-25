@@ -25,8 +25,10 @@ class VishwamAIModel(hk.Module):
         self.positional_encoding = self._create_positional_encoding()
 
     def _create_tokenizer(self):
+        with tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm", "rb") as f:
+            model_proto = f.read()
         return keras_nlp.tokenizers.SentencePieceTokenizer(
-            proto=tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm", "rb").read(),
+            proto=model_proto,
             sequence_length=self.max_sequence_length,
             dtype="int32"
         )

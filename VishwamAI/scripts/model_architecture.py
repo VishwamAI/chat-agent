@@ -76,7 +76,7 @@ class VishwamAIModel(hk.Module):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        tokenized_inputs = self.tokenizer(inputs)
+        tokenized_inputs = self.tokenizer(inputs).numpy()
         inputs = jnp.array(tokenized_inputs, dtype=jnp.int32)
 
         transformer_output = self.transformer.apply(None, inputs)

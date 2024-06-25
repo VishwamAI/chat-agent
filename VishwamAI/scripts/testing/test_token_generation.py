@@ -28,11 +28,20 @@ def main():
         max_sequence_length=max_sequence_length
     )
 
+    def forward_fn(inputs):
+        tokenized_inputs = model.tokenizer(inputs)
+        input_ids = jnp.array(tokenized_inputs, dtype=jnp.int32)
+        return model(input_ids)
+
+    transformed_model = hk.transform(forward_fn)
+
     # Sample input prompt
     prompt = "Once upon a time"
 
     # Generate text
-    generated_text = model.generate_text(prompt)
+    rng = jax.random.PRNGKey(42)
+    params = transformed_model.init(rng, [prompt])
+    generated_text = transformed_model.apply(params, rng, [prompt])
     print(f"Generated text: {generated_text}")
 
 if __name__ == "__main__":

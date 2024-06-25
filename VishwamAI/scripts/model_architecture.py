@@ -43,8 +43,7 @@ class VishwamAIModel(hk.Module):
                 alpha=1.0,
                 add_bos=False,
                 add_eos=False,
-                reverse=False,
-                emit_orig=False
+                reverse=False
             )
             print("Tokenizer initialized successfully.")
         except Exception as e:

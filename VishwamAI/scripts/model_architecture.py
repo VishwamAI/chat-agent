@@ -86,7 +86,10 @@ class VishwamAIModel(hk.Module):
         if inputs.ndim != 2 or inputs.shape[1] > self.max_sequence_length:
             raise ValueError("Tokenized inputs should be a 2D array with shape (batch_size, sequence_length).")
 
-        transformer_output = self.transformer.apply(None, inputs)
+        # Prepare inputs for the Attention layer
+        query = inputs
+        value = inputs
+        transformer_output = self.transformer.apply(None, [query, value])
         expert_outputs = [expert.apply(None, transformer_output) for expert in self.experts]
         gates = jax.nn.softmax(self.gating_network(transformer_output))
         combined_output = sum(g * e for g, e in zip(gates, expert_outputs))

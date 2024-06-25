@@ -1,12 +1,9 @@
-import haiku as hk
-import jax
-import jax.numpy as jnp
 import tensorflow as tf
 import keras_nlp
 import logging
 import config
 import pickle
-from model_architecture import VishwamAIModel
+from model_architecture import ChatModel
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,39 +11,31 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def tokenize_input(input_text, tokenizer):
     try:
         tokenized_input = tokenizer.tokenize(input_text)
-        return jax.numpy.array(tokenized_input, dtype=jnp.int32)  # Ensure inputs are integer dtype for embedding layer
+        return tf.convert_to_tensor(tokenized_input, dtype=tf.int32)  # Ensure inputs are integer dtype for embedding layer
     except Exception as e:
         logging.error(f"Error during tokenization: {e}")
         raise
 
-def initialize_model(tokenized_input):
+def initialize_model(vocab_size, embed_dim, num_experts):
     try:
-        forward = hk.transform(forward_fn)
-        rng = jax.random.PRNGKey(config.RNG_SEED)
-        tokenized_input_tf = tf.convert_to_tensor(tokenized_input, dtype=tf.int32)  # Convert JAX array to TensorFlow tensor
-        params = forward.init(rng, tokenized_input_tf)
-        return forward, params, rng
+        model = ChatModel(vocab_size, embed_dim, num_experts)
+        return model
     except Exception as e:
         logging.error(f"Error during model initialization: {e}")
         raise
 
-def process_input(forward, params, rng, tokenized_input):
+def process_input(model, tokenized_input):
     try:
-        tokenized_input_tf = tf.convert_to_tensor(tokenized_input, dtype=tf.int32)  # Convert JAX array to TensorFlow tensor
-        return forward.apply(params, rng, tokenized_input_tf)
+        return model(tokenized_input)
     except Exception as e:
         logging.error(f"Error during model inference: {e}")
         raise
 
-def forward_fn(tokenized_input):
-    model = VishwamAIModel()
-    return model(tokenized_input)
-
-def load_model_params():
+def load_model_params(model):
     try:
         with open("vishwamai_model_params.pkl", "rb") as f:
             params = pickle.load(f)
-        return params
+        model.set_weights(params)
     except Exception as e:
         logging.error(f"Error loading model parameters: {e}")
         raise
@@ -74,6 +63,13 @@ def test_vishwamai_performance():
 
     tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
 
+    vocab_size = 10000  # Example value
+    embed_dim = 128  # Example value
+    num_experts = 4  # Example value
+
+    model = initialize_model(vocab_size, embed_dim, num_experts)
+    load_model_params(model)
+
     for task in tasks:
         input_text = task["input"]
         expected_output = task["expected_output"]
@@ -82,9 +78,7 @@ def test_vishwamai_performance():
         logging.info(f"Tokenized input: {tokenized_input}")
         logging.info(f"Tokenized input dtype: {tokenized_input.dtype}")
 
-        forward, _, rng = initialize_model(tokenized_input)
-        params = load_model_params()
-        output = process_input(forward, params, rng, tokenized_input)
+        output = process_input(model, tokenized_input)
         decoded_output = decode_output(output, tokenizer)
         logging.info(f"Model output: {decoded_output}")
 

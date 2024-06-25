@@ -25,13 +25,29 @@ class VishwamAIModel(hk.Module):
         self.positional_encoding = self._create_positional_encoding()
 
     def _create_tokenizer(self):
-        with tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai_cleaned.spm", "rb") as f:
-            model_proto = f.read()
-        return keras_nlp.tokenizers.SentencePieceTokenizer(
-            proto=model_proto,
-            sequence_length=self.max_sequence_length,
-            dtype="int32"
-        )
+        try:
+            with tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm", "rb") as f:
+                model_proto = f.read()
+            if not model_proto:
+                raise ValueError("Model file is empty or could not be read.")
+            print("Model file read successfully.")
+            print(f"Model file size: {len(model_proto)} bytes")
+            print(f"Model file snippet: {model_proto[:100]}")
+        except Exception as e:
+            raise ValueError(f"Error reading model file: {e}")
+        try:
+            tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(
+                proto=model_proto,
+                sequence_length=self.max_sequence_length,
+                dtype="int32"
+            )
+            print("Tokenizer initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing tokenizer: {e}")
+            print(f"Exception type: {type(e)}")
+            print(f"Exception args: {e.args}")
+            raise ValueError(f"Error initializing tokenizer: {e}")
+        return tokenizer
 
     def _create_transformer(self):
         def transformer_fn(x):

@@ -19,7 +19,9 @@ class TestEmbeddingLayer(unittest.TestCase):
         self.assertEqual(output.dtype, tf.float32)
 
     def test_embedding_with_different_input_lengths(self):
-        input_data = tf.constant([[1, 2], [3, 4, 5, 6]], dtype=tf.int32)
+        input_data = tf.ragged.constant([[1, 2], [3, 4, 5, 6]])
+        input_data = input_data.to_tensor(default_value=0)
+        input_data = tf.constant(input_data, dtype=tf.int32)
         output = self.embedding_layer(input_data)
         expected_shape = (2, 4, self.embed_dim)  # The second dimension should be the length of the longest input
         self.assertEqual(output.shape, expected_shape)

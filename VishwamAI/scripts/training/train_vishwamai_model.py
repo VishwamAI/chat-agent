@@ -6,7 +6,7 @@ import jax.numpy as jnp
 import optax
 import logging
 import pickle
-from model_architecture import VishwamAIModel
+from ..model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
 import numpy as np

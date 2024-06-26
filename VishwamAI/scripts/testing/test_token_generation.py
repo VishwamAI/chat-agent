@@ -8,13 +8,13 @@ end_time = time.time()
 print(f"TensorFlow import took {end_time - start_time:.2f} seconds")
 print("Completed TensorFlow import.")
 
+print("Starting TensorFlow Text import...")
 print("Importing TensorFlow Text...")
 start_time = time.time()
 import tensorflow_text as tf_text
 end_time = time.time()
 print(f"TensorFlow Text import took {end_time - start_time:.2f} seconds")
-
-print("TensorFlow Text imported successfully.")
+print("Completed TensorFlow Text import.")
 
 import haiku as hk
 import jax

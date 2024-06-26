@@ -211,9 +211,4 @@ The development process and results are documented in various formats, including
 
 ## Contributing
 Contributions are welcome! Please follow the standard guidelines for contributing to this project.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
->>>>>>> origin/main
-
 These dependencies are listed in the `requirements.txt` file and can be installed using `pip install -r requirements.txt`.

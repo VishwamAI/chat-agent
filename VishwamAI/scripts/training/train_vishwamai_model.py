@@ -1,3 +1,5 @@
+import sys
+import os
 import tensorflow as tf
 import keras_nlp
 import haiku as hk
@@ -6,6 +8,10 @@ import jax.numpy as jnp
 import optax
 import logging
 import pickle
+
+# Add the parent directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from model_architecture import VishwamAIModel
 from config import VOCAB_FILE
 from memory_profiler import profile
@@ -26,7 +32,7 @@ def data_generator(file_path, max_seq_length=32, batch_size=4, label_encoder=Non
     Returns:
         tf.data.Dataset: A dataset yielding batches of tokenized and padded data and corresponding labels.
     """
-    tokenizer = tf_text.BertTokenizer(VOCAB_FILE, lower_case=True)
+    tokenizer = tf_text.SentencepieceTokenizer(model=tf.io.gfile.GFile(VOCAB_FILE, "rb").read())
 
     def parse_line(line):
         parts = tf.strings.split(line, '\t')

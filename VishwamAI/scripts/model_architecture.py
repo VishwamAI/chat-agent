@@ -3,274 +3,205 @@ import jax
 import jax.numpy as jnp
 import tensorflow as tf
 import tensorflow_text as tf_text
-import random
+import optax
+import numpy as np
 import keras_nlp
-import config
-import numpy as np  # Ensure NumPy is imported for data type compatibility
-import jax.numpy as jnp  # Ensure JAX NumPy is imported for data type compatibility
-import jraph  # Import Jraph for graph neural networks
 
-# Define the model architecture for VishwamAI
 class VishwamAIModel(hk.Module):
-    def __init__(self, transformer_model_name="gpt2"):
+    def __init__(self, vocab_size=20000, embed_dim=512, num_heads=8, num_layers=12, num_experts=4, max_sequence_length=1024):
         super(VishwamAIModel, self).__init__()
-        self.tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=tf.io.gfile.GFile(config.VOCAB_FILE, "rb").read(), sequence_length=1024, dtype="int32")
-        self.embedding = hk.Embed(vocab_size=10000, embed_dim=512, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))  # He initialization
-        self.encoder_layers = [
+        self.vocab_size = vocab_size
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.num_layers = num_layers
+        self.num_experts = num_experts
+        self.max_sequence_length = max_sequence_length
+
+        self.tokenizer = self._create_tokenizer()
+        self.transformer = self._create_transformer()
+        self.experts = [self._create_expert() for _ in range(self.num_experts)]
+        self.gating_network = hk.Linear(self.num_experts)
+        self.output_layer = hk.Linear(self.vocab_size)
+        self.positional_encoding = self._create_positional_encoding()
+
+    def _create_tokenizer(self):
+        import sentencepiece as spm
+        try:
+            sp = spm.SentencePieceProcessor()
+            sp.Load("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm")
+            print("SentencePiece model loaded successfully.")
+        except Exception as e:
+            raise ValueError(f"Error loading SentencePiece model: {e}")
+        return sp
+
+    def _create_transformer(self):
+        def transformer_fn(x):
+            return hk.Sequential([
+                hk.Embed(vocab_size=self.vocab_size, embed_dim=self.embed_dim),
+                lambda t: t + self.positional_encoding[:, :t.shape[1], :],
+                *[self._transformer_layer() for _ in range(self.num_layers)],
+                hk.LayerNorm(axis=-1),
+            ])(x)
+        return hk.transform(transformer_fn)
+
+    def _transformer_layer(self):
+        return hk.Sequential([
+            hk.LayerNorm(axis=-1),
+            hk.MultiHeadAttention(num_heads=self.num_heads, key_size=self.embed_dim // self.num_heads, w_init=hk.initializers.VarianceScaling(1.0, "fan_avg")),
+            hk.LayerNorm(axis=-1),
             hk.Sequential([
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal")),  # He initialization
-                hk.LayerNorm(axis=-1, create_scale=True, create_offset=True),
-                lambda x: hk.MultiHeadAttention(num_heads=8, key_size=64, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))(x, x, x),  # He initialization
-                hk.Linear(512, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal")),  # He initialization
-                hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
-            ]) for _ in range(6)
-        ]
-        self.attention = hk.MultiHeadAttention(
-            num_heads=8,
-            key_size=32,
-            w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal")  # He initialization
-        )
-        self.dense = hk.Linear(3, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))  # He initialization
+                hk.Linear(4 * self.embed_dim),
+                jax.nn.gelu,
+                hk.Linear(self.embed_dim)
+            ])
+        ])
 
-        # Define expert networks for Mixture of Experts (MoE) architecture
-        self.num_experts = 32  # Increased number of experts to 32
-        self.gating_network = hk.Linear(self.num_experts, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))  # Gating mechanism
-        self.experts = [hk.Sequential([
-            lambda x: self.attention(x, x, x),  # Apply attention directly to embedded inputs
-            hk.Linear(512, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal")),  # He initialization
-            hk.Linear(256, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))  # He initialization
-        ]) for _ in range(self.num_experts)]
+    def _create_expert(self):
+        def expert_fn(x):
+            return hk.Sequential([
+                hk.Linear(512),
+                jax.nn.gelu,
+                hk.Linear(256)
+            ])(x)
+        return hk.transform(expert_fn)
 
-        # Implement memory network and memory augmentation
-        def memory_network(self, inputs):
-            # Enhanced LSTM-based memory network with bidirectional LSTM
-            rnn_cell_fw = tf.keras.layers.LSTMCell(512)
-            rnn_cell_bw = tf.keras.layers.LSTMCell(512)
-            rnn_layer = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(rnn_cell_fw), backward_layer=tf.keras.layers.RNN(rnn_cell_bw))
-            memory_output = rnn_layer(inputs)
-
-            # External memory storage and retrieval
-            external_memory = tf.Variable(tf.zeros([512, 512]), trainable=False)
-            memory_output = tf.concat([memory_output, external_memory], axis=-1)
-            return memory_output
-
-        def memory_augmentation(self, inputs):
-            # Enhanced augmentation mechanism with additional dense layers
-            augmented_memory = tf.keras.layers.Dense(512, activation='relu')(inputs)
-            augmented_memory = tf.keras.layers.Dense(256, activation='relu')(augmented_memory)
-
-            # Additional sophisticated layers for better performance
-            augmented_memory = tf.keras.layers.Dense(128, activation='relu')(augmented_memory)
-            augmented_memory = tf.keras.layers.Dense(64, activation='relu')(augmented_memory)
-            return augmented_memory
-
-        # Define a simple transformer architecture for text processing
-        self.transformer = hk.transform(lambda x: hk.nets.MLP([512, 512, 512])(x))
+    def _create_positional_encoding(self):
+        position = np.arange(self.max_sequence_length)[:, np.newaxis]
+        div_term = np.exp(np.arange(0, self.embed_dim, 2) * -(np.log(10000.0) / self.embed_dim))
+        pos_encoding = np.zeros((self.max_sequence_length, self.embed_dim))
+        pos_encoding[:, 0::2] = np.sin(position * div_term)
+        pos_encoding[:, 1::2] = np.cos(position * div_term)
+        return jnp.array(pos_encoding[np.newaxis, :, :])
 
     def __call__(self, inputs):
-        if tf.is_tensor(inputs):
-            inputs = tf.cast(inputs, tf.int32)  # Convert TensorFlow tensor to integer dtype
-            if len(inputs.shape) == 1:
-                inputs = tf.expand_dims(inputs, axis=0)  # Add a new dimension to make it two-dimensional
-            inputs = tf.ensure_shape(inputs, [None, None])  # Ensure the shape is compatible
-        elif isinstance(inputs, str):
-            inputs = [inputs]  # Convert single input to a batch of one
-            tokenized_inputs = self.tokenizer.tokenize(inputs)
-            inputs = tf.convert_to_tensor(tokenized_inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
-        elif isinstance(inputs, list) and all(isinstance(i, str) for i in inputs):
-            tokenized_inputs = self.tokenizer.tokenize(inputs)
-            inputs = tf.convert_to_tensor(tokenized_inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
-        elif isinstance(inputs, list) and all(isinstance(i, list) for i in inputs):
-            inputs = tf.convert_to_tensor(inputs, dtype=tf.int32)  # Convert tokenized inputs to TensorFlow tensor with integer dtype
-        else:
-            raise ValueError("Input must be of type `str`, `List[str]`, `List[List[int]]`, or a TensorFlow tensor")
-        tf.print(f"Data type of inputs after conversion: {inputs.dtype}")
+        if isinstance(inputs, str):
+            inputs = [inputs]
+        elif not isinstance(inputs, list) or not all(isinstance(i, str) for i in inputs):
+            raise ValueError("Inputs should be a string or a list of strings.")
 
-        # Ensure inputs are integer dtype for embedding layer
-        tf.print(f"Data type of inputs before embedding layer: {inputs.dtype}")
-        if inputs.dtype != tf.int32:
-            inputs = tf.cast(inputs, tf.int32)
-        tf.print(f"Data type of inputs after conversion to int32: {inputs.dtype}")
+        tokenized_inputs = self.tokenizer.Encode(inputs)
+        if not isinstance(tokenized_inputs, np.ndarray):
+            raise ValueError("Tokenized inputs should be a numpy array.")
 
-        # Apply the embedding layer to the inputs
-        tf.print(f"Data type of inputs before embedding layer (final check): {inputs.dtype}")
-        embedded_inputs = self.embedding(inputs)
-        tf.print(f"Data type of embedded inputs after embedding layer: {embedded_inputs.dtype}")
-        tf.print(f"Shape of embedded inputs after embedding layer: {embedded_inputs.shape}")
-        if embedded_inputs is None:
-            raise ValueError("The 'embedded_inputs' variable is None after the embedding layer. Ensure that it is correctly initialized and contains valid data.")
-        for layer in self.encoder_layers:
-            embedded_inputs = layer(embedded_inputs)
-            tf.print(f"Data type of embedded inputs after encoder layer: {embedded_inputs.dtype}")
-            tf.print(f"Shape of embedded inputs after encoder layer: {embedded_inputs.shape}")
-            if embedded_inputs is None:
-                raise ValueError("The 'embedded_inputs' variable is None after an encoder layer. Ensure that it is correctly initialized and contains valid data.")
+        inputs = jnp.array(tokenized_inputs, dtype=jnp.int32)
+        if inputs.ndim != 2 or inputs.shape[1] > self.max_sequence_length:
+            raise ValueError("Tokenized inputs should be a 2D array with shape (batch_size, sequence_length).")
 
-        # Apply dropout using Haiku's built-in dropout function
-        embedded_inputs = hk.dropout(hk.next_rng_key(), rate=0.5, x=embedded_inputs)
-        tf.print(f"Data type of embedded inputs after transformer apply: {embedded_inputs.dtype}")
+        # Prepare inputs for the Attention layer
+        query = inputs
+        value = inputs
+        transformer_output = self.transformer.apply(None, [query, value])
+        expert_outputs = [expert.apply(None, transformer_output) for expert in self.experts]
+        gates = jax.nn.softmax(self.gating_network(transformer_output))
+        combined_output = sum(g * e for g, e in zip(gates, expert_outputs))
+        return self.output_layer(combined_output)
 
-        # Create a graph structure from the embedded inputs
-        num_nodes = embedded_inputs.shape[0]
-        senders = jnp.arange(num_nodes - 1)  # Example senders: [0, 1, 2, ..., num_nodes-2]
-        receivers = jnp.arange(1, num_nodes)  # Example receivers: [1, 2, 3, ..., num_nodes-1]
+    def generate_text(self, prompt, max_length=100):
+        input_ids = self.tokenizer.Encode([prompt])
+        input_ids = jnp.array(input_ids, dtype=jnp.int32)
+        for _ in range(max_length):
+            predictions = self(input_ids)
+            next_token = jnp.argmax(predictions[:, -1, :], axis=-1)
+            input_ids = jnp.concatenate([input_ids, next_token[:, None]], axis=-1)
+            if next_token == self.tokenizer.PieceToId("[EOS]"):
+                break
+        return self.tokenizer.Decode(input_ids.tolist())
 
-        graph = jraph.GraphsTuple(
-            nodes=embedded_inputs,
-            senders=senders,
-            receivers=receivers,
-            edges=None,
-            n_node=jnp.array([num_nodes]),
-            n_edge=jnp.array([num_nodes - 1]),
-            globals=None
-        )
+    def compute_loss(self, logits, labels):
+        return optax.softmax_cross_entropy_with_integer_labels(logits, labels)
 
-        # Apply the graph neural network
-        tf.print(f"Data type of graph input nodes before graph neural network: {graph.nodes.dtype}")
-        tf.print(f"Shape of graph input nodes before graph neural network: {graph.nodes.shape}")
-        graph_output = self.graph_neural_network(graph)
-        embedded_inputs = graph_output.nodes  # Use the output nodes from the graph neural network
-        tf.print(f"Data type of graph output after graph neural network: {embedded_inputs.dtype}")
-        tf.print(f"Shape of graph output after graph neural network: {embedded_inputs.shape}")
+    def train_step(self, batch):
+        def loss_fn(params):
+            logits = self.apply(params, batch['input_ids'])
+            return self.compute_loss(logits, batch['labels'])
 
-        # Apply memory network
-        memory_output = self.memory_network(graph_output.nodes)
-        tf.print(f"Data type of memory output after memory network: {memory_output.dtype}")
+        loss, grads = jax.value_and_grad(loss_fn)(self.params)
+        self.params = optax.apply_updates(self.params, self.optimizer.update(grads, self.opt_state))
+        self.opt_state = self.optimizer.update(grads, self.opt_state)[1]
+        return loss
 
-        # Apply memory augmentation
-        augmented_memory = self.memory_augmentation(memory_output)
-        tf.print(f"Data type of augmented memory after memory augmentation: {augmented_memory.dtype}")
+    def train(self, dataset, num_epochs, learning_rate=1e-4):
+        self.optimizer = optax.adam(learning_rate)
+        self.opt_state = self.optimizer.init(self.params)
 
-        # Integrate advanced features
-        combined_output = self.refined_attention(augmented_memory, augmented_memory, augmented_memory)
-        combined_output = self.self_improvement_layer(combined_output)
-
-        # Continue with the rest of the model
-        hidden_states = combined_output
-        attention_output = hidden_states
-        output = self.dense(attention_output)  # Directly pass attention_output to dense layer
-
-        # Return the final output as a JAX array
-        return output
-
-    def add_advanced_features(self):
-        # Memory Augmentation
-        self.memory_augmentation_layer = tf.keras.layers.Dense(512, activation='relu')
-
-        # Attention Mechanism
-        self.refined_attention = hk.MultiHeadAttention(
-            num_heads=8,
-            key_size=64,
-            w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal")
-        )
-
-        # Self-Improvement Mechanism
-        self.self_improvement_layer = hk.Linear(512, w_init=hk.initializers.VarianceScaling(2.0, "fan_in", "normal"))
-
-        return None
-
-    def generate_question(self):
-        # Generate a question based on the model's current knowledge
-        # Example: Generate a question about a random topic
-        topics = ["math", "science", "history", "geography", "literature", "technology", "art", "philosophy"]
-        question_templates = [
-            "What is a fundamental concept in {}?",
-            "Can you explain the importance of {} in {}?",
-            "How does {} relate to {}?",
-            "What are the key principles of {} in {}?",
-            "Describe the role of {} in {}."
-        ]
-        topic = random.choice(topics)
-        template = random.choice(question_templates)
-        question = template.format(topic, topic)
-        return question
+        for epoch in range(num_epochs):
+            epoch_loss = 0
+            for batch in dataset:
+                loss = self.train_step(batch)
+                epoch_loss += loss
+            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
 
     def answer_question(self, question):
-        input_ids = self.tokenizer.tokenize([question]).to_tensor()
-        transformer_outputs = self.transformer(input_ids)
-        hidden_states = transformer_outputs
-        attention_output = self.attention(hidden_states)
-        memory_output, state_h, state_c = self.memory_network(attention_output)
-        augmented_memory = self.memory_augmentation(memory_output)
-        answer = self.dense(augmented_memory)
-        return answer
+        input_ids = self.tokenizer.Encode([question])
+        logits = self(input_ids)
+        answer_ids = jnp.argmax(logits, axis=-1)
+        return self.tokenizer.Decode(answer_ids.tolist())
 
-    def self_improve(self):
-        # Generate a question and answer it to improve the model's performance
-        question = self.generate_question()
-        answer = self.answer_question(question)
-        print(f"Question: {question}")
-        print(f"Answer: {answer}")
+    def self_improve(self, dataset, num_iterations=100):
+        for _ in range(num_iterations):
+            batch = next(dataset)
+            loss = self.train_step(batch)
+            print(f"Self-improvement iteration, Loss: {loss}")
 
-    def memory_network(self, inputs):
-        # Enhanced LSTM-based memory network with bidirectional LSTM
-        rnn_cell_fw = tf.keras.layers.LSTMCell(512)
-        rnn_cell_bw = tf.keras.layers.LSTMCell(512)
-        rnn_layer = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(rnn_cell_fw), backward_layer=tf.keras.layers.RNN(rnn_cell_bw))
-        memory_output = rnn_layer(inputs)
+    def auto_fine_tune(self, dataset, performance_threshold=0.9, num_iterations=100):
+        for _ in range(num_iterations):
+            batch = next(dataset)
+            loss = self.train_step(batch)
+            print(f"Auto-fine-tuning iteration, Loss: {loss}")
+            if self.evaluate(dataset) >= performance_threshold:
+                print("Performance threshold met. Stopping auto-fine-tuning.")
+                break
 
-        # External memory storage and retrieval
-        external_memory = tf.Variable(tf.zeros([512, 512]), trainable=False)
-        memory_output = tf.concat([memory_output, external_memory], axis=-1)
+    def evaluate(self, dataset):
+        total_loss = 0
+        num_batches = 0
+        for batch in dataset:
+            logits = self.apply(self.params, batch['input_ids'])
+            loss = self.compute_loss(logits, batch['labels'])
+            total_loss += loss
+            num_batches += 1
+        return total_loss / num_batches
 
-        # Sophisticated external memory retrieval mechanism
-        external_memory_retrieval = tf.keras.layers.Dense(512, activation='relu')(external_memory)
-        memory_output = tf.concat([memory_output, external_memory_retrieval], axis=-1)
-        return memory_output
+    def continuous_learning(self, dataset, evaluation_dataset, num_epochs, learning_rate=1e-4, performance_threshold=0.9):
+        self.optimizer = optax.adam(learning_rate)
+        self.opt_state = self.optimizer.init(self.params)
 
-    def memory_augmentation(self, inputs):
-        # Enhanced augmentation mechanism with additional dense layers
-        augmented_memory = tf.keras.layers.Dense(512, activation='relu')(inputs)
-        augmented_memory = tf.keras.layers.Dense(256, activation='relu')(augmented_memory)
+        for epoch in range(num_epochs):
+            epoch_loss = 0
+            for batch in dataset:
+                loss = self.train_step(batch)
+                epoch_loss += loss
+            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
 
-        # Additional sophisticated layers for better performance
-        augmented_memory = tf.keras.layers.Dense(128, activation='relu')(augmented_memory)
-        augmented_memory = tf.keras.layers.Dense(64, activation='relu')(augmented_memory)
-        return augmented_memory
-
-    def graph_neural_network(self, graph):
-        # Define a simple graph neural network using Jraph
-        def update_fn(nodes, sent_attributes, received_attributes, global_attributes):
-            if nodes is None:
-                raise ValueError("The 'nodes' variable is None. Ensure that it is correctly initialized and contains valid data.")
-            return jax.nn.relu(nodes)
-
-        def aggregate_fn(messages):
-            return jax.tree_util.tree_map(jnp.sum, messages)
-
-        def apply_fn(graph):
-            return jraph.GraphNetwork(update_fn, update_fn, aggregate_fn)(graph)
-
-        return apply_fn(graph)
-
-# Placeholder for unique features to achieve 100% accuracy in MMLU, math, and reasoning
-def unique_features():
-    # Implement additional advanced techniques to enhance model performance
-    # Advanced normalization techniques
-    normalization_layer = tf.keras.layers.LayerNormalization(axis=-1)
-
-    # Self-attention mechanism
-    attention_layer = tf.keras.layers.MultiHeadAttention(num_heads=8, key_dim=64)
-
-    # Meta-learning technique
-    meta_learning_layer = tf.keras.layers.Dense(128, activation='relu')
-
-    # Ensemble method
-    ensemble_layer = tf.keras.layers.Dense(128, activation='relu')
-
-    return tf.keras.Sequential([
-        normalization_layer,
-        attention_layer,
-        meta_learning_layer,
-        ensemble_layer
-    ])
+            if self.evaluate(evaluation_dataset) < performance_threshold:
+                print("Performance below threshold. Triggering auto-fine-tuning.")
+                self.auto_fine_tune(dataset, performance_threshold)
 
 # Example usage
-if __name__ == "__main__":
-    model = VishwamAIModel()
-    example_input = "What is the capital of France?"
+def main():
+    model = hk.transform(lambda: VishwamAIModel())
     rng = jax.random.PRNGKey(42)
-    output = model(example_input, rng)
-    print(f"Model output: {output}")
-    # Self-improvement example
-    model.self_improve()
+    dummy_input = jnp.ones((1, 10), dtype=jnp.int32)
+    params = model.init(rng, dummy_input)
+
+    # Train the model
+    # Note: You'll need to implement a proper data loading mechanism
+    train_dataset = ...  # Your training dataset
+    model.train(train_dataset, num_epochs=10)
+
+    # Generate text
+    generated_text = model.generate_text("Once upon a time")
+    print(f"Generated text: {generated_text}")
+
+    # Answer a question
+    question = "What is the capital of France?"
+    answer = model.answer_question(question)
+    print(f"Question: {question}")
+    print(f"Answer: {answer}")
+
+    # Self-improvement
+    improvement_dataset = ...  # Your self-improvement dataset
+    model.self_improve(improvement_dataset)
+
+if __name__ == "__main__":
+    main()

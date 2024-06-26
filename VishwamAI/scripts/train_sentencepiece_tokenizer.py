@@ -1,6 +1,8 @@
+import sentencepiece as spm
 import tensorflow as tf
-import keras_nlp
 import logging
+import tempfile
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,14 +22,39 @@ def train_sentencepiece_tokenizer(data, vocabulary_size, model_type="unigram", p
         None
     """
     try:
-        proto = keras_nlp.tokenizers.compute_sentence_piece_proto(
-            data,
-            vocabulary_size=vocabulary_size,
+        # Convert the dataset to a list of strings
+        data_list = [str(line.numpy(), 'utf-8') for line in data]
+
+        # Write the data list to a temporary text file
+        with tempfile.NamedTemporaryFile(delete=False, mode='w', encoding='utf-8') as temp_file:
+            temp_file.write('\n'.join(data_list))
+            temp_file_path = temp_file.name
+
+        # Train the SentencePiece model
+        spm.SentencePieceTrainer.Train(
+            input=temp_file_path,
+            model_prefix=proto_output_file.split('.')[0],
+            vocab_size=vocabulary_size,
             model_type=model_type,
-            proto_output_file=proto_output_file,
-            lowercase=lowercase
+            character_coverage=1.0,
+            input_sentence_size=1000000,
+            shuffle_input_sentence=True
         )
         logging.info(f"SentencePiece model trained and saved to {proto_output_file}")
+
+        # Load the trained model
+        sp = spm.SentencePieceProcessor()
+        sp.Load(proto_output_file.split('.')[0] + ".model")
+
+        # Serialize the model and save it to a separate file
+        serialized_model_proto = sp.serialized_model_proto()
+        serialized_proto_output_file = proto_output_file.split('.')[0] + ".serialized"
+        with open(serialized_proto_output_file, 'wb') as f:
+            f.write(serialized_model_proto)
+        logging.info(f"Serialized SentencePiece model saved to {serialized_proto_output_file}")
+
+        # Clean up the temporary file
+        os.remove(temp_file_path)
     except Exception as e:
         logging.error(f"Error during SentencePiece model training: {e}")
         raise
@@ -36,4 +63,4 @@ if __name__ == "__main__":
     # Example usage
     # Replace 'example_data' with the actual dataset
     example_data = tf.data.TextLineDataset(["/home/ubuntu/chat-agent/VishwamAI/scripts/text_data.txt"])
-    train_sentencepiece_tokenizer(example_data, vocabulary_size=1000)
+    train_sentencepiece_tokenizer(example_data, vocabulary_size=64)

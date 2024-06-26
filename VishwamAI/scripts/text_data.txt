@@ -1,0 +1,5 @@
+This is a sample sentence for training the SentencePiece tokenizer.
+Another example sentence to include in the training data.
+The quick brown fox jumps over the lazy dog.
+SentencePiece tokenization is useful for various NLP tasks.
+This file contains text data for training the VishwamAI model.

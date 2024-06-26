@@ -6,6 +6,7 @@ import tensorflow_text as tf_text
 import sentencepiece as spm
 import sys
 import os
+import time
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -38,12 +39,19 @@ def generate_text(model, params, rng, tokenizer, prompt, max_length=50):
     input_ids = jnp.array(input_ids, dtype=jnp.int32)
     generated_ids = input_ids
 
+    start_time = time.time()
+
     for _ in range(max_length):
         logits = model.apply(params, rng, generated_ids)
         next_token = jnp.argmax(logits[:, -1, :], axis=-1)
         generated_ids = jnp.concatenate([generated_ids, next_token[:, None]], axis=-1)
+        print(f"Generated token ID: {next_token}")
         if next_token == tokenizer.token_to_id("[EOS]"):
             break
+
+    end_time = time.time()
+    generation_time = end_time - start_time
+    print(f"Token generation time: {generation_time:.2f} seconds")
 
     return tokenizer.detokenize(generated_ids)[0]
 

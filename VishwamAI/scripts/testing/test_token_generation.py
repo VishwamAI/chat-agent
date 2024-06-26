@@ -62,11 +62,18 @@ def main():
     # Read the serialized SentencePiece model file
     model_path = "/home/ubuntu/chat-agent/VishwamAI/scripts/vishwamai.serialized"
     try:
+        print("Loading SentencePiece model...")
+        start_time = time.time()
         with open(model_path, 'rb') as f:
             model_proto = f.read()
+        end_time = time.time()
         print(f"Model proto type: {type(model_proto)}")
         print(f"Model proto length: {len(model_proto)}")
         print(f"Model proto content: {model_proto[:100]}")  # Print first 100 bytes for inspection
+        print(f"Loading SentencePiece model took {end_time - start_time:.2f} seconds")
+
+        print("Initializing tokenizer...")
+        start_time = time.time()
         tokenizer = tf_text.SentencepieceTokenizer(
             model=model_proto,
             out_type=tf.int32,
@@ -76,7 +83,9 @@ def main():
             add_eos=False,
             reverse=False
         )
+        end_time = time.time()
         print("Tokenizer initialized successfully.")
+        print(f"Tokenizer initialization took {end_time - start_time:.2f} seconds")
     except tf.errors.InvalidArgumentError as e:
         print(f"TensorFlow InvalidArgumentError initializing tokenizer: {e}")
         return
@@ -85,9 +94,14 @@ def main():
         return
 
     # Transform the forward function
+    print("Transforming the forward function...")
+    start_time = time.time()
     transformed_model = hk.transform(forward_fn)
+    end_time = time.time()
+    print(f"Transforming the forward function took {end_time - start_time:.2f} seconds")
 
     # Generate text
+    print("Generating text...")
     rng = jax.random.PRNGKey(42)
     params = transformed_model.init(rng, jnp.array([[0]]))  # Initialize with dummy input
     generated_text = generate_text(transformed_model, params, rng, tokenizer, prompt)

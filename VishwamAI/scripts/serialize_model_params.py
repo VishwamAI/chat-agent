@@ -16,7 +16,7 @@ def serialize_model_params():
     tokenized_input = jnp.array(tokenized_input).reshape(1, -1)
 
     # Pass the tokenized dummy input to the model
-    params = model.init(rng, tokenized_input)
+    params = model.init(tokenized_input, rng)
     params_dict = hk.data_structures.to_immutable_dict(params)
     with open('vishwamai_model_params.pkl', 'wb') as f:
         np.savez(f, **params_dict)

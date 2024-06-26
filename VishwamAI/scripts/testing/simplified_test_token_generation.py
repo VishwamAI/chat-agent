@@ -38,17 +38,23 @@ class VishwamAIModel(hk.Module):
         return self.tokenizer.DecodeIds(input_ids.tolist())
 
 def main():
-    model = VishwamAIModel()
-    rng = jax.random.PRNGKey(42)
-    dummy_input = jnp.ones((1, 10), dtype=jnp.int32)
-    model.params = model.transformer.init(rng, dummy_input)
+    def forward_fn(prompt):
+        model = VishwamAIModel()
+        rng = jax.random.PRNGKey(42)
+        dummy_input = jnp.ones((1, 10), dtype=jnp.int32)
+        model.params = model.transformer.init(rng, dummy_input)
 
+        start_time = time.time()
+        generated_text = model.generate_text(prompt)
+        end_time = time.time()
+        return generated_text, end_time - start_time
+
+    forward = hk.transform(forward_fn)
+    rng = jax.random.PRNGKey(42)
     prompt = "Once upon a time"
-    start_time = time.time()
-    generated_text = model.generate_text(prompt)
-    end_time = time.time()
+    generated_text, time_taken = forward.apply(rng, prompt)
     print(f"Generated text: {generated_text}")
-    print(f"Time taken for token generation: {end_time - start_time} seconds")
+    print(f"Time taken for token generation: {time_taken} seconds")
 
 if __name__ == "__main__":
     main()

@@ -69,6 +69,9 @@ def main():
             reverse=False
         )
         print("Tokenizer initialized successfully.")
+    except tf.errors.InvalidArgumentError as e:
+        print(f"TensorFlow InvalidArgumentError initializing tokenizer: {e}")
+        return
     except Exception as e:
         print(f"Error initializing tokenizer: {e}")
         return

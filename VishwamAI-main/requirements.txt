@@ -1,2 +1,12 @@
-haiku
+dm-haiku
 jax
+transformers
+tensorflow
+torch
+onnx
+onnx2keras
+tf-keras
+Pillow
+numpy
+scipy
+requests

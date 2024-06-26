@@ -3,9 +3,6 @@
 ## Overview
 VishwamAI is an advanced virtual assistant chat model designed to achieve 100% accuracy in the MMLU benchmark, with a strong focus on mathematical reasoning and other benchmarks such as HellaSwag. The model leverages libraries from Google, OpenAI, and Microsoft, and is implemented using TensorFlow and JAX. VishwamAI aims to excel in various reasoning tasks and provide accurate and reliable responses.
 
-## Note on Dependencies
-The `glide_text2im` module is a required dependency for the VishwamAI project. It can be obtained by cloning the official GitHub repository and installing it as an editable package. Ensure that you have the correct path to the TensorFlow checkpoint file for the GLIDE model.
-
 ## File Structure
 ```
 VishwamAI/

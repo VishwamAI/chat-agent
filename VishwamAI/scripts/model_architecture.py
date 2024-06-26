@@ -25,33 +25,14 @@ class VishwamAIModel(hk.Module):
         self.positional_encoding = self._create_positional_encoding()
 
     def _create_tokenizer(self):
+        import sentencepiece as spm
         try:
-            with tf.io.gfile.GFile("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm", "rb") as f:
-                model_proto = f.read()
-            if not model_proto:
-                raise ValueError("Model file is empty or could not be read.")
-            print("Model file read successfully.")
-            print(f"Model file size: {len(model_proto)} bytes")
-            print(f"Model file snippet: {model_proto[:100]}")
+            sp = spm.SentencePieceProcessor()
+            sp.Load("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm")
+            print("SentencePiece model loaded successfully.")
         except Exception as e:
-            raise ValueError(f"Error reading model file: {e}")
-        try:
-            tokenizer = tf_text.SentencepieceTokenizer(
-                model=model_proto,
-                out_type=tf.int32,
-                nbest_size=0,  # Set nbest_size to 0 to disable n-best sampling
-                alpha=1.0,
-                add_bos=False,
-                add_eos=False,
-                reverse=False
-            )
-            print("Tokenizer initialized successfully.")
-        except Exception as e:
-            print(f"Error initializing tokenizer: {e}")
-            print(f"Exception type: {type(e)}")
-            print(f"Exception args: {e.args}")
-            raise ValueError(f"Error initializing tokenizer: {e}")
-        return tokenizer
+            raise ValueError(f"Error loading SentencePiece model: {e}")
+        return sp
 
     def _create_transformer(self):
         def transformer_fn(x):
@@ -98,7 +79,7 @@ class VishwamAIModel(hk.Module):
         elif not isinstance(inputs, list) or not all(isinstance(i, str) for i in inputs):
             raise ValueError("Inputs should be a string or a list of strings.")
 
-        tokenized_inputs = self.tokenizer(inputs).numpy()
+        tokenized_inputs = self.tokenizer.Encode(inputs)
         if not isinstance(tokenized_inputs, np.ndarray):
             raise ValueError("Tokenized inputs should be a numpy array.")
 
@@ -116,15 +97,15 @@ class VishwamAIModel(hk.Module):
         return self.output_layer(combined_output)
 
     def generate_text(self, prompt, max_length=100):
-        input_ids = self.tokenizer([prompt]).numpy()
+        input_ids = self.tokenizer.Encode([prompt])
         input_ids = jnp.array(input_ids, dtype=jnp.int32)
         for _ in range(max_length):
             predictions = self(input_ids)
             next_token = jnp.argmax(predictions[:, -1, :], axis=-1)
             input_ids = jnp.concatenate([input_ids, next_token[:, None]], axis=-1)
-            if next_token == self.tokenizer.token_to_id("[EOS]"):
+            if next_token == self.tokenizer.PieceToId("[EOS]"):
                 break
-        return self.tokenizer.detokenize(input_ids)[0]
+        return self.tokenizer.Decode(input_ids.tolist())
 
     def compute_loss(self, logits, labels):
         return optax.softmax_cross_entropy_with_integer_labels(logits, labels)
@@ -151,10 +132,10 @@ class VishwamAIModel(hk.Module):
             print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
 
     def answer_question(self, question):
-        input_ids = self.tokenizer([question]).numpy()
+        input_ids = self.tokenizer.Encode([question])
         logits = self(input_ids)
         answer_ids = jnp.argmax(logits, axis=-1)
-        return self.tokenizer.detokenize(answer_ids)[0]
+        return self.tokenizer.Decode(answer_ids.tolist())
 
     def self_improve(self, dataset, num_iterations=100):
         for _ in range(num_iterations):

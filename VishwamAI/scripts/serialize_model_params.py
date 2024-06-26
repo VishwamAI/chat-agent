@@ -10,8 +10,13 @@ def serialize_model_params():
     rng = jax.random.PRNGKey(42)
     dummy_input = "This is a dummy input string for testing."  # Adjusted to a single string for tokenization
 
-    # Pass the raw dummy input to the model
-    params = model.init(rng, dummy_input)
+    # Tokenize the dummy input
+    sp = spm.SentencePieceProcessor(model_file='vishwamai.spm')
+    tokenized_input = sp.encode(dummy_input, out_type=int)
+    tokenized_input = jnp.array(tokenized_input).reshape(1, -1)
+
+    # Pass the tokenized dummy input to the model
+    params = model.init(rng, tokenized_input)
     params_dict = hk.data_structures.to_immutable_dict(params)
     with open('vishwamai_model_params.pkl', 'wb') as f:
         np.savez(f, **params_dict)

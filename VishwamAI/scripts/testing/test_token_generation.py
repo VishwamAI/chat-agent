@@ -1,16 +1,20 @@
 import time
 
+print("Starting TensorFlow import...")
 print("Importing TensorFlow...")
 start_time = time.time()
 import tensorflow as tf
 end_time = time.time()
 print(f"TensorFlow import took {end_time - start_time:.2f} seconds")
+print("Completed TensorFlow import.")
 
 print("Importing TensorFlow Text...")
 start_time = time.time()
 import tensorflow_text as tf_text
 end_time = time.time()
 print(f"TensorFlow Text import took {end_time - start_time:.2f} seconds")
+
+print("TensorFlow Text imported successfully.")
 
 import haiku as hk
 import jax
@@ -52,17 +56,19 @@ def generate_text(model, params, rng, tokenizer, prompt, max_length=50):
 
     start_time = time.time()
 
-    for _ in range(max_length):
+    for i in range(max_length):
+        iteration_start_time = time.time()
         logits = model.apply(params, rng, generated_ids)
         next_token = jnp.argmax(logits[:, -1, :], axis=-1)
         generated_ids = jnp.concatenate([generated_ids, next_token[:, None]], axis=-1)
-        print(f"Generated token ID: {next_token}")
+        iteration_end_time = time.time()
+        print(f"Iteration {i+1}: Generated token ID: {next_token}, Time taken: {iteration_end_time - iteration_start_time:.2f} seconds")
         if next_token == tokenizer.token_to_id("[EOS]"):
             break
 
     end_time = time.time()
     generation_time = end_time - start_time
-    print(f"Token generation time: {generation_time:.2f} seconds")
+    print(f"Total token generation time: {generation_time:.2f} seconds")
 
     return tokenizer.detokenize(generated_ids)[0]
 

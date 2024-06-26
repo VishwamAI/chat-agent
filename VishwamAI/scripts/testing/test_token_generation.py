@@ -1,12 +1,23 @@
+import time
+
+print("Importing TensorFlow...")
+start_time = time.time()
+import tensorflow as tf
+end_time = time.time()
+print(f"TensorFlow import took {end_time - start_time:.2f} seconds")
+
+print("Importing TensorFlow Text...")
+start_time = time.time()
+import tensorflow_text as tf_text
+end_time = time.time()
+print(f"TensorFlow Text import took {end_time - start_time:.2f} seconds")
+
 import haiku as hk
 import jax
 import jax.numpy as jnp
-import tensorflow as tf
-import tensorflow_text as tf_text
 import sentencepiece as spm
 import sys
 import os
-import time
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

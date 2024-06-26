@@ -5,7 +5,7 @@ VishwamAI is an advanced virtual assistant chat model designed to achieve 100% a
 
 ## File Structure
 ```
-VishwamAI/
+VishwamAI-Main/
 ├── data/               # Directory for datasets
 ├── models/             # Directory for storing trained models
 ├── scripts/            # Directory for scripts (e.g., training, preprocessing, model conversion, auto-update)

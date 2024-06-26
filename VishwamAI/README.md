@@ -1,134 +1,72 @@
-# VishwamAI Chat Agent
+# VishwamAI
 
-## Overview
 
-VishwamAI is an advanced virtual assistant chat model designed to achieve high accuracy on the MMLU benchmark, with a focus on mathematical reasoning and other benchmarks such as HellaSwag. The model leverages powerful tokenization capabilities and a unique architecture to excel in various reasoning tasks.
+VishwamAI is an advanced language model based on the Transformer architecture, designed for various natural language processing tasks.
 
-## Setup Instructions
-
-### Prerequisites
-
-- Python 3.9 or higher
-- TensorFlow 2.16.1
-- JAX
-- Haiku
-- Keras NLP
-- Optax
-
-### Installation
+## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/VishwamAI/chat-agent.git
-   cd chat-agent/VishwamAI
+   ```
+   git clone https://github.com/yourusername/vishwam_ai.git
+   cd vishwam_ai
    ```
 
-2. Create a virtual environment and activate it:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+2. Install the required packages:
    ```
-
-3. Install the required dependencies:
-   ```bash
    pip install -r requirements.txt
    ```
 
-4. Install additional dependencies:
-   ```bash
-   pip install tensorflow keras_nlp jax haiku optax
-   ```
-
-### Configuration
-
-Update the `config.py` file with the appropriate paths and settings:
-```python
-# config.py
-
-VOCAB_FILE = "/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm"
-RNG_SEED = 42
-```
-
 ## Usage
 
-### Training the Model
+### Training the model
 
-To train the VishwamAI model, use the `train_vishwamai_model.py` script:
-```bash
-python scripts/train_vishwamai_model.py
+To train the VishwamAI model, run:
+
+```
+python scripts/train.py
 ```
 
-### Evaluating the Model
+This script will load the configuration from `configs/default_config.yaml`, initialize the model and datasets, and start the training process.
 
-To evaluate the VishwamAI model's performance on MMLU and math reasoning benchmarks, use the `test_vishwamai_performance.py` script:
-```bash
-python scripts/test_vishwamai_performance.py
+### Generating text
+
+To generate text using a trained model, use:
+
+```
+python scripts/generate_text.py --prompt "Your prompt here" --max_length 100
 ```
 
-### Tokenizer
+### Evaluating the model
 
-To train the SentencePiece tokenizer, use the `train_sentencepiece_tokenizer.py` script:
-```bash
-python scripts/train_sentencepiece_tokenizer.py
+To evaluate the model on a test dataset, run:
+
+```
+python scripts/evaluate.py --test_file path/to/test/file.txt
 ```
 
-To clean the SentencePiece model file, use the `clean_spm.py` script:
-```bash
-python scripts/clean_spm.py
-```
+## Configuration
 
-## Model Architecture
+You can modify the model and training configuration by editing the `configs/default_config.yaml` file.
 
-The VishwamAI model includes the following components:
-- Tokenization using SentencePiece
-- Transformer application
-- Expert networks
-- Gating networks
-- Output layers
+## Documentation
 
-### Example Usage
-
-```python
-from model_architecture import VishwamAIModel
-import tensorflow as tf
-import keras_nlp
-import config
-
-# Initialize tokenizer
-tokenizer = keras_nlp.tokenizers.SentencePieceTokenizer(proto=config.VOCAB_FILE)
-
-# Initialize model
-vocab_size = 10000
-embed_dim = 128
-num_experts = 4
-model = VishwamAIModel(vocab_size, embed_dim, num_experts)
-
-# Load model parameters
-model.load_weights("vishwamai_model_params.pkl")
-
-# Tokenize input
-input_text = "What is the capital of France?"
-tokenized_input = tokenizer.tokenize(input_text)
-tokenized_input = tf.convert_to_tensor(tokenized_input, dtype=tf.int32)
-
-# Process input through the model
-output = model(tokenized_input)
-
-# Decode output
-decoded_output = tokenizer.detokenize(tf.argmax(output, axis=-1).numpy())
-print(f"Model output: {decoded_output}")
-```
+For more detailed information about the model architecture, training process, and API reference, please refer to the `docs/` directory.
 
 ## Contributing
 
-Contributions are welcome! Please follow the standard GitHub workflow for contributing to this project.
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature-branch`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature-branch`)
-5. Create a new Pull Request
+Contributions to VishwamAI are welcome! Please refer to the `CONTRIBUTING.md` file for guidelines on how to contribute to this project.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+```
+
+This structure and these files provide a solid foundation for your improved VishwamAI model. The code is more modular and organized, making it easier to maintain and extend. The `README.md` file gives users an overview of how to use your model.
+
+To use this improved version:
+
+1. Set up the folder structure as shown above.
+2. Copy the provided code into their respective files.
+3. Implement any missing functions (e.g., evaluation logic, text generation).
+4. Add necessary dependencies to `requirements.txt`.
+5. Create appropriate documentation in the `docs/` directory.

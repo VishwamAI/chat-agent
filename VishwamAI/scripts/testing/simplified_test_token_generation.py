@@ -20,17 +20,16 @@ class VishwamAIModel(hk.Module):
             return hk.nets.ResNet50(1000)(x)
         return hk.transform(transformer_fn)
 
-    def __call__(self, input_ids, rng):
+    def __call__(self, input_ids, params, rng):
         embeddings = self.tokenizer.EncodeAsIds(input_ids)
-        logits = self.transformer.apply(self.params, rng, embeddings)
+        logits = self.transformer.apply(params, rng, embeddings)
         return logits
 
-    def generate_text(self, prompt, max_length=100):
+    def generate_text(self, prompt, params, rng, max_length=100):
         input_ids = self.tokenizer.EncodeAsIds(prompt)
         input_ids = jnp.array(input_ids, dtype=jnp.int32)
-        rng = jax.random.PRNGKey(0)
         for _ in range(max_length):
-            predictions = self(input_ids, rng)
+            predictions = self(input_ids, params, rng)
             next_token = jnp.argmax(predictions[:, -1, :], axis=-1)
             input_ids = jnp.concatenate([input_ids, next_token], axis=-1)
             if next_token == self.tokenizer.PieceToId("[EOS]"):
@@ -42,17 +41,18 @@ def main():
         model = VishwamAIModel()
         rng = jax.random.PRNGKey(42)
         dummy_input = jnp.ones((1, 10), dtype=jnp.int32)
-        model.params = model.transformer.init(rng, dummy_input)
+        params = model.transformer.init(rng, dummy_input)
 
         start_time = time.time()
-        generated_text = model.generate_text(prompt)
+        generated_text = model.generate_text(prompt, params, rng)
         end_time = time.time()
         return generated_text, end_time - start_time
 
     forward = hk.transform(forward_fn)
     rng = jax.random.PRNGKey(42)
     prompt = "Once upon a time"
-    generated_text, time_taken = forward.apply(rng, prompt)
+    params = forward.init(rng, jnp.ones((1, 10), dtype=jnp.int32))
+    generated_text, time_taken = forward.apply(params, rng, prompt)
     print(f"Generated text: {generated_text}")
     print(f"Time taken for token generation: {time_taken} seconds")
 

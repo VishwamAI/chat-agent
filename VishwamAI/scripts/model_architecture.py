@@ -23,12 +23,13 @@ class VishwamAIModel(hk.Module):
         self.gating_network = hk.Linear(self.num_experts)
         self.output_layer = hk.Linear(self.vocab_size)
         self.positional_encoding = self._create_positional_encoding()
+        self.params = None  # Initialize self.params as None
 
     def _create_tokenizer(self):
         import sentencepiece as spm
         try:
             sp = spm.SentencePieceProcessor()
-            sp.Load("/home/ubuntu/chat-agent/VishwamAI/data/vishwamai.spm")
+            sp.Load("/home/ubuntu/chat-agent/VishwamAI/scripts/vishwamai.spm")
             print("SentencePiece model loaded successfully.")
         except Exception as e:
             raise ValueError(f"Error loading SentencePiece model: {e}")
@@ -73,7 +74,7 @@ class VishwamAIModel(hk.Module):
         pos_encoding[:, 1::2] = np.cos(position * div_term)
         return jnp.array(pos_encoding[np.newaxis, :, :])
 
-    def __call__(self, inputs):
+    def __call__(self, inputs, params, rng):
         if isinstance(inputs, str):
             inputs = [inputs]
         elif not isinstance(inputs, list) or not all(isinstance(i, str) for i in inputs):
@@ -81,7 +82,7 @@ class VishwamAIModel(hk.Module):
 
         tokenized_inputs = self.tokenizer.Encode(inputs)
         if not isinstance(tokenized_inputs, np.ndarray):
-            raise ValueError("Tokenized inputs should be a numpy array.")
+            tokenized_inputs = np.array(tokenized_inputs)  # Ensure tokenized inputs are a numpy array
 
         inputs = jnp.array(tokenized_inputs, dtype=jnp.int32)
         if inputs.ndim != 2 or inputs.shape[1] > self.max_sequence_length:
@@ -90,35 +91,66 @@ class VishwamAIModel(hk.Module):
         # Prepare inputs for the Attention layer
         query = inputs
         value = inputs
-        transformer_output = self.transformer.apply(None, [query, value])
-        expert_outputs = [expert.apply(None, transformer_output) for expert in self.experts]
+        transformer_output = self.transformer.apply(params, rng, [query, value])
+        expert_outputs = [expert.apply(params, rng, transformer_output) for expert in self.experts]
         gates = jax.nn.softmax(self.gating_network(transformer_output))
         combined_output = sum(g * e for g, e in zip(gates, expert_outputs))
         return self.output_layer(combined_output)
 
-    def generate_text(self, prompt, max_length=100):
+    def generate_text(self, params, prompt, max_length=100):
         input_ids = self.tokenizer.Encode([prompt])
         input_ids = jnp.array(input_ids, dtype=jnp.int32)
         for _ in range(max_length):
-            predictions = self(input_ids)
+            predictions = self(input_ids, params, jax.random.PRNGKey(42))
             next_token = jnp.argmax(predictions[:, -1, :], axis=-1)
             input_ids = jnp.concatenate([input_ids, next_token[:, None]], axis=-1)
             if next_token == self.tokenizer.PieceToId("[EOS]"):
                 break
         return self.tokenizer.Decode(input_ids.tolist())
 
+    def answer_question(self, params, question):
+        input_ids = self.tokenizer.Encode([question])
+        logits = self(input_ids, params, jax.random.PRNGKey(42))
+        answer_ids = jnp.argmax(logits, axis=-1)
+        return self.tokenizer.Decode(answer_ids.tolist())
+
+    def evaluate(self, params, dataset):
+        total_loss = 0
+        num_batches = 0
+        for batch in dataset:
+            logits = self.apply(params, batch['input_ids'])
+            loss = self.compute_loss(logits, batch['labels'])
+            total_loss += loss
+            num_batches += 1
+        return total_loss / num_batches
+
+    def continuous_learning(self, params, dataset, evaluation_dataset, num_epochs, learning_rate=1e-4, performance_threshold=0.9):
+        self.optimizer = optax.adam(learning_rate)
+        self.opt_state = self.optimizer.init(params)
+
+        for epoch in range(num_epochs):
+            epoch_loss = 0
+            for batch in dataset:
+                loss, params = self.train_step(params, batch)
+                epoch_loss += loss
+            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
+
+            if self.evaluate(params, evaluation_dataset) < performance_threshold:
+                print("Performance below threshold. Triggering auto-fine-tuning.")
+                self.auto_fine_tune(params, dataset, performance_threshold)
+
     def compute_loss(self, logits, labels):
         return optax.softmax_cross_entropy_with_integer_labels(logits, labels)
 
-    def train_step(self, batch):
+    def train_step(self, params, batch):
         def loss_fn(params):
             logits = self.apply(params, batch['input_ids'])
             return self.compute_loss(logits, batch['labels'])
 
-        loss, grads = jax.value_and_grad(loss_fn)(self.params)
-        self.params = optax.apply_updates(self.params, self.optimizer.update(grads, self.opt_state))
+        loss, grads = jax.value_and_grad(loss_fn)(params)
+        params = optax.apply_updates(params, self.optimizer.update(grads, self.opt_state))
         self.opt_state = self.optimizer.update(grads, self.opt_state)[1]
-        return loss
+        return loss, params
 
     def train(self, dataset, num_epochs, learning_rate=1e-4):
         self.optimizer = optax.adam(learning_rate)
@@ -127,55 +159,29 @@ class VishwamAIModel(hk.Module):
         for epoch in range(num_epochs):
             epoch_loss = 0
             for batch in dataset:
-                loss = self.train_step(batch)
+                loss, self.params = self.train_step(self.params, batch)
                 epoch_loss += loss
             print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
-
-    def answer_question(self, question):
+    def answer_question(self, params, question):
         input_ids = self.tokenizer.Encode([question])
-        logits = self(input_ids)
+        logits = self(input_ids, params, jax.random.PRNGKey(42))
         answer_ids = jnp.argmax(logits, axis=-1)
         return self.tokenizer.Decode(answer_ids.tolist())
 
     def self_improve(self, dataset, num_iterations=100):
         for _ in range(num_iterations):
             batch = next(dataset)
-            loss = self.train_step(batch)
+            loss, self.params = self.train_step(self.params, batch)
             print(f"Self-improvement iteration, Loss: {loss}")
 
     def auto_fine_tune(self, dataset, performance_threshold=0.9, num_iterations=100):
         for _ in range(num_iterations):
             batch = next(dataset)
-            loss = self.train_step(batch)
+            loss, self.params = self.train_step(self.params, batch)
             print(f"Auto-fine-tuning iteration, Loss: {loss}")
             if self.evaluate(dataset) >= performance_threshold:
                 print("Performance threshold met. Stopping auto-fine-tuning.")
                 break
-
-    def evaluate(self, dataset):
-        total_loss = 0
-        num_batches = 0
-        for batch in dataset:
-            logits = self.apply(self.params, batch['input_ids'])
-            loss = self.compute_loss(logits, batch['labels'])
-            total_loss += loss
-            num_batches += 1
-        return total_loss / num_batches
-
-    def continuous_learning(self, dataset, evaluation_dataset, num_epochs, learning_rate=1e-4, performance_threshold=0.9):
-        self.optimizer = optax.adam(learning_rate)
-        self.opt_state = self.optimizer.init(self.params)
-
-        for epoch in range(num_epochs):
-            epoch_loss = 0
-            for batch in dataset:
-                loss = self.train_step(batch)
-                epoch_loss += loss
-            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataset)}")
-
-            if self.evaluate(evaluation_dataset) < performance_threshold:
-                print("Performance below threshold. Triggering auto-fine-tuning.")
-                self.auto_fine_tune(dataset, performance_threshold)
 
 # Example usage
 def main():

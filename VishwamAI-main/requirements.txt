@@ -1,4 +1,4 @@
-haiku
+dm-haiku
 jax
 transformers
 tensorflow

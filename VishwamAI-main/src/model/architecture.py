@@ -106,40 +106,41 @@ class MathReasoningLayer(hk.Module):
         return expressions
 
     def _batch_sympify(self, expressions: List[str], debug: bool = True) -> List[str]:
-        import time
-        import tracemalloc
-        from concurrent.futures import ThreadPoolExecutor
+        # import time
+        # import tracemalloc
+        # from concurrent.futures import ThreadPoolExecutor
 
-        # Cache for storing previously computed results
-        cache = {}
-        solved_expressions = []
+        # # Cache for storing previously computed results
+        # cache = {}
+        # solved_expressions = []
 
-        # Start memory profiling if debug is enabled
-        if debug:
-            tracemalloc.start()
+        # # Start memory profiling if debug is enabled
+        # if debug:
+        #     tracemalloc.start()
 
-        def sympify_expression(expr):
-            if expr in cache:
-                return cache[expr]
-            else:
-                solved_expr = sp.sympify(expr).evalf()
-                cache[expr] = solved_expr
-                return solved_expr
+        # def sympify_expression(expr):
+        #     if expr in cache:
+        #         return cache[expr]
+        #     else:
+        #         solved_expr = sp.sympify(expr).evalf()
+        #         cache[expr] = solved_expr
+        #         return solved_expr
 
-        start_time = time.time()
-        with ThreadPoolExecutor() as executor:
-            solved_expressions = list(executor.map(sympify_expression, expressions))
-        end_time = time.time()
+        # start_time = time.time()
+        # with ThreadPoolExecutor() as executor:
+        #     solved_expressions = list(executor.map(sympify_expression, expressions))
+        # end_time = time.time()
 
-        print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
+        # print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
 
-        # Stop memory profiling and get memory usage if debug is enabled
-        if debug:
-            current, peak = tracemalloc.get_traced_memory()
-            tracemalloc.stop()
-            print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
+        # # Stop memory profiling and get memory usage if debug is enabled
+        # if debug:
+        #     current, peak = tracemalloc.get_traced_memory()
+        #     tracemalloc.stop()
+        #     print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
 
-        return solved_expressions
+        # return solved_expressions
+        return expressions
 
     def _expressions_to_tensor(self, expressions: List[str], shape: Tuple[int]) -> jnp.ndarray:
         # Convert list of string expressions back to tensor

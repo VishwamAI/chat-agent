@@ -246,10 +246,8 @@ def main():
                         else:
                             logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
                             logger.debug(f"Parameters to be saved: {params}")
-                            logger.debug(f"Size of parameters: {params.size}")
-                            logger.debug(f"Type of parameters: {type(params)}")
-                            logger.debug(f"Shape of parameters: {params.shape}")
-                            np.save(intermediate_checkpoint_path, params)
+                            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+                            np.save(intermediate_checkpoint_path, params_dict)
                             logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                             if os.path.exists(intermediate_checkpoint_path):
                                 logger.info(f"Checkpoint file {intermediate_checkpoint_path} created successfully.")
@@ -288,7 +286,8 @@ def main():
                 else:
                     logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
                     logger.debug(f"Parameters to be saved: {params}")
-                    np.save(checkpoint_path, params)
+                    params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+                    np.save(checkpoint_path, params_dict)
                     logger.debug(f"Checkpoint parameters: {params}")
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
                     if os.path.exists(checkpoint_path):
@@ -313,7 +312,8 @@ def main():
         logger.debug(f"Type of parameters: {type(params)}")
         logger.debug(f"Shape of parameters: {params.shape}")
         try:
-            np.save(interrupted_checkpoint_path, params)
+            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+            np.save(interrupted_checkpoint_path, params_dict)
             logger.debug(f"Checkpoint parameters: {params}")
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
             if os.path.exists(interrupted_checkpoint_path):
@@ -340,7 +340,8 @@ def main():
         if not os.path.exists(checkpoint_dir):
             logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
         else:
-            np.save(checkpoint_path, params)
+            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+            np.save(checkpoint_path, params_dict)
             logger.debug(f"Checkpoint parameters: {params}")
             logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:

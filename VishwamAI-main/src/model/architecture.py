@@ -83,7 +83,7 @@ class ImprovedAttention(hk.Module):
     def __init__(self, config: Dict):
         super().__init__()
         self.num_heads = config['num_heads']
-        self.head_dim = config['embed_dim'] // config['num_heads']
+        self.head_dim = 64  # Ensure head_dim is set to 64
         self.rotary_emb = RotaryEmbedding(self.num_heads, self.head_dim)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):

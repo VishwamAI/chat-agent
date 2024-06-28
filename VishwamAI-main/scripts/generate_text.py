@@ -35,7 +35,7 @@ def load_model(config_path, checkpoint_path):
     else:
         # Convert the loaded parameters to a Haiku Params object if they are not already in that format
         if isinstance(trained_params, jnp.ndarray):
-            params = hk.data_structures.to_immutable_dict(hk.data_structures.to_mutable_dict(trained_params))
+            params = hk.data_structures.to_immutable_dict(hk.data_structures.to_mutable_dict({'params': trained_params}))
         else:
             raise ValueError("Loaded parameters are not in the expected format")
 

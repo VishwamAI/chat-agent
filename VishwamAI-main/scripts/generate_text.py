@@ -65,14 +65,20 @@ def main():
 
     iterations = len(prompts)  # Number of iterations based on the number of prompts
 
-    for i in range(iterations):
-        input_text = prompts[i]
-        generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
-        print(f"Iteration {i + 1}:")
-        print(f"Input: {input_text}")
-        print(f"Generated text: {generated_text}")
-        print(f"Self-evaluation: {evaluation}")
-        print(f"Response time: {response_time:.2f} ms")
+    # Open a file to log training loss
+    loss_log_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/training_loss.log'))
+    with open(loss_log_file, 'w') as log_file:
+        log_file.write("Iteration,Input,Generated Text,Self-evaluation,Response Time (ms)\n")
+
+        for i in range(iterations):
+            input_text = prompts[i]
+            generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
+            log_file.write(f"{i + 1},{input_text},{generated_text},{evaluation},{response_time:.2f}\n")
+            print(f"Iteration {i + 1}:")
+            print(f"Input: {input_text}")
+            print(f"Generated text: {generated_text}")
+            print(f"Self-evaluation: {evaluation}")
+            print(f"Response time: {response_time:.2f} ms")
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,7 @@ import haiku as hk
 import sys
 import os
 import time
+import pandas as pd
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -55,17 +56,23 @@ def main():
     model, params, config = load_model(config_path, checkpoint_path)
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
 
-    input_text = "Hi"
-    iterations = 5  # Number of iterations for self-reinforcement
+    # Load prompts from the CSV file
+    prompts = []
+    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    with open(train_file_path, 'r') as csvfile:
+        reader = pd.read_csv(csvfile)
+        prompts = reader['prompt'].tolist()
+
+    iterations = len(prompts)  # Number of iterations based on the number of prompts
 
     for i in range(iterations):
+        input_text = prompts[i]
         generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
         print(f"Iteration {i + 1}:")
         print(f"Input: {input_text}")
         print(f"Generated text: {generated_text}")
         print(f"Self-evaluation: {evaluation}")
         print(f"Response time: {response_time:.2f} ms")
-        input_text = generated_text  # Use the generated text as the new input
 
 if __name__ == "__main__":
     main()

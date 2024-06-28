@@ -105,7 +105,7 @@ class MathReasoningLayer(hk.Module):
             expressions.append(expr)
         return expressions
 
-    def _batch_sympify(self, expressions: List[str], debug: bool = False) -> List[str]:
+    def _batch_sympify(self, expressions: List[str], debug: bool = True) -> List[str]:
         import time
         import tracemalloc
         from concurrent.futures import ThreadPoolExecutor

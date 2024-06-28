@@ -234,8 +234,8 @@ def main():
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
-
-                logger.debug(f"Attempting to save intermediate checkpoint at step {train_steps}")
+                if train_steps % 100 == 0:
+                    logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
                 if train_steps % 500 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
@@ -244,6 +244,8 @@ def main():
                         if not os.path.exists(checkpoint_dir):
                             logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
                         else:
+                            logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
+                            logger.debug(f"Parameters to be saved: {params}")
                             np.save(intermediate_checkpoint_path, params)
                             logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                     except Exception as e:
@@ -274,6 +276,8 @@ def main():
                 if not os.path.exists(checkpoint_dir):
                     logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
                 else:
+                    logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
+                    logger.debug(f"Parameters to be saved: {params}")
                     np.save(checkpoint_path, params)
                     logger.debug(f"Checkpoint parameters: {params}")
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")

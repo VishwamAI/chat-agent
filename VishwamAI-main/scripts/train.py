@@ -289,11 +289,19 @@ def main():
                     logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
                     logger.debug(f"Parameters to be saved: {params}")
                     params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+                    logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
                     np.save(checkpoint_path, params_dict)
                     logger.debug(f"Checkpoint parameters: {params}")
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
                     if os.path.exists(checkpoint_path):
                         logger.info(f"Checkpoint file {checkpoint_path} created successfully.")
+                        # Verify the contents of the saved file
+                        loaded_params = np.load(checkpoint_path, allow_pickle=True)
+                        logger.debug(f"Loaded parameters type after saving: {type(loaded_params)}")
+                        if isinstance(loaded_params, dict):
+                            logger.info(f"Parameters are correctly saved as a dictionary at {checkpoint_path}")
+                        else:
+                            logger.error(f"Parameters are NOT saved as a dictionary at {checkpoint_path}")
                     else:
                         logger.error(f"Checkpoint file {checkpoint_path} was not created.")
             except Exception as e:

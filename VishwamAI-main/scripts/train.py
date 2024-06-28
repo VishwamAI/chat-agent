@@ -254,6 +254,7 @@ def main():
                                 logger.error(f"Checkpoint file {intermediate_checkpoint_path} was not created.")
                     except Exception as e:
                         logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
+                        logger.debug(f"Exception details: {e}")
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
@@ -289,6 +290,7 @@ def main():
                         logger.error(f"Checkpoint file {checkpoint_path} was not created.")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
+                logger.debug(f"Exception details: {e}")
 
             if trainer._should_stop_early(eval_metrics):
                 logger.info("Early stopping criteria met. Ending training.")
@@ -298,10 +300,15 @@ def main():
         # Save checkpoint on interruption
         interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted.npy')
         logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
+        logger.debug(f"Checkpoint parameters before saving: {params}")
         try:
             np.save(interrupted_checkpoint_path, params)
             logger.debug(f"Checkpoint parameters: {params}")
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
+            if os.path.exists(interrupted_checkpoint_path):
+                logger.info(f"Checkpoint file {interrupted_checkpoint_path} created successfully.")
+            else:
+                logger.error(f"Checkpoint file {interrupted_checkpoint_path} was not created.")
         except Exception as e:
             logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
             logger.debug(f"Exception details: {e}")

@@ -239,9 +239,15 @@ def main():
                     logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
 
             # Reinforcement learning update
+            logger.debug(f"Logging memory usage before reinforcement learning update")
+            log_memory_usage()
             rl_model.learn(total_timesteps=1000)
+            logger.debug(f"Logging memory usage after reinforcement learning update")
+            log_memory_usage()
 
             eval_metrics = trainer.evaluate(params, eval_dataset)
+            logger.debug(f"Logging memory usage after evaluation step")
+            log_memory_usage()
             epoch_time = time.time() - start_time
             logger.info(f"Epoch {epoch + 1}/{config['num_epochs']} completed in {epoch_time:.2f} seconds")
             logger.info(f"Train Loss: {train_loss / train_steps:.4f}")

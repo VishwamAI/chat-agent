@@ -247,6 +247,8 @@ def main():
                             logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
                             logger.debug(f"Parameters to be saved: {params}")
                             logger.debug(f"Size of parameters: {params.size}")
+                            logger.debug(f"Type of parameters: {type(params)}")
+                            logger.debug(f"Shape of parameters: {params.shape}")
                             np.save(intermediate_checkpoint_path, params)
                             logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                             if os.path.exists(intermediate_checkpoint_path):
@@ -278,6 +280,8 @@ def main():
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
             logger.debug(f"Checkpoint parameters before saving: {params}")
             logger.debug(f"Size of parameters: {params.size}")
+            logger.debug(f"Type of parameters: {type(params)}")
+            logger.debug(f"Shape of parameters: {params.shape}")
             try:
                 if not os.path.exists(checkpoint_dir):
                     logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
@@ -306,6 +310,8 @@ def main():
         logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
         logger.debug(f"Checkpoint parameters before saving: {params}")
         logger.debug(f"Size of parameters: {params.size}")
+        logger.debug(f"Type of parameters: {type(params)}")
+        logger.debug(f"Shape of parameters: {params.shape}")
         try:
             np.save(interrupted_checkpoint_path, params)
             logger.debug(f"Checkpoint parameters: {params}")

@@ -246,7 +246,9 @@ def main():
                         else:
                             logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
                             logger.debug(f"Parameters to be saved: {params}")
+                            logger.debug(f"Parameters before conversion: {params}")
                             params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+                            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
                             np.save(intermediate_checkpoint_path, params_dict)
                             logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                             if os.path.exists(intermediate_checkpoint_path):
@@ -336,11 +338,13 @@ def main():
     checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
     logger.debug(f"Checkpoint parameters before saving: {params}")
+    logger.debug(f"Parameters before conversion: {params}")
     try:
         if not os.path.exists(checkpoint_dir):
             logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
         else:
             params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
             np.save(checkpoint_path, params_dict)
             logger.debug(f"Checkpoint parameters: {params}")
             logger.info(f"Final checkpoint saved at {checkpoint_path}")

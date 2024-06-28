@@ -241,6 +241,8 @@ def main():
                     except Exception as e:
                         logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
                         logger.debug(f"Exception details: {e}")
+                else:
+                    logger.debug(f"Skipping intermediate checkpoint saving at step {train_steps}")
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
@@ -268,6 +270,8 @@ def main():
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
                 logger.debug(f"Exception details: {e}")
+            else:
+                logger.debug(f"Skipping checkpoint saving after epoch {epoch + 1}")
 
             if trainer._should_stop_early(eval_metrics):
                 logger.info("Early stopping criteria met. Ending training.")

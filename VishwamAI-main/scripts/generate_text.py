@@ -27,7 +27,7 @@ def load_model(config_path, checkpoint_path):
 
     # Load trained parameters
     with open(checkpoint_path, 'rb') as f:
-        trained_params = jnp.load(f, allow_pickle=True).item()
+        trained_params = jnp.load(f, allow_pickle=True)
 
     return model, trained_params, config
 

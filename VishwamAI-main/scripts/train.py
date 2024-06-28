@@ -239,6 +239,7 @@ def main():
                         logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                     except Exception as e:
                         logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
+                        logger.debug(f"Exception details: {e}")
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
@@ -272,11 +273,13 @@ def main():
     except KeyboardInterrupt:
         # Save checkpoint on interruption
         interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted.npy')
+        logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
         try:
             np.save(interrupted_checkpoint_path, params)
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
         except Exception as e:
             logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
+            logger.debug(f"Exception details: {e}")
 
     logger.info("Training process completed.")
 
@@ -288,6 +291,7 @@ def main():
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
+    logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
     try:
         np.save(checkpoint_path, params)
         logger.info(f"Final checkpoint saved at {checkpoint_path}")

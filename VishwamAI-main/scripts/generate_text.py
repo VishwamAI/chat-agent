@@ -63,7 +63,7 @@ def generate_and_evaluate(model, params, tokenizer, input_text, config, max_leng
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        final_evaluation = VishwamAILLM.self_evaluate(model, generated_text, evaluation_metrics)
+        final_evaluation = model.apply(params, rng, generated_text, evaluation_metrics, method=VishwamAILLM.self_evaluate)
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise

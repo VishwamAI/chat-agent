@@ -17,7 +17,7 @@ from typing import Iterable
 import more_itertools
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Add the parent directory to the system path to resolve the import issue
@@ -199,7 +199,7 @@ def main():
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/memory_usage.txt'
+    memory_log_file = '/home/ubuntu/chat-agent/VishwamAI-main/memory_usage.txt'
     with open(memory_log_file, 'w') as f:
         f.write("Timestamp,Memory_Usage(MiB)\n")
 

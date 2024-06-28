@@ -29,13 +29,16 @@ def apply_rotary_pos_emb(x, sincos):
 
     memory_usage_before_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before split: {memory_usage_before_split:.2f} MiB")
-    x1, x2 = jnp.split(x, 2, axis=-1)
+    x1 = x[..., :x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2:]
     memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after split: {memory_usage_after_split:.2f} MiB")
 
     memory_usage_before_concat = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before concat: {memory_usage_before_concat:.2f} MiB")
-    rotated_x = jnp.concatenate([-x2, x1], axis=-1)
+    rotated_x = jnp.empty_like(x)
+    rotated_x[..., :x.shape[-1] // 2] = -x2
+    rotated_x[..., x.shape[-1] // 2:] = x1
     memory_usage_after_concat = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after concat: {memory_usage_after_concat:.2f} MiB")
     print(f"apply_rotary_pos_emb - rotated_x shape: {rotated_x.shape}")

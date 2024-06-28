@@ -21,10 +21,13 @@ def rotate_half(x):
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
+    print(f"apply_rotary_pos_emb - input shape: {x.shape}")
     rotated_x = rotate_half(x)
+    print(f"apply_rotary_pos_emb - rotated_x shape: {rotated_x.shape}")
     cos = jnp.expand_dims(cos, axis=(0, 2))
     sin = jnp.expand_dims(sin, axis=(0, 2))
     result = (x * cos) + (rotated_x * sin)
+    print(f"apply_rotary_pos_emb - result shape: {result.shape}")
     return result
 
 class RotaryEmbedding(hk.Module):
@@ -56,8 +59,18 @@ class ImprovedAttention(hk.Module):
         v = v.reshape(-1, seq_len, self.num_heads, self.head_dim)
 
         sincos = self.rotary_emb(seq_len)
+        import psutil
+        memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
         q = apply_rotary_pos_emb(q, sincos)
+        memory_usage_after_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after apply_rotary_pos_emb (q): {memory_usage_after_q:.2f} MiB")
+
+        memory_usage_before_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before apply_rotary_pos_emb (k): {memory_usage_before_k:.2f} MiB")
         k = apply_rotary_pos_emb(k, sincos)
+        memory_usage_after_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after apply_rotary_pos_emb (k): {memory_usage_after_k:.2f} MiB")
 
         if kv_cache is not None:
             if kv_cache['k'] is None:

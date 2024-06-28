@@ -51,10 +51,11 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
 
             tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
             logger.debug(f"Original tokens: {tokens}")
-            if len(tokens) > max_length:
+            actual_length = len(tokens)
+            if actual_length > max_length:
                 tokens = tokens[:max_length]
             else:
-                tokens = tokens + [tokenizer.pad_token_id] * (max_length - len(tokens))
+                tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
 
             # Ensure pad_token_id is valid and replace None values
             if tokenizer.pad_token_id is None:

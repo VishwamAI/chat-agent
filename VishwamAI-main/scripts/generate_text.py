@@ -46,7 +46,8 @@ def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
 
     @jax.jit
     def generate_step(params, input_ids):
-        return model.apply(params, None, input_ids, method=VishwamAILLM.generate_with_evaluation)
+        model_instance = VishwamAILLM(model.config)
+        return model_instance.generate_with_evaluation(input_ids)
 
     start_time = time.time()
     try:
@@ -61,7 +62,8 @@ def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        final_evaluation = model.apply(params, None, generated_text, evaluation_metrics, method=VishwamAILLM.self_evaluate)
+        model_instance = VishwamAILLM(model.config)
+        final_evaluation = model_instance.self_evaluate(generated_text, evaluation_metrics)
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise

@@ -46,8 +46,7 @@ def generate_and_evaluate(model, params, tokenizer, input_text, config, max_leng
 
     @jax.jit
     def generate_step(params, rng, input_ids):
-        model_instance = VishwamAILLM(config)
-        return model_instance.generate_with_evaluation(params, rng, input_ids)
+        return model.apply(params, rng, input_ids)
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 

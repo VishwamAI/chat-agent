@@ -45,13 +45,22 @@ def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
         return model.apply(params, None, input_ids, method=VishwamAILLM.generate_with_evaluation)
 
     start_time = time.time()
-    generated_ids, evaluation_metrics = generate_step(params, input_ids)
+    try:
+        generated_ids, evaluation_metrics = generate_step(params, input_ids)
+    except Exception as e:
+        print(f"Error during generate_step: {e}")
+        raise
+
     end_time = time.time()
     response_time = (end_time - start_time) * 1000  # Convert to milliseconds
 
     generated_text = tokenizer.decode(generated_ids[0])
 
-    final_evaluation = model.apply(params, None, generated_text, evaluation_metrics, method=VishwamAILLM.self_evaluate)
+    try:
+        final_evaluation = model.apply(params, None, generated_text, evaluation_metrics, method=VishwamAILLM.self_evaluate)
+    except Exception as e:
+        print(f"Error during self_evaluate: {e}")
+        raise
 
     return generated_text, final_evaluation, response_time
 
@@ -61,6 +70,11 @@ def main():
 
     model, params, config = load_model(config_path, checkpoint_path)
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
+
+    # Log the type and structure of params
+    print(f"Type of params: {type(params)}")
+    if isinstance(params, dict):
+        print(f"Keys in params: {list(params.keys())}")
 
     # Load prompts from the CSV file
     prompts = []
@@ -78,7 +92,11 @@ def main():
 
         for i in range(iterations):
             input_text = prompts[i]
-            generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
+            try:
+                generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
+            except Exception as e:
+                print(f"Error during generate_and_evaluate: {e}")
+                continue
             log_file.write(f"{i + 1},{input_text},{generated_text},{evaluation},{response_time:.2f}\n")
             print(f"Iteration {i + 1}:")
             print(f"Input: {input_text}")

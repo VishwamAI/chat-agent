@@ -29,7 +29,13 @@ def load_model(config_path, checkpoint_path):
     with open(checkpoint_path, 'rb') as f:
         trained_params = jnp.load(f, allow_pickle=True)
 
-    return model, trained_params, config
+    # Ensure trained_params is a dictionary
+    if isinstance(trained_params, dict):
+        params = trained_params
+    else:
+        raise TypeError("Loaded parameters are not in the expected dictionary format.")
+
+    return model, params, config
 
 def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
     input_ids = tokenizer.encode(input_text, return_tensors='jax')

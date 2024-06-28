@@ -77,8 +77,11 @@ class VishwamAITrainer:
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             print(f"Checkpoint path: {checkpoint_path}")
             print(f"Saving checkpoint to {checkpoint_path}")
-            np.save(checkpoint_path, params)
-            print(f"Checkpoint saved successfully at {checkpoint_path}")
+            try:
+                np.save(checkpoint_path, params)
+                print(f"Checkpoint saved successfully at {checkpoint_path}")
+            except Exception as e:
+                print(f"Error saving checkpoint at {checkpoint_path}: {e}")
 
             if self._should_stop_early(eval_metrics):
                 print("Early stopping criteria met. Ending training.")

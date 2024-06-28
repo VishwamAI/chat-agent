@@ -248,10 +248,12 @@ def main():
                             logger.debug(f"Parameters to be saved: {params}")
                             np.save(intermediate_checkpoint_path, params)
                             logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+                            if os.path.exists(intermediate_checkpoint_path):
+                                logger.info(f"Checkpoint file {intermediate_checkpoint_path} created successfully.")
+                            else:
+                                logger.error(f"Checkpoint file {intermediate_checkpoint_path} was not created.")
                     except Exception as e:
                         logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
-                else:
-                    logger.debug(f"Skipping intermediate checkpoint saving at step {train_steps}")
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
@@ -281,6 +283,10 @@ def main():
                     np.save(checkpoint_path, params)
                     logger.debug(f"Checkpoint parameters: {params}")
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
+                    if os.path.exists(checkpoint_path):
+                        logger.info(f"Checkpoint file {checkpoint_path} created successfully.")
+                    else:
+                        logger.error(f"Checkpoint file {checkpoint_path} was not created.")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
 

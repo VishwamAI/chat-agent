@@ -79,22 +79,8 @@ class MathReasoningLayer(hk.Module):
         self.config = config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Convert input tensor to string representation of mathematical expressions
-        expressions = self._tensor_to_expressions(x)
-
-        # Log the start of the sympify operation
-        print("Starting sympify operation on expressions")
-
-        # Batch processing and caching for sympify operation
-        solved_expressions = self._batch_sympify(expressions)
-
-        # Log the completion of the sympify operation
-        print("Completed sympify operation on expressions")
-
-        # Convert solved expressions back to tensor format
-        solved_tensor = self._expressions_to_tensor(solved_expressions, x.shape)
-
-        return solved_tensor
+        # Directly return the input tensor without any modifications
+        return x
 
     def _tensor_to_expressions(self, x: jnp.ndarray) -> List[str]:
         # Convert tensor to list of string expressions

@@ -263,6 +263,7 @@ def main():
                 logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
+                logger.debug(f"Exception details: {e}")
 
             if trainer._should_stop_early(eval_metrics):
                 logger.info("Early stopping criteria met. Ending training.")
@@ -287,8 +288,12 @@ def main():
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
-    np.save(checkpoint_path, trained_params)
-    logger.info(f"Final checkpoint saved at {checkpoint_path}")
+    try:
+        np.save(checkpoint_path, params)
+        logger.info(f"Final checkpoint saved at {checkpoint_path}")
+    except Exception as e:
+        logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")
+        logger.debug(f"Exception details: {e}")
 
     # Save checkpoint after each epoch
     for epoch in range(config['num_epochs']):

@@ -261,6 +261,7 @@ def main():
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
             try:
                 np.save(checkpoint_path, params)
+                logger.debug(f"Checkpoint parameters: {params}")
                 logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
@@ -276,6 +277,7 @@ def main():
         logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
         try:
             np.save(interrupted_checkpoint_path, params)
+            logger.debug(f"Checkpoint parameters: {params}")
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
         except Exception as e:
             logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
@@ -294,6 +296,7 @@ def main():
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
     try:
         np.save(checkpoint_path, params)
+        logger.debug(f"Checkpoint parameters: {params}")
         logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:
         logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")

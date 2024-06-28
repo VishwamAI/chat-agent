@@ -8,6 +8,8 @@ import numpy as np
 import yaml
 import pandas as pd
 import logging
+import psutil  # Import psutil for memory profiling
+import time  # Import time for logging timestamps
 from transformers import AutoTokenizer
 from bias_analysis import analyze_bias
 from generate_modular_question import generate_modular_question
@@ -158,8 +160,12 @@ def main():
     # Initialize trainer
     trainer = VishwamAITrainer(model, config, optimizer, opt_state)
 
-    # Create reinforcement learning environment
-    prompts = ["Hello, how can I help you?", "What is the weather like today?", "Tell me a joke."]
+    # Load prompts from the CSV file
+    prompts = []
+    with open(train_file_path, 'r') as csvfile:
+        reader = pd.read_csv(csvfile)
+        prompts = reader['prompt'].tolist()
+
     env = ChatAgentEnv(model, tokenizer, prompts, config['max_seq_length'])
 
     # Initialize reinforcement learning algorithm
@@ -174,12 +180,27 @@ def main():
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
 
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
+    def log_memory_usage():
+        memory_usage = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        timestamp = time.time()
+        with open(memory_log_file, 'a') as f:
+            f.write(f"{timestamp},{memory_usage:.2f}\n")
+
     try:
         for epoch in range(config['num_epochs']):
             start_time = time.time()
             logger.info(f"Starting epoch {epoch + 1}/{config['num_epochs']}")
             train_loss = 0
             train_steps = 0
+
+            # Log memory usage at the beginning of the epoch
+            log_memory_usage()
+
             for batch in train_dataset:
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
@@ -189,6 +210,8 @@ def main():
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
+                    # Log memory usage at regular steps
+                    log_memory_usage()
 
                 # Save intermediate checkpoint every 500 steps
                 if train_steps % 500 == 0:

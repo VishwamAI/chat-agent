@@ -3,6 +3,7 @@ import jax.numpy as jnp
 import haiku as hk
 import sys
 import os
+import time
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -36,12 +37,16 @@ def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
     def generate_step(params, input_ids):
         return model.apply(params, None, input_ids, method=VishwamAILLM.generate_with_evaluation)
 
+    start_time = time.time()
     generated_ids, evaluation_metrics = generate_step(params, input_ids)
+    end_time = time.time()
+    response_time = (end_time - start_time) * 1000  # Convert to milliseconds
+
     generated_text = tokenizer.decode(generated_ids[0])
 
     final_evaluation = model.apply(params, None, generated_text, evaluation_metrics, method=VishwamAILLM.self_evaluate)
 
-    return generated_text, final_evaluation
+    return generated_text, final_evaluation, response_time
 
 def main():
     config_path = '/home/ubuntu/chat-agent/VishwamAI-main/configs/default_config.yaml'
@@ -54,11 +59,12 @@ def main():
     iterations = 5  # Number of iterations for self-reinforcement
 
     for i in range(iterations):
-        generated_text, evaluation = generate_and_evaluate(model, params, tokenizer, input_text)
+        generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
         print(f"Iteration {i + 1}:")
         print(f"Input: {input_text}")
         print(f"Generated text: {generated_text}")
         print(f"Self-evaluation: {evaluation}")
+        print(f"Response time: {response_time:.2f} ms")
         input_text = generated_text  # Use the generated text as the new input
 
 if __name__ == "__main__":

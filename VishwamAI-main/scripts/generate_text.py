@@ -25,6 +25,11 @@ def load_model(config_path, checkpoint_path):
 
     model = hk.transform(model_fn)
 
+    # Initialize parameters
+    rng = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    params = model.init(rng, dummy_input)
+
     # Load trained parameters
     with open(checkpoint_path, 'rb') as f:
         trained_params = jnp.load(f, allow_pickle=True)

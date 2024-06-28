@@ -64,16 +64,17 @@ def apply_rotary_pos_emb(x, sincos):
     return result
 
 class RotaryEmbedding(hk.Module):
-    def __init__(self, dim):
+    def __init__(self, num_heads, head_dim):
         super().__init__()
-        self.dim = dim
+        self.num_heads = num_heads
+        self.head_dim = head_dim
 
     def __call__(self, seq_len):
-        inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.dim, 2) / self.dim))
+        inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim, 2) / self.head_dim))
         t = jnp.arange(seq_len)
         freqs = jnp.outer(t, inv_freq)
-        sin = jnp.sin(freqs)
-        cos = jnp.cos(freqs)
+        sin = jnp.sin(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
+        cos = jnp.cos(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
         print(f"RotaryEmbedding - sin shape: {sin.shape}")
         print(f"RotaryEmbedding - cos shape: {cos.shape}")
         return sin, cos
@@ -83,7 +84,7 @@ class ImprovedAttention(hk.Module):
         super().__init__()
         self.num_heads = config['num_heads']
         self.head_dim = config['embed_dim'] // config['num_heads']
-        self.rotary_emb = RotaryEmbedding(self.num_heads * self.head_dim)
+        self.rotary_emb = RotaryEmbedding(self.num_heads, self.head_dim)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         seq_len = x.shape[1]

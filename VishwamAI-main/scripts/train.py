@@ -156,19 +156,6 @@ def main():
     train_dataset = create_dataset_from_csv(train_file_path, tokenizer, config['batch_size'], config['max_seq_length'])
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, config['batch_size'], config['max_seq_length'])
 
-    # Simulate a larger dataset by duplicating the existing sample data
-    def duplicate_dataset(dataset, num_duplicates):
-        duplicated_data = []
-        for _ in range(num_duplicates):
-            for batch in dataset:
-                duplicated_data.append(batch)
-        return duplicated_data
-
-    # Duplicate the dataset to simulate a larger dataset
-    num_duplicates = 10  # Adjust this number to simulate a larger dataset
-    train_dataset = duplicate_dataset(train_dataset, num_duplicates)
-    eval_dataset = duplicate_dataset(eval_dataset, num_duplicates)
-
     # Analyze training data for biases
     logger.info("Analyzing training data for biases...")
     for batch in train_dataset:

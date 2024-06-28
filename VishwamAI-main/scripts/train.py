@@ -234,6 +234,7 @@ def main():
                 if train_steps % 500 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
+                    logger.debug(f"Checkpoint parameters before saving: {params}")
                     try:
                         np.save(intermediate_checkpoint_path, params)
                         logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
@@ -259,6 +260,7 @@ def main():
             logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
+            logger.debug(f"Checkpoint parameters before saving: {params}")
             try:
                 np.save(checkpoint_path, params)
                 logger.debug(f"Checkpoint parameters: {params}")

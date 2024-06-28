@@ -34,30 +34,15 @@ def apply_rotary_pos_emb(x, sincos):
     memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after split: {memory_usage_after_split:.2f} MiB")
 
-    memory_usage_before_concat = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before concat: {memory_usage_before_concat:.2f} MiB")
-    rotated_x = jnp.empty_like(x)
-    rotated_x = rotated_x.at[..., :x.shape[-1] // 2].set(-x2)
-    rotated_x = rotated_x.at[..., x.shape[-1] // 2:].set(x1)
-    memory_usage_after_concat = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after concat: {memory_usage_after_concat:.2f} MiB")
-    print(f"apply_rotary_pos_emb - rotated_x shape: {rotated_x.shape}")
-
-    memory_usage_before_expand_cos = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before expand_dims (cos): {memory_usage_before_expand_cos:.2f} MiB")
-    cos = jnp.expand_dims(cos, axis=(0, 2))
-    memory_usage_after_expand_cos = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after expand_dims (cos): {memory_usage_after_expand_cos:.2f} MiB")
-
-    memory_usage_before_expand_sin = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before expand_dims (sin): {memory_usage_before_expand_sin:.2f} MiB")
-    sin = jnp.expand_dims(sin, axis=(0, 2))
-    memory_usage_after_expand_sin = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after expand_dims (sin): {memory_usage_after_expand_sin:.2f} MiB")
+    memory_usage_before_rotation = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+    print(f"Memory usage before rotation: {memory_usage_before_rotation:.2f} MiB")
+    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
+    memory_usage_after_rotation = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+    print(f"Memory usage after rotation: {memory_usage_after_rotation:.2f} MiB")
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")
-    result = (x * cos) + (rotated_x * sin)
+    result = (x * cos) + (x_rotated * sin)
     memory_usage_after_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after result calculation: {memory_usage_after_result:.2f} MiB")
     print(f"apply_rotary_pos_emb - result shape: {result.shape}")

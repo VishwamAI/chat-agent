@@ -42,8 +42,11 @@ def apply_rotary_pos_emb(x, sincos):
     print(f"Memory usage after rotation: {memory_usage_after_rotation:.2f} MiB")
 
     # Ensure cos and sin are reshaped to match the shape of x1 and x2
-    cos = jnp.reshape(cos, (1, cos.shape[0], 1, cos.shape[1] // 2))
-    sin = jnp.reshape(sin, (1, sin.shape[0], 1, sin.shape[1] // 2))
+    seq_len = x.shape[1]
+    num_heads = x.shape[2]
+    head_dim = x.shape[3]
+    cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim // 2))
+    sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim // 2))
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")

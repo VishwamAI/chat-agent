@@ -23,6 +23,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.model.architecture import VishwamAILLM
 from src.training.trainer import VishwamAITrainer
+from src.environment.chat_agent_env import ChatAgentEnv
+from stable_baselines3 import PPO
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
@@ -134,6 +136,14 @@ def main():
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
+    # Analyze training data for biases
+    logger.info("Analyzing training data for biases...")
+    for batch in train_dataset:
+        text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
+        for text in text_batch:
+            bias_results = analyze_bias(text)
+            logger.info(f"Bias Analysis Results for training data: {bias_results}")
+
     # Initialize model
     def model_fn(inputs):
         model = VishwamAILLM(config)
@@ -147,6 +157,13 @@ def main():
 
     # Initialize trainer
     trainer = VishwamAITrainer(model, config, optimizer, opt_state)
+
+    # Create reinforcement learning environment
+    prompts = ["Hello, how can I help you?", "What is the weather like today?", "Tell me a joke."]
+    env = ChatAgentEnv(model, tokenizer, prompts, config['max_seq_length'])
+
+    # Initialize reinforcement learning algorithm
+    rl_model = PPO("MlpPolicy", env, verbose=1)
 
     # Train model
     rng_key = jax.random.PRNGKey(0)
@@ -178,6 +195,9 @@ def main():
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     np.save(intermediate_checkpoint_path, params)
                     logger.info(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+
+            # Reinforcement learning update
+            rl_model.learn(total_timesteps=1000)
 
             eval_metrics = trainer.evaluate(params, eval_dataset)
             epoch_time = time.time() - start_time

@@ -45,8 +45,8 @@ def apply_rotary_pos_emb(x, sincos):
     seq_len = x.shape[1]
     num_heads = x.shape[2]
     head_dim = x.shape[3]
-    cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim // 2))
-    sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim // 2))
+    cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim))
+    sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim))
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")

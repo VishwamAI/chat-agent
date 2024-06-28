@@ -89,6 +89,11 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
     batched_dataset = (create_batch(samples) for samples in more_itertools.chunked(dataset, batch_size))
     return batched_dataset
 
+def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
+    new_data = create_dataset_from_csv(new_data_file, tokenizer, batch_size, max_length)
+    updated_dataset = more_itertools.chain(existing_dataset, new_data)
+    return updated_dataset
+
 def main():
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))

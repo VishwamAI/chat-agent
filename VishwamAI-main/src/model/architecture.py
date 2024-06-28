@@ -45,7 +45,7 @@ def apply_rotary_pos_emb(x, sincos):
     seq_len = x.shape[1]
     num_heads = x.shape[2]
     head_dim = x.shape[3]
-    print(f"Expected reshape dimensions: (1, {seq_len}, {num_heads}, {head_dim})")
+    print(f"Expected reshape dimensions: (1, {seq_len}, {num_heads}, {head_dim // 2})")
     cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim // 2))
     sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim // 2))
     print(f"Reshaped sin shape: {sin.shape}")

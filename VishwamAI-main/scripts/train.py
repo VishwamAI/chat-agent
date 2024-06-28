@@ -216,7 +216,7 @@ def main():
             train_loss = 0
             train_steps = 0
 
-            # Log memory usage at the beginning of the epoch
+            logger.debug(f"Logging memory usage at the beginning of epoch {epoch + 1}")
             log_memory_usage()
 
             for batch in train_dataset:
@@ -228,14 +228,14 @@ def main():
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
-                    # Log memory usage at regular steps
+                    logger.debug(f"Logging memory usage at step {train_steps}")
                     log_memory_usage()
 
-                # Save intermediate checkpoint every 500 steps
+                logger.debug(f"Attempting to save intermediate checkpoint at step {train_steps}")
                 if train_steps % 500 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     np.save(intermediate_checkpoint_path, params)
-                    logger.info(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+                    logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
 
             # Reinforcement learning update
             rl_model.learn(total_timesteps=1000)
@@ -246,7 +246,7 @@ def main():
             logger.info(f"Train Loss: {train_loss / train_steps:.4f}")
             logger.info(f"Eval Metrics: {eval_metrics}")
 
-            # Save checkpoint after each epoch
+            logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             np.save(checkpoint_path, params)
             logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")

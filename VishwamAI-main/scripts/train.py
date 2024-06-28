@@ -241,11 +241,13 @@ def main():
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
                     logger.debug(f"Checkpoint parameters before saving: {params}")
                     try:
-                        np.save(intermediate_checkpoint_path, params)
-                        logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+                        if not os.path.exists(checkpoint_dir):
+                            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
+                        else:
+                            np.save(intermediate_checkpoint_path, params)
+                            logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
                     except Exception as e:
                         logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
-                        logger.debug(f"Exception details: {e}")
                 else:
                     logger.debug(f"Skipping intermediate checkpoint saving at step {train_steps}")
 
@@ -269,14 +271,14 @@ def main():
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
             logger.debug(f"Checkpoint parameters before saving: {params}")
             try:
-                np.save(checkpoint_path, params)
-                logger.debug(f"Checkpoint parameters: {params}")
-                logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
+                if not os.path.exists(checkpoint_dir):
+                    logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
+                else:
+                    np.save(checkpoint_path, params)
+                    logger.debug(f"Checkpoint parameters: {params}")
+                    logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
-                logger.debug(f"Exception details: {e}")
-            else:
-                logger.debug(f"Skipping checkpoint saving after epoch {epoch + 1}")
 
             if trainer._should_stop_early(eval_metrics):
                 logger.info("Early stopping criteria met. Ending training.")
@@ -305,13 +307,16 @@ def main():
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
+    logger.debug(f"Checkpoint parameters before saving: {params}")
     try:
-        np.save(checkpoint_path, params)
-        logger.debug(f"Checkpoint parameters: {params}")
-        logger.info(f"Final checkpoint saved at {checkpoint_path}")
+        if not os.path.exists(checkpoint_dir):
+            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
+        else:
+            np.save(checkpoint_path, params)
+            logger.debug(f"Checkpoint parameters: {params}")
+            logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:
         logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")
-        logger.debug(f"Exception details: {e}")
 
     # Save checkpoint after each epoch
     for epoch in range(config['num_epochs']):

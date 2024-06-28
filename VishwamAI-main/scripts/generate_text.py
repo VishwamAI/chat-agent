@@ -33,8 +33,8 @@ def load_model(config_path, checkpoint_path):
     if isinstance(trained_params, dict):
         params = trained_params
     else:
-        # Convert the loaded parameters to a dictionary if they are not already in that format
-        params = hk.data_structures.to_immutable_dict(trained_params)
+        # Convert the loaded parameters to a Haiku Params object if they are not already in that format
+        params = hk.data_structures.to_immutable_dict(hk.data_structures.to_mutable_dict(trained_params))
 
     return model, params, config
 

@@ -46,8 +46,8 @@ def apply_rotary_pos_emb(x, sincos):
     num_heads = x.shape[2]
     head_dim = x.shape[3]
     print(f"Expected reshape dimensions: (1, {seq_len}, {num_heads}, {head_dim})")
-    cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim // 2))
-    sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim // 2))
+    cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim))
+    sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim))
     print(f"Reshaped sin shape: {sin.shape}")
     print(f"Reshaped cos shape: {cos.shape}")
 
@@ -73,8 +73,8 @@ class RotaryEmbedding(hk.Module):
         inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim, 2) / self.head_dim))
         t = jnp.arange(seq_len)
         freqs = jnp.outer(t, inv_freq)
-        sin = jnp.sin(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
-        cos = jnp.cos(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
+        sin = jnp.sin(freqs).reshape(1, seq_len, self.num_heads, self.head_dim)
+        cos = jnp.cos(freqs).reshape(1, seq_len, self.num_heads, self.head_dim)
         print(f"RotaryEmbedding - sin shape: {sin.shape}")
         print(f"RotaryEmbedding - cos shape: {cos.shape}")
         return sin, cos

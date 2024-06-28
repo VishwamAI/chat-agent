@@ -233,8 +233,11 @@ def main():
                 if train_steps % 500 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
-                    np.save(intermediate_checkpoint_path, params)
-                    logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+                    try:
+                        np.save(intermediate_checkpoint_path, params)
+                        logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
+                    except Exception as e:
+                        logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
@@ -254,8 +257,11 @@ def main():
             logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
-            np.save(checkpoint_path, params)
-            logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
+            try:
+                np.save(checkpoint_path, params)
+                logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
+            except Exception as e:
+                logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
 
             if trainer._should_stop_early(eval_metrics):
                 logger.info("Early stopping criteria met. Ending training.")
@@ -264,8 +270,11 @@ def main():
     except KeyboardInterrupt:
         # Save checkpoint on interruption
         interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted.npy')
-        np.save(interrupted_checkpoint_path, params)
-        logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
+        try:
+            np.save(interrupted_checkpoint_path, params)
+            logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
+        except Exception as e:
+            logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
 
     logger.info("Training process completed.")
 

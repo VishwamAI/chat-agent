@@ -41,12 +41,12 @@ def load_model(config_path, checkpoint_path):
 
     return model, params, config
 
-def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
+def generate_and_evaluate(model, params, tokenizer, input_text, config, max_length=100):
     input_ids = tokenizer.encode(input_text, return_tensors='jax')
 
     @jax.jit
     def generate_step(params, input_ids):
-        model_instance = VishwamAILLM(model.config)
+        model_instance = VishwamAILLM(config)
         return model_instance.generate_with_evaluation(input_ids)
 
     start_time = time.time()
@@ -62,7 +62,7 @@ def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        model_instance = VishwamAILLM(model.config)
+        model_instance = VishwamAILLM(config)
         final_evaluation = model_instance.self_evaluate(generated_text, evaluation_metrics)
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
@@ -99,7 +99,7 @@ def main():
         for i in range(iterations):
             input_text = prompts[i]
             try:
-                generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text)
+                generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text, config)
             except Exception as e:
                 print(f"Error during generate_and_evaluate: {e}")
                 continue

@@ -282,9 +282,6 @@ def main():
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
             logger.debug(f"Checkpoint parameters before saving: {params}")
-            logger.debug(f"Size of parameters: {params.size}")
-            logger.debug(f"Type of parameters: {type(params)}")
-            logger.debug(f"Shape of parameters: {params.shape}")
             try:
                 if not os.path.exists(checkpoint_dir):
                     logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")

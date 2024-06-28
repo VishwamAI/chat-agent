@@ -111,11 +111,13 @@ def main():
 
     def log_memory_usage():
         logger.debug("log_memory_usage function called")
-        memory_usage = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        memory_info = psutil.virtual_memory()
+        memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
+        available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
         timestamp = time.time()
-        logger.debug(f"Memory usage: {memory_usage:.2f} MiB at timestamp: {timestamp}")
+        logger.debug(f"Memory usage: {memory_usage:.2f} MiB, Available memory: {available_memory:.2f} MiB at timestamp: {timestamp}")
         with open(memory_log_file, 'a') as f:
-            f.write(f"{timestamp},{memory_usage:.2f}\n")
+            f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
 
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
@@ -218,13 +220,16 @@ def main():
             log_memory_usage()
 
             for batch in train_dataset:
+                logger.debug(f"Logging memory usage before processing batch {train_steps + 1}")
+                log_memory_usage()
+
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1
 
-                logger.debug(f"Logging memory usage at step {train_steps}")
+                logger.debug(f"Logging memory usage after processing batch {train_steps}")
                 log_memory_usage()
 
                 if train_steps % 100 == 0:

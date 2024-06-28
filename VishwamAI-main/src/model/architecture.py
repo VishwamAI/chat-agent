@@ -29,8 +29,7 @@ def apply_rotary_pos_emb(x, sincos):
 
     memory_usage_before_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before split: {memory_usage_before_split:.2f} MiB")
-    x1 = x[..., :x.shape[-1] // 2]
-    x2 = x[..., x.shape[-1] // 2:]
+    x1, x2 = jnp.split(x, 2, axis=-1)
     memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after split: {memory_usage_after_split:.2f} MiB")
 
@@ -41,8 +40,8 @@ def apply_rotary_pos_emb(x, sincos):
     print(f"Memory usage after rotation: {memory_usage_after_rotation:.2f} MiB")
 
     # Ensure cos and sin are broadcasted to match the shape of x
-    cos = cos.reshape(1, cos.shape[0], 1, cos.shape[1])
-    sin = sin.reshape(1, sin.shape[0], 1, sin.shape[1])
+    cos = jnp.broadcast_to(cos, x.shape)
+    sin = jnp.broadcast_to(sin, x.shape)
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")

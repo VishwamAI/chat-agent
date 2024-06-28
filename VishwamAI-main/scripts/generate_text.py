@@ -45,12 +45,14 @@ def generate_and_evaluate(model, params, tokenizer, input_text, config, max_leng
     input_ids = tokenizer.encode(input_text, return_tensors='jax')
 
     @jax.jit
-    def generate_step(params, input_ids):
-        return model.apply(params, input_ids, is_training=False, method=VishwamAILLM.generate_with_evaluation)
+    def generate_step(params, rng, input_ids):
+        return model.apply(params, rng, input_ids, is_training=False, method=VishwamAILLM.generate_with_evaluation)
+
+    rng = jax.random.PRNGKey(0)  # Initialize RNG
 
     start_time = time.time()
     try:
-        generated_ids, evaluation_metrics = generate_step(params, input_ids)
+        generated_ids, evaluation_metrics = generate_step(params, rng, input_ids)
     except Exception as e:
         print(f"Error during generate_step: {e}")
         raise
@@ -61,7 +63,7 @@ def generate_and_evaluate(model, params, tokenizer, input_text, config, max_leng
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        final_evaluation = model.apply(params, generated_text, evaluation_metrics, is_training=False, method=VishwamAILLM.self_evaluate)
+        final_evaluation = model.apply(params, rng, generated_text, evaluation_metrics, is_training=False, method=VishwamAILLM.self_evaluate)
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise

@@ -40,6 +40,10 @@ def apply_rotary_pos_emb(x, sincos):
     memory_usage_after_rotation = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after rotation: {memory_usage_after_rotation:.2f} MiB")
 
+    # Ensure cos and sin are broadcasted to match the shape of x
+    cos = cos.reshape(1, cos.shape[0], 1, cos.shape[1])
+    sin = sin.reshape(1, sin.shape[0], 1, sin.shape[1])
+
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")
     result = (x * cos) + (x_rotated * sin)

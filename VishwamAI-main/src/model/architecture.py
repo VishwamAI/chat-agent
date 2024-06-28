@@ -45,8 +45,11 @@ def apply_rotary_pos_emb(x, sincos):
     seq_len = x.shape[1]
     num_heads = x.shape[2]
     head_dim = x.shape[3]
+    print(f"Expected reshape dimensions: (1, {seq_len}, {num_heads}, {head_dim // 2})")
     cos = jnp.reshape(cos, (1, seq_len, num_heads, head_dim // 2))
     sin = jnp.reshape(sin, (1, seq_len, num_heads, head_dim // 2))
+    print(f"Reshaped sin shape: {sin.shape}")
+    print(f"Reshaped cos shape: {cos.shape}")
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")
@@ -70,7 +73,10 @@ class RotaryEmbedding(hk.Module):
         t = jnp.arange(seq_len)
         freqs = jnp.outer(t, inv_freq)
         emb = jnp.concatenate((freqs, freqs), axis=-1)
-        return jnp.sin(emb), jnp.cos(emb)
+        sin, cos = jnp.sin(emb), jnp.cos(emb)
+        print(f"RotaryEmbedding - sin shape: {sin.shape}")
+        print(f"RotaryEmbedding - cos shape: {cos.shape}")
+        return sin, cos
 
 class ImprovedAttention(hk.Module):
     def __init__(self, config: Dict):

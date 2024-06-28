@@ -21,7 +21,7 @@ def load_model(config_path, checkpoint_path):
     # Initialize model
     def model_fn(inputs):
         model = VishwamAILLM(config)
-        return model(inputs, is_training=False)
+        return model(inputs)
 
     model = hk.transform(model_fn)
 

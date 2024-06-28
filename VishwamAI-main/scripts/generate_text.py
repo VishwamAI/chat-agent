@@ -44,6 +44,12 @@ def load_model(config_path, checkpoint_path):
         else:
             raise ValueError("Loaded parameters are not in the expected format")
 
+    # Log the structure and dimensions of the loaded parameters
+    print(f"Loaded parameters type: {type(params)}")
+    if isinstance(params, dict):
+        for key, value in params.items():
+            print(f"Key: {key}, Shape: {value.shape}")
+
     return model, params, config
 
 def generate_and_evaluate(model, params, tokenizer, input_text, config, max_length=100):

@@ -26,7 +26,8 @@ def apply_rotary_pos_emb(x, sincos):
 
     sin, cos = sincos
     print(f"apply_rotary_pos_emb - input shape: {x.shape}")
-    rotated_x = rotate_half(x)
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    rotated_x = jnp.concatenate([-x2, x1], axis=-1)
     print(f"apply_rotary_pos_emb - rotated_x shape: {rotated_x.shape}")
     cos = jnp.expand_dims(cos, axis=(0, 2))
     sin = jnp.expand_dims(sin, axis=(0, 2))

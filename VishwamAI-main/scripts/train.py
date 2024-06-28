@@ -95,6 +95,17 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
     return updated_dataset
 
 def main():
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/chat-agent/VishwamAI-main/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
+    def log_memory_usage():
+        memory_usage = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        timestamp = time.time()
+        with open(memory_log_file, 'a') as f:
+            f.write(f"{timestamp},{memory_usage:.2f}\n")
+
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
     with open(config_path, 'r') as f:
@@ -198,17 +209,6 @@ def main():
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
 
-    # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/chat-agent/VishwamAI-main/memory_usage.txt'
-    with open(memory_log_file, 'w') as f:
-        f.write("Timestamp,Memory_Usage(MiB)\n")
-
-    def log_memory_usage():
-        memory_usage = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        timestamp = time.time()
-        with open(memory_log_file, 'a') as f:
-            f.write(f"{timestamp},{memory_usage:.2f}\n")
-
     try:
         for epoch in range(config['num_epochs']):
             start_time = time.time()
@@ -226,10 +226,11 @@ def main():
                 train_loss += loss
                 train_steps += 1
 
+                logger.debug(f"Logging memory usage at step {train_steps}")
+                log_memory_usage()
+
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
-                    logger.debug(f"Logging memory usage at step {train_steps}")
-                    log_memory_usage()
 
                 logger.debug(f"Attempting to save intermediate checkpoint at step {train_steps}")
                 if train_steps % 500 == 0:

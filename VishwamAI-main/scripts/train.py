@@ -101,8 +101,10 @@ def main():
         f.write("Timestamp,Memory_Usage(MiB)\n")
 
     def log_memory_usage():
+        logger.debug("log_memory_usage function called")
         memory_usage = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         timestamp = time.time()
+        logger.debug(f"Memory usage: {memory_usage:.2f} MiB at timestamp: {timestamp}")
         with open(memory_log_file, 'a') as f:
             f.write(f"{timestamp},{memory_usage:.2f}\n")
 

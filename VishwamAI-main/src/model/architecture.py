@@ -20,21 +20,11 @@ def rotate_half(x):
     return result
 
 def apply_rotary_pos_emb(x, sincos):
-    import psutil
-    memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before apply_rotary_pos_emb: {memory_usage_before:.2f} MiB")
-
     sin, cos = sincos
-    print(f"x shape: {x.shape}, cos shape: {cos.shape}, sin shape: {sin.shape}")
     rotated_x = rotate_half(x)
-    print(f"rotated_x shape: {rotated_x.shape}")
     cos = jnp.expand_dims(cos, axis=(0, 2))
     sin = jnp.expand_dims(sin, axis=(0, 2))
     result = (x * cos) + (rotated_x * sin)
-
-    memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after apply_rotary_pos_emb: {memory_usage_after:.2f} MiB")
-
     return result
 
 class RotaryEmbedding(hk.Module):

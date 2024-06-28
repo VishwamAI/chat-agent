@@ -236,6 +236,8 @@ def main():
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
+
+                # Save intermediate checkpoint
                 if train_steps % 500 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
@@ -275,6 +277,7 @@ def main():
             logger.info(f"Train Loss: {train_loss / train_steps:.4f}")
             logger.info(f"Eval Metrics: {eval_metrics}")
 
+            # Save checkpoint after each epoch
             logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")

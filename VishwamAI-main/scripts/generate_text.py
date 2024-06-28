@@ -32,7 +32,7 @@ def load_model(config_path, checkpoint_path):
     return model, trained_params, config
 
 def generate_and_evaluate(model, params, tokenizer, input_text, max_length=100):
-    input_ids = tokenizer.encode(input_text, return_tensors='jnp')
+    input_ids = tokenizer.encode(input_text, return_tensors='jax')
 
     @jax.jit
     def generate_step(params, input_ids):

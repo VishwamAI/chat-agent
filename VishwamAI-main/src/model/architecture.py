@@ -20,37 +20,13 @@ def rotate_half(x):
     return result
 
 def apply_rotary_pos_emb(x, sincos):
-    import psutil
-    memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before apply_rotary_pos_emb: {memory_usage_before:.2f} MiB")
-
     sin, cos = sincos
-    print(f"apply_rotary_pos_emb - input shape: {x.shape}")
-    print(f"apply_rotary_pos_emb - sin shape: {sin.shape}")
-    print(f"apply_rotary_pos_emb - cos shape: {cos.shape}")
-
-    memory_usage_before_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before split: {memory_usage_before_split:.2f} MiB")
-
     def split_and_rotate(x):
         x1, x2 = jnp.split(x, 2, axis=-1)
         return jnp.concatenate([-x2, x1], axis=-1)
 
-    x_rotated = jax.vmap(split_and_rotate)(x)
-
-    memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after split and rotation: {memory_usage_after_split:.2f} MiB")
-
-    memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")
+    x_rotated = jax.checkpoint(jax.vmap(split_and_rotate))(x)
     result = (x * cos) + (x_rotated * sin)
-    memory_usage_after_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after result calculation: {memory_usage_after_result:.2f} MiB")
-    print(f"apply_rotary_pos_emb - result shape: {result.shape}")
-
-    memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after apply_rotary_pos_emb: {memory_usage_after:.2f} MiB")
-
     return result
 
 class RotaryEmbedding(hk.Module):

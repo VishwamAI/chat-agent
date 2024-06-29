@@ -20,6 +20,7 @@ def apply_rotary_pos_emb(x, sincos):
     x_rotated = jnp.concatenate([-x2, x1], axis=-1)
     result = (x * cos) + (x_rotated * sin)
     del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
+    jax.experimental.host_callback.id_tap(lambda _: None, result)  # Ensure result is materialized
     return result
 
 class RotaryEmbedding(hk.Module):

@@ -116,9 +116,6 @@ def main():
         reader = pd.read_csv(csvfile)
         prompts = reader['prompt'].tolist()
 
-    # Pre-tokenize prompts
-    tokenized_prompts = [tokenizer.encode(prompt, return_tensors='jax') for prompt in prompts]
-
     iterations = len(prompts)  # Number of iterations based on the number of prompts
 
     # Open a file to log training loss
@@ -128,7 +125,8 @@ def main():
 
         for i in range(iterations):
             input_text = prompts[i]
-            input_ids = tokenized_prompts[i]
+            # Tokenize the current prompt
+            input_ids = tokenizer.encode(prompts[i], return_tensors='jax')
             try:
                 generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
             except Exception as e:

@@ -109,41 +109,40 @@ def main():
     if isinstance(params, dict):
         print(f"Keys in params: {list(params.keys())}")
 
-    # Open the CSV file to read prompts one by one
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     with open(train_file_path, 'r') as csvfile:
         reader = pd.read_csv(csvfile)
-        prompts = reader['prompt'].tolist()
-
-    iterations = len(prompts)  # Number of iterations based on the number of prompts
+        iterations = len(reader)  # Number of iterations based on the number of prompts
 
     # Open a file to log training loss
     loss_log_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/training_loss.log'))
     with open(loss_log_file, 'w') as log_file:
         log_file.write("Iteration,Input,Generated Text,Self-evaluation,Response Time (ms)\n")
 
-        for i in range(iterations):
-            input_text = prompts[i]
-            # Tokenize the current prompt
-            input_ids = tokenizer.encode(prompts[i], return_tensors='jax')
-            try:
-                generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
-            except Exception as e:
-                print(f"Error during generate_and_evaluate: {e}")
-                continue
-            log_file.write(f"{i + 1},{input_text},{generated_text},{evaluation},{response_time:.2f}\n")
-            print(f"Iteration {i + 1}:")
-            print(f"Input: {input_text}")
-            print(f"Generated text: {generated_text}")
-            print(f"Self-evaluation: {evaluation}")
-            print(f"Response time: {response_time:.2f} ms")
+        with open(train_file_path, 'r') as csvfile:
+            reader = pd.read_csv(csvfile)
+            for i, row in reader.iterrows():
+                input_text = row['prompt']
+                # Tokenize the current prompt
+                input_ids = tokenizer.encode(input_text, return_tensors='jax')
+                try:
+                    generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
+                except Exception as e:
+                    print(f"Error during generate_and_evaluate: {e}")
+                    continue
+                log_file.write(f"{i + 1},{input_text},{generated_text},{evaluation},{response_time:.2f}\n")
+                print(f"Iteration {i + 1}:")
+                print(f"Input: {input_text}")
+                print(f"Generated text: {generated_text}")
+                print(f"Self-evaluation: {evaluation}")
+                print(f"Response time: {response_time:.2f} ms")
 
-            # Ensure unnecessary references are deleted to aid garbage collection
-            del input_ids, generated_text, evaluation, response_time
+                # Ensure unnecessary references are deleted to aid garbage collection
+                del input_ids, generated_text, evaluation, response_time
 
-            # Explicitly call garbage collection
-            import gc
-            gc.collect()
+                # Explicitly call garbage collection
+                import gc
+                gc.collect()
 
 if __name__ == "__main__":
     main()

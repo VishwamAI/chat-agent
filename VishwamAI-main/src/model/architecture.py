@@ -276,7 +276,7 @@ class ImprovedVishwamAIModel(hk.Module):
         if self.config['pad_token_id'] is None:
             raise ValueError("pad_token_id is not set in the configuration.")
         mask = jnp.not_equal(inputs, self.config['pad_token_id']).astype(jnp.float32)
-        mask = mask[:, None, None, :]  # Expand mask dimensions
+        mask = mask[:, None, :, None]  # Expand mask dimensions to match attention tensor's shape
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), dtype=jnp.float32))
         causal_mask = causal_mask[None, None, :, :]  # Expand causal mask dimensions

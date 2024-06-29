@@ -138,6 +138,10 @@ def main():
             print(f"Generated text: {generated_text}")
             print(f"Self-evaluation: {evaluation}")
             print(f"Response time: {response_time:.2f} ms")
+
+            # Ensure unnecessary references are deleted to aid garbage collection
+            del input_ids, generated_text, evaluation, response_time
+
             # Explicitly call garbage collection
             import gc
             gc.collect()

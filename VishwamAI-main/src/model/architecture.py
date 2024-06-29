@@ -95,7 +95,7 @@ class ImprovedAttention(hk.Module):
 
         memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
-        attn = jnp.einsum('bqhd,bkhd->bhqk', q, k) / jnp.sqrt(self.head_dim)
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
         memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
@@ -106,7 +106,7 @@ class ImprovedAttention(hk.Module):
 
         attn = jax.nn.softmax(attn, axis=-1)
 
-        output = jnp.einsum('bhqk,bkhd->bqhd', attn, v)
+        output = jnp.matmul(attn, v)
         return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
 class MathReasoningLayer(hk.Module):
@@ -271,7 +271,7 @@ class ImprovedVishwamAIModel(hk.Module):
         mask = mask[:, None, None, :]  # Adjust mask expansion to match attention tensor's shape
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), dtype=jnp.float32))
-        causal_mask = causal_mask[None, None, :, :]  # Expand dimensions to match mask
+        causal_mask = causal_mask[None, :, :, :]  # Expand dimensions to match mask
         return jnp.broadcast_to(mask, (mask.shape[0], self.config['num_heads'], seq_length, seq_length)) * causal_mask
 
 class VishwamAILLM(hk.Module):

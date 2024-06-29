@@ -74,7 +74,10 @@ def load_model(config_path, checkpoint_path):
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     @jax.jit
     def generate_step(params, rng, input_ids):
-        return model.apply(params, rng, input_ids)
+        print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
+        output = model.apply(params, rng, input_ids)
+        print(f"Shape of output: {output[0].shape}")  # Debugging statement
+        return output
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 

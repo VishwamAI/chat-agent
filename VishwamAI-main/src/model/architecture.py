@@ -100,8 +100,8 @@ class ImprovedAttention(hk.Module):
         print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
         if mask is not None:
-            # Ensure mask shape matches attention tensor's shape
-            mask = jnp.broadcast_to(mask[:, None, :], (mask.shape[0], self.num_heads, seq_len, seq_len))
+            print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
+            print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

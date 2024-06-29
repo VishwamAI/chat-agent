@@ -103,7 +103,7 @@ class ImprovedAttention(hk.Module):
         if mask is not None:
             print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
             print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
-            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
+            mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_len, seq_len))  # Ensure mask is expanded to match attn tensor's shape
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

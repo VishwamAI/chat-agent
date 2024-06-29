@@ -7,17 +7,8 @@ import sympy as sp
 import optax
 
 def rotate_half(x):
-    import psutil
-    memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before rotate_half: {memory_usage_before:.2f} MiB")
-
     x1, x2 = jnp.split(x, 2, axis=-1)
-    result = jnp.concatenate([-x2, x1], axis=-1)
-
-    memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after rotate_half: {memory_usage_after:.2f} MiB")
-
-    return result
+    return jnp.concatenate([-x2, x1], axis=-1)
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
@@ -27,6 +18,7 @@ def apply_rotary_pos_emb(x, sincos):
 
     x_rotated = jax.checkpoint(jax.vmap(split_and_rotate))(x)
     result = (x * cos) + (x_rotated * sin)
+    del x, x_rotated, sin, cos  # Ensure intermediate variables are deleted
     return result
 
 class RotaryEmbedding(hk.Module):

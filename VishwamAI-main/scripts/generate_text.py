@@ -65,6 +65,10 @@ def load_model(config_path, checkpoint_path):
         for key, value in params.items():
             print(f"Key: {key}, Shape: {value.shape}")
 
+    # Debugging statement to log the mask shape
+    dummy_mask = model.apply(params, rng, dummy_input)[1][0]['k']
+    print(f"Shape of dummy_mask: {dummy_mask.shape}")
+
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):

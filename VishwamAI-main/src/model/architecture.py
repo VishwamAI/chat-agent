@@ -20,8 +20,7 @@ def apply_rotary_pos_emb(x, sincos):
 
     x_rotated = jax.vmap(split_and_rotate)(x)
     result = (x * cos) + (x_rotated * sin)
-    del x, x_rotated, sin, cos  # Ensure intermediate variables are deleted
-    del x, x_rotated, sin, cos  # Ensure intermediate variables are deleted
+    del x_rotated, sin, cos  # Ensure intermediate variables are deleted
     return result
 
 class RotaryEmbedding(hk.Module):

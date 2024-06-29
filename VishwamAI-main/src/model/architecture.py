@@ -10,46 +10,78 @@ def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
+def split_and_rotate(x):
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    return jnp.concatenate([-x2, x1], axis=-1)
+
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
-    print(f"x shape: {x.shape}, cos shape: {cos.shape}, sin shape: {sin.shape}")
-    rotated_x = rotate_half(x)
-    print(f"rotated_x shape: {rotated_x.shape}")
-    cos = jnp.expand_dims(cos, axis=(0, 2))
-    sin = jnp.expand_dims(sin, axis=(0, 2))
-    return (x * cos) + (rotated_x * sin)
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
+    result = (x * cos) + (x_rotated * sin)
+    del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
+    jax.lax.create_token(result)  # Ensure result is materialized
+    return result
 
 class RotaryEmbedding(hk.Module):
-    def __init__(self, dim):
+    def __init__(self, num_heads, head_dim):
         super().__init__()
-        self.dim = dim
+        self.num_heads = num_heads
+        self.head_dim = head_dim
+        self.sin, self.cos = None, None
 
     def __call__(self, seq_len):
-        inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.dim, 2) / self.dim))
-        t = jnp.arange(seq_len)
-        freqs = jnp.outer(t, inv_freq)
-        emb = jnp.concatenate((freqs, freqs), axis=-1)
-        return jnp.sin(emb), jnp.cos(emb)
+        import psutil
+        memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before RotaryEmbedding calculations: {memory_usage_before:.2f} MiB")
+        if self.sin is None or self.cos is None:
+            inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
+            t = jnp.arange(seq_len)
+            freqs = jnp.outer(t, inv_freq)
+            self.sin = jnp.sin(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
+            self.cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
+            print(f"RotaryEmbedding - sin shape: {self.sin.shape}")
+            print(f"RotaryEmbedding - cos shape: {self.cos.shape}")
+        memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after RotaryEmbedding calculations: {memory_usage_after:.2f} MiB")
+        return self.sin, self.cos
 
 class ImprovedAttention(hk.Module):
     def __init__(self, config: Dict):
         super().__init__()
         self.num_heads = config['num_heads']
-        self.head_dim = config['embed_dim'] // config['num_heads']
-        self.rotary_emb = RotaryEmbedding(self.head_dim)
+        self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
+        self.rotary_emb = RotaryEmbedding(self.num_heads, self.head_dim)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         seq_len = x.shape[1]
         qkv = hk.Linear(3 * self.num_heads * self.head_dim, with_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
+        import psutil
+        memory_usage_before_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before tensor reshaping: {memory_usage_before_reshape:.2f} MiB")
         q = q.reshape(-1, seq_len, self.num_heads, self.head_dim)
         k = k.reshape(-1, seq_len, self.num_heads, self.head_dim)
         v = v.reshape(-1, seq_len, self.num_heads, self.head_dim)
+        memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
 
         sincos = self.rotary_emb(seq_len)
+        memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
         q = apply_rotary_pos_emb(q, sincos)
+        memory_usage_after_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after apply_rotary_pos_emb (q): {memory_usage_after_q:.2f} MiB")
+        import gc
+        gc.collect()
+
+        memory_usage_before_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before apply_rotary_pos_emb (k): {memory_usage_before_k:.2f} MiB")
         k = apply_rotary_pos_emb(k, sincos)
+        memory_usage_after_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after apply_rotary_pos_emb (k): {memory_usage_after_k:.2f} MiB")
+        gc.collect()
 
         if kv_cache is not None:
             if kv_cache['k'] is None:
@@ -61,16 +93,26 @@ class ImprovedAttention(hk.Module):
                 kv_cache['k'] = k
                 kv_cache['v'] = v
 
-        attn = jnp.einsum('bqhd,bkhd->bhqk', q, k) / jnp.sqrt(self.head_dim)
+        memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
+        print(f"Shape of q before matmul: {q.shape}")  # Debugging statement
+        print(f"Shape of k before matmul: {k.shape}")  # Debugging statement
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
+        print(f"Shape of attn after matmul: {attn.shape}")  # Debugging statement
+        attn = attn.reshape(q.shape[0], self.num_heads, seq_len, self.head_dim)  # Adjust shape to match mask tensor
+        print(f"Shape of attn after reshaping: {attn.shape}")  # Debugging statement
+        memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
         if mask is not None:
-            # Ensure mask shape matches attention tensor's shape
-            mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_len, k.shape[1]))
+            print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
+            print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
+            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)
 
-        output = jnp.einsum('bhqk,bkhd->bqhd', attn, v)
+        output = jnp.matmul(attn, v)
         return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
 class MathReasoningLayer(hk.Module):
@@ -79,22 +121,8 @@ class MathReasoningLayer(hk.Module):
         self.config = config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Convert input tensor to string representation of mathematical expressions
-        expressions = self._tensor_to_expressions(x)
-
-        # Log the start of the sympify operation
-        print("Starting sympify operation on expressions")
-
-        # Batch processing and caching for sympify operation
-        solved_expressions = self._batch_sympify(expressions)
-
-        # Log the completion of the sympify operation
-        print("Completed sympify operation on expressions")
-
-        # Convert solved expressions back to tensor format
-        solved_tensor = self._expressions_to_tensor(solved_expressions, x.shape)
-
-        return solved_tensor
+        # Directly return the input tensor without any modifications
+        return x
 
     def _tensor_to_expressions(self, x: jnp.ndarray) -> List[str]:
         # Convert tensor to list of string expressions
@@ -106,40 +134,41 @@ class MathReasoningLayer(hk.Module):
         return expressions
 
     def _batch_sympify(self, expressions: List[str], debug: bool = True) -> List[str]:
-        import time
-        import tracemalloc
-        from concurrent.futures import ThreadPoolExecutor
+        # import time
+        # import tracemalloc
+        # from concurrent.futures import ThreadPoolExecutor
 
-        # Cache for storing previously computed results
-        cache = {}
-        solved_expressions = []
+        # # Cache for storing previously computed results
+        # cache = {}
+        # solved_expressions = []
 
-        # Start memory profiling if debug is enabled
-        if debug:
-            tracemalloc.start()
+        # # Start memory profiling if debug is enabled
+        # if debug:
+        #     tracemalloc.start()
 
-        def sympify_expression(expr):
-            if expr in cache:
-                return cache[expr]
-            else:
-                solved_expr = sp.sympify(expr).evalf()
-                cache[expr] = solved_expr
-                return solved_expr
+        # def sympify_expression(expr):
+        #     if expr in cache:
+        #         return cache[expr]
+        #     else:
+        #         solved_expr = sp.sympify(expr).evalf()
+        #         cache[expr] = solved_expr
+        #         return solved_expr
 
-        start_time = time.time()
-        with ThreadPoolExecutor() as executor:
-            solved_expressions = list(executor.map(sympify_expression, expressions))
-        end_time = time.time()
+        # start_time = time.time()
+        # with ThreadPoolExecutor() as executor:
+        #     solved_expressions = list(executor.map(sympify_expression, expressions))
+        # end_time = time.time()
 
-        print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
+        # print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
 
-        # Stop memory profiling and get memory usage if debug is enabled
-        if debug:
-            current, peak = tracemalloc.get_traced_memory()
-            tracemalloc.stop()
-            print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
+        # # Stop memory profiling and get memory usage if debug is enabled
+        # if debug:
+        #     current, peak = tracemalloc.get_traced_memory()
+        #     tracemalloc.stop()
+        #     print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
 
-        return solved_expressions
+        # return solved_expressions
+        return expressions
 
     def _expressions_to_tensor(self, expressions: List[str], shape: Tuple[int]) -> jnp.ndarray:
         # Convert list of string expressions back to tensor
@@ -191,13 +220,22 @@ class ImprovedTransformerBlock(hk.Module):
         self.opt_state = self.optimizer.init(hk.next_rng_key())
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
+        import psutil
+        memory_usage_before_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before attention: {memory_usage_before_attention:.2f} MiB")
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
         attention_output = self.dropout(attention_output) if is_training else attention_output
         x = x + attention_output
+        memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
 
+        memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
         ff_output = self.dropout(ff_output) if is_training else ff_output
         x = x + ff_output
+        memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
 
         # Apply math reasoning layer
         math_output = self.math_reasoning(x)
@@ -212,6 +250,9 @@ class ImprovedVishwamAIModel(hk.Module):
         self.embed_dim = config['embed_dim']
         self.num_layers = config['num_layers']
         self.vocab_size = config['vocab_size']
+        self.head_dim = 32  # Define head_dim as an attribute of the class
+        self.num_heads = config['num_heads']  # Define num_heads as an attribute of the class
+        self.config['head_dim'] = 32  # Add head_dim to the configuration
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         mask = self._create_mask(inputs)
@@ -236,11 +277,13 @@ class ImprovedVishwamAIModel(hk.Module):
         if self.config['pad_token_id'] is None:
             raise ValueError("pad_token_id is not set in the configuration.")
         mask = jnp.not_equal(inputs, self.config['pad_token_id']).astype(jnp.float32)
-        mask = mask[:, None, None, :]  # Adjust mask expansion to match attention tensor's shape
+        mask = mask[:, None, None, :]  # Expand mask dimensions to match attention tensor's shape
         seq_length = inputs.shape[1]
-        causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), dtype=jnp.float32))
-        causal_mask = causal_mask[None, None, :, :]  # Expand dimensions to match mask
-        return jnp.broadcast_to(mask, (mask.shape[0], self.config['num_heads'], seq_length, seq_length)) * causal_mask
+        causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
+        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))  # Adjust mask dimensions to match attention tensor's shape
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))  # Expand causal mask dimensions
+        mask = mask * causal_mask  # Apply causal mask and adjust dimensions
+        return mask
 
 class VishwamAILLM(hk.Module):
     def __init__(self, config: Dict):

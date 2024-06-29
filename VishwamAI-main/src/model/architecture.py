@@ -16,9 +16,10 @@ def split_and_rotate(x):
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
-    x_rotated = jax.vmap(split_and_rotate)(x)
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
     result = (x * cos) + (x_rotated * sin)
-    del x_rotated, sin, cos  # Ensure intermediate variables are deleted
+    del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
     return result
 
 class RotaryEmbedding(hk.Module):

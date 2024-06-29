@@ -43,7 +43,7 @@ def apply_rotary_pos_emb(x, sincos):
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")
-    result = (x1 * cos) + (x_rotated * sin)
+    result = (x * cos) + (x_rotated * sin)
     memory_usage_after_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage after result calculation: {memory_usage_after_result:.2f} MiB")
     print(f"apply_rotary_pos_emb - result shape: {result.shape}")

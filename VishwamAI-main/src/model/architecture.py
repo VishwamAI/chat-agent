@@ -279,8 +279,8 @@ class ImprovedVishwamAIModel(hk.Module):
         mask = mask[:, None, :, None]  # Expand mask dimensions to match attention tensor's shape
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), dtype=jnp.float32))
-        causal_mask = causal_mask[None, None, :, :]  # Expand causal mask dimensions
-        mask = jnp.broadcast_to(mask, (mask.shape[0], self.config['num_heads'], seq_length, self.head_dim)) * causal_mask
+        causal_mask = jnp.broadcast_to(causal_mask, (mask.shape[0], self.config['num_heads'], seq_length, seq_length))  # Expand causal mask dimensions
+        mask = jnp.broadcast_to(mask, (mask.shape[0], self.config['num_heads'], seq_length, self.head_dim)) * causal_mask[:, :, :, :self.head_dim]
         return mask
 
 class VishwamAILLM(hk.Module):

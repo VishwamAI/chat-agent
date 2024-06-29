@@ -25,18 +25,20 @@ def apply_rotary_pos_emb(x, sincos):
 class RotaryEmbedding(hk.Module):
     def __init__(self, num_heads, head_dim):
         super().__init__()
-        self.num_heads = num_heads;
-        self.head_dim = head_dim;
+        self.num_heads = num_heads
+        self.head_dim = head_dim
+        self.sin, self.cos = None, None
 
     def __call__(self, seq_len):
-        inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
-        t = jnp.arange(seq_len)
-        freqs = jnp.outer(t, inv_freq)
-        sin = jnp.sin(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-        cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-        print(f"RotaryEmbedding - sin shape: {sin.shape}")
-        print(f"RotaryEmbedding - cos shape: {cos.shape}")
-        return sin, cos
+        if self.sin is None or self.cos is None:
+            inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
+            t = jnp.arange(seq_len)
+            freqs = jnp.outer(t, inv_freq)
+            self.sin = jnp.sin(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
+            self.cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
+            print(f"RotaryEmbedding - sin shape: {self.sin.shape}")
+            print(f"RotaryEmbedding - cos shape: {self.cos.shape}")
+        return self.sin, self.cos
 
 class ImprovedAttention(hk.Module):
     def __init__(self, config: Dict):
@@ -61,12 +63,15 @@ class ImprovedAttention(hk.Module):
         q = apply_rotary_pos_emb(q, sincos)
         memory_usage_after_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after apply_rotary_pos_emb (q): {memory_usage_after_q:.2f} MiB")
+        import gc
+        gc.collect()
 
         memory_usage_before_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before apply_rotary_pos_emb (k): {memory_usage_before_k:.2f} MiB")
         k = apply_rotary_pos_emb(k, sincos)
         memory_usage_after_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after apply_rotary_pos_emb (k): {memory_usage_after_k:.2f} MiB")
+        gc.collect()
 
         if kv_cache is not None:
             if kv_cache['k'] is None:

@@ -69,6 +69,7 @@ def load_model(config_path, checkpoint_path):
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     @jax.jit
+    @jax.checkpoint
     def generate_step(params, rng, input_ids):
         return model.apply(params, rng, input_ids)
 
@@ -91,6 +92,9 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise
+
+    # Ensure unnecessary references are deleted to aid garbage collection
+    del generated_ids, evaluation_metrics
 
     return generated_text, final_evaluation, response_time
 

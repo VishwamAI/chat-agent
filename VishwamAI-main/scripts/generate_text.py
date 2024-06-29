@@ -141,6 +141,9 @@ def main():
             print(f"Generated text: {generated_text}")
             print(f"Self-evaluation: {evaluation}")
             print(f"Response time: {response_time:.2f} ms")
+            # Explicitly call garbage collection
+            import gc
+            gc.collect()
 
 if __name__ == "__main__":
     main()

@@ -105,7 +105,6 @@ class ImprovedAttention(hk.Module):
             print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
             mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
             attn = jnp.where(mask, attn, float('-inf'))
-            attn = attn.reshape(q.shape[0], self.num_heads, seq_len, seq_len)  # Adjust shape back to match original dimensions
 
         attn = jax.nn.softmax(attn, axis=-1)
 

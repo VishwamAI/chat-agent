@@ -69,7 +69,6 @@ def load_model(config_path, checkpoint_path):
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     @jax.jit
-    @jax.checkpoint
     def generate_step(params, rng, input_ids):
         return model.apply(params, rng, input_ids)
 

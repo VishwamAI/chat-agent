@@ -10,14 +10,12 @@ def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
+def split_and_rotate(x):
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    return jnp.concatenate([-x2, x1], axis=-1)
+
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
-
-    @jax.checkpoint
-    def split_and_rotate(x):
-        x1, x2 = jnp.split(x, 2, axis=-1)
-        return jnp.concatenate([-x2, x1], axis=-1)
-
     x_rotated = jax.vmap(split_and_rotate)(x)
     result = (x * cos) + (x_rotated * sin)
     del x_rotated, sin, cos  # Ensure intermediate variables are deleted

@@ -109,8 +109,7 @@ def main():
     if isinstance(params, dict):
         print(f"Keys in params: {list(params.keys())}")
 
-    # Load prompts from the CSV file
-    prompts = []
+    # Open the CSV file to read prompts one by one
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     with open(train_file_path, 'r') as csvfile:
         reader = pd.read_csv(csvfile)

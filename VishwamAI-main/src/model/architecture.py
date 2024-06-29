@@ -251,6 +251,7 @@ class ImprovedVishwamAIModel(hk.Module):
         self.num_layers = config['num_layers']
         self.vocab_size = config['vocab_size']
         self.head_dim = 32  # Define head_dim as an attribute of the class
+        self.num_heads = config['num_heads']  # Define num_heads as an attribute of the class
         self.config['head_dim'] = 32  # Add head_dim to the configuration
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:

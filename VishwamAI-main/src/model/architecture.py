@@ -63,8 +63,8 @@ class RotaryEmbedding(hk.Module):
         inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim, 2) / self.head_dim))
         t = jnp.arange(seq_len)
         freqs = jnp.outer(t, inv_freq)
-        sin = jnp.sin(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
-        cos = jnp.cos(freqs).reshape(1, seq_len, self.num_heads, self.head_dim // 2)
+        sin = jnp.sin(freqs).reshape(1, seq_len, self.num_heads, self.head_dim)
+        cos = jnp.cos(freqs).reshape(1, seq_len, self.num_heads, self.head_dim)
         print(f"RotaryEmbedding - sin shape: {sin.shape}")
         print(f"RotaryEmbedding - cos shape: {cos.shape}")
         return sin, cos

@@ -31,15 +31,15 @@ def apply_rotary_pos_emb(x, sincos):
 
     memory_usage_before_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before split: {memory_usage_before_split:.2f} MiB")
-    x1, x2 = jnp.split(x, 2, axis=-1)
-    memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after split: {memory_usage_after_split:.2f} MiB")
 
-    memory_usage_before_rotation = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before rotation: {memory_usage_before_rotation:.2f} MiB")
-    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
-    memory_usage_after_rotation = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after rotation: {memory_usage_after_rotation:.2f} MiB")
+    def split_and_rotate(x):
+        x1, x2 = jnp.split(x, 2, axis=-1)
+        return jnp.concatenate([-x2, x1], axis=-1)
+
+    x_rotated = jax.vmap(split_and_rotate)(x)
+
+    memory_usage_after_split = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+    print(f"Memory usage after split and rotation: {memory_usage_after_split:.2f} MiB")
 
     memory_usage_before_result = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
     print(f"Memory usage before result calculation: {memory_usage_before_result:.2f} MiB")

@@ -67,9 +67,7 @@ def load_model(config_path, checkpoint_path):
 
     return model, params, config
 
-def generate_and_evaluate(model, params, tokenizer, input_text, config, max_length=100):
-    input_ids = tokenizer.encode(input_text, return_tensors='jax')
-
+def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     @jax.jit
     def generate_step(params, rng, input_ids):
         return model.apply(params, rng, input_ids)
@@ -115,6 +113,9 @@ def main():
         reader = pd.read_csv(csvfile)
         prompts = reader['prompt'].tolist()
 
+    # Pre-tokenize prompts
+    tokenized_prompts = [tokenizer.encode(prompt, return_tensors='jax') for prompt in prompts]
+
     iterations = len(prompts)  # Number of iterations based on the number of prompts
 
     # Open a file to log training loss
@@ -124,8 +125,9 @@ def main():
 
         for i in range(iterations):
             input_text = prompts[i]
+            input_ids = tokenized_prompts[i]
             try:
-                generated_text, evaluation, response_time = generate_and_evaluate(model, params, tokenizer, input_text, config)
+                generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
             except Exception as e:
                 print(f"Error during generate_and_evaluate: {e}")
                 continue

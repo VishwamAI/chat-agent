@@ -31,6 +31,9 @@ class RotaryEmbedding(hk.Module):
         self.sin, self.cos = None, None
 
     def __call__(self, seq_len):
+        import psutil
+        memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before RotaryEmbedding calculations: {memory_usage_before:.2f} MiB")
         if self.sin is None or self.cos is None:
             inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
             t = jnp.arange(seq_len)
@@ -39,6 +42,8 @@ class RotaryEmbedding(hk.Module):
             self.cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
             print(f"RotaryEmbedding - sin shape: {self.sin.shape}")
             print(f"RotaryEmbedding - cos shape: {self.cos.shape}")
+        memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after RotaryEmbedding calculations: {memory_usage_after:.2f} MiB")
         return self.sin, self.cos
 
 class ImprovedAttention(hk.Module):
@@ -53,12 +58,16 @@ class ImprovedAttention(hk.Module):
         qkv = hk.Linear(3 * self.num_heads * self.head_dim, with_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
+        import psutil
+        memory_usage_before_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before tensor reshaping: {memory_usage_before_reshape:.2f} MiB")
         q = q.reshape(-1, seq_len, self.num_heads, self.head_dim)
         k = k.reshape(-1, seq_len, self.num_heads, self.head_dim)
         v = v.reshape(-1, seq_len, self.num_heads, self.head_dim)
+        memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
 
         sincos = self.rotary_emb(seq_len)
-        import psutil
         memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
         q = apply_rotary_pos_emb(q, sincos)
@@ -84,7 +93,11 @@ class ImprovedAttention(hk.Module):
                 kv_cache['k'] = k
                 kv_cache['v'] = v
 
+        memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
         attn = jnp.einsum('bqhd,bkhd->bhqk', q, k) / jnp.sqrt(self.head_dim)
+        memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
         if mask is not None:
             # Ensure mask shape matches attention tensor's shape
@@ -201,13 +214,22 @@ class ImprovedTransformerBlock(hk.Module):
         self.opt_state = self.optimizer.init(hk.next_rng_key())
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
+        import psutil
+        memory_usage_before_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before attention: {memory_usage_before_attention:.2f} MiB")
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
         attention_output = self.dropout(attention_output) if is_training else attention_output
         x = x + attention_output
+        memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
 
+        memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
         ff_output = self.dropout(ff_output) if is_training else ff_output
         x = x + ff_output
+        memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
+        print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
 
         # Apply math reasoning layer
         math_output = self.math_reasoning(x)

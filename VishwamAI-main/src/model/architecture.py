@@ -101,7 +101,7 @@ class ImprovedAttention(hk.Module):
 
         if mask is not None:
             # Ensure mask shape matches attention tensor's shape
-            mask = jnp.broadcast_to(mask[:, None, None, :], (mask.shape[0], self.num_heads, seq_len, seq_len))
+            mask = jnp.broadcast_to(mask[:, None, :], (mask.shape[0], self.num_heads, seq_len, seq_len))
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

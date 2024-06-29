@@ -28,11 +28,26 @@ def load_model(config_path, checkpoint_path):
     # Initialize parameters
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    print(f"Shape of dummy_input: {dummy_input.shape}")
     params = model.init(rng, dummy_input)
+    print(f"Type of initialized params: {type(params)}")
+    if isinstance(params, dict):
+        for key, value in params.items():
+            print(f"Key: {key}, Shape: {value.shape}")
+    elif isinstance(params, jnp.ndarray):
+        print(f"Initialized params shape: {params.shape}")
 
     # Load trained parameters
     with open(checkpoint_path, 'rb') as f:
         trained_params = jnp.load(f, allow_pickle=True)
+
+    # Log the type and structure of the loaded parameters
+    print(f"Loaded trained parameters type: {type(trained_params)}")
+    if isinstance(trained_params, dict):
+        for key, value in trained_params.items():
+            print(f"Key: {key}, Shape: {value.shape}")
+    elif isinstance(trained_params, jnp.ndarray):
+        print(f"Trained parameters shape: {trained_params.shape}")
 
     # Ensure trained_params is a dictionary
     if isinstance(trained_params, dict):
@@ -44,8 +59,8 @@ def load_model(config_path, checkpoint_path):
         else:
             raise ValueError("Loaded parameters are not in the expected format")
 
-    # Log the structure and dimensions of the loaded parameters
-    print(f"Loaded parameters type: {type(params)}")
+    # Log the structure and dimensions of the converted parameters
+    print(f"Converted parameters type: {type(params)}")
     if isinstance(params, dict):
         for key, value in params.items():
             print(f"Key: {key}, Shape: {value.shape}")

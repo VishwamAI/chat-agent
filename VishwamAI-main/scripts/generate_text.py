@@ -77,6 +77,8 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
         print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
         output = model.apply(params, rng, input_ids)
         print(f"Shape of output: {output[0].shape}")  # Debugging statement
+        print(f"Shape of attn before matmul: {output[1]['attn'].shape}")  # Debugging statement
+        print(f"Shape of v before matmul: {output[1]['v'].shape}")  # Debugging statement
         return output
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG

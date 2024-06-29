@@ -95,15 +95,19 @@ class ImprovedAttention(hk.Module):
 
         memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
+        print(f"Shape of q before matmul: {q.shape}")  # Debugging statement
+        print(f"Shape of k before matmul: {k.shape}")  # Debugging statement
         attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
-        attn = attn.reshape(q.shape[0], self.num_heads, seq_len, seq_len)  # Adjust shape to match mask
+        print(f"Shape of attn after matmul: {attn.shape}")  # Debugging statement
+        attn = attn.reshape(q.shape[0], self.num_heads, 32, 32)  # Adjust shape to match mask
+        print(f"Shape of attn after reshaping: {attn.shape}")  # Debugging statement
         memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
         if mask is not None:
             print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
             print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
-            mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_len, seq_len))  # Ensure mask is expanded to match attn tensor's shape
+            mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, 32, 32))  # Ensure mask is expanded to match attn tensor's shape
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

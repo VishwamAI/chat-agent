@@ -72,8 +72,8 @@ def load_model(config_path, checkpoint_path):
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
-    # Convert input_ids to JAX numpy array
-    input_ids = jax.device_put(input_ids)
+    # Convert input_ids to PyTorch tensor
+    input_ids = torch.tensor(input_ids)
     print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
 
     @jax.jit
@@ -137,7 +137,7 @@ def main():
             reader = pd.read_csv(csvfile)
             for i, row in reader.iterrows():
                 input_text = row['prompt']
-                input_ids = tokenizer.encode(input_text, return_tensors='np')  # Tokenize the current prompt and return as JAX numpy array
+                input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize the current prompt and return as PyTorch tensor
                 print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)

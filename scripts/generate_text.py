@@ -142,9 +142,6 @@ def main():
             for i, row in reader.iterrows():
                 input_text = row['prompt']
                 input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize the current prompt and return as PyTorch tensor
-                # Ensure input_ids is a PyTorch tensor and on the correct device
-                device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-                input_ids = input_ids.to(device)
                 print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)

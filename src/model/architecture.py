@@ -6,6 +6,7 @@ from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp
 import optax
+import torch
 
 def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)
@@ -266,6 +267,8 @@ class ImprovedVishwamAIModel(hk.Module):
         # Convert JAX numpy array to list of strings
         inputs = [str(input) for input in inputs.tolist()]
         inputs = self.tokenizer(inputs, padding=True, truncation=True)
+        # Debug print statement to confirm torch import
+        print(f"torch is available: {torch}")
         # Ensure input_ids and attention_mask are correctly formatted as PyTorch tensors
         input_ids = torch.tensor(inputs['input_ids'])
         attention_mask = torch.tensor(inputs['attention_mask'])
@@ -277,11 +280,14 @@ class ImprovedVishwamAIModel(hk.Module):
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
 
+        # Convert input_ids to JAX ndarray
+        input_ids_jax = jnp.array(inputs['input_ids'])
+
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
 
-        mask = self._create_mask(inputs['input_ids'])
+        mask = self._create_mask(input_ids_jax)
 
         if kv_cache is None:
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]

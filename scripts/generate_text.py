@@ -85,6 +85,8 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
 
     start_time = time.time()
     try:
+        # Ensure input_ids is correctly formatted as a PyTorch tensor
+        input_ids = input_ids.to('cpu')
         generated_ids, evaluation_metrics = generate_step(params, rng, input_ids)
     except Exception as e:
         print(f"Error during generate_step: {e}")
@@ -133,8 +135,8 @@ def main():
             for i, row in reader.iterrows():
                 input_text = row['prompt']
                 # Tokenize the current prompt
-                input_ids = tokenizer.encode(input_text, return_tensors='np')  # Tokenize and return as numpy array
-                input_ids = jax.device_put(jnp.array(input_ids).reshape(1, -1))  # Convert to JAX tensor and reshape
+                input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize and return as PyTorch tensor
+                input_ids = input_ids.to('cpu')  # Ensure tensor is on CPU
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:

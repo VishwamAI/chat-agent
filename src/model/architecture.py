@@ -262,10 +262,12 @@ class ImprovedVishwamAIModel(hk.Module):
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Convert JAX numpy array to list of strings
         inputs = [str(input) for input in inputs.tolist()]
-        inputs = self.tokenizer(inputs, return_tensors='pt', padding=True, truncation=True)
+        inputs = self.tokenizer(inputs, padding=True, truncation=True)
+        input_ids = jnp.array(inputs['input_ids'])
+        attention_mask = jnp.array(inputs['attention_mask'])
 
         # Pass inputs through BERT model
-        bert_outputs = self.bert_model(**inputs)
+        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
 
         mask = self._create_mask(inputs['input_ids'])

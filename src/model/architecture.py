@@ -1,13 +1,13 @@
 import jax
 import jax.numpy as jnp
-import haiku as hk
-from transformers import BertModel, BertTokenizer
+from transformers import FlaxBertForSequenceClassification, AutoTokenizer
 from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp
 import optax
 import logging
-import torch
+import flax.linen as nn
+from flax.training import train_state
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -30,39 +30,17 @@ def apply_rotary_pos_emb(x, sincos):
     jax.lax.create_token(result)  # Ensure result is materialized
     return result
 
-class RotaryEmbedding(hk.Module):
-    def __init__(self, num_heads, head_dim):
-        super().__init__()
-        self.num_heads = num_heads
-        self.head_dim = head_dim
-        self.sin, self.cos = None, None
 
-    def __call__(self, seq_len):
-        import psutil
-        memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before RotaryEmbedding calculations: {memory_usage_before:.2f} MiB")
-        if self.sin is None or self.cos is None:
-            inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
-            t = jnp.arange(seq_len)
-            freqs = jnp.outer(t, inv_freq)
-            self.sin = jnp.sin(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-            self.cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-            print(f"RotaryEmbedding - sin shape: {self.sin.shape}")
-            print(f"RotaryEmbedding - cos shape: {self.cos.shape}")
-        memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after RotaryEmbedding calculations: {memory_usage_after:.2f} MiB")
-        return self.sin, self.cos
+class ImprovedAttention(nn.Module):
+    config: Dict
 
-class ImprovedAttention(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.num_heads = config['num_heads']
+    def setup(self):
+        self.num_heads = self.config['num_heads']
         self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
-        self.rotary_emb = RotaryEmbedding(self.num_heads, self.head_dim)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         seq_len = x.shape[1]
-        qkv = hk.Linear(3 * self.num_heads * self.head_dim, with_bias=False)(x)
+        qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
         import psutil
@@ -211,21 +189,22 @@ class MathReasoningLayer(hk.Module):
             problems.append(problem)
         return problems
 
-class ImprovedTransformerBlock(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.attention = ImprovedAttention(config)
-        self.feed_forward = hk.Sequential([
-            hk.Linear(config['ff_dim']),
-            jax.nn.gelu,
-            hk.Linear(config['embed_dim']),
+class ImprovedTransformerBlock(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.attention = ImprovedAttention(self.config)
+        self.feed_forward = nn.Sequential([
+            nn.Dense(self.config['ff_dim']),
+            nn.gelu,
+            nn.Dense(self.config['embed_dim']),
         ])
-        self.math_reasoning = MathReasoningLayer(config)
-        self.layer_norm1 = hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
-        self.layer_norm2 = hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
-        self.dropout = lambda x: hk.dropout(hk.next_rng_key(), config['dropout_rate'], x)
-        self.optimizer = optax.adam(config['learning_rate'])
-        rng_key = hk.next_rng_key()
+        self.math_reasoning = MathReasoningLayer(self.config)
+        self.layer_norm1 = nn.LayerNorm()
+        self.layer_norm2 = nn.LayerNorm()
+        self.dropout = nn.Dropout(self.config['dropout_rate'])
+        self.optimizer = optax.adam(self.config['learning_rate'])
+        rng_key = jax.random.PRNGKey(0)
         logger.debug(f"RNG key type: {type(rng_key)}")
         logger.debug(f"RNG key value: {rng_key}")
         self.opt_state = self.optimizer.init(rng_key)
@@ -235,7 +214,7 @@ class ImprovedTransformerBlock(hk.Module):
         memory_usage_before_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before attention: {memory_usage_before_attention:.2f} MiB")
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
-        attention_output = self.dropout(attention_output) if is_training else attention_output
+        attention_output = self.dropout(attention_output, deterministic=not is_training)
         x = x + attention_output
         memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
@@ -246,7 +225,7 @@ class ImprovedTransformerBlock(hk.Module):
         memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
-        ff_output = self.dropout(ff_output) if is_training else ff_output
+        ff_output = self.dropout(ff_output, deterministic=not is_training)
         x = x + ff_output
         memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
@@ -263,20 +242,20 @@ class ImprovedTransformerBlock(hk.Module):
 
         return x
 
-class ImprovedVishwamAIModel(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
-        self.embed_dim = config['embed_dim']
-        self.num_layers = config['num_layers']
-        self.vocab_size = config['vocab_size']
+class ImprovedVishwamAIModel(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.embed_dim = self.config['embed_dim']
+        self.num_layers = self.config['num_layers']
+        self.vocab_size = self.config['vocab_size']
         self.head_dim = 32  # Define head_dim as an attribute of the class
-        self.num_heads = config['num_heads']  # Define num_heads as an attribute of the class
+        self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
         self.config['head_dim'] = 32  # Add head_dim to the configuration
 
-        # Instantiate BERT model and tokenizer
-        self.bert_model = BertModel.from_pretrained('bert-base-uncased')
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        # Instantiate a compatible JAX-based BERT model and tokenizer
+        self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
+        self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor
@@ -296,11 +275,7 @@ class ImprovedVishwamAIModel(hk.Module):
         # Ensure input_ids remains a JAX numpy array
         input_ids = jax.device_put(input_ids)
 
-        # Convert input_ids to PyTorch tensor before passing to BERT model
-        input_ids = torch.tensor(input_ids)
-        attention_mask = torch.tensor(attention_mask)
-
-        # Pass inputs through BERT model
+        # Pass inputs through the JAX-based BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
 
@@ -318,7 +293,7 @@ class ImprovedVishwamAIModel(hk.Module):
         # Log the final output shape and type
         logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")
 
-        return hk.Linear(self.vocab_size)(x), kv_cache
+        return nn.Dense(self.vocab_size)(x), kv_cache
 
     def _embed(self, x: jnp.ndarray) -> jnp.ndarray:
         embedding_matrix = hk.get_parameter("embedding_matrix",
@@ -339,12 +314,12 @@ class ImprovedVishwamAIModel(hk.Module):
         mask = mask * causal_mask  # Apply causal mask and adjust dimensions
         return mask
 
-class VishwamAILLM(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
-        self.transformer = ImprovedVishwamAIModel(config)
-        self.lm_head = hk.Linear(config['vocab_size'])
+class VishwamAILLM(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.transformer = ImprovedVishwamAIModel(self.config)
+        self.lm_head = nn.Dense(self.config['vocab_size'])
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
@@ -356,7 +331,7 @@ class VishwamAILLM(hk.Module):
         for _ in range(max_length - input_ids.shape[1]):
             logits, _ = self(generated_ids, is_training=False)
             next_token_logits = logits[:, -1, :] / temperature
-            next_token = jax.random.categorical(hk.next_rng_key(), next_token_logits, axis=-1)
+            next_token = jax.random.categorical(jax.random.PRNGKey(0), next_token_logits, axis=-1)
             generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
         return generated_ids
 
@@ -368,7 +343,7 @@ class VishwamAILLM(hk.Module):
             logits, kv_cache = self(generated_ids, is_training=False, kv_cache=kv_cache)
             next_token_logits = logits[:, -1, :] / temperature
             next_token_probs = jax.nn.softmax(next_token_logits, axis=-1)
-            next_token = jax.random.categorical(hk.next_rng_key(), next_token_logits, axis=-1)
+            next_token = jax.random.categorical(jax.random.PRNGKey(0), next_token_logits, axis=-1)
             generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
 
             # Calculate log probability of the chosen token

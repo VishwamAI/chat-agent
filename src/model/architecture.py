@@ -7,6 +7,7 @@ from functools import partial
 import sympy as sp
 import optax
 import logging
+import torch
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -271,9 +272,9 @@ class ImprovedVishwamAIModel(hk.Module):
         # Convert JAX numpy array to list of strings
         inputs = [str(input) for input in inputs.tolist()]
         inputs = self.tokenizer(inputs, padding=True, truncation=True)
-        # Ensure input_ids and attention_mask are correctly formatted as JAX tensors
-        input_ids = jnp.array(inputs['input_ids'])
-        attention_mask = jnp.array(inputs['attention_mask'])
+        # Ensure input_ids and attention_mask are correctly formatted as PyTorch tensors
+        input_ids = torch.tensor(inputs['input_ids'])
+        attention_mask = torch.tensor(inputs['attention_mask'])
 
         # Ensure input_ids is correctly shaped as a 2D tensor
         input_ids = input_ids.reshape(-1, input_ids.shape[-1])
@@ -286,17 +287,11 @@ class ImprovedVishwamAIModel(hk.Module):
         logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
         logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
 
-        # Convert input_ids to JAX ndarray
-        input_ids_jax = jnp.array(inputs['input_ids'])
-
-        # Ensure input_ids_jax is correctly shaped as a 2D tensor
-        input_ids_jax = input_ids_jax.reshape(-1, input_ids_jax.shape[-1])
-
         # Pass inputs through BERT model
-        bert_outputs = self.bert_model(input_ids=input_ids_jax, attention_mask=attention_mask)
+        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
 
-        mask = self._create_mask(input_ids_jax)
+        mask = self._create_mask(input_ids)
 
         if kv_cache is None:
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]

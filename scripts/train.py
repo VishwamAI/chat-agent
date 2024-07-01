@@ -239,6 +239,8 @@ def main():
         logger.debug(f"dummy_input: {dummy_input}")
         if 'model_params' in locals():
             logger.debug(f"model_params: {model_params}")
+        if 'optimizer' in locals():
+            logger.debug(f"optimizer: {optimizer}")
         raise
 
     # Initialize trainer

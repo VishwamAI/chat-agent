@@ -1,7 +1,8 @@
-# VishwamAI
+# VishwamAI Documentation
 
+## Overview
 
-VishwamAI is an advanced language model based on the Transformer architecture, designed for various natural language processing tasks.
+VishwamAI is an advanced language model based on the Transformer architecture, designed for various natural language processing tasks. The model aims for 100% accuracy in the MMLU benchmark, focusing on mathematical reasoning and other benchmarks. It integrates features like image to text, PDF to text, summarization, and video to text.
 
 ## Installation
 
@@ -18,7 +19,7 @@ VishwamAI is an advanced language model based on the Transformer architecture, d
 
 ## Usage
 
-### Training the model
+### Training the Model
 
 To train the VishwamAI model, run:
 
@@ -28,7 +29,7 @@ python scripts/train.py
 
 This script will load the configuration from `configs/default_config.yaml`, initialize the model and datasets, and start the training process.
 
-### Generating text
+### Generating Text
 
 To generate text using a trained model, use:
 
@@ -36,7 +37,7 @@ To generate text using a trained model, use:
 python scripts/generate_text.py --prompt "Your prompt here" --max_length 100
 ```
 
-### Evaluating the model
+### Evaluating the Model
 
 To evaluate the model on a test dataset, run:
 
@@ -47,6 +48,24 @@ python scripts/evaluate.py --test_file path/to/test/file.txt
 ## Configuration
 
 You can modify the model and training configuration by editing the `configs/default_config.yaml` file.
+
+## Features
+
+### Image to Text
+
+The `image_to_text` function extracts text from image files using Tesseract OCR. It supports `.png`, `.jpg`, and `.jpeg` formats.
+
+### PDF to Text
+
+The `pdf_to_text` function extracts text from PDF files using PyMuPDF.
+
+### Summarization
+
+The `summarize_text` function summarizes text using a pre-trained summarization model from Hugging Face.
+
+### Video to Text
+
+The `video_to_text` function (to be implemented) will extract text from video files.
 
 ## Documentation
 
@@ -59,14 +78,3 @@ Contributions to VishwamAI are welcome! Please refer to the `CONTRIBUTING.md` fi
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-```
-
-This structure and these files provide a solid foundation for your improved VishwamAI model. The code is more modular and organized, making it easier to maintain and extend. The `README.md` file gives users an overview of how to use your model.
-
-To use this improved version:
-
-1. Set up the folder structure as shown above.
-2. Copy the provided code into their respective files.
-3. Implement any missing functions (e.g., evaluation logic, text generation).
-4. Add necessary dependencies to `requirements.txt`.
-5. Create appropriate documentation in the `docs/` directory.

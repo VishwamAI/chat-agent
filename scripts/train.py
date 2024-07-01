@@ -284,9 +284,13 @@ def main():
                 log_memory_usage()
 
                 batch['input_ids'] = jnp.array(batch['input_ids'])
+                logger.debug(f"Input IDs after conversion to JAX array: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
+                logger.debug(f"Input IDs after preprocessing: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
+                logger.debug(f"Input IDs after math preprocessing: {batch['input_ids']}")
                 input_shape = batch['input_ids'].shape
+                logger.debug(f"Input shape: {input_shape}")
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1

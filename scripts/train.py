@@ -176,7 +176,15 @@ def main():
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
-    opt_state = optimizer.init(model.init(jax.random.PRNGKey(0), jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)))
+    logger.debug(f"Optimizer initialized: {optimizer}")
+
+    # Initialize optimizer state
+    try:
+        opt_state = optimizer.init(model.init(jax.random.PRNGKey(0), jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)))
+        logger.debug(f"Optimizer state initialized: {opt_state}")
+    except TypeError as e:
+        logger.error(f"TypeError during optimizer state initialization: {e}")
+        raise
 
     # Initialize trainer
     trainer = VishwamAITrainer(model, config, optimizer, opt_state)

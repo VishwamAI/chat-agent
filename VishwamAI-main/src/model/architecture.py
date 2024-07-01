@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
 import haiku as hk
+from transformers import BertModel, BertTokenizer
 from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp
@@ -254,9 +255,19 @@ class ImprovedVishwamAIModel(hk.Module):
         self.num_heads = config['num_heads']  # Define num_heads as an attribute of the class
         self.config['head_dim'] = 32  # Add head_dim to the configuration
 
+        # Instantiate BERT model and tokenizer
+        self.bert_model = BertModel.from_pretrained('bert-base-uncased')
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
-        mask = self._create_mask(inputs)
-        x = self._embed(inputs)
+        # Tokenize inputs using BERT tokenizer
+        inputs = self.tokenizer(inputs, return_tensors='jax', padding=True, truncation=True)
+
+        # Pass inputs through BERT model
+        bert_outputs = self.bert_model(**inputs)
+        x = bert_outputs.last_hidden_state
+
+        mask = self._create_mask(inputs['input_ids'])
 
         if kv_cache is None:
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]

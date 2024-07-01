@@ -261,7 +261,8 @@ class ImprovedVishwamAIModel(hk.Module):
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Convert JAX numpy array to list of strings
-        inputs = self.tokenizer(inputs.tolist(), return_tensors='jax', padding=True, truncation=True)
+        inputs = [str(input) for input in inputs.tolist()]
+        inputs = self.tokenizer(inputs, return_tensors='pt', padding=True, truncation=True)
 
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(**inputs)

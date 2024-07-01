@@ -72,8 +72,8 @@ def load_model(config_path, checkpoint_path):
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
-    # Convert input_ids to PyTorch tensor
-    input_ids = torch.tensor(input_ids)
+    # Ensure input_ids are JAX arrays
+    input_ids = jnp.array(input_ids)
     print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
 
     @jax.jit

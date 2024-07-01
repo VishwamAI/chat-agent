@@ -128,7 +128,8 @@ class MathReasoningLayer(hk.Module):
         self.config = config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Directly return the input tensor without any modifications
+        # Log the shape and type of input x
+        logger.debug(f"MathReasoningLayer input type: {type(x)}, shape: {x.shape}")
         return x
 
     def _tensor_to_expressions(self, x: jnp.ndarray) -> List[str]:
@@ -239,6 +240,9 @@ class ImprovedTransformerBlock(hk.Module):
         memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
 
+        # Log the shape and type of attention_output
+        logger.debug(f"attention_output type: {type(attention_output)}, shape: {attention_output.shape}")
+
         memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
@@ -247,9 +251,15 @@ class ImprovedTransformerBlock(hk.Module):
         memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
 
+        # Log the shape and type of ff_output
+        logger.debug(f"ff_output type: {type(ff_output)}, shape: {ff_output.shape}")
+
         # Apply math reasoning layer
         math_output = self.math_reasoning(x)
         x = x + math_output
+
+        # Log the shape and type of math_output
+        logger.debug(f"math_output type: {type(math_output)}, shape: {math_output.shape}")
 
         return x
 
@@ -283,12 +293,15 @@ class ImprovedVishwamAIModel(hk.Module):
         logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
         logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
 
-        # Convert input_ids to a JAX numpy array
-        input_ids = jax.device_put(input_ids)
+        # Ensure input_ids remains a PyTorch tensor
+        input_ids = torch.tensor(input_ids)
 
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
+
+        # Log the shape and type of the BERT model output
+        logger.debug(f"BERT model output type: {type(x)}, shape: {x.shape}")
 
         mask = self._create_mask(input_ids)
 
@@ -297,6 +310,9 @@ class ImprovedVishwamAIModel(hk.Module):
 
         for i in range(self.num_layers):
             x = ImprovedTransformerBlock(self.config)(x, mask, kv_cache[i], is_training)
+
+        # Log the final output shape and type
+        logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")
 
         return hk.Linear(self.vocab_size)(x), kv_cache
 

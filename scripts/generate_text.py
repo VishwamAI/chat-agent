@@ -135,8 +135,8 @@ def main():
             for i, row in reader.iterrows():
                 input_text = row['prompt']
                 # Tokenize the current prompt
-                input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize and return as PyTorch tensor
-                input_ids = input_ids.to('cpu')  # Ensure tensor is on CPU
+                input_ids = tokenizer.encode(input_text, return_tensors='np')  # Tokenize and return as NumPy array
+                input_ids = jax.device_put(jnp.array(input_ids))  # Convert to JAX tensor
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:

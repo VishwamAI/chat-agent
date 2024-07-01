@@ -73,9 +73,8 @@ def load_model(config_path, checkpoint_path):
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
-    # Convert input_ids to PyTorch tensor and ensure it is on the correct device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    input_ids = torch.tensor(input_ids, device=device)
+    # Convert input_ids to JAX numpy array
+    input_ids = jax.device_put(input_ids)
     print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
 
     @jax.jit
@@ -85,8 +84,7 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
         x = bert_outputs.last_hidden_state
 
         # Convert BERT output back to JAX numpy array
-        x = jnp.array(x.detach().cpu().numpy())
-
+        x = jnp.array(x)
         print(f"Shape of output: {x.shape}")  # Debugging statement
         return x
 

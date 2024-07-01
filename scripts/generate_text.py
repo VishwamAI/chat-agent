@@ -133,7 +133,8 @@ def main():
             for i, row in reader.iterrows():
                 input_text = row['prompt']
                 # Tokenize the current prompt
-                input_ids = jax.device_put(tokenizer.encode(input_text, return_tensors='np'))
+                input_ids = tokenizer.encode(input_text)
+                input_ids = jax.device_put(jnp.array(input_ids).reshape(1, -1))  # Convert to JAX tensor and reshape
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:
@@ -152,6 +153,9 @@ def main():
                 # Explicitly call garbage collection
                 import gc
                 gc.collect()
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

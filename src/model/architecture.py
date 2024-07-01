@@ -271,10 +271,10 @@ class ImprovedVishwamAIModel(hk.Module):
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Convert JAX numpy array to list of strings
         inputs = [str(input) for input in inputs.tolist()]
-        inputs = self.tokenizer(inputs, padding=True, truncation=True)
+        inputs = self.tokenizer(inputs, padding=True, truncation=True, return_tensors='pt')
         # Ensure input_ids and attention_mask are correctly formatted as JAX tensors
-        input_ids = jax.device_put(inputs['input_ids'])
-        attention_mask = jax.device_put(inputs['attention_mask'])
+        input_ids = jax.device_put(jnp.array(inputs['input_ids'].numpy()))
+        attention_mask = jax.device_put(jnp.array(inputs['attention_mask'].numpy()))
 
         # Ensure input_ids is correctly shaped as a 2D tensor
         input_ids = input_ids.reshape(-1, input_ids.shape[-1])

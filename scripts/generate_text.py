@@ -139,7 +139,7 @@ def main():
             reader = pd.read_csv(csvfile)
             for i, row in reader.iterrows():
                 input_text = row['prompt']
-                input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize the current prompt and return as PyTorch tensor
+                input_ids = tokenizer.encode(input_text, return_tensors='np')  # Tokenize the current prompt and return as JAX numpy array
                 print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)

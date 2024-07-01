@@ -285,6 +285,9 @@ class ImprovedVishwamAIModel(hk.Module):
         # Convert input_ids to a JAX numpy array
         input_ids = jax.device_put(input_ids)
 
+        # Convert input_ids to a PyTorch tensor
+        input_ids = torch.tensor(input_ids, dtype=torch.long)
+
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state

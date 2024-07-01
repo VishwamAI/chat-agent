@@ -7,7 +7,6 @@ from functools import partial
 import sympy as sp
 import optax
 import logging
-import torch
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -269,15 +268,11 @@ class ImprovedVishwamAIModel(hk.Module):
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
-        # Convert JAX numpy array to list of strings
-        inputs = [str(input) for input in inputs.tolist()]
-        inputs = self.tokenizer(inputs, padding=True, truncation=True, return_tensors='pt')
-        # Ensure input_ids and attention_mask are correctly formatted as JAX tensors
-        input_ids = jax.device_put(jnp.array(inputs['input_ids'].numpy()))
-        attention_mask = jax.device_put(jnp.array(inputs['attention_mask'].numpy()))
+        # Ensure input_ids are correctly shaped as a 2D tensor
+        input_ids = jax.device_put(inputs).reshape(-1, inputs.shape[-1])
 
-        # Ensure input_ids is correctly shaped as a 2D tensor
-        input_ids = input_ids.reshape(-1, input_ids.shape[-1])
+        # Create attention_mask directly from input_ids
+        attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
 
         # Check if input_ids is a valid tensor with the shape attribute
         if not hasattr(input_ids, 'shape'):

@@ -223,6 +223,7 @@ def main():
                 logger.debug(f"Logging memory usage before processing batch {train_steps + 1}")
                 log_memory_usage()
 
+                batch['input_ids'] = jnp.array(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)

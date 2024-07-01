@@ -1,0 +1,24 @@
+What is 44 + 99?
+What is 45 + 29?
+What is 19 + 89?
+What is 36 + 22?
+What is 66 + 90?
+What is 23 + 78?
+What is 82 + 20?
+What is 5 + 30?
+What is 35 + 15?
+What is 7 + 16?
+Solve for x: 1x + 7 = 0
+Solve for x: 8x + 10 = 0
+Solve for x: 5x + 6 = 0
+Solve for x: 4x + 8 = 0
+Solve for x: 6x + 7 = 0
+Solve for x: 7x + 1 = 0
+Solve for x: 4x + 9 = 0
+Solve for x: 7x + 6 = 0
+Solve for x: 5x + 9 = 0
+Solve for x: 7x + 6 = 0
+Differentiate the function: f(x) = x^2 + 3x + 2
+Integrate the function: f(x) = 2x + 1
+Solve the system of equations: 2x + 3y = 5, 4x - y = 3
+Find the roots of the quadratic equation: x^2 - 4x + 4 = 0

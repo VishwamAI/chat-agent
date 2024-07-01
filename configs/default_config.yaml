@@ -1,0 +1,20 @@
+# Model configuration
+embed_dim: 2048
+num_heads: 32
+num_layers: 24
+vocab_size: 50000
+dropout_rate: 0.1
+ff_dim: 8192
+pad_token_id: 50256
+
+# Training configuration
+learning_rate: 1e-4
+weight_decay: 0.01
+batch_size: 8  # Reduced batch size from 32 to 8
+num_epochs: 10
+max_seq_length: 1024  # Reduced max sequence length from 2048 to 1024
+
+# Data configuration
+train_file: "data/processed/train.txt"
+eval_file: "/home/ubuntu/chat-agent/VishwamAI-main/scripts/evaluation_problems.txt"
+tokenizer_name: "gpt2"

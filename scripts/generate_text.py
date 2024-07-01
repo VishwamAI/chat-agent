@@ -107,8 +107,8 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     return generated_text, final_evaluation, response_time
 
 def main():
-    config_path = '/home/ubuntu/chat-agent/VishwamAI-main/configs/default_config.yaml'
-    checkpoint_path = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints/model_checkpoint.npy'  # Updated to match the expected checkpoint file name
+    config_path = '/home/ubuntu/chat-agent/configs/default_config.yaml'
+    checkpoint_path = '/home/ubuntu/chat-agent/checkpoints/model_checkpoint.npy'  # Updated to match the expected checkpoint file name
 
     model, params, config = load_model(config_path, checkpoint_path)
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])

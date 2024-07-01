@@ -184,13 +184,20 @@ def main():
         rng_key = jax.random.PRNGKey(0)
         dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
         model_params = model.init(rng_key, dummy_input)
+        logger.debug(f"Model parameters initialized: {model_params}")
+        if not isinstance(model_params, dict):
+            raise TypeError(f"model_params is not a dictionary, but a {type(model_params)}")
+        logger.debug(f"Model parameters type: {type(model_params)}")
+        logger.debug(f"Model parameters structure: {model_params}")
+        logger.debug(f"Model parameters before optimizer init: {model_params}")
         opt_state = optimizer.init(model_params)
         logger.debug(f"Optimizer state initialized: {opt_state}")
     except TypeError as e:
         logger.error(f"TypeError during optimizer state initialization: {e}")
         logger.debug(f"rng_key: {rng_key}")
         logger.debug(f"dummy_input: {dummy_input}")
-        logger.debug(f"model_params: {model_params}")
+        if 'model_params' in locals():
+            logger.debug(f"model_params: {model_params}")
         raise
 
     # Initialize trainer
@@ -242,6 +249,7 @@ def main():
                 batch['input_ids'] = jnp.array(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
+                input_shape = batch['input_ids'].shape
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1
@@ -354,9 +362,6 @@ def main():
     logger.info("Training process completed.")
 
     # Save trained parameters
-    model.save_pretrained('/home/ubuntu/chat-agent/VishwamAI-main/saved_models')
-    logger.info("Trained parameters saved.")
-
     # Save final checkpoint
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)

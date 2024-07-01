@@ -266,6 +266,10 @@ class ImprovedVishwamAIModel(hk.Module):
         input_ids = jnp.array(inputs['input_ids'])
         attention_mask = jnp.array(inputs['attention_mask'])
 
+        # Ensure input_ids and attention_mask are correctly formatted as tensors
+        input_ids = jax.device_put(input_ids)
+        attention_mask = jax.device_put(attention_mask)
+
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state

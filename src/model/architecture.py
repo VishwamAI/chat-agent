@@ -8,6 +8,7 @@ import optax
 import logging
 import flax.linen as nn
 from flax.training import train_state
+import haiku as hk  # Add this import statement
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

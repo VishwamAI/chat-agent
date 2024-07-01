@@ -282,6 +282,9 @@ class ImprovedVishwamAIModel(hk.Module):
         logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
         logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
 
+        # Convert input_ids to a JAX numpy array
+        input_ids = jax.device_put(input_ids)
+
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state

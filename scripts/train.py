@@ -216,8 +216,6 @@ def main():
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
     logger.debug(f"Optimizer initialized: {optimizer}")
-
-    # Initialize optimizer state
     opt_state = None
     try:
         rng_key = jax.random.PRNGKey(0)

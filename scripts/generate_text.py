@@ -5,7 +5,6 @@ import sys
 import os
 import time
 import pandas as pd
-import torch  # Import the torch library
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -83,9 +82,8 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
         bert_outputs = model.apply(params, rng, input_ids)
         x = bert_outputs.last_hidden_state
 
-        # Convert BERT output back to JAX numpy array
-        x = jnp.array(x)
-        print(f"Shape of output: {x.shape}")  # Debugging statement
+        # Debugging statement to log the shape of the output
+        print(f"Shape of output: {x.shape}")
         return x
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG

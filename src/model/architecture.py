@@ -7,6 +7,11 @@ from functools import partial
 import sympy as sp
 import optax
 import torch
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)

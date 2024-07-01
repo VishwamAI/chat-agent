@@ -220,6 +220,7 @@ def main():
     try:
         rng_key = jax.random.PRNGKey(0)
         dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
         model_params = model.init(rng_key, dummy_input)
         logger.debug(f"Model parameters initialized: {model_params}")
         if not isinstance(model_params, dict):
@@ -231,6 +232,7 @@ def main():
         if isinstance(model_params, dict):
             # Convert model_params to a dictionary if it is not already
             model_params = hk.data_structures.to_immutable_dict(model_params)
+            logger.debug(f"Model parameters after conversion to immutable dict: {model_params}")
             opt_state = optimizer.init(model_params)
         else:
             raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")

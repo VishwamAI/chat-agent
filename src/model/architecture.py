@@ -6,7 +6,6 @@ from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp
 import optax
-import torch
 import logging
 
 # Set up logging

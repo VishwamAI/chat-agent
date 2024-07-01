@@ -132,9 +132,7 @@ def main():
             reader = pd.read_csv(csvfile)
             for i, row in reader.iterrows():
                 input_text = row['prompt']
-                # Tokenize the current prompt
-                input_ids = tokenizer.encode(input_text)  # Tokenize the current prompt
-                input_ids = jax.device_put(jnp.array(input_ids))  # Convert to JAX tensor
+                input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize the current prompt and return as PyTorch tensor
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:

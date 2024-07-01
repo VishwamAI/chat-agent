@@ -269,7 +269,7 @@ class ImprovedVishwamAIModel(hk.Module):
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor
-        input_ids = jax.device_put(inputs).reshape(-1, inputs.shape[-1])
+        input_ids = inputs.reshape(-1, inputs.shape[-1])
 
         # Create attention_mask directly from input_ids
         attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)

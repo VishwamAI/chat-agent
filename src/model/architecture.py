@@ -7,6 +7,7 @@ from functools import partial
 import sympy as sp
 import optax
 import logging
+import torch
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

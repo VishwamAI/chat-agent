@@ -252,7 +252,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.vocab_size = self.config['vocab_size']
         self.head_dim = 32  # Define head_dim as an attribute of the class
         self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
-        self.config['head_dim'] = 32  # Add head_dim to the configuration
+        self.config = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
 
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')

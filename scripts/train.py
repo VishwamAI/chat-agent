@@ -227,7 +227,11 @@ def main():
         logger.debug(f"Model parameters type: {type(model_params)}")
         logger.debug(f"Model parameters structure: {model_params}")
         logger.debug(f"Model parameters before optimizer init: {model_params}")
-        opt_state = optimizer.init(model_params)
+        # Ensure model_params is a dictionary
+        if isinstance(model_params, dict):
+            opt_state = optimizer.init(model_params)
+        else:
+            raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")
         logger.debug(f"Optimizer state initialized: {opt_state}")
     except TypeError as e:
         logger.error(f"TypeError during optimizer state initialization: {e}")

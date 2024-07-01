@@ -282,6 +282,10 @@ class ImprovedVishwamAIModel(hk.Module):
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
 
+        # Log the types and values of input_ids and attention_mask
+        logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
+        logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
+
         # Convert input_ids to JAX ndarray
         input_ids_jax = jnp.array(inputs['input_ids'])
 

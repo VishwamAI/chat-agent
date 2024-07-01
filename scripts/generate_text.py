@@ -5,6 +5,7 @@ import sys
 import os
 import time
 import pandas as pd
+import torch  # Import the torch library
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -72,14 +73,22 @@ def load_model(config_path, checkpoint_path):
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
+    # Convert input_ids to PyTorch tensor and ensure it is on the correct device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    input_ids = torch.tensor(input_ids, device=device)
+    print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
+
     @jax.jit
     def generate_step(params, rng, input_ids):
-        print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
-        output = model.apply(params, rng, input_ids)
-        print(f"Shape of output: {output[0].shape}")  # Debugging statement
-        print(f"Shape of attn before matmul: {output[1]['attn'].shape}")  # Debugging statement
-        print(f"Shape of v before matmul: {output[1]['v'].shape}")  # Debugging statement
-        return output
+        # Pass inputs through BERT model
+        bert_outputs = model.apply(params, rng, input_ids)
+        x = bert_outputs.last_hidden_state
+
+        # Convert BERT output back to JAX numpy array
+        x = jnp.array(x.detach().cpu().numpy())
+
+        print(f"Shape of output: {x.shape}")  # Debugging statement
+        return x
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 
@@ -133,6 +142,10 @@ def main():
             for i, row in reader.iterrows():
                 input_text = row['prompt']
                 input_ids = tokenizer.encode(input_text, return_tensors='pt')  # Tokenize the current prompt and return as PyTorch tensor
+                # Ensure input_ids is a PyTorch tensor and on the correct device
+                device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                input_ids = input_ids.to(device)
+                print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:
@@ -151,6 +164,9 @@ def main():
                 # Explicitly call garbage collection
                 import gc
                 gc.collect()
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

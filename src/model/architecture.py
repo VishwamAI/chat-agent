@@ -278,7 +278,7 @@ class ImprovedVishwamAIModel(hk.Module):
         # Ensure input_ids is correctly shaped as a 2D tensor
         input_ids = input_ids.reshape(-1, input_ids.shape[-1])
 
-        # Check if input_ids is a valid tensor with the size() method
+        # Check if input_ids is a valid tensor with the shape attribute
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
 
@@ -289,8 +289,11 @@ class ImprovedVishwamAIModel(hk.Module):
         # Convert input_ids to JAX ndarray
         input_ids_jax = jnp.array(inputs['input_ids'])
 
+        # Ensure input_ids_jax is correctly shaped as a 2D tensor
+        input_ids_jax = input_ids_jax.reshape(-1, input_ids_jax.shape[-1])
+
         # Pass inputs through BERT model
-        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
+        bert_outputs = self.bert_model(input_ids=input_ids_jax, attention_mask=attention_mask)
         x = bert_outputs.last_hidden_state
 
         mask = self._create_mask(input_ids_jax)

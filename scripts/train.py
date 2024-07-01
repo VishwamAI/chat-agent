@@ -105,7 +105,7 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
 
 def main():
     # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/chat-agent/VishwamAI-main/memory_usage.txt'
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
     with open(memory_log_file, 'w') as f:
         f.write("Timestamp,Memory_Usage(MiB)\n")
 

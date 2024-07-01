@@ -236,29 +236,6 @@ def main():
         if 'model_params' in locals():
             logger.debug(f"model_params: {model_params}")
         raise
-    logger.debug(f"Optimizer initialized: {optimizer}")
-
-    # Initialize optimizer state
-    opt_state = None
-    try:
-        rng_key = jax.random.PRNGKey(0)
-        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-        model_params = model.init(rng_key, dummy_input)
-        logger.debug(f"Model parameters initialized: {model_params}")
-        if not isinstance(model_params, dict):
-            raise TypeError(f"model_params is not a dictionary, but a {type(model_params)}")
-        logger.debug(f"Model parameters type: {type(model_params)}")
-        logger.debug(f"Model parameters structure: {model_params}")
-        logger.debug(f"Model parameters before optimizer init: {model_params}")
-        opt_state = optimizer.init(model_params)
-        logger.debug(f"Optimizer state initialized: {opt_state}")
-    except TypeError as e:
-        logger.error(f"TypeError during optimizer state initialization: {e}")
-        logger.debug(f"rng_key: {rng_key}")
-        logger.debug(f"dummy_input: {dummy_input}")
-        if 'model_params' in locals():
-            logger.debug(f"model_params: {model_params}")
-        raise
 
     # Initialize trainer
     trainer = VishwamAITrainer(model, config, optimizer, opt_state)

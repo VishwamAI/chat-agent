@@ -293,8 +293,8 @@ class ImprovedVishwamAIModel(hk.Module):
         logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
         logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
 
-        # Ensure input_ids remains a PyTorch tensor
-        input_ids = torch.tensor(input_ids)
+        # Ensure input_ids remains a JAX numpy array
+        input_ids = jax.device_put(input_ids)
 
         # Pass inputs through BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)

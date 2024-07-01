@@ -167,14 +167,6 @@ def main():
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
-    # Analyze training data for biases
-    logger.info("Analyzing training data for biases...")
-    for batch in train_dataset:
-        text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
-        for text in text_batch:
-            bias_results = analyze_bias(text)
-            logger.info(f"Bias Analysis Results for training data: {bias_results}")
-
     # Initialize model
     def model_fn(inputs):
         model = VishwamAILLM(config)
@@ -200,10 +192,19 @@ def main():
     # Initialize reinforcement learning algorithm
     rl_model = PPO("MlpPolicy", env, verbose=1)
 
-    # Train model
-    rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-    params = model.init(rng_key, dummy_input)
+    # Check for existing checkpoints and load the latest one
+    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_checkpoint')]
+    if checkpoint_files:
+        latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))
+        checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
+        logger.info(f"Loading checkpoint from {checkpoint_path}")
+        params = np.load(checkpoint_path, allow_pickle=True).item()
+    else:
+        rng_key = jax.random.PRNGKey(0)
+        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        params = model.init(rng_key, dummy_input)
 
     logger.info("Starting training process...")
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'

@@ -271,11 +271,9 @@ class ImprovedVishwamAIModel(hk.Module):
         # Convert JAX numpy array to list of strings
         inputs = [str(input) for input in inputs.tolist()]
         inputs = self.tokenizer(inputs, padding=True, truncation=True)
-        # Debug print statement to confirm torch import
-        print(f"torch is available: {torch}")
-        # Ensure input_ids and attention_mask are correctly formatted as PyTorch tensors
-        input_ids = torch.tensor(inputs['input_ids'])
-        attention_mask = torch.tensor(inputs['attention_mask'])
+        # Ensure input_ids and attention_mask are correctly formatted as JAX tensors
+        input_ids = jnp.array(inputs['input_ids'])
+        attention_mask = jnp.array(inputs['attention_mask'])
 
         # Ensure input_ids is correctly shaped as a 2D tensor
         input_ids = input_ids.reshape(-1, input_ids.shape[-1])

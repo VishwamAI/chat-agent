@@ -20,3 +20,6 @@ env/
 
 # Ignore data files
 data/
+
+# Ignore nohup output file
+scripts/nohup.out

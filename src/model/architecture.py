@@ -251,6 +251,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.config = {**config, 'head_dim': 32}  # Add head_dim to the configuration
 
     def setup(self):
+        logger.debug("Entering setup method of ImprovedVishwamAIModel")
         self.embed_dim = self.config['embed_dim']
         self.num_layers = self.config['num_layers']
         self.vocab_size = self.config['vocab_size']
@@ -264,10 +265,15 @@ class ImprovedVishwamAIModel(nn.Module):
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+        logger.debug("Exiting setup method of ImprovedVishwamAIModel")
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
+        logger.debug("Entering __call__ method of ImprovedVishwamAIModel")
         # Ensure input_ids are correctly shaped as a 2D tensor
         input_ids = inputs.reshape(-1, inputs.shape[-1])
+
+        # Log the shape and type of input_ids
+        logger.debug(f"input_ids type: {type(input_ids)}, shape: {input_ids.shape}")
 
         # Create attention_mask directly from input_ids
         attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
@@ -303,6 +309,7 @@ class ImprovedVishwamAIModel(nn.Module):
 
         # Log the final output shape and type
         logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")
+        logger.debug("Exiting __call__ method of ImprovedVishwamAIModel")
 
         return nn.Dense(self.vocab_size)(x), kv_cache
 
@@ -329,13 +336,17 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
+        logger.debug("Entering setup method of VishwamAILLM")
         self.transformer = ImprovedVishwamAIModel(self.config)
         self.lm_head = nn.Dense(self.config['vocab_size'])
         self.params = self.transformer.init(jax.random.PRNGKey(0), jnp.ones((1, self.config['max_seq_length']), dtype=jnp.int32))['params']
+        logger.debug("Exiting setup method of VishwamAILLM")
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
+        logger.debug("Entering __call__ method of VishwamAILLM")
         transformer_outputs, new_kv_cache = self.transformer.apply({'params': self.params}, inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
+        logger.debug("Exiting __call__ method of VishwamAILLM")
         return lm_logits, new_kv_cache
 
     def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:

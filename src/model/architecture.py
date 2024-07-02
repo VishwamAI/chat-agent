@@ -268,6 +268,9 @@ class ImprovedVishwamAIModel(nn.Module):
         # Ensure params attribute is defined
         self.params = self.bert_model.params
 
+        # Log the params attribute
+        logger.debug(f"params: {self.params}")
+
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor
         input_ids = inputs.reshape(-1, inputs.shape[-1])

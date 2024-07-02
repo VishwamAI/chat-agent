@@ -25,10 +25,9 @@ def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
     x_rotated = jnp.concatenate([-x2, x1], axis=-1)
-    sin = sin.reshape(1, 1, 32, 16)
-    cos = cos.reshape(1, 1, 32, 16)
-    sin1, sin2 = jnp.split(sin, 2, axis=-1)
-    cos1, cos2 = jnp.split(cos, 2, axis=-1)
+    batch_size, num_heads, seq_len, head_dim = x1.shape
+    sin = sin.reshape(batch_size, num_heads, seq_len, head_dim)
+    cos = cos.reshape(batch_size, num_heads, seq_len, head_dim)
     result = (x1 * cos) + (x_rotated * sin)
     return jnp.concatenate([result, x2], axis=-1)
 

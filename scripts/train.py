@@ -175,6 +175,7 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
     print(f"Shape of k: {k.shape}")
     print(f"Shape of v: {v.shape}")
 
+    # Ensure the correct parameters are passed to the rotary_emb function
     sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
     print(f"Shape of sin: {sincos[0].shape}")
     print(f"Shape of cos: {sincos[1].shape}")
@@ -204,7 +205,7 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
             kv_cache['v'] = v
 
     memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f MiB}")
+    print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
     print(f"Shape of q before matmul: {q.shape}")  # Debugging statement
     print(f"Shape of k before matmul: {k.shape}")  # Debugging statement
     attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
@@ -212,7 +213,7 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
     attn = attn.reshape(q.shape[0], self.num_heads, seq_len, self.head_dim)  # Adjust shape to match mask tensor
     print(f"Shape of attn after reshaping: {attn.shape}")  # Debugging statement
     memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f MiB}")
+    print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
     if mask is not None:
         print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement

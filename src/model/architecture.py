@@ -246,13 +246,16 @@ class ImprovedTransformerBlock(nn.Module):
 class ImprovedVishwamAIModel(nn.Module):
     config: Dict
 
+    def __init__(self, config: Dict):
+        super().__init__()
+        self.config = {**config, 'head_dim': 32}  # Add head_dim to the configuration
+
     def setup(self):
         self.embed_dim = self.config['embed_dim']
         self.num_layers = self.config['num_layers']
         self.vocab_size = self.config['vocab_size']
         self.head_dim = 32  # Define head_dim as an attribute of the class
         self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
-        self.config = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
 
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')

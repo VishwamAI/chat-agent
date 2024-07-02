@@ -1,6 +1,6 @@
 import jax
 import jax.numpy as jnp
-import haiku as hk
+from transformers import FlaxBertForSequenceClassification, AutoTokenizer
 import sys
 import os
 import time
@@ -19,11 +19,7 @@ def load_model(config_path, checkpoint_path):
         config = yaml.safe_load(f)
 
     # Initialize model
-    def model_fn(inputs):
-        model = VishwamAILLM(config)
-        return model(inputs)
-
-    model = hk.transform(model_fn)
+    model = VishwamAILLM(config)
 
     # Initialize parameters
     rng = jax.random.PRNGKey(0)
@@ -53,21 +49,13 @@ def load_model(config_path, checkpoint_path):
     if isinstance(trained_params, dict):
         params = trained_params
     else:
-        # Convert the loaded parameters to a Haiku Params object if they are not already in that format
-        if isinstance(trained_params, jnp.ndarray):
-            params = hk.data_structures.to_immutable_dict(hk.data_structures.to_mutable_dict({'params': trained_params}))
-        else:
-            raise ValueError("Loaded parameters are not in the expected format")
+        raise ValueError("Loaded parameters are not in the expected format")
 
     # Log the structure and dimensions of the converted parameters
     print(f"Converted parameters type: {type(params)}")
     if isinstance(params, dict):
         for key, value in params.items():
             print(f"Key: {key}, Shape: {value.shape}")
-
-    # Debugging statement to log the mask shape
-    dummy_mask = model.apply(params, rng, dummy_input)[1][0]['k']
-    print(f"Shape of dummy_mask: {dummy_mask.shape}")
 
     return model, params, config
 
@@ -78,19 +66,20 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
 
     @jax.jit
     def generate_step(params, rng, input_ids):
-        # Pass inputs through BERT model
-        bert_outputs = model.apply(params, rng, input_ids)
-        x = bert_outputs.last_hidden_state
-
-        # Debugging statement to log the shape of the output
-        print(f"Shape of output: {x.shape}")
-        return x
+        # Pass inputs through the model
+        logits, _ = model.apply(params, rng, input_ids)
+        next_token_logits = logits[:, -1, :]
+        next_token = jax.random.categorical(rng, next_token_logits)
+        return next_token
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 
     start_time = time.time()
     try:
-        generated_ids, evaluation_metrics = generate_step(params, rng, input_ids)
+        generated_ids = input_ids
+        for _ in range(max_length - input_ids.shape[1]):
+            next_token = generate_step(params, rng, generated_ids)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, None]], axis=-1)
     except Exception as e:
         print(f"Error during generate_step: {e}")
         raise
@@ -101,13 +90,13 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        final_evaluation = VishwamAILLM.self_evaluate(generated_text, evaluation_metrics)
+        final_evaluation = model.self_evaluate(generated_text, {})
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise
 
     # Ensure unnecessary references are deleted to aid garbage collection
-    del generated_ids, evaluation_metrics
+    del generated_ids
 
     return generated_text, final_evaluation, response_time
 

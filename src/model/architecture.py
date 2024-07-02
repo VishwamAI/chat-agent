@@ -27,8 +27,9 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"x1 shape before reshape: {x1.shape}")
     logger.debug(f"sin shape before reshape: {sin.shape}")
     logger.debug(f"cos shape before reshape: {cos.shape}")
-    sin = sin.reshape(x1.shape[:-1] + (head_dim,))
-    cos = cos.reshape(x1.shape[:-1] + (head_dim,))
+    batch_size, num_heads, seq_len, _ = x1.shape
+    sin = sin.reshape((batch_size, num_heads, seq_len, head_dim))
+    cos = cos.reshape((batch_size, num_heads, seq_len, head_dim))
     logger.debug(f"sin shape after reshape: {sin.shape}")
     logger.debug(f"cos shape after reshape: {cos.shape}")
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
@@ -36,7 +37,6 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
 
 class ImprovedAttention(nn.Module):
     config: Dict
-
     def setup(self):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']  # Use head_dim from the configuration

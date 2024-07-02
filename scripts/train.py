@@ -216,7 +216,6 @@ def main():
         logger.debug("Instantiating VishwamAILLM model with config")
         model = VishwamAILLM(config)
         logger.debug(f"Model instantiated with config: {config}")
-        logger.debug(f"Model parameters: {model.params}")
         return model(inputs, is_training=True)
 
     model = hk.transform(model_fn)

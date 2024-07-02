@@ -265,12 +265,6 @@ class ImprovedVishwamAIModel(nn.Module):
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
-        # Ensure params attribute is defined
-        self.params = self.bert_model.params
-
-        # Log the params attribute
-        logger.debug(f"params: {self.params}")
-
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor
         input_ids = inputs.reshape(-1, inputs.shape[-1])
@@ -290,7 +284,7 @@ class ImprovedVishwamAIModel(nn.Module):
         input_ids = jax.device_put(input_ids)
 
         # Log the parameters before passing to the apply method
-        logger.debug(f"Parameters before apply: {self.params}")
+        logger.debug(f"Parameters before apply: {self.bert_model.params}")
 
         # Pass inputs through the JAX-based BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)

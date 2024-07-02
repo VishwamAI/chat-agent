@@ -233,6 +233,9 @@ def main():
             # Convert model_params to a dictionary if it is not already
             model_params = hk.data_structures.to_immutable_dict(model_params)
             logger.debug(f"Model parameters after conversion to immutable dict: {model_params}")
+            logger.debug(f"Model parameters keys: {list(model_params.keys())}")
+            for key, value in model_params.items():
+                logger.debug(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if hasattr(value, 'shape') else 'N/A'}")
             opt_state = optimizer.init(model_params)
         else:
             raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")

@@ -291,7 +291,7 @@ class ImprovedVishwamAIModel(nn.Module):
 
         # Pass inputs through the JAX-based BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
-        x = bert_outputs.last_hidden_state
+        x = bert_outputs.logits
 
         # Log the shape and type of the BERT model output
         logger.debug(f"BERT model output type: {type(x)}, shape: {x.shape}")

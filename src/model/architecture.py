@@ -71,8 +71,8 @@ class ImprovedAttention(nn.Module):
         if mask is not None:
             logger.debug(f"Mask shape before broadcasting: {mask.shape}")
             logger.debug(f"Attention tensor shape: {attn.shape}")
-            mask = jnp.reshape(mask, (mask.shape[0], attn.shape[1], mask.shape[2], mask.shape[3]))  # Reshape mask to match attention tensor's dimensions
-            mask = jnp.broadcast_to(mask, (mask.shape[0], attn.shape[1], attn.shape[2], mask.shape[3]))  # Ensure mask is expanded to match attn tensor's shape
+            mask = jnp.reshape(mask, (mask.shape[0], 1, mask.shape[1], mask.shape[2]))  # Reshape mask to match attention tensor's dimensions
+            mask = jnp.broadcast_to(mask, (mask.shape[0], attn.shape[1], attn.shape[2], attn.shape[3]))  # Ensure mask is expanded to match attn tensor's shape
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 

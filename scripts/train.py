@@ -227,13 +227,14 @@ def main():
     model_params = model.init(rng_key, dummy_input)['params']
     logger.debug(f"Model parameters initialized: {model_params}")
 
+    # Initialize optimizer
+    optimizer = optax.adam(config['learning_rate'])
+    logger.debug(f"Optimizer initialized: {optimizer}")
+
     # Initialize optimizer state
     opt_state = optimizer.init(model_params)
     logger.debug(f"Optimizer state initialized: {opt_state}")
 
-    # Initialize optimizer
-    optimizer = optax.adam(config['learning_rate'])
-    logger.debug(f"Optimizer initialized: {optimizer}")
     opt_state = None
     try:
         rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key

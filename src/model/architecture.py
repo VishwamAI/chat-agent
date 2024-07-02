@@ -39,7 +39,10 @@ class ImprovedAttention(nn.Module):
     def setup(self):
         self.num_heads = self.config['num_heads']
         self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
-        self.rotary_emb = lambda seq_len: (jnp.sin(jnp.arange(seq_len)[:, None]), jnp.cos(jnp.arange(seq_len)[:, None]))
+        self.rotary_emb = lambda seq_len: (
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :]),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :])
+        )
 
     @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):

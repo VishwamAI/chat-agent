@@ -334,14 +334,14 @@ class VishwamAILLM(nn.Module):
     def setup(self):
         logger.debug("Entering setup method of VishwamAILLM")
         config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
+        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
         self.lm_head = nn.Dense(self.config['vocab_size'])
         logger.debug("Exiting setup method of VishwamAILLM")
 
     @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         logger.debug("Entering __call__ method of VishwamAILLM")
-        transformer = ImprovedVishwamAIModel(self.config)
-        transformer_outputs, new_kv_cache = transformer(inputs, is_training, kv_cache)
+        transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
         logger.debug("Exiting __call__ method of VishwamAILLM")
         return lm_logits, new_kv_cache

@@ -266,7 +266,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
         # Ensure params attribute is defined
-        self.params = None
+        self.params = self.bert_model.params
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor

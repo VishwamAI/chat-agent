@@ -28,7 +28,7 @@ def apply_rotary_pos_emb(x, sincos):
     sin = sin.reshape(x1.shape[0], x1.shape[1], x1.shape[2], x1.shape[3])
     cos = cos.reshape(x1.shape[0], x1.shape[1], x1.shape[2], x1.shape[3])
     result = (x1 * cos) + (x_rotated * sin)
-    return result
+    return jnp.concatenate([result, x2], axis=-1)
 
 
 class ImprovedAttention(nn.Module):

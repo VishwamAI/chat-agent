@@ -251,6 +251,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.config = {**config, 'head_dim': 32}  # Add head_dim to the configuration
 
     def setup(self):
+        self._id = self.config.get('_id', None)  # Define _id as an attribute of the class
         self.embed_dim = self.config['embed_dim']
         self.num_layers = self.config['num_layers']
         self.vocab_size = self.config['vocab_size']

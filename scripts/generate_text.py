@@ -5,13 +5,18 @@ import sys
 import os
 import time
 import pandas as pd
+import yaml
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.model.architecture import VishwamAILLM
 from transformers import AutoTokenizer
-import yaml
 
 def load_model(config_path, checkpoint_path):
     # Load configuration
@@ -20,42 +25,24 @@ def load_model(config_path, checkpoint_path):
 
     # Initialize model
     model = VishwamAILLM(config)
+    logger.debug(f"Model initialized: {model}")
 
     # Initialize parameters
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-    print(f"Shape of dummy_input: {dummy_input.shape}")
+    logger.debug(f"Shape of dummy_input: {dummy_input.shape}")
     params = model.init(rng, dummy_input)
-    print(f"Type of initialized params: {type(params)}")
-    if isinstance(params, dict):
-        for key, value in params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
-    elif isinstance(params, jnp.ndarray):
-        print(f"Initialized params shape: {params.shape}")
+    logger.debug(f"Parameters initialized: {params}")
 
     # Load trained parameters
     with open(checkpoint_path, 'rb') as f:
         trained_params = jnp.load(f, allow_pickle=True)
-
-    # Log the type and structure of the loaded parameters
-    print(f"Loaded trained parameters type: {type(trained_params)}")
-    if isinstance(trained_params, dict):
-        for key, value in trained_params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
-    elif isinstance(trained_params, jnp.ndarray):
-        print(f"Trained parameters shape: {trained_params.shape}")
 
     # Ensure trained_params is a dictionary
     if isinstance(trained_params, dict):
         params = trained_params
     else:
         raise ValueError("Loaded parameters are not in the expected format")
-
-    # Log the structure and dimensions of the converted parameters
-    print(f"Converted parameters type: {type(params)}")
-    if isinstance(params, dict):
-        for key, value in params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
 
     return model, params, config
 

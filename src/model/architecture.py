@@ -21,11 +21,11 @@ def rotate_half(x):
     return jnp.concatenate([-x2, x1], axis=-1)
 
 
-def apply_rotary_pos_emb(x, sincos):
+def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    sin = sin.reshape(x1.shape)
-    cos = cos.reshape(x1.shape)
+    sin = sin.reshape(x1.shape[:-1] + (head_dim,))
+    cos = cos.reshape(x1.shape[:-1] + (head_dim,))
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     return jnp.concatenate([x_rotated, x2], axis=-1)
 
@@ -51,8 +51,8 @@ class ImprovedAttention(nn.Module):
         v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
 
         sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
-        q = apply_rotary_pos_emb(q, sincos)
-        k = apply_rotary_pos_emb(k, sincos)
+        q = apply_rotary_pos_emb(q, sincos, self.head_dim)
+        k = apply_rotary_pos_emb(k, sincos, self.head_dim)
 
         if kv_cache is not None:
             if kv_cache['k'] is None:

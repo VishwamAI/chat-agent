@@ -24,8 +24,15 @@ def split_and_rotate(x):
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    sin = sin.reshape((x1.shape[0], x1.shape[1], x1.shape[2], x1.shape[3]))
-    cos = cos.reshape((x1.shape[0], x1.shape[1], x1.shape[2], x1.shape[3]))
+    print(f"x shape: {x.shape}")
+    print(f"x1 shape: {x1.shape}")
+    print(f"x2 shape: {x2.shape}")
+    print(f"sin shape before reshape: {sin.shape}")
+    print(f"cos shape before reshape: {cos.shape}")
+    sin = sin.reshape(x1.shape)
+    cos = cos.reshape(x1.shape)
+    print(f"sin shape after reshape: {sin.shape}")
+    print(f"cos shape after reshape: {cos.shape}")
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     return jnp.concatenate([x_rotated, x2], axis=-1)
 
@@ -37,8 +44,8 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
         self.rotary_emb = lambda batch_size, num_heads, seq_len, head_dim: (
-            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(1, seq_len, head_dim).repeat(batch_size * num_heads, axis=0).reshape(batch_size, num_heads, seq_len, head_dim),
-            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(1, seq_len, head_dim).repeat(batch_size * num_heads, axis=0).reshape(batch_size, num_heads, seq_len, head_dim)
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(1, 1, seq_len, head_dim),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(1, 1, seq_len, head_dim)
         )
 
     @nn.compact

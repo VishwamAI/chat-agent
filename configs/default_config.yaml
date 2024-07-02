@@ -17,4 +17,4 @@ max_seq_length: 1024  # Reduced max sequence length from 2048 to 1024
 # Data configuration
 train_file: "data/processed/train.txt"
 eval_file: "/home/ubuntu/chat-agent/VishwamAI-main/scripts/evaluation_problems.txt"
-tokenizer_name: "gpt2"
+tokenizer_name: "bert-base-uncased"

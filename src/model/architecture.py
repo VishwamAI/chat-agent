@@ -24,8 +24,13 @@ def rotate_half(x):
 def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    sin = sin.reshape(x1.shape[:-1] + (head_dim,))
-    cos = cos.reshape(x1.shape[:-1] + (head_dim,))
+    logger.debug(f"x1 shape before reshape: {x1.shape}")
+    logger.debug(f"sin shape before reshape: {sin.shape}")
+    logger.debug(f"cos shape before reshape: {cos.shape}")
+    sin = sin.reshape(x1.shape[:-1] + (x1.shape[-1],))
+    cos = cos.reshape(x1.shape[:-1] + (x1.shape[-1],))
+    logger.debug(f"sin shape after reshape: {sin.shape}")
+    logger.debug(f"cos shape after reshape: {cos.shape}")
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     return jnp.concatenate([x_rotated, x2], axis=-1)
 

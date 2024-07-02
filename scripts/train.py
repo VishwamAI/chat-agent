@@ -11,12 +11,13 @@ import logging
 import psutil  # Import psutil for memory profiling
 
 class VishwamAILLM(hk.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.config = config
-        self.embedding = hk.Embed(vocab_size=config['vocab_size'], embed_dim=config['embed_dim'])
-        self.lstm = hk.LSTM(hidden_size=config['hidden_size'])
-        self.output_layer = hk.Linear(output_size=config['vocab_size'])
+    config: Dict
+
+    def setup(self):
+        self.config = self.config
+        self.embedding = hk.Embed(vocab_size=self.config['vocab_size'], embed_dim=self.config['embed_dim'])
+        self.lstm = hk.LSTM(hidden_size=self.config['hidden_size'])
+        self.output_layer = hk.Linear(output_size=self.config['vocab_size'])
 
     def __call__(self, input_ids, hidden_state=None):
         logger.debug(f"Input IDs: {input_ids}")
@@ -216,7 +217,7 @@ def main():
         logger.debug("Instantiating VishwamAILLM model with config")
         model = VishwamAILLM(config)
         logger.debug(f"Model instantiated with config: {config}")
-        return model(inputs, is_training=True)
+        return model(inputs)
 
     model = hk.transform(model_fn)
 

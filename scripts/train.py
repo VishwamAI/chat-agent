@@ -11,6 +11,7 @@ import logging
 import psutil  # Import psutil for memory profiling
 from typing import Dict  # Import Dict from typing module
 
+import flax.linen as nn
 
 from transformers import AutoTokenizer
 

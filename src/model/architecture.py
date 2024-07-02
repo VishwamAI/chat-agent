@@ -24,7 +24,7 @@ def split_and_rotate(x):
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
+    x_rotated = rotate_half(x1)
     batch_size, num_heads, seq_len, head_dim = x1.shape
     sin = sin.reshape(batch_size, num_heads, seq_len, head_dim)
     cos = cos.reshape(batch_size, num_heads, seq_len, head_dim)

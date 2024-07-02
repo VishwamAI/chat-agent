@@ -69,7 +69,11 @@ class ImprovedAttention(nn.Module):
         attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
 
         if mask is not None:
+            logger.debug(f"Mask shape before broadcasting: {mask.shape}")
+            logger.debug(f"Attention tensor shape: {attn.shape}")
+            mask = jnp.reshape(mask, (mask.shape[0], 1, mask.shape[1], mask.shape[2]))  # Reshape mask to match attention tensor's dimensions
             mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
+            logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

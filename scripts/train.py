@@ -9,7 +9,7 @@ import yaml
 import pandas as pd
 import logging
 import psutil  # Import psutil for memory profiling
-from typing import Dict, Optional  # Import Dict and Optional from typing module
+from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
 
 import flax.linen as nn
 

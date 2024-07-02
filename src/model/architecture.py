@@ -257,11 +257,10 @@ class ImprovedVishwamAIModel(nn.Module):
         self.vocab_size = self.config['vocab_size']
         self.head_dim = 32  # Define head_dim as an attribute of the class
         self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
-        self._id = jax.random.PRNGKey(0)  # Define _id as an attribute of the class
 
         # Log the configuration and attributes
         logger.debug(f"Configuration: {self.config}")
-        logger.debug(f"embed_dim: {self.embed_dim}, num_layers: {self.num_layers}, vocab_size: {self.vocab_size}, head_dim: {self.head_dim}, num_heads: {self.num_heads}, _id: {self._id}")
+        logger.debug(f"embed_dim: {self.embed_dim}, num_layers: {self.num_layers}, vocab_size: {self.vocab_size}, head_dim: {self.head_dim}, num_heads: {self.num_heads}")
 
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
@@ -332,6 +331,27 @@ class ImprovedVishwamAIModel(nn.Module):
         causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))  # Expand causal mask dimensions
         mask = mask * causal_mask  # Apply causal mask and adjust dimensions
         return mask
+
+    def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
+        generated_ids = input_ids
+        rng = jax.random.PRNGKey(0)  # Create a dynamic PRNGKey
+        for _ in range(max_length - input_ids.shape[1]):
+            logits, _ = self(generated_ids, is_training=False)
+            next_token_logits = logits[:, -1, :] / temperature
+            next_token = jax.random.categorical(rng, next_token_logits, axis=-1)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
+        return generated_ids
+
+    def generate_with_evaluation(self, input_ids: jnp.ndarray, kv_cache: Optional[Dict] = None, max_length: int = 100, temperature: float = 1.0) -> Tuple[jnp.ndarray, Dict]:
+        generated_ids = input_ids
+        total_log_probs = 0.0
+        rng = jax.random.PRNGKey(0)  # Create a dynamic PRNGKey
+        for _ in range(max_length - input_ids.shape[1]):
+            logits, kv_cache = self(generated_ids, is_training=False, kv_cache=kv_cache)
+            next_token_logits = logits[:, -1, :] / temperature
+            next_token_probs = jax.nn.softmax(next_token_logits, axis=-1)
+            next_token = jax.random.categorical(rng, next_token_logits, axis=-1)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
 
 class VishwamAILLM(nn.Module):
     config: Dict

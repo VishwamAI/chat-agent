@@ -239,7 +239,6 @@ class ImprovedVishwamAIModel(nn.Module):
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
         logger.debug("Exiting setup method of ImprovedVishwamAIModel")
 
-    @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         logger.debug("Entering __call__ method of ImprovedVishwamAIModel")
         # Ensure input_ids are correctly shaped as a 2D tensor

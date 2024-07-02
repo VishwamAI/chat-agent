@@ -53,11 +53,17 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
 
     @jax.jit
     def generate_step(params, rng, input_ids):
-        # Pass inputs through the model
-        logits, _ = model.apply(params, rng, input_ids)
-        next_token_logits = logits[:, -1, :]
-        next_token = jax.random.categorical(rng, next_token_logits)
-        return next_token
+        try:
+            logger.debug(f"Parameters before apply: {params}")
+            # Pass inputs through the model
+            logits, _ = model.apply(params, rng, input_ids)
+            logger.debug(f"Logits after apply: {logits}")
+            next_token_logits = logits[:, -1, :]
+            next_token = jax.random.categorical(rng, next_token_logits)
+            return next_token
+        except AttributeError as e:
+            logger.error(f"AttributeError in generate_step: {e}")
+            raise
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 

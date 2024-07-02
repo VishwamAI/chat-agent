@@ -38,9 +38,9 @@ class ImprovedAttention(nn.Module):
     def setup(self):
         self.num_heads = self.config['num_heads']
         self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
-        self.rotary_emb = lambda batch_size, seq_len: (
-            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim // 2)[None, :]).reshape(1, seq_len, self.head_dim // 2).repeat(batch_size, axis=0),
-            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim // 2)[None, :]).reshape(1, seq_len, self.head_dim // 2).repeat(batch_size, axis=0)
+        self.rotary_emb = lambda batch_size, num_heads, seq_len: (
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim // 2)[None, :]).reshape(1, 1, seq_len, self.head_dim // 2).repeat(batch_size, axis=0).repeat(num_heads, axis=1),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim // 2)[None, :]).reshape(1, 1, seq_len, self.head_dim // 2).repeat(batch_size, axis=0).repeat(num_heads, axis=1)
         )
 
     @nn.compact
@@ -58,7 +58,7 @@ class ImprovedAttention(nn.Module):
         memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
 
-        sincos = self.rotary_emb(x.shape[0], seq_len)
+        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len)
         memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
         q = apply_rotary_pos_emb(q, sincos)

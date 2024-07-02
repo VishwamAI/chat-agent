@@ -38,6 +38,7 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
 
+    @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         seq_len = x.shape[1]
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
@@ -277,7 +278,9 @@ class ImprovedVishwamAIModel(nn.Module):
         logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")
         logger.debug("Exiting __call__ method of ImprovedVishwamAIModel")
 
-        return nn.Dense(self.vocab_size)(x), kv_cache
+        # Define the final dense layer within the @compact method
+        dense_layer = nn.Dense(self.vocab_size)
+        return dense_layer(x), kv_cache
 
     def _embed(self, x: jnp.ndarray) -> jnp.ndarray:
         embedding_matrix = hk.get_parameter("embedding_matrix",

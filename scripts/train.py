@@ -11,25 +11,6 @@ import logging
 import psutil  # Import psutil for memory profiling
 from typing import Dict  # Import Dict from typing module
 
-class VishwamAILLM(hk.Module):
-    config: Dict
-
-    def setup(self):
-        self.config = self.config
-        self.embedding = hk.Embed(vocab_size=self.config['vocab_size'], embed_dim=self.config['embed_dim'])
-        self.lstm = hk.LSTM(hidden_size=self.config['hidden_size'])
-        self.output_layer = hk.Linear(output_size=self.config['vocab_size'])
-
-    def __call__(self, input_ids, hidden_state=None):
-        logger.debug(f"Input IDs: {input_ids}")
-        embedded = self.embedding(input_ids)
-        logger.debug(f"Embedded: {embedded}")
-        if hidden_state is None:
-            hidden_state = self.lstm.initial_state(batch_size=embedded.shape[0])
-        output, hidden_state = self.lstm(embedded, hidden_state)
-        logits = self.output_layer(output)
-        logger.debug(f"Logits: {logits}")
-        return logits, hidden_state
 
 from transformers import AutoTokenizer
 
@@ -57,6 +38,24 @@ def update(params, opt_state, batch):
     new_params = optax.apply_updates(params, updates)
     logger.debug(f"New parameters: {new_params}")
     return new_params, opt_state
+
+class VishwamAILLM(nn.Module):
+    config: Dict
+
+    def setup(self):
+        logger.debug("Entering setup method of VishwamAILLM")
+        config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
+        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
+        self.lm_head = nn.Dense(self.config['vocab_size'])
+        logger.debug("Exiting setup method of VishwamAILLM")
+
+    @nn.compact
+    def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
+        logger.debug("Entering __call__ method of VishwamAILLM")
+        transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
+        lm_logits = self.lm_head(transformer_outputs)
+        logger.debug("Exiting __call__ method of VishwamAILLM")
+        return lm_logits, new_kv_cache
 
 from generate_modular_question import generate_modular_question
 from typing import Iterable
@@ -216,18 +215,27 @@ def main():
     # Initialize model
     def model_fn(inputs):
         logger.debug("Instantiating VishwamAILLM model with config")
-        model = VishwamAILLM(config)
+        model = VishwamAILLM(config=config)
         logger.debug(f"Model instantiated with config: {config}")
-        return model(inputs)
+        return model
 
-    model = hk.transform(model_fn)
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    model = model_fn(dummy_input)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.debug(f"Model parameters initialized: {model_params}")
+
+    # Initialize optimizer state
+    opt_state = optimizer.init(model_params)
+    logger.debug(f"Optimizer state initialized: {opt_state}")
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
     logger.debug(f"Optimizer initialized: {optimizer}")
     opt_state = None
     try:
-        rng_key = jax.random.PRNGKey(0)
+        rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key
         dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
         logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
         model_params = model.init(rng_key, dummy_input)['params']

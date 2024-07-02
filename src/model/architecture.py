@@ -25,8 +25,8 @@ def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
     x_rotated = jnp.concatenate([-x2, x1], axis=-1)
-    sin = sin.reshape(1, 1, x1.shape[-2], x1.shape[-1])
-    cos = cos.reshape(1, 1, x1.shape[-2], x1.shape[-1])
+    sin = sin.reshape(1, 1, x1.shape[-2], x1.shape[-1] // 2)
+    cos = cos.reshape(1, 1, x1.shape[-2], x1.shape[-1] // 2)
     result = (x * cos) + (x_rotated * sin)
     del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
     jax.lax.create_token(result)  # Ensure result is materialized

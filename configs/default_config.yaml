@@ -6,6 +6,7 @@ vocab_size: 50000
 dropout_rate: 0.1
 ff_dim: 8192
 pad_token_id: 50256
+head_dim: 32  # Added head_dim to match the model architecture
 
 # Training configuration
 learning_rate: 1e-4

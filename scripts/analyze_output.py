@@ -17,6 +17,6 @@ def analyze_output(file_path, error_pattern, context_lines=5):
             print("".join(context))
 
 if __name__ == "__main__":
-    error_pattern = r"TypeError: cannot reshape array.*"
-    file_path = "/home/ubuntu/chat-agent/logs/train.log"
+    error_pattern = r"TypeError: mul got incompatible shapes for broadcasting.*"
+    file_path = "/home/ubuntu/full_outputs/python3_train_py_1719941094.6379483.txt"
     analyze_output(file_path, error_pattern)

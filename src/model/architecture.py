@@ -257,9 +257,16 @@ class ImprovedVishwamAIModel(nn.Module):
         self.head_dim = 32  # Define head_dim as an attribute of the class
         self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
 
+        # Log the configuration and attributes
+        logger.debug(f"Configuration: {self.config}")
+        logger.debug(f"embed_dim: {self.embed_dim}, num_layers: {self.num_layers}, vocab_size: {self.vocab_size}, head_dim: {self.head_dim}, num_heads: {self.num_heads}")
+
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
+        # Ensure params attribute is defined
+        self.params = None
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Ensure input_ids are correctly shaped as a 2D tensor
@@ -278,6 +285,9 @@ class ImprovedVishwamAIModel(nn.Module):
 
         # Ensure input_ids remains a JAX numpy array
         input_ids = jax.device_put(input_ids)
+
+        # Log the parameters before passing to the apply method
+        logger.debug(f"Parameters before apply: {self.params}")
 
         # Pass inputs through the JAX-based BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)

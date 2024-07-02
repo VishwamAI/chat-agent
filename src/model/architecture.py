@@ -30,6 +30,8 @@ def apply_rotary_pos_emb(x, sincos):
     result = (x * cos) + (x_rotated * sin)
     del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
     jax.lax.create_token(result)  # Ensure result is materialized
+    del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
+    jax.lax.create_token(result)  # Ensure result is materialized
     return result
 
 

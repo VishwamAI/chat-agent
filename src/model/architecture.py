@@ -39,8 +39,8 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = 16  # Adjust head_dim to 16 to match the actual dimensions
         self.rotary_emb = lambda batch_size, num_heads, seq_len: (
-            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :]).reshape(1, seq_len, self.head_dim).repeat(num_heads, axis=0).reshape(1, num_heads, seq_len, self.head_dim).repeat(batch_size, axis=0),
-            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :]).reshape(1, seq_len, self.head_dim).repeat(num_heads, axis=0).reshape(1, num_heads, seq_len, self.head_dim).repeat(batch_size, axis=0)
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :]).reshape(1, num_heads, seq_len, self.head_dim).repeat(batch_size, axis=0),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(self.head_dim)[None, :]).reshape(1, num_heads, seq_len, self.head_dim).repeat(batch_size, axis=0)
         )
 
     @nn.compact

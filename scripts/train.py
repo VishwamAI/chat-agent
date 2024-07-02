@@ -9,6 +9,7 @@ import yaml
 import pandas as pd
 import logging
 import psutil  # Import psutil for memory profiling
+from typing import Dict  # Import Dict from typing module
 
 class VishwamAILLM(hk.Module):
     config: Dict

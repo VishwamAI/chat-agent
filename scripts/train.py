@@ -40,6 +40,16 @@ def update(params, opt_state, batch):
     logger.debug(f"New parameters: {new_params}")
     return new_params, opt_state
 
+def apply_rotary_pos_emb(x, sincos):
+    sin, cos = sincos
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    print(f"Shape of sin before reshape: {sin.shape}")
+    print(f"Shape of cos before reshape: {cos.shape}")
+    sin = sin.reshape(x1.shape)
+    cos = cos.reshape(x1.shape)
+    x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
+    return jnp.concatenate([x_rotated, x2], axis=-1)
+
 class VishwamAILLM(nn.Module):
     config: Dict
 

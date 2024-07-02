@@ -43,12 +43,17 @@ from bias_analysis import analyze_bias
 
 def update(params, opt_state, batch):
     def loss_fn_wrapper(params):
+        logger.debug(f"Applying model with params: {params}")
         logits, _ = model.apply(params, batch['input_ids'])
+        logger.debug(f"Logits after model apply: {logits}")
         return loss_fn(logits, batch['labels'])
 
     grads = jax.grad(loss_fn_wrapper)(params)
+    logger.debug(f"Gradients: {grads}")
     updates, opt_state = optimizer.update(grads, opt_state)
+    logger.debug(f"Updates: {updates}")
     new_params = optax.apply_updates(params, updates)
+    logger.debug(f"New parameters: {new_params}")
     return new_params, opt_state
 
 from generate_modular_question import generate_modular_question
@@ -208,7 +213,10 @@ def main():
 
     # Initialize model
     def model_fn(inputs):
+        logger.debug("Instantiating VishwamAILLM model with config")
         model = VishwamAILLM(config)
+        logger.debug(f"Model instantiated with config: {config}")
+        logger.debug(f"Model parameters: {model.params}")
         return model(inputs, is_training=True)
 
     model = hk.transform(model_fn)

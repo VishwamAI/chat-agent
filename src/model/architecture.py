@@ -47,9 +47,9 @@ class ImprovedAttention(nn.Module):
         import psutil
         memory_usage_before_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage before tensor reshaping: {memory_usage_before_reshape:.2f} MiB")
-        q = q.reshape(x.shape[0], seq_len, self.num_heads, self.head_dim)
-        k = k.reshape(x.shape[0], seq_len, self.num_heads, self.head_dim)
-        v = v.reshape(x.shape[0], seq_len, self.num_heads, self.head_dim)
+        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
         memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
         print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
 

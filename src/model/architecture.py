@@ -8,7 +8,6 @@ import optax
 import logging
 import flax.linen as nn
 from flax.training import train_state
-import haiku as hk  # Add this import statement
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -101,10 +100,11 @@ class ImprovedAttention(nn.Module):
         output = jnp.matmul(attn, v)
         return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
-class MathReasoningLayer(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
+class MathReasoningLayer(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.config = self.config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
         # Log the shape and type of input x
@@ -121,40 +121,6 @@ class MathReasoningLayer(hk.Module):
         return expressions
 
     def _batch_sympify(self, expressions: List[str], debug: bool = True) -> List[str]:
-        # import time
-        # import tracemalloc
-        # from concurrent.futures import ThreadPoolExecutor
-
-        # # Cache for storing previously computed results
-        # cache = {}
-        # solved_expressions = []
-
-        # # Start memory profiling if debug is enabled
-        # if debug:
-        #     tracemalloc.start()
-
-        # def sympify_expression(expr):
-        #     if expr in cache:
-        #         return cache[expr]
-        #     else:
-        #         solved_expr = sp.sympify(expr).evalf()
-        #         cache[expr] = solved_expr
-        #         return solved_expr
-
-        # start_time = time.time()
-        # with ThreadPoolExecutor() as executor:
-        #     solved_expressions = list(executor.map(sympify_expression, expressions))
-        # end_time = time.time()
-
-        # print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
-
-        # # Stop memory profiling and get memory usage if debug is enabled
-        # if debug:
-        #     current, peak = tracemalloc.get_traced_memory()
-        #     tracemalloc.stop()
-        #     print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
-
-        # return solved_expressions
         return expressions
 
     def _expressions_to_tensor(self, expressions: List[str], shape: Tuple[int]) -> jnp.ndarray:
@@ -168,7 +134,6 @@ class MathReasoningLayer(hk.Module):
             tensor_values.append(value)
         return jnp.array(tensor_values).reshape(shape)
 
-    # Generate a sequence of modular mathematical problems
     def _generate_modular_problems(self, num_problems: int) -> List[str]:
         problems = []
         for _ in range(num_problems):
@@ -179,7 +144,6 @@ class MathReasoningLayer(hk.Module):
             problems.append(problem)
         return problems
 
-    # This will involve creating a sequence of mathematical problems where the output of one problem can serve as the input to another
     def _generate_compositional_problems(self, num_problems: int) -> List[str]:
         problems = []
         for _ in range(num_problems):
@@ -189,6 +153,7 @@ class MathReasoningLayer(hk.Module):
             problem = f"Solve for x: {a}x + {b} = 0"
             problems.append(problem)
         return problems
+
 
 class ImprovedTransformerBlock(nn.Module):
     config: Dict

@@ -262,8 +262,12 @@ class ImprovedVishwamAIModel(nn.Module):
         # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
+        # Instantiate ImprovedTransformerBlock submodules
+        self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
         logger.debug("Exiting setup method of ImprovedVishwamAIModel")
 
+    @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         logger.debug("Entering __call__ method of ImprovedVishwamAIModel")
         # Ensure input_ids are correctly shaped as a 2D tensor
@@ -302,7 +306,7 @@ class ImprovedVishwamAIModel(nn.Module):
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]
 
         for i in range(self.num_layers):
-            x = ImprovedTransformerBlock(self.config)(x, mask, kv_cache[i], is_training)
+            x = self.transformer_blocks[i](x, mask, kv_cache[i], is_training)
 
         # Log the final output shape and type
         logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")

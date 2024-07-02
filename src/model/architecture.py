@@ -337,7 +337,7 @@ class VishwamAILLM(nn.Module):
     def setup(self):
         self.transformer = ImprovedVishwamAIModel(self.config)
         self.lm_head = nn.Dense(self.config['vocab_size'])
-        self.params = self.transformer.params  # Initialize self.params with the transformer's params
+        self.params = self.transformer.init(jax.random.PRNGKey(0), jnp.ones((1, self.config['max_seq_length']), dtype=jnp.int32))['params']
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         transformer_outputs, new_kv_cache = self.transformer.apply({'params': self.params}, inputs, is_training, kv_cache)

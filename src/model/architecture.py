@@ -25,9 +25,6 @@ def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
     x_rotated = rotate_half(x1)
-    batch_size, num_heads, seq_len, head_dim = x1.shape
-    sin = sin.reshape(batch_size, num_heads, seq_len, head_dim)
-    cos = cos.reshape(batch_size, num_heads, seq_len, head_dim)
     result = (x1 * cos) + (x_rotated * sin)
     return jnp.concatenate([result, x2], axis=-1)
 
@@ -39,8 +36,8 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
         self.rotary_emb = lambda batch_size, num_heads, seq_len, head_dim: (
-            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(batch_size, num_heads, seq_len, head_dim),
-            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(batch_size, num_heads, seq_len, head_dim)
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(seq_len, head_dim),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim)[None, :]).reshape(seq_len, head_dim)
         )
 
     @nn.compact

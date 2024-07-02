@@ -336,6 +336,7 @@ class VishwamAILLM(nn.Module):
         self.params = self.transformer.init(jax.random.PRNGKey(0), jnp.ones((1, self.config['max_seq_length']), dtype=jnp.int32))['params']
         logger.debug("Exiting setup method of VishwamAILLM")
 
+    @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         logger.debug("Entering __call__ method of VishwamAILLM")
         transformer_outputs, new_kv_cache = self.transformer.apply({'params': self.params}, inputs, is_training, kv_cache)

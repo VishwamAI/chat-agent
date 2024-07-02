@@ -31,7 +31,7 @@ def load_model(config_path, checkpoint_path):
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
     logger.debug(f"Shape of dummy_input: {dummy_input.shape}")
-    params = model.init(rng, dummy_input)
+    params = model.init(rng, dummy_input)['params']
     logger.debug(f"Parameters initialized: {params}")
 
     # Load trained parameters

@@ -246,9 +246,6 @@ class ImprovedTransformerBlock(nn.Module):
 class ImprovedVishwamAIModel(nn.Module):
     config: Dict
 
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = {**config, 'head_dim': 32}  # Add head_dim to the configuration
 
     def setup(self):
         logger.debug("Entering setup method of ImprovedVishwamAIModel")
@@ -358,7 +355,8 @@ class VishwamAILLM(nn.Module):
 
     def setup(self):
         logger.debug("Entering setup method of VishwamAILLM")
-        self.transformer = ImprovedVishwamAIModel(self.config)
+        config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
+        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
         self.lm_head = nn.Dense(self.config['vocab_size'])
         self.params = self.transformer.init(jax.random.PRNGKey(0), jnp.ones((1, self.config['max_seq_length']), dtype=jnp.int32))['params']
         logger.debug("Exiting setup method of VishwamAILLM")

@@ -8,18 +8,18 @@ import optax
 import logging
 import flax.linen as nn
 from flax.training import train_state
+import os
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() in ('true', '1', 't')
+
 def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
-def split_and_rotate(x):
-    x1, x2 = jnp.split(x, 2, axis=-1)
-    return jnp.concatenate([-x2, x1], axis=-1)
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
@@ -74,6 +74,8 @@ class ImprovedAttention(nn.Module):
         output = jnp.matmul(attn, v)
         return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
+# Removed unnecessary debug logging statements and print statement used for debugging purposes
+
 class MathReasoningLayer(nn.Module):
     config: Dict
 
@@ -81,16 +83,12 @@ class MathReasoningLayer(nn.Module):
         self.config = self.config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Log the shape and type of input x
-        logger.debug(f"MathReasoningLayer input type: {type(x)}, shape: {x.shape}")
         return x
 
     def _tensor_to_expressions(self, x: jnp.ndarray) -> List[str]:
-        # Convert tensor to list of string expressions
         expressions = []
         for val in x.flatten():
             expr = str(val)
-            # Add logic to handle mathematical symbols and expressions
             expressions.append(expr)
         return expressions
 
@@ -145,98 +143,48 @@ class ImprovedTransformerBlock(nn.Module):
         self.dropout = nn.Dropout(self.config['dropout_rate'])
         self.optimizer = optax.adam(self.config['learning_rate'])
         rng_key = jax.random.PRNGKey(0)
-        logger.debug(f"RNG key type: {type(rng_key)}")
-        logger.debug(f"RNG key value: {rng_key}")
         self.opt_state = self.optimizer.init(rng_key)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
-        import psutil
-        memory_usage_before_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before attention: {memory_usage_before_attention:.2f} MiB")
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
         attention_output = self.dropout(attention_output, deterministic=not is_training)
         x = x + attention_output
-        memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
 
-        # Log the shape and type of attention_output
-        logger.debug(f"attention_output type: {type(attention_output)}, shape: {attention_output.shape}")
-
-        memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
         ff_output = self.dropout(ff_output, deterministic=not is_training)
         x = x + ff_output
-        memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
 
-        # Log the shape and type of ff_output
-        logger.debug(f"ff_output type: {type(ff_output)}, shape: {ff_output.shape}")
-
-        # Apply math reasoning layer
         math_output = self.math_reasoning(x)
         x = x + math_output
-
-        # Log the shape and type of math_output
-        logger.debug(f"math_output type: {type(math_output)}, shape: {math_output.shape}")
 
         return x
 
 class ImprovedVishwamAIModel(nn.Module):
     config: Dict
 
-
     def setup(self):
-        logger.debug("Entering setup method of ImprovedVishwamAIModel")
         self.embed_dim = self.config['embed_dim']
         self.num_layers = self.config['num_layers']
         self.vocab_size = self.config['vocab_size']
-        self.head_dim = 32  # Define head_dim as an attribute of the class
-        self.num_heads = self.config['num_heads']  # Define num_heads as an attribute of the class
+        self.head_dim = 32
+        self.num_heads = self.config['num_heads']
 
-        # Log the configuration and attributes
-        logger.debug(f"Configuration: {self.config}")
-        logger.debug(f"embed_dim: {self.embed_dim}, num_layers: {self.num_layers}, vocab_size: {self.vocab_size}, head_dim: {self.head_dim}, num_heads: {self.num_heads}")
-
-        # Instantiate a compatible JAX-based BERT model and tokenizer
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
-        # Instantiate ImprovedTransformerBlock submodules
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
-        logger.debug("Exiting setup method of ImprovedVishwamAIModel")
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
-        logger.debug("Entering __call__ method of ImprovedVishwamAIModel")
-        # Ensure input_ids are correctly shaped as a 2D tensor
         input_ids = inputs.reshape(-1, inputs.shape[-1])
-
-        # Log the shape and type of input_ids
-        logger.debug(f"input_ids type: {type(input_ids)}, shape: {input_ids.shape}")
-
-        # Create attention_mask directly from input_ids
         attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
 
-        # Check if input_ids is a valid tensor with the shape attribute
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
 
-        # Log the types and values of input_ids and attention_mask
-        logger.debug(f"input_ids type: {type(input_ids)}, value: {input_ids}")
-        logger.debug(f"attention_mask type: {type(attention_mask)}, value: {attention_mask}")
-
-        # Ensure input_ids remains a JAX numpy array
         input_ids = jax.device_put(input_ids)
 
-        # Log the parameters before passing to the apply method
-        logger.debug(f"Parameters before apply: {self.bert_model.params}")
-
-        # Pass inputs through the JAX-based BERT model
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.logits
-
-        # Log the shape and type of the BERT model output
-        logger.debug(f"BERT model output type: {type(x)}, shape: {x.shape}")
 
         mask = self._create_mask(input_ids)
 
@@ -246,11 +194,6 @@ class ImprovedVishwamAIModel(nn.Module):
         for i in range(self.num_layers):
             x = self.transformer_blocks[i](x, mask, kv_cache[i], is_training)
 
-        # Log the final output shape and type
-        logger.debug(f"Final output type: {type(x)}, shape: {x.shape}")
-        logger.debug("Exiting __call__ method of ImprovedVishwamAIModel")
-
-        # Define the final dense layer within the @compact method
         dense_layer = nn.Dense(self.vocab_size)
         return dense_layer(x), kv_cache
 
@@ -261,21 +204,20 @@ class ImprovedVishwamAIModel(nn.Module):
         return jnp.take(embedding_matrix, x, axis=0)
 
     def _create_mask(self, inputs: jnp.ndarray) -> jnp.ndarray:
-        print(f"pad_token_id: {self.config['pad_token_id']}")  # Debugging statement
         if self.config['pad_token_id'] is None:
             raise ValueError("pad_token_id is not set in the configuration.")
         mask = jnp.not_equal(inputs, self.config['pad_token_id']).astype(jnp.float32)
-        mask = mask[:, None, None, :]  # Expand mask dimensions to match attention tensor's shape
+        mask = mask[:, None, None, :]
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
-        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))  # Adjust mask dimensions to match attention tensor's shape
-        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))  # Expand causal mask dimensions
-        mask = mask * causal_mask  # Apply causal mask and adjust dimensions
+        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))
+        mask = mask * causal_mask
         return mask
 
     def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
         generated_ids = input_ids
-        rng = jax.random.PRNGKey(0)  # Create a dynamic PRNGKey
+        rng = jax.random.PRNGKey(0)
         for _ in range(max_length - input_ids.shape[1]):
             logits, _ = self(generated_ids, is_training=False)
             next_token_logits = logits[:, -1, :] / temperature
@@ -286,7 +228,7 @@ class ImprovedVishwamAIModel(nn.Module):
     def generate_with_evaluation(self, input_ids: jnp.ndarray, kv_cache: Optional[Dict] = None, max_length: int = 100, temperature: float = 1.0) -> Tuple[jnp.ndarray, Dict]:
         generated_ids = input_ids
         total_log_probs = 0.0
-        rng = jax.random.PRNGKey(0)  # Create a dynamic PRNGKey
+        rng = jax.random.PRNGKey(0)
         for _ in range(max_length - input_ids.shape[1]):
             logits, kv_cache = self(generated_ids, is_training=False, kv_cache=kv_cache)
             next_token_logits = logits[:, -1, :] / temperature
@@ -298,18 +240,14 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
-        logger.debug("Entering setup method of VishwamAILLM")
-        config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
+        config_with_head_dim = {**self.config, 'head_dim': 32}
         self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
         self.lm_head = nn.Dense(self.config['vocab_size'])
-        logger.debug("Exiting setup method of VishwamAILLM")
 
     @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
-        logger.debug("Entering __call__ method of VishwamAILLM")
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
-        logger.debug("Exiting __call__ method of VishwamAILLM")
         return lm_logits, new_kv_cache
 
     def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
@@ -350,17 +288,13 @@ class VishwamAILLM(nn.Module):
         return generated_ids, evaluation
 
     def calculate_coherence(self, text: str) -> float:
-        # This is a very simple coherence check. In practice, you'd want a more sophisticated method.
         words = text.split()
         if len(words) < 2:
             return 1.0
 
         coherence = 0
         for i in range(len(words) - 1):
-            # Check if consecutive words often appear together in the training data
-            # This would require access to training data statistics, which we don't have here
-            # So we'll use a placeholder value
-            coherence += 0.5  # placeholder
+            coherence += 0.5
 
         return coherence / (len(words) - 1)
 

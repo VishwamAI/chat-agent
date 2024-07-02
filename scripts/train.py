@@ -8,7 +8,6 @@ import numpy as np
 import yaml
 import pandas as pd
 import logging
-import psutil  # Import psutil for memory profiling
 from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
 
 import flax.linen as nn
@@ -43,8 +42,6 @@ def update(params, opt_state, batch):
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    print(f"Shape of sin before reshape: {sin.shape}")
-    print(f"Shape of cos before reshape: {cos.shape}")
     sin = sin.reshape(x1.shape)
     cos = cos.reshape(x1.shape)
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
@@ -54,19 +51,51 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
-        logger.debug("Entering setup method of VishwamAILLM")
         config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
         self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
         self.lm_head = nn.Dense(self.config['vocab_size'])
-        logger.debug("Exiting setup method of VishwamAILLM")
 
     @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
-        logger.debug("Entering __call__ method of VishwamAILLM")
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
-        logger.debug("Exiting __call__ method of VishwamAILLM")
         return lm_logits, new_kv_cache
+
+    @nn.compact
+    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
+        seq_len = x.shape[1]
+        qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
+        q, k, v = jnp.split(qkv, 3, axis=-1)
+
+        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+
+        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+
+        q = apply_rotary_pos_emb(q, sincos)
+        k = apply_rotary_pos_emb(k, sincos)
+
+        if kv_cache is not None:
+            if kv_cache['k'] is None:
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+            else:
+                k = jnp.concatenate([kv_cache['k'], k], axis=1)
+                v = jnp.concatenate([kv_cache['v'], v], axis=1)
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
+
+        if mask is not None:
+            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
+            attn = jnp.where(mask, attn, float('-inf'))
+
+        attn = jax.nn.softmax(attn, axis=-1)
+
+        output = jnp.matmul(attn, v)
+        return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
 from generate_modular_question import generate_modular_question
 from typing import Iterable
@@ -153,78 +182,6 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
     dataset = load_and_preprocess_data(file_path)
     batched_dataset = (create_batch(samples) for samples in more_itertools.chunked(dataset, batch_size))
     return batched_dataset
-
-@nn.compact
-def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
-    seq_len = x.shape[1]
-    qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
-    q, k, v = jnp.split(qkv, 3, axis=-1)
-
-    import psutil
-    memory_usage_before_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before tensor reshaping: {memory_usage_before_reshape:.2f} MiB")
-    q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-    k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-    v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-    memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
-
-    # Add logging to monitor tensor shapes
-    print(f"Shape of x: {x.shape}")
-    print(f"Shape of q: {q.shape}")
-    print(f"Shape of k: {k.shape}")
-    print(f"Shape of v: {v.shape}")
-
-    # Ensure the correct parameters are passed to the rotary_emb function
-    sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
-    print(f"Shape of sin: {sincos[0].shape}")
-    print(f"Shape of cos: {sincos[1].shape}")
-    memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
-    q = apply_rotary_pos_emb(q, sincos)
-    memory_usage_after_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after apply_rotary_pos_emb (q): {memory_usage_after_q:.2f} MiB")
-    import gc
-    gc.collect()
-
-    memory_usage_before_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before apply_rotary_pos_emb (k): {memory_usage_before_k:.2f} MiB")
-    k = apply_rotary_pos_emb(k, sincos)
-    memory_usage_after_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after apply_rotary_pos_emb (k): {memory_usage_after_k:.2f} MiB")
-    gc.collect()
-
-    if kv_cache is not None:
-        if kv_cache['k'] is None:
-            kv_cache['k'] = k
-            kv_cache['v'] = v
-        else:
-            k = jnp.concatenate([kv_cache['k'], k], axis=1)
-            v = jnp.concatenate([kv_cache['v'], v], axis=1)
-            kv_cache['k'] = k
-            kv_cache['v'] = v
-
-    memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
-    print(f"Shape of q before matmul: {q.shape}")  # Debugging statement
-    print(f"Shape of k before matmul: {k.shape}")  # Debugging statement
-    attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
-    print(f"Shape of attn after matmul: {attn.shape}")  # Debugging statement
-    attn = attn.reshape(q.shape[0], self.num_heads, seq_len, self.head_dim)  # Adjust shape to match mask tensor
-    print(f"Shape of attn after reshaping: {attn.shape}")  # Debugging statement
-    memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-    print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
-
-    if mask is not None:
-        print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
-        print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
-        mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
-        attn = jnp.where(mask, attn, float('-inf'))
-
-    attn = jax.nn.softmax(attn, axis=-1)
-
-    output = jnp.matmul(attn, v)
-    return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
 def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     new_data = create_dataset_from_csv(new_data_file, tokenizer, batch_size, max_length)

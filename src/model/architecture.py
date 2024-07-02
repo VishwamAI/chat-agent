@@ -27,8 +27,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
-    sin = jnp.reshape(sin, (1, 1, sin.shape[2], sin.shape[3]))
-    cos = jnp.reshape(cos, (1, 1, cos.shape[2], cos.shape[3]))
+    sin = jnp.repeat(sin, x1.shape[2] // sin.shape[2], axis=2)
+    cos = jnp.repeat(cos, x1.shape[2] // cos.shape[2], axis=2)
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     return jnp.concatenate([x_rotated, x2], axis=-1)
 

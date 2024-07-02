@@ -326,7 +326,7 @@ class VishwamAILLM(nn.Module):
         self.lm_head = nn.Dense(self.config['vocab_size'])
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
-        transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
+        transformer_outputs, new_kv_cache = self.transformer.apply({'params': self.params}, inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
         return lm_logits, new_kv_cache
 

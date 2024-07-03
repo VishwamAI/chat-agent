@@ -283,12 +283,6 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
 import gc
 
 def main():
-    # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
-    with open(memory_log_file, 'w') as f:
-        f.write("Timestamp,Memory_Usage(MiB)\n")
-
-
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
     with open(config_path, 'r') as f:
@@ -298,6 +292,12 @@ def main():
     config['embed_dim'] = 128  # Further reduce embedding dimension
     config['num_heads'] = 4  # Further reduce number of attention heads
     config['num_layers'] = 2  # Further reduce number of layers
+
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])

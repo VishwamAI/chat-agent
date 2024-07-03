@@ -30,6 +30,54 @@ def log_memory_usage():
         f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
     gc.collect()  # Explicitly call garbage collector to free up memory
 
+def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
+    def load_and_preprocess_data(file_path: str):
+        chunk_size = 25  # Further reduce chunk size to manage memory usage
+        for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+            logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
+            for _, row in chunk.iterrows():
+                prompt = row['prompt']
+                response = row['response']
+
+                # Check for empty or None values in prompt and response
+                if not prompt or not response:
+                    logger.warning(f"Warning: Empty or None value encountered in row: {row}")
+                    continue
+
+                tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
+                actual_length = len(tokens)
+                if actual_length > max_length:
+                    tokens = tokens[:max_length]
+                else:
+                    tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
+
+                # Ensure pad_token_id is valid and replace None values
+                if tokenizer.pad_token_id is None:
+                    raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
+                tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
+
+                input_ids = tokens[:-1]
+                labels = tokens[1:]
+                yield {'input_ids': input_ids, 'labels': labels}
+            gc.collect()  # Explicitly call garbage collector to free up memory
+
+            log_memory_usage()  # Log memory usage at the end of the epoch
+
+            # Temporarily disable reinforcement learning update to reduce memory usage
+            # logger.debug(f"Logging memory usage before reinforcement learning update")
+            # log_memory_usage()
+            # rl_model.learn(total_timesteps=500)
+            # logger.debug(f"Logging memory usage after reinforcement learning update")
+            # log_memory_usage()
+
+            eval_metrics = trainer.evaluate(params, eval_dataset)
+            logger.debug(f"Logging memory usage after evaluation step")
+            log_memory_usage()
+
+            gc.collect()  # Explicitly call garbage collector to free up memory
+
+    gc.collect()  # Explicitly call garbage collector at the start
+
 from bias_analysis import analyze_bias
 
 def update(params, opt_state, batch):

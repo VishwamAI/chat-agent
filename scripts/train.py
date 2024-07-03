@@ -472,37 +472,21 @@ def main():
             logger.info(f"Eval Metrics: {eval_metrics}")
 
             # Save checkpoint after each epoch
-            logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
-            checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
+            checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
-            logger.debug(f"Checkpoint parameters before saving: {params}")
             try:
                 if not os.path.exists(checkpoint_dir):
                     logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
                 else:
-                    logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
-                    logger.debug(f"Parameters to be saved: {params}")
-                    params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-                    logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-                    np.save(checkpoint_path, params_dict)
-                    logger.debug(f"Checkpoint parameters: {params}")
+                    model.save_pretrained(checkpoint_path)
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
                     if os.path.exists(checkpoint_path):
-                        logger.info(f"Checkpoint file {checkpoint_path} created successfully.")
-                        # Verify the contents of the saved file
-                        loaded_params = np.load(checkpoint_path, allow_pickle=True)
-                        logger.debug(f"Loaded parameters type after saving: {type(loaded_params)}")
-                        if isinstance(loaded_params, dict):
-                            logger.info(f"Parameters are correctly saved as a dictionary at {checkpoint_path}")
-                        else:
-                            logger.error(f"Parameters are NOT saved as a dictionary at {checkpoint_path}")
-                    else:
-                        logger.error(f"Checkpoint file {checkpoint_path} was not created.")
+                        logger.info(f"Checkpoint directory {checkpoint_path} created successfully.")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
                 logger.debug(f"Exception details: {e}")
             finally:
-                del params_dict  # Ensure old checkpoints are not kept in memory
+                del params  # Ensure old checkpoints are not kept in memory
             logger.debug(f"Completed attempt to save checkpoint after epoch {epoch + 1}")
 
             if trainer._should_stop_early(eval_metrics):

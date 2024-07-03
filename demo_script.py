@@ -40,8 +40,8 @@ def generate_responses(prompts: list, model, tokenizer):
                 top_k=50,
                 top_p=0.9,
                 do_sample=True,
-                repetition_penalty=1.2,  # Added repetition penalty to reduce echoing
-                no_repeat_ngram_size=2  # Added no repeat n-gram size to reduce repetition
+                repetition_penalty=2.0,  # Further increased repetition penalty to reduce echoing
+                no_repeat_ngram_size=4  # Further increased no repeat n-gram size to reduce repetition
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

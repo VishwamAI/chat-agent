@@ -57,11 +57,16 @@ def generate_responses(prompts: list, model, tokenizer):
         except Exception as e:
             response = f"Error generating response: {str(e)}"
 
+        # Check if the response is echoing the prompt or conversation history
+        if response.strip().lower() in [prompt.strip().lower(), conversation_history_str.strip().lower()]:
+            response = "I'm sorry, I didn't understand that. Can you please rephrase?"
+
         # Append the bot's response to the conversation history
         conversation_history.append(response)
 
-        # Append the bot's response to the responses list
-        responses.append(response)
+        # Append the bot's response to the responses list only if it's a valid response
+        if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
+            responses.append(response)
 
         # Print the prompt and response for verification
         print(f"Prompt: {prompt}")

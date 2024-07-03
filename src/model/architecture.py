@@ -44,15 +44,17 @@ class ImprovedAttention(nn.Module):
 
     @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
-        seq_len = x.shape[1]
+        batch_size, seq_len, embed_dim = x.shape
+        assert embed_dim == self.num_heads * self.head_dim, "Embedding dimension must match num_heads * head_dim"
+
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
-        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        q = q.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+        k = k.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+        v = v.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
-        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+        sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 
         q = apply_rotary_pos_emb(q, sincos, self.head_dim)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim)
@@ -73,13 +75,13 @@ class ImprovedAttention(nn.Module):
             logger.debug(f"Mask shape before broadcasting: {mask.shape}")
             logger.debug(f"Attention tensor shape: {attn.shape}")
             mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
-            mask = jnp.broadcast_to(mask, (x.shape[0], self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
+            mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)
         output = jnp.matmul(attn, v)
-        return output.reshape(x.shape[0], -1, self.num_heads * self.head_dim)
+        return output.reshape(batch_size, seq_len, self.num_heads * self.head_dim)
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes
 
@@ -157,6 +159,11 @@ class ImprovedTransformerBlock(nn.Module):
         attention_output = self.dropout(attention_output, deterministic=not is_training)
         logger.debug(f"x shape before addition: {x.shape}")
         logger.debug(f"attention_output shape: {attention_output.shape}")
+
+        # Ensure x and attention_output have compatible shapes
+        if x.shape != attention_output.shape:
+            x = jnp.broadcast_to(x, attention_output.shape)
+
         x = x + attention_output
 
         ff_output = self.feed_forward(self.layer_norm2(x))

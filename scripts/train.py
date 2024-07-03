@@ -115,32 +115,33 @@ from stable_baselines3 import PPO
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        data = pd.read_csv(file_path)
-        logger.info(f"Loaded data from CSV: {data.head()}")
-        for _, row in data.iterrows():
-            prompt = row['prompt']
-            response = row['response']
+        chunk_size = 1000  # Load data in smaller chunks
+        for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+            logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
+            for _, row in chunk.iterrows():
+                prompt = row['prompt']
+                response = row['response']
 
-            # Check for empty or None values in prompt and response
-            if not prompt or not response:
-                logger.warning(f"Warning: Empty or None value encountered in row: {row}")
-                continue
+                # Check for empty or None values in prompt and response
+                if not prompt or not response:
+                    logger.warning(f"Warning: Empty or None value encountered in row: {row}")
+                    continue
 
-            tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
-            actual_length = len(tokens)
-            if (actual_length > max_length):
-                tokens = tokens[:max_length]
-            else:
-                tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
+                tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
+                actual_length = len(tokens)
+                if actual_length > max_length:
+                    tokens = tokens[:max_length]
+                else:
+                    tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
 
-            # Ensure pad_token_id is valid and replace None values
-            if tokenizer.pad_token_id is None:
-                raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
-            tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
+                # Ensure pad_token_id is valid and replace None values
+                if tokenizer.pad_token_id is None:
+                    raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
+                tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
 
-            input_ids = tokens[:-1]
-            labels = tokens[1:]
-            yield {'input_ids': input_ids, 'labels': labels}
+                input_ids = tokens[:-1]
+                labels = tokens[1:]
+                yield {'input_ids': input_ids, 'labels': labels}
 
     def create_batch(samples):
         input_ids = []

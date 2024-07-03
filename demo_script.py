@@ -11,10 +11,11 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
-    conversation_history = ""  # Initialize conversation history outside the loop
     for prompt in prompts:
-        conversation_history += f"User: {prompt}\n"
+        # Initialize conversation history with the user's prompt
+        conversation_history = f"User: {prompt}\n"
 
+        # Encode the conversation history
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
 
         # Ensure pad_token_id is set
@@ -29,19 +30,25 @@ def generate_responses(prompts: list, model, tokenizer):
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
         print("Generating response...")  # Debugging print statement
-        output = model.generate(
-            input_ids,
-            attention_mask=attention_mask,
-            pad_token_id=tokenizer.eos_token_id,
-            max_new_tokens=50,
-            temperature=0.7,
-            top_k=50,
-            top_p=0.9,
-            do_sample=True,
-            repetition_penalty=1.2,  # Added repetition penalty to reduce echoing
-            no_repeat_ngram_size=2  # Added no repeat n-gram size to reduce repetition
-        )
-        response = tokenizer.decode(output[0], skip_special_tokens=True)
+        try:
+            output = model.generate(
+                input_ids,
+                attention_mask=attention_mask,
+                pad_token_id=tokenizer.eos_token_id,
+                max_new_tokens=50,
+                temperature=0.7,
+                top_k=50,
+                top_p=0.9,
+                do_sample=True,
+                repetition_penalty=1.2,  # Added repetition penalty to reduce echoing
+                no_repeat_ngram_size=2  # Added no repeat n-gram size to reduce repetition
+            )
+            response = tokenizer.decode(output[0], skip_special_tokens=True)
+        except Exception as e:
+            print(f"Error during generation: {e}")
+            response = "Error generating response."
+
+        # Append the bot's response to the conversation history
         conversation_history += f"Bot: {response}\n"
 
         # Truncate conversation_history again after appending the bot's response

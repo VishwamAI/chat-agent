@@ -10,6 +10,7 @@ import pandas as pd
 import logging
 import psutil  # Import psutil module
 from typing import Dict, Optional, Tuple, Iterable  # Import Dict, Optional, Tuple, and Iterable from typing module
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig  # Import necessary modules from transformers library
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

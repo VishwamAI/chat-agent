@@ -42,12 +42,12 @@ def generate_responses(prompts: list, model, tokenizer):
                 attention_mask=attention_mask,
                 pad_token_id=tokenizer.eos_token_id,
                 max_new_tokens=50,
-                temperature=0.9,  # Adjusted temperature for more diverse responses
-                top_k=50,
-                top_p=0.95,  # Adjusted top_p for more diverse responses
+                temperature=0.7,  # Adjusted temperature for more coherent responses
+                top_k=30,  # Adjusted top_k for more focused responses
+                top_p=0.85,  # Adjusted top_p for more focused responses
                 do_sample=True,
-                repetition_penalty=1.2,  # Simplified repetition penalty
-                no_repeat_ngram_size=2,  # Simplified no repeat n-gram size
+                repetition_penalty=1.5,  # Increased repetition penalty
+                no_repeat_ngram_size=3,  # Increased no repeat n-gram size
                 num_beams=1,  # Simplified to no beam search
                 num_return_sequences=1  # Return only one sequence
             )

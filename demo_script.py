@@ -41,7 +41,9 @@ def generate_responses(prompts: list, model, tokenizer):
                 top_p=0.9,
                 do_sample=True,
                 repetition_penalty=2.0,  # Further increased repetition penalty to reduce echoing
-                no_repeat_ngram_size=4  # Further increased no repeat n-gram size to reduce repetition
+                no_repeat_ngram_size=4,  # Further increased no repeat n-gram size to reduce repetition
+                num_beams=5,  # Added beam search with 5 beams
+                num_return_sequences=1  # Return only one sequence
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

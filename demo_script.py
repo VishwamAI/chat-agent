@@ -10,8 +10,10 @@ def load_prompts(file_path: str):
 
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
+    conversation_history = ""
     for prompt in prompts:
-        input_ids = tokenizer.encode(prompt, return_tensors='pt')
+        conversation_history += f"User: {prompt}\n"
+        input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
         output = model.generate(
@@ -24,6 +26,7 @@ def generate_responses(prompts: list, model, tokenizer):
             do_sample=True
         )
         response = tokenizer.decode(output[0], skip_special_tokens=True)
+        conversation_history += f"Bot: {response}\n"
         responses.append(response)
     return responses
 

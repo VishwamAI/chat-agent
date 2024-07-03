@@ -9,7 +9,7 @@ import yaml
 import pandas as pd
 import logging
 import psutil  # Import psutil module
-from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
+from typing import Dict, Optional, Tuple, Iterable  # Import Dict, Optional, Tuple, and Iterable from typing module
 
 import flax.linen as nn
 

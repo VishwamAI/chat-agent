@@ -11,13 +11,23 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     conversation_history = ""
+    max_length = 1024  # Maximum sequence length for the model
     for prompt in prompts:
         conversation_history += f"User: {prompt}\n"
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+
+        # Truncate input_ids if it exceeds max_length
+        if input_ids.size(1) > max_length:
+            input_ids = input_ids[:, -max_length:]
+
+        # Create attention mask
+        attention_mask = (input_ids != tokenizer.pad_token_id).long()
+
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
         output = model.generate(
             input_ids,
+            attention_mask=attention_mask,
             pad_token_id=tokenizer.eos_token_id,
             max_new_tokens=50,
             temperature=0.7,

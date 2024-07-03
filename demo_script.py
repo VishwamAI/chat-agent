@@ -11,13 +11,20 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
-    conversation_history = ""  # Initialize conversation history outside the loop
+    conversation_history = []  # Initialize conversation history without a generic greeting
     for prompt in prompts:
         # Append the user's prompt to the conversation history
-        conversation_history += f"User: {prompt}\n"
+        conversation_history.append(prompt)
+
+        # Maintain a sliding window of the last 5 exchanges
+        if len(conversation_history) > 5:
+            conversation_history = conversation_history[-5:]
+
+        # Join the conversation history into a single string
+        conversation_history_str = "\n".join(conversation_history)
 
         # Encode the conversation history
-        input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
@@ -47,6 +54,7 @@ def generate_responses(prompts: list, model, tokenizer):
                 num_return_sequences=1  # Return only one sequence
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
+            print(f"Output: {output}")  # Debugging print statement
         except Exception as e:
             print(f"Error during generation: {e}")
             response = "Error generating response."
@@ -55,20 +63,15 @@ def generate_responses(prompts: list, model, tokenizer):
         if response.strip().lower() == prompt.strip().lower():
             response = "I'm sorry, I didn't understand that. Can you please rephrase?"
 
-        # Append the bot's response to the conversation history
-        conversation_history += f"Bot: {response}\n"
-
-        # Truncate conversation history if it exceeds max_length
-        input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
-        if input_ids.size(1) > max_length:
-            conversation_history = tokenizer.decode(input_ids[:, -max_length:], skip_special_tokens=True)
+        # Append the bot's response to the conversation history only if it's a valid response
+        if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
+            conversation_history.append(response)
 
         responses.append(response)
         print(f"Prompt: {prompt}")  # Debugging print statement
         print(f"Response: {response}")  # Debugging print statement
         print(f"Conversation History: {conversation_history}")  # Debugging print statement
         print(f"Input IDs: {input_ids}")  # Debugging print statement
-        print(f"Output: {output}")  # Debugging print statement
     return responses
 
 def main():

@@ -151,15 +151,9 @@ class ImprovedTransformerBlock(nn.Module):
         self.dropout = nn.Dropout(self.config['dropout_rate'])
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
-        def checkpointed_attention(x, mask, kv_cache):
-            attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
-            return self.dropout(attention_output, deterministic=not is_training)
-
-        def checkpointed_feed_forward(x):
-            ff_output = self.feed_forward(self.layer_norm2(x))
-            return self.dropout(ff_output, deterministic=not is_training)
-
-        attention_output = jax.checkpoint(checkpointed_attention)(x, mask, kv_cache)
+        x = self.layer_norm1(x)
+        attention_output = self.attention(x, mask, kv_cache)
+        attention_output = self.dropout(attention_output, deterministic=not is_training)
 
         # Ensure x and attention_output have compatible shapes
         if x.shape != attention_output.shape:
@@ -167,7 +161,9 @@ class ImprovedTransformerBlock(nn.Module):
 
         x = x + attention_output
 
-        ff_output = jax.checkpoint(checkpointed_feed_forward)(x)
+        x = self.layer_norm2(x)
+        ff_output = self.feed_forward(x)
+        ff_output = self.dropout(ff_output, deterministic=not is_training)
         x = x + ff_output
 
         return x

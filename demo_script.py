@@ -11,9 +11,19 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
+    conversation_history = []
+
     for prompt in prompts:
-        # Encode the user's prompt
-        input_ids = tokenizer.encode(prompt, return_tensors='pt')
+        # Add the user's prompt to the conversation history
+        conversation_history.append(prompt)
+
+        # Maintain a sliding window of the last 5 user prompts
+        if len(conversation_history) > 5:
+            conversation_history = conversation_history[-5:]
+
+        # Encode the conversation history
+        conversation_history_str = " ".join(conversation_history)
+        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:

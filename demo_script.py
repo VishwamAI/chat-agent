@@ -40,9 +40,9 @@ def generate_responses(prompts: list, model, tokenizer):
                 top_k=50,
                 top_p=0.9,
                 do_sample=True,
-                repetition_penalty=2.0,  # Further increased repetition penalty to reduce echoing
-                no_repeat_ngram_size=4,  # Further increased no repeat n-gram size to reduce repetition
-                num_beams=5,  # Added beam search with 5 beams
+                repetition_penalty=1.2,  # Simplified repetition penalty
+                no_repeat_ngram_size=2,  # Simplified no repeat n-gram size
+                num_beams=1,  # Simplified to no beam search
                 num_return_sequences=1  # Return only one sequence
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
@@ -56,6 +56,7 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"Conversation History: {conversation_history}")  # Debugging print statement
         print(f"Input IDs: {input_ids}")  # Debugging print statement
         print(f"Output: {output}")  # Debugging print statement
+        print(f"Updated Conversation History: {conversation_history + 'Bot: ' + response}\n")  # New debugging print statement
     return responses
 
 def main():

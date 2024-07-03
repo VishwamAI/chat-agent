@@ -32,7 +32,7 @@ def log_memory_usage():
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        chunk_size = 25  # Further reduce chunk size to manage memory usage
+        chunk_size = 10  # Further reduce chunk size to manage memory usage
         for chunk in pd.read_csv(file_path, chunksize=chunk_size):
             logger.warning(f"Loaded data chunk from CSV: {chunk.head()}")
             for _, row in chunk.iterrows():
@@ -77,6 +77,52 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
             gc.collect()  # Explicitly call garbage collector to free up memory
 
     gc.collect()  # Explicitly call garbage collector at the start
+
+# Initialize model only once
+def model_fn(inputs):
+    model = VishwamAILLM(config=config)
+    return model
+
+# Initialize model parameters
+rng_key = jax.random.PRNGKey(0)
+dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+model = model_fn(dummy_input)
+model_params = model.init(rng_key, dummy_input)['params']
+logger.info(f"Model parameters initialized.")
+
+# Save checkpoint after each epoch
+logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
+checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
+logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
+logger.debug(f"Checkpoint parameters before saving: {params}")
+try:
+    if not os.path.exists(checkpoint_dir):
+        logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
+    else:
+        logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
+        logger.debug(f"Parameters to be saved: {params}")
+        params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
+        logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
+        np.save(checkpoint_path, params_dict)
+        logger.debug(f"Checkpoint parameters: {params}")
+        logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
+        if os.path.exists(checkpoint_path):
+            logger.info(f"Checkpoint file {checkpoint_path} created successfully.")
+            # Verify the contents of the saved file
+            loaded_params = np.load(checkpoint_path, allow_pickle=True)
+            logger.debug(f"Loaded parameters type after saving: {type(loaded_params)}")
+            if isinstance(loaded_params, dict):
+                logger.info(f"Parameters are correctly saved as a dictionary at {checkpoint_path}")
+            else:
+                logger.error(f"Parameters are NOT saved as a dictionary at {checkpoint_path}")
+        else:
+            logger.error(f"Checkpoint file {checkpoint_path} was not created.")
+except Exception as e:
+    logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
+    logger.debug(f"Exception details: {e}")
+finally:
+    del params_dict  # Ensure old checkpoints are not kept in memory
+logger.debug(f"Completed attempt to save checkpoint after epoch {epoch + 1}")
 
 from bias_analysis import analyze_bias
 

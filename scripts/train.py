@@ -331,11 +331,9 @@ def main():
             train_loss = 0
             train_steps = 0
 
-            log_memory_usage()
+            log_memory_usage()  # Log memory usage at the start of the epoch
 
             for batch in train_dataset:
-                log_memory_usage()
-
                 batch['input_ids'] = jnp.array(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
@@ -344,36 +342,12 @@ def main():
                 train_loss += loss
                 train_steps += 1
 
-                log_memory_usage()
                 gc.collect()  # Explicitly call garbage collector to free up memory
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
 
-                # Save intermediate checkpoint
-                if train_steps % 1000 == 0:
-                    intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
-                    logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
-                    logger.debug(f"Checkpoint parameters before saving: {params}")
-                    try:
-                        if not os.path.exists(checkpoint_dir):
-                            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-                        else:
-                            logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
-                            logger.debug(f"Parameters to be saved: {params}")
-                            logger.debug(f"Parameters before conversion: {params}")
-                            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-                            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-                            np.save(intermediate_checkpoint_path, params_dict)
-                            logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
-                            if os.path.exists(intermediate_checkpoint_path):
-                                logger.info(f"Checkpoint file {intermediate_checkpoint_path} created successfully.")
-                            else:
-                                logger.error(f"Checkpoint file {intermediate_checkpoint_path} was not created.")
-                    except Exception as e:
-                        logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
-                        logger.debug(f"Exception details: {e}")
-                    logger.debug(f"Completed attempt to save intermediate checkpoint at step {train_steps}")
+            log_memory_usage()  # Log memory usage at the end of the epoch
 
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")

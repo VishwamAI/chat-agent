@@ -46,7 +46,12 @@ class ImprovedAttention(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         batch_size, seq_len, embed_dim = x.shape if len(x.shape) == 3 else (x.shape[0], x.shape[1], self.num_heads * self.head_dim)
         assert embed_dim == self.num_heads * self.head_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}"
-        x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)  # Ensure x has the correct shape
+
+        # Ensure x has the correct shape
+        if embed_dim != self.num_heads * self.head_dim:
+            raise ValueError(f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}")
+
+        x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)

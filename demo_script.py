@@ -20,11 +20,13 @@ def generate_responses(prompts: list, model, tokenizer):
         if input_ids.size(1) > max_length:
             input_ids = input_ids[:, -max_length:]
 
+        # Ensure pad_token_id is set
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
+
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
-        if tokenizer.pad_token_id is None:
-            tokenizer.pad_token_id = tokenizer.eos_token_id
         output = model.generate(
             input_ids,
             attention_mask=attention_mask,

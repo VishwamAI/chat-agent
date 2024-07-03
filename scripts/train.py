@@ -15,28 +15,20 @@ import flax.linen as nn
 from transformers import AutoTokenizer
 
 def loss_fn(logits, labels):
-    logger.debug(f"Logits: {logits}")
-    logger.debug(f"Labels: {labels}")
     one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
     loss = optax.softmax_cross_entropy(logits, one_hot_labels).mean()
-    logger.debug(f"Loss: {loss}")
     return loss
 
 from bias_analysis import analyze_bias
 
 def update(params, opt_state, batch):
     def loss_fn_wrapper(params):
-        logger.debug(f"Applying model with params: {params}")
         logits, _ = model.apply(params, batch['input_ids'])
-        logger.debug(f"Logits after model apply: {logits}")
         return loss_fn(logits, batch['labels'])
 
     grads = jax.grad(loss_fn_wrapper)(params)
-    logger.debug(f"Gradients: {grads}")
     updates, opt_state = optimizer.update(grads, opt_state)
-    logger.debug(f"Updates: {updates}")
     new_params = optax.apply_updates(params, updates)
-    logger.debug(f"New parameters: {new_params}")
     return new_params, opt_state
 
 def apply_rotary_pos_emb(x, sincos):
@@ -135,7 +127,6 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
                 continue
 
             tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
-            logger.debug(f"Original tokens: {tokens}")
             actual_length = len(tokens)
             if (actual_length > max_length):
                 tokens = tokens[:max_length]
@@ -147,15 +138,11 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
                 raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
             tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
 
-            logger.debug(f"Padded tokens: {tokens}")
             input_ids = tokens[:-1]
             labels = tokens[1:]
-            logger.debug(f"Processed input_ids: {input_ids}")
-            logger.debug(f"Processed labels: {labels}")
             yield {'input_ids': input_ids, 'labels': labels}
 
     def create_batch(samples):
-        logger.debug(f"Samples before processing: {samples}")  # Added logging
         input_ids = []
         labels = []
         for s in samples:
@@ -171,8 +158,6 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
             else:
                 labels.append(s['labels'])
 
-        logger.debug(f"Final input_ids: {input_ids}")
-        logger.debug(f"Final labels: {labels}")
         batch = {
             'input_ids': jnp.array(input_ids),
             'labels': jnp.array(labels)

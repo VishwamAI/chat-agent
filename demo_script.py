@@ -11,12 +11,21 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
+    conversation_history = []
+
     for prompt in prompts:
-        # Initialize conversation history with the user's prompt
-        conversation_history = f"User: {prompt}\n"
+        # Add the user's prompt to the conversation history
+        conversation_history.append(prompt)
+
+        # Maintain a sliding window of the last 5 exchanges (user prompt + bot response)
+        if len(conversation_history) > 10:
+            conversation_history = conversation_history[-10:]
+
+        # Use the full conversation history for generating the next response
+        conversation_history_str = " ".join(conversation_history)
 
         # Encode the conversation history
-        input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
@@ -29,33 +38,44 @@ def generate_responses(prompts: list, model, tokenizer):
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
-        print("Generating response...")  # Debugging print statement
         try:
             output = model.generate(
                 input_ids,
                 attention_mask=attention_mask,
                 pad_token_id=tokenizer.eos_token_id,
-                max_new_tokens=50,
-                temperature=0.7,
-                top_k=50,
-                top_p=0.9,
+                max_new_tokens=100,  # Increased max_new_tokens for longer responses
+                temperature=0.7,  # Adjusted temperature for more coherent responses
+                top_k=50,  # Adjusted top_k for more diverse responses
+                top_p=0.9,  # Adjusted top_p for more diverse responses
                 do_sample=True,
-                repetition_penalty=2.0,  # Further increased repetition penalty to reduce echoing
-                no_repeat_ngram_size=4,  # Further increased no repeat n-gram size to reduce repetition
-                num_beams=5,  # Added beam search with 5 beams
+                repetition_penalty=1.5,  # Adjusted repetition penalty
+                no_repeat_ngram_size=2,  # Adjusted no repeat n-gram size
+                num_beams=1,  # Simplified to no beam search
                 num_return_sequences=1  # Return only one sequence
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
-            print(f"Error during generation: {e}")
-            response = "Error generating response."
+            response = f"Error generating response: {str(e)}"
 
-        responses.append(response)
-        print(f"Prompt: {prompt}")  # Debugging print statement
-        print(f"Response: {response}")  # Debugging print statement
-        print(f"Conversation History: {conversation_history}")  # Debugging print statement
-        print(f"Input IDs: {input_ids}")  # Debugging print statement
-        print(f"Output: {output}")  # Debugging print statement
+        # Check if the response is echoing the prompt or conversation history
+        if response.strip().lower() in [prompt.strip().lower(), conversation_history_str.strip().lower()]:
+            response = "I'm sorry, I didn't understand that. Can you please rephrase?"
+
+        # Append the bot's response to the conversation history
+        conversation_history.append(response)
+
+        # Append the bot's response to the responses list only if it's a valid response
+        if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
+            responses.append(response)
+
+        # Print the prompt and response for verification
+        print(f"Prompt: {prompt}")
+        print(f"Response: {response}")
+        print(f"Input IDs: {input_ids}")
+        print(f"Attention Mask: {attention_mask}")
+        print(f"Output: {output}")
+        print()
+
     return responses
 
 def main():
@@ -80,6 +100,9 @@ def main():
         print(f"Prompt: {prompt}")
         print(f"Response: {response}")
         print()
+
+    # Terminate the script after processing all prompts
+    print("All prompts have been processed. Terminating the script.")
 
 if __name__ == "__main__":
     main()

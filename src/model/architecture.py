@@ -53,6 +53,7 @@ class ImprovedAttention(nn.Module):
         v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
 
         sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+
         q = apply_rotary_pos_emb(q, sincos, self.head_dim)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim)
 
@@ -71,14 +72,14 @@ class ImprovedAttention(nn.Module):
         if mask is not None:
             logger.debug(f"Mask shape before broadcasting: {mask.shape}")
             logger.debug(f"Attention tensor shape: {attn.shape}")
-            mask = jnp.reshape(mask, (mask.shape[0], self.num_heads, mask.shape[2], mask.shape[3]))  # Reshape mask to match attention tensor's dimensions
+            mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
             mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)
         output = jnp.matmul(attn, v)
-        return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
+        return output.reshape(x.shape[0], -1, self.num_heads * self.head_dim)
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes
 
@@ -216,8 +217,8 @@ class ImprovedVishwamAIModel(nn.Module):
         mask = mask[:, None, None, :]
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
-        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))
-        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))
+        mask = jnp.broadcast_to(mask, (inputs.shape[0], self.num_heads, seq_length, seq_length))
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (inputs.shape[0], self.num_heads, seq_length, seq_length))
         mask = mask * causal_mask
         return mask
 

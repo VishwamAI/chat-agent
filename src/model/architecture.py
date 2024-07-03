@@ -146,19 +146,13 @@ class ImprovedTransformerBlock(nn.Module):
             nn.gelu,
             nn.Dense(self.config['embed_dim']),
         ])
-        self.math_reasoning = MathReasoningLayer(self.config)
         self.layer_norm1 = nn.LayerNorm()
         self.layer_norm2 = nn.LayerNorm()
         self.dropout = nn.Dropout(self.config['dropout_rate'])
-        self.optimizer = optax.adam(self.config['learning_rate'])
-        rng_key = jax.random.PRNGKey(0)
-        self.opt_state = self.optimizer.init(rng_key)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
         attention_output = self.dropout(attention_output, deterministic=not is_training)
-        logger.debug(f"x shape before addition: {x.shape}")
-        logger.debug(f"attention_output shape: {attention_output.shape}")
 
         # Ensure x and attention_output have compatible shapes
         if x.shape != attention_output.shape:
@@ -169,9 +163,6 @@ class ImprovedTransformerBlock(nn.Module):
         ff_output = self.feed_forward(self.layer_norm2(x))
         ff_output = self.dropout(ff_output, deterministic=not is_training)
         x = x + ff_output
-
-        math_output = self.math_reasoning(x)
-        x = x + math_output
 
         return x
 

@@ -11,9 +11,10 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
+    conversation_history = ""  # Initialize conversation history outside the loop
     for prompt in prompts:
-        # Initialize conversation history with the user's prompt
-        conversation_history = f"User: {prompt}\n"
+        # Append the user's prompt to the conversation history
+        conversation_history += f"User: {prompt}\n"
 
         # Encode the conversation history
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
@@ -50,13 +51,24 @@ def generate_responses(prompts: list, model, tokenizer):
             print(f"Error during generation: {e}")
             response = "Error generating response."
 
+        # Check if the response is echoing the prompt
+        if response.strip().lower() == prompt.strip().lower():
+            response = "I'm sorry, I didn't understand that. Can you please rephrase?"
+
+        # Append the bot's response to the conversation history
+        conversation_history += f"Bot: {response}\n"
+
+        # Truncate conversation history if it exceeds max_length
+        input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+        if input_ids.size(1) > max_length:
+            conversation_history = tokenizer.decode(input_ids[:, -max_length:], skip_special_tokens=True)
+
         responses.append(response)
         print(f"Prompt: {prompt}")  # Debugging print statement
         print(f"Response: {response}")  # Debugging print statement
         print(f"Conversation History: {conversation_history}")  # Debugging print statement
         print(f"Input IDs: {input_ids}")  # Debugging print statement
         print(f"Output: {output}")  # Debugging print statement
-        print(f"Updated Conversation History: {conversation_history + 'Bot: ' + response}\n")  # New debugging print statement
     return responses
 
 def main():

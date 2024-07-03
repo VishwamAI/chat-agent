@@ -44,6 +44,8 @@ class ImprovedAttention(nn.Module):
 
     @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
+        if len(x.shape) == 2:
+            x = x[:, :, None]  # Add a third dimension if x is two-dimensional
         batch_size, seq_len, embed_dim = x.shape
         assert embed_dim == self.num_heads * self.head_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}"
 

@@ -249,48 +249,31 @@ def main():
     dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
     model = model_fn(dummy_input)
     model_params = model.init(rng_key, dummy_input)['params']
-    logger.debug(f"Model parameters initialized: {model_params}")
+    logger.info(f"Model parameters initialized.")
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
-    logger.debug(f"Optimizer initialized: {optimizer}")
+    logger.info(f"Optimizer initialized.")
 
     # Initialize optimizer state
     opt_state = optimizer.init(model_params)
-    logger.debug(f"Optimizer state initialized: {opt_state}")
+    logger.info(f"Optimizer state initialized.")
 
     opt_state = None
     try:
         rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key
         dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-        logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
         model_params = model.init(rng_key, dummy_input)['params']
-        logger.debug(f"Model parameters initialized: {model_params}")
         if not isinstance(model_params, dict):
             raise TypeError(f"model_params is not a dictionary, but a {type(model_params)}")
-        logger.debug(f"Model parameters type: {type(model_params)}")
-        logger.debug(f"Model parameters structure: {model_params}")
-        logger.debug(f"Model parameters before optimizer init: {model_params}")
-        # Ensure model_params is a dictionary
         if isinstance(model_params, dict):
-            # Convert model_params to a dictionary if it is not already
             model_params = hk.data_structures.to_immutable_dict(model_params)
-            logger.debug(f"Model parameters after conversion to immutable dict: {model_params}")
-            logger.debug(f"Model parameters keys: {list(model_params.keys())}")
-            for key, value in model_params.items():
-                logger.debug(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if hasattr(value, 'shape') else 'N/A'}")
             opt_state = optimizer.init(model_params)
         else:
             raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")
-        logger.debug(f"Optimizer state initialized: {opt_state}")
+        logger.info(f"Optimizer state re-initialized.")
     except TypeError as e:
         logger.error(f"TypeError during optimizer state initialization: {e}")
-        logger.debug(f"rng_key: {rng_key}")
-        logger.debug(f"dummy_input: {dummy_input}")
-        if 'model_params' in locals():
-            logger.debug(f"model_params: {model_params}")
-        if 'optimizer' in locals():
-            logger.debug(f"optimizer: {optimizer}")
         raise
 
     # Initialize trainer

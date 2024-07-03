@@ -249,7 +249,7 @@ def main():
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.float32)  # Ensure correct shape for dummy input
+    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)  # Ensure correct shape for dummy input
     model = model_fn(dummy_input)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.debug(f"Model parameters initialized: {model_params}")

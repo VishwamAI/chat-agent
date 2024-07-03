@@ -480,6 +480,7 @@ def main():
                     logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
                 else:
                     model.save_pretrained(checkpoint_path)
+                    tokenizer.save_pretrained(checkpoint_path)
                     logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
                     if os.path.exists(checkpoint_path):
                         logger.info(f"Checkpoint directory {checkpoint_path} created successfully.")
@@ -521,18 +522,14 @@ def main():
     # Save final checkpoint
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
-    checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
+    checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final')
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
-    logger.debug(f"Checkpoint parameters before saving: {params}")
-    logger.debug(f"Parameters before conversion: {params}")
     try:
         if not os.path.exists(checkpoint_dir):
             logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
         else:
-            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-            np.save(checkpoint_path, params_dict)
-            logger.debug(f"Checkpoint parameters: {params}")
+            model.save_pretrained(checkpoint_path)
+            tokenizer.save_pretrained(checkpoint_path)
             logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:
         logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")

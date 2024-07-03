@@ -609,11 +609,3 @@ def main():
 if __name__ == "__main__":
     gc.collect()  # Explicitly call garbage collector at the start
     main()
-
-if __name__ == "__main__":
-    gc.collect()  # Explicitly call garbage collector at the start
-    main()
-
-
-if __name__ == "__main__":
-    main()

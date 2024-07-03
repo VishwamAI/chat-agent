@@ -53,6 +53,7 @@ class ImprovedAttention(nn.Module):
         v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
 
         sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+
         q = apply_rotary_pos_emb(q, sincos, self.head_dim)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim)
 
@@ -71,7 +72,7 @@ class ImprovedAttention(nn.Module):
         if mask is not None:
             logger.debug(f"Mask shape before broadcasting: {mask.shape}")
             logger.debug(f"Attention tensor shape: {attn.shape}")
-            mask = jnp.reshape(mask, (mask.shape[0], self.num_heads, mask.shape[2], mask.shape[3]))  # Reshape mask to match attention tensor's dimensions
+            mask = jnp.reshape(mask, (mask.shape[0], self.num_heads, mask.shape[2], mask.shape[2]))  # Reshape mask to match attention tensor's dimensions
             mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))

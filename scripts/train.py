@@ -11,6 +11,18 @@ import logging
 import psutil  # Import psutil module
 from typing import Dict, Optional, Tuple, Iterable  # Import Dict, Optional, Tuple, and Iterable from typing module
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Add file handler to write logs to a file
+log_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/train.log'))
+file_handler = logging.FileHandler(log_file_path)
+file_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 import flax.linen as nn
 
 from transformers import AutoTokenizer

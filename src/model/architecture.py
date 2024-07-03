@@ -79,7 +79,7 @@ class ImprovedAttention(nn.Module):
 
         attn = jax.nn.softmax(attn, axis=-1)
         output = jnp.matmul(attn, v)
-        return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
+        return output.reshape(x.shape[0], seq_len, self.num_heads * self.head_dim)
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes
 
@@ -217,8 +217,8 @@ class ImprovedVishwamAIModel(nn.Module):
         mask = mask[:, None, None, :]
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
-        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))
-        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))
+        mask = jnp.broadcast_to(mask, (inputs.shape[0], self.num_heads, seq_length, seq_length))
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (inputs.shape[0], self.num_heads, seq_length, seq_length))
         mask = mask * causal_mask
         return mask
 

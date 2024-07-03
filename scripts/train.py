@@ -129,7 +129,7 @@ from stable_baselines3 import PPO
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        chunk_size = 50  # Further reduce chunk size to manage memory usage
+        chunk_size = 25  # Further reduce chunk size to manage memory usage
         for chunk in pd.read_csv(file_path, chunksize=chunk_size):
             logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
             for _, row in chunk.iterrows():

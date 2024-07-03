@@ -48,20 +48,11 @@ class ImprovedAttention(nn.Module):
         assert embed_dim == self.num_heads * self.head_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}"
 
         # Ensure x has the correct shape
-        if embed_dim != self.num_heads * self.head_dim:
-            raise ValueError(f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}")
+        if len(x.shape) == 2:
+            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
         # Log the shape of x before reshaping
         logger.debug(f"x shape before reshaping: {x.shape}")
-
-        # Adjust reshaping operation based on the dimensions of x
-        if len(x.shape) == 2:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        else:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-
-        # Log the shape of x after reshaping
-        logger.debug(f"x shape after reshaping: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)

@@ -49,7 +49,7 @@ class ImprovedAttention(nn.Module):
 
         # Ensure x has the correct shape
         if len(x.shape) == 2:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            x = x.reshape(batch_size, seq_len, self.num_heads * self.head_dim)
 
         # Log the shape of x before reshaping
         logger.debug(f"x shape before reshaping: {x.shape}")

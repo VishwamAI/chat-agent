@@ -115,7 +115,7 @@ from stable_baselines3 import PPO
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        chunk_size = 1000  # Load data in smaller chunks
+        chunk_size = 100  # Load data in smaller chunks
         for chunk in pd.read_csv(file_path, chunksize=chunk_size):
             logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
             for _, row in chunk.iterrows():
@@ -142,6 +142,7 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
                 input_ids = tokens[:-1]
                 labels = tokens[1:]
                 yield {'input_ids': input_ids, 'labels': labels}
+            gc.collect()  # Explicitly call garbage collector to free up memory
 
     def create_batch(samples):
         input_ids = []

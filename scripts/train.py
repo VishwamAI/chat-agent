@@ -540,6 +540,8 @@ def main():
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
                 logger.debug(f"Exception details: {e}")
+            finally:
+                del params_dict  # Ensure old checkpoints are not kept in memory
             logger.debug(f"Completed attempt to save checkpoint after epoch {epoch + 1}")
 
             if trainer._should_stop_early(eval_metrics):

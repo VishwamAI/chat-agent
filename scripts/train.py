@@ -241,8 +241,8 @@ def main():
     # Create datasets
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, config['batch_size'], config['max_seq_length'])
-    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, config['batch_size'], config['max_seq_length'])
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 2, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 2, config['max_seq_length'])
 
     # Analyze training data for biases
     logger.info("Analyzing training data for biases...")

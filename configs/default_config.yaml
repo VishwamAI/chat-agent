@@ -1,19 +1,19 @@
 # Model configuration
-embed_dim: 2048
-num_heads: 32
-num_layers: 24
+embed_dim: 512  # Reduced embed_dim from 1024 to 512
+num_heads: 16  # Reduced num_heads from 32 to 16
+num_layers: 6  # Reduced num_layers from 12 to 6
 vocab_size: 50000
-dropout_rate: 0.1
-ff_dim: 8192
+dropout_rate: 0.3  # Increased dropout_rate from 0.2 to 0.3
+ff_dim: 2048  # Reduced ff_dim from 4096 to 2048
 pad_token_id: 50256
 head_dim: 32  # Added head_dim to match the model architecture
 
 # Training configuration
 learning_rate: 1e-4
 weight_decay: 0.01
-batch_size: 8  # Reduced batch size from 32 to 8
+batch_size: 2  # Reduced batch size from 4 to 2
 num_epochs: 10
-max_seq_length: 1024  # Reduced max sequence length from 2048 to 1024
+max_seq_length: 512  # Reduced max sequence length from 1024 to 512
 
 # Data configuration
 train_file: "data/processed/train.txt"

@@ -8,35 +8,86 @@ import numpy as np
 import yaml
 import pandas as pd
 import logging
-from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
+import psutil  # Import psutil module
+from typing import Dict, Optional, Tuple, Iterable  # Import Dict, Optional, Tuple, and Iterable from typing module
 
 import flax.linen as nn
 
 from transformers import AutoTokenizer
 
 def loss_fn(logits, labels):
-    logger.debug(f"Logits: {logits}")
-    logger.debug(f"Labels: {labels}")
     one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
     loss = optax.softmax_cross_entropy(logits, one_hot_labels).mean()
-    logger.debug(f"Loss: {loss}")
     return loss
+
+def log_memory_usage():
+    memory_info = psutil.virtual_memory()
+    memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
+    available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
+    timestamp = time.time()
+    logger.info(f"Logging memory usage: {memory_usage:.2f} MiB used, {available_memory:.2f} MiB available")
+    with open(memory_log_file, 'a') as f:
+        f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
+    gc.collect()  # Explicitly call garbage collector to free up memory
+
+def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
+    def load_and_preprocess_data(file_path: str):
+        chunk_size = 25  # Further reduce chunk size to manage memory usage
+        for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+            logger.warning(f"Loaded data chunk from CSV: {chunk.head()}")
+            for _, row in chunk.iterrows():
+                prompt = row['prompt']
+                response = row['response']
+
+                # Check for empty or None values in prompt and response
+                if not prompt or not response:
+                    logger.warning(f"Warning: Empty or None value encountered in row: {row}")
+                    continue
+
+                tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
+                actual_length = len(tokens)
+                if actual_length > max_length:
+                    tokens = tokens[:max_length]
+                else:
+                    tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
+
+                # Ensure pad_token_id is valid and replace None values
+                if tokenizer.pad_token_id is None:
+                    raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
+                tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
+
+                input_ids = tokens[:-1]
+                labels = tokens[1:]
+                yield {'input_ids': input_ids, 'labels': labels}
+            gc.collect()  # Explicitly call garbage collector to free up memory
+
+            log_memory_usage()  # Log memory usage at the end of the epoch
+
+            # Temporarily disable reinforcement learning update to reduce memory usage
+            # logger.warning(f"Logging memory usage before reinforcement learning update")
+            # log_memory_usage()
+            # rl_model.learn(total_timesteps=500)
+            # logger.warning(f"Logging memory usage after reinforcement learning update")
+            # log_memory_usage()
+
+            eval_metrics = trainer.evaluate(params, eval_dataset)
+            logger.warning(f"Logging memory usage after evaluation step")
+            log_memory_usage()
+
+            gc.collect()  # Explicitly call garbage collector to free up memory
+
+    gc.collect()  # Explicitly call garbage collector at the start
 
 from bias_analysis import analyze_bias
 
 def update(params, opt_state, batch):
     def loss_fn_wrapper(params):
-        logger.debug(f"Applying model with params: {params}")
         logits, _ = model.apply(params, batch['input_ids'])
-        logger.debug(f"Logits after model apply: {logits}")
         return loss_fn(logits, batch['labels'])
 
     grads = jax.grad(loss_fn_wrapper)(params)
-    logger.debug(f"Gradients: {grads}")
     updates, opt_state = optimizer.update(grads, opt_state)
-    logger.debug(f"Updates: {updates}")
     new_params = optax.apply_updates(params, updates)
-    logger.debug(f"New parameters: {new_params}")
     return new_params, opt_state
 
 def apply_rotary_pos_emb(x, sincos):
@@ -123,39 +174,36 @@ from stable_baselines3 import PPO
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        data = pd.read_csv(file_path)
-        logger.info(f"Loaded data from CSV: {data.head()}")
-        for _, row in data.iterrows():
-            prompt = row['prompt']
-            response = row['response']
+        chunk_size = 25  # Further reduce chunk size to manage memory usage
+        for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+            logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
+            for _, row in chunk.iterrows():
+                prompt = row['prompt']
+                response = row['response']
 
-            # Check for empty or None values in prompt and response
-            if not prompt or not response:
-                logger.warning(f"Warning: Empty or None value encountered in row: {row}")
-                continue
+                # Check for empty or None values in prompt and response
+                if not prompt or not response:
+                    logger.warning(f"Warning: Empty or None value encountered in row: {row}")
+                    continue
 
-            tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
-            logger.debug(f"Original tokens: {tokens}")
-            actual_length = len(tokens)
-            if (actual_length > max_length):
-                tokens = tokens[:max_length]
-            else:
-                tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
+                tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
+                actual_length = len(tokens)
+                if actual_length > max_length:
+                    tokens = tokens[:max_length]
+                else:
+                    tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
 
-            # Ensure pad_token_id is valid and replace None values
-            if tokenizer.pad_token_id is None:
-                raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
-            tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
+                # Ensure pad_token_id is valid and replace None values
+                if tokenizer.pad_token_id is None:
+                    raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
+                tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
 
-            logger.debug(f"Padded tokens: {tokens}")
-            input_ids = tokens[:-1]
-            labels = tokens[1:]
-            logger.debug(f"Processed input_ids: {input_ids}")
-            logger.debug(f"Processed labels: {labels}")
-            yield {'input_ids': input_ids, 'labels': labels}
+                input_ids = tokens[:-1]
+                labels = tokens[1:]
+                yield {'input_ids': input_ids, 'labels': labels}
+            gc.collect()  # Explicitly call garbage collector to free up memory
 
     def create_batch(samples):
-        logger.debug(f"Samples before processing: {samples}")  # Added logging
         input_ids = []
         labels = []
         for s in samples:
@@ -171,8 +219,6 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
             else:
                 labels.append(s['labels'])
 
-        logger.debug(f"Final input_ids: {input_ids}")
-        logger.debug(f"Final labels: {labels}")
         batch = {
             'input_ids': jnp.array(input_ids),
             'labels': jnp.array(labels)
@@ -188,26 +234,24 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
     updated_dataset = more_itertools.chain(existing_dataset, new_data)
     return updated_dataset
 
+import gc
+
 def main():
     # Initialize memory usage log file
     memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
     with open(memory_log_file, 'w') as f:
         f.write("Timestamp,Memory_Usage(MiB)\n")
 
-    def log_memory_usage():
-        logger.debug("log_memory_usage function called")
-        memory_info = psutil.virtual_memory()
-        memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
-        available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
-        timestamp = time.time()
-        logger.debug(f"Memory usage: {memory_usage:.2f} MiB, Available memory: {available_memory:.2f} MiB at timestamp: {timestamp}")
-        with open(memory_log_file, 'a') as f:
-            f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
 
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
+
+    # Reduce model complexity
+    config['embed_dim'] = 128  # Further reduce embedding dimension
+    config['num_heads'] = 4  # Further reduce number of attention heads
+    config['num_layers'] = 2  # Further reduce number of layers
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
@@ -221,6 +265,24 @@ def main():
     # Add mathematical symbols to tokenizer
     math_symbols = ['+', '-', '*', '/', '=', '(', ')', '^', 'sqrt', 'pi', 'e']
     tokenizer.add_tokens(math_symbols)
+
+    # Create datasets with smaller subsets of data for incremental training
+    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
+
+    # Initialize model only once
+    def model_fn(inputs):
+        model = VishwamAILLM(config=config)
+        return model
+
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+    model = model_fn(dummy_input)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.info(f"Model parameters initialized.")
 
     # Define a placeholder reward function
     def reward_function(response: str) -> float:
@@ -238,74 +300,49 @@ def main():
             responses.append(response)
         return responses
 
-    # Create datasets
-    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
-    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
-
-    # Analyze training data for biases
-    logger.info("Analyzing training data for biases...")
-    for batch in train_dataset:
-        text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
-        for text in text_batch:
-            bias_results = analyze_bias(text)
-            logger.info(f"Bias Analysis Results for training data: {bias_results}")
+    # Temporarily disable bias analysis to save memory and processing time
+    # logger.info("Analyzing training data for biases...")
+    # for batch in train_dataset:
+    #     text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
+    #     for text in text_batch:
+    #         bias_results = analyze_bias(text)
+    #         logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
     # Initialize model
     def model_fn(inputs):
-        logger.debug("Instantiating VishwamAILLM model with config")
         model = VishwamAILLM(config=config)
-        logger.debug(f"Model instantiated with config: {config}")
         return model
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, 10, config['embed_dim']), dtype=jnp.float32)  # Reduced sequence length for initialization
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
     model = model_fn(dummy_input)
     model_params = model.init(rng_key, dummy_input)['params']
-    logger.debug(f"Model parameters initialized: {model_params}")
+    logger.info(f"Model parameters initialized.")
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
-    logger.debug(f"Optimizer initialized: {optimizer}")
+    logger.info(f"Optimizer initialized.")
 
     # Initialize optimizer state
     opt_state = optimizer.init(model_params)
-    logger.debug(f"Optimizer state initialized: {opt_state}")
+    logger.info(f"Optimizer state initialized.")
 
     opt_state = None
     try:
         rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key
-        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-        logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
+        dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
         model_params = model.init(rng_key, dummy_input)['params']
-        logger.debug(f"Model parameters initialized: {model_params}")
         if not isinstance(model_params, dict):
             raise TypeError(f"model_params is not a dictionary, but a {type(model_params)}")
-        logger.debug(f"Model parameters type: {type(model_params)}")
-        logger.debug(f"Model parameters structure: {model_params}")
-        logger.debug(f"Model parameters before optimizer init: {model_params}")
-        # Ensure model_params is a dictionary
         if isinstance(model_params, dict):
-            # Convert model_params to a dictionary if it is not already
             model_params = hk.data_structures.to_immutable_dict(model_params)
-            logger.debug(f"Model parameters after conversion to immutable dict: {model_params}")
-            logger.debug(f"Model parameters keys: {list(model_params.keys())}")
-            for key, value in model_params.items():
-                logger.debug(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if hasattr(value, 'shape') else 'N/A'}")
             opt_state = optimizer.init(model_params)
         else:
             raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")
-        logger.debug(f"Optimizer state initialized: {opt_state}")
+        logger.info(f"Optimizer state re-initialized.")
     except TypeError as e:
         logger.error(f"TypeError during optimizer state initialization: {e}")
-        logger.debug(f"rng_key: {rng_key}")
-        logger.debug(f"dummy_input: {dummy_input}")
-        if 'model_params' in locals():
-            logger.debug(f"model_params: {model_params}")
-        if 'optimizer' in locals():
-            logger.debug(f"optimizer: {optimizer}")
         raise
 
     # Initialize trainer
@@ -347,64 +384,30 @@ def main():
             train_loss = 0
             train_steps = 0
 
-            logger.debug(f"Logging memory usage at the beginning of epoch {epoch + 1}")
-            log_memory_usage()
+            log_memory_usage()  # Log memory usage at the start of the epoch
 
             for batch in train_dataset:
-                logger.debug(f"Logging memory usage before processing batch {train_steps + 1}")
-                log_memory_usage()
-
                 batch['input_ids'] = jnp.array(batch['input_ids'])
-                logger.debug(f"Input IDs after conversion to JAX array: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
-                logger.debug(f"Input IDs after preprocessing: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
-                logger.debug(f"Input IDs after math preprocessing: {batch['input_ids']}")
                 input_shape = batch['input_ids'].shape
-                logger.debug(f"Input shape: {input_shape}")
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1
 
-                logger.debug(f"Logging memory usage after processing batch {train_steps}")
-                log_memory_usage()
+                gc.collect()  # Explicitly call garbage collector to free up memory
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
-                if train_steps % 100 == 0:
-                    logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
 
-                # Save intermediate checkpoint
-                if train_steps % 1000 == 0:
-                    intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
-                    logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
-                    logger.debug(f"Checkpoint parameters before saving: {params}")
-                    try:
-                        if not os.path.exists(checkpoint_dir):
-                            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-                        else:
-                            logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
-                            logger.debug(f"Parameters to be saved: {params}")
-                            logger.debug(f"Parameters before conversion: {params}")
-                            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-                            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-                            np.save(intermediate_checkpoint_path, params_dict)
-                            logger.debug(f"Intermediate checkpoint saved at {intermediate_checkpoint_path}")
-                            if os.path.exists(intermediate_checkpoint_path):
-                                logger.info(f"Checkpoint file {intermediate_checkpoint_path} created successfully.")
-                            else:
-                                logger.error(f"Checkpoint file {intermediate_checkpoint_path} was not created.")
-                    except Exception as e:
-                        logger.error(f"Failed to save intermediate checkpoint at {intermediate_checkpoint_path}: {e}")
-                        logger.debug(f"Exception details: {e}")
-                    logger.debug(f"Completed attempt to save intermediate checkpoint at step {train_steps}")
+            log_memory_usage()  # Log memory usage at the end of the epoch
 
-            # Reinforcement learning update
-            logger.debug(f"Logging memory usage before reinforcement learning update")
-            log_memory_usage()
-            rl_model.learn(total_timesteps=500)
-            logger.debug(f"Logging memory usage after reinforcement learning update")
-            log_memory_usage()
+            # Temporarily disable reinforcement learning update to reduce memory usage
+            # logger.debug(f"Logging memory usage before reinforcement learning update")
+            # log_memory_usage()
+            # rl_model.learn(total_timesteps=500)
+            # logger.debug(f"Logging memory usage after reinforcement learning update")
+            # log_memory_usage()
 
             eval_metrics = trainer.evaluate(params, eval_dataset)
             logger.debug(f"Logging memory usage after evaluation step")
@@ -508,67 +511,10 @@ def main():
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for model outputs: {bias_results}")
 
-def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
-    def load_and_preprocess_data(file_path: str):
-        data = pd.read_csv(file_path)
-        logger.info(f"Loaded data from CSV: {data.head()}")
-        for _, row in data.iterrows():
-            prompt = row['prompt']
-            response = row['response']
+if __name__ == "__main__":
+    gc.collect()  # Explicitly call garbage collector at the start
+    main()
 
-            # Check for empty or None values in prompt and response
-            if not prompt or not response:
-                logger.warning(f"Warning: Empty or None value encountered in row: {row}")
-                continue
-
-            tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
-            logger.debug(f"Original tokens: {tokens}")
-            actual_length = len(tokens)
-            if (actual_length > max_length):
-                tokens = tokens[:max_length]
-            else:
-                tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
-
-            # Ensure pad_token_id is valid and replace None values
-            if tokenizer.pad_token_id is None:
-                raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
-            tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
-
-            logger.debug(f"Padded tokens: {tokens}")
-            input_ids = tokens[:-1]
-            labels = tokens[1:]
-            logger.debug(f"Processed input_ids: {input_ids}")
-            logger.debug(f"Processed labels: {labels}")
-            yield {'input_ids': input_ids, 'labels': labels}
-
-    def create_batch(samples):
-        logger.debug(f"Samples before processing: {samples}")  # Added logging
-        input_ids = []
-        labels = []
-        for s in samples:
-            if s['input_ids'] is None:
-                logger.warning(f"Warning: None value encountered in input_ids: {s}")
-                input_ids.append([tokenizer.pad_token_id] * max_length)
-            else:
-                input_ids.append(s['input_ids'])
-
-            if s['labels'] is None:
-                logger.warning(f"Warning: None value encountered in labels: {s}")
-                labels.append([tokenizer.pad_token_id] * max_length)
-            else:
-                labels.append(s['labels'])
-
-        logger.debug(f"Final input_ids: {input_ids}")
-        logger.debug(f"Final labels: {labels}")
-        batch = {
-            'input_ids': jnp.array(input_ids),
-            'labels': jnp.array(labels)
-        }
-        return batch
-
-    dataset = load_and_preprocess_data(file_path)
-    batched_dataset = (create_batch(samples) for samples in more_itertools.chunked(dataset, batch_size))
-    return batched_dataset
 
 if __name__ == "__main__":
     main()

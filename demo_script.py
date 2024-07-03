@@ -11,20 +11,9 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
-    conversation_history = []  # Initialize conversation history without a generic greeting
     for prompt in prompts:
-        # Append the user's prompt to the conversation history
-        conversation_history.append(prompt)
-
-        # Maintain a sliding window of the last 5 user prompts
-        if len(conversation_history) > 5:  # 5 user prompts
-            conversation_history = conversation_history[-5:]
-
-        # Join the conversation history into a single string
-        conversation_history_str = "\n".join(conversation_history)
-
-        # Encode the conversation history
-        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
+        # Encode the user's prompt
+        input_ids = tokenizer.encode(prompt, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
@@ -43,9 +32,9 @@ def generate_responses(prompts: list, model, tokenizer):
                 attention_mask=attention_mask,
                 pad_token_id=tokenizer.eos_token_id,
                 max_new_tokens=50,
-                temperature=0.7,
+                temperature=0.9,  # Adjusted temperature for more diverse responses
                 top_k=50,
-                top_p=0.9,
+                top_p=0.95,  # Adjusted top_p for more diverse responses
                 do_sample=True,
                 repetition_penalty=1.2,  # Simplified repetition penalty
                 no_repeat_ngram_size=2,  # Simplified no repeat n-gram size
@@ -54,7 +43,7 @@ def generate_responses(prompts: list, model, tokenizer):
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
-            response = "Error generating response."
+            response = f"Error generating response: {str(e)}"
 
         # Check if the response is echoing the prompt
         if response.strip().lower() == prompt.strip().lower():
@@ -63,6 +52,11 @@ def generate_responses(prompts: list, model, tokenizer):
         # Append the bot's response to the responses list only if it's a valid response
         if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
             responses.append(response)
+
+        # Print the prompt and response for verification
+        print(f"Prompt: {prompt}")
+        print(f"Response: {response}")
+        print()
 
     return responses
 

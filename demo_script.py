@@ -17,8 +17,8 @@ def generate_responses(prompts: list, model, tokenizer):
         conversation_history.append(prompt)
 
         # Maintain a sliding window of the last 5 exchanges
-        if len(conversation_history) > 5:
-            conversation_history = conversation_history[-5:]
+        if len(conversation_history) > 10:  # 5 exchanges = 10 entries (5 user prompts + 5 bot responses)
+            conversation_history = conversation_history[-10:]
 
         # Join the conversation history into a single string
         conversation_history_str = "\n".join(conversation_history)
@@ -72,6 +72,7 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"Response: {response}")  # Debugging print statement
         print(f"Conversation History: {conversation_history}")  # Debugging print statement
         print(f"Input IDs: {input_ids}")  # Debugging print statement
+
     return responses
 
 def main():

@@ -79,7 +79,7 @@ class ImprovedAttention(nn.Module):
 
         attn = jax.nn.softmax(attn, axis=-1)
         output = jnp.matmul(attn, v)
-        return output.reshape(x.shape[0], seq_len, self.num_heads * self.head_dim)
+        return output.reshape(x.shape[0], -1, self.num_heads * self.head_dim)
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes
 

@@ -261,7 +261,7 @@ def main():
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, 10, config['embed_dim']), dtype=jnp.float32)  # Reduced sequence length for initialization
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.float32)  # Ensure correct shape for dummy input
     model = model_fn(dummy_input)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.debug(f"Model parameters initialized: {model_params}")
@@ -277,7 +277,7 @@ def main():
     opt_state = None
     try:
         rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key
-        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
         logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
         model_params = model.init(rng_key, dummy_input)['params']
         logger.debug(f"Model parameters initialized: {model_params}")

@@ -18,7 +18,7 @@ def generate_responses(prompts: list, model, tokenizer):
         conversation_history.append(prompt)
 
         # Maintain a sliding window of the last 5 exchanges (user prompt + bot response)
-        if len(conversation_history) > 10:
+        if (len(conversation_history) > 10):
             conversation_history = conversation_history[-10:]
 
         # Use the full conversation history for generating the next response
@@ -43,13 +43,13 @@ def generate_responses(prompts: list, model, tokenizer):
                 input_ids,
                 attention_mask=attention_mask,
                 pad_token_id=tokenizer.eos_token_id,
-                max_new_tokens=100,  # Increased max_new_tokens for longer responses
-                temperature=0.7,  # Adjusted temperature for more coherent responses
+                max_new_tokens=150,  # Increased max_new_tokens for longer responses
+                temperature=0.9,  # Adjusted temperature for more coherent responses
                 top_k=50,  # Adjusted top_k for more diverse responses
-                top_p=0.9,  # Adjusted top_p for more diverse responses
+                top_p=0.95,  # Adjusted top_p for more diverse responses
                 do_sample=True,
-                repetition_penalty=1.5,  # Adjusted repetition penalty
-                no_repeat_ngram_size=2,  # Adjusted no repeat n-gram size
+                repetition_penalty=1.2,  # Adjusted repetition penalty
+                no_repeat_ngram_size=3,  # Adjusted no repeat n-gram size
                 num_beams=1,  # Simplified to no beam search
                 num_return_sequences=1  # Return only one sequence
             )
@@ -64,9 +64,8 @@ def generate_responses(prompts: list, model, tokenizer):
         # Append the bot's response to the conversation history
         conversation_history.append(response)
 
-        # Append the bot's response to the responses list only if it's a valid response
-        if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
-            responses.append(response)
+        # Append the bot's response to the responses list
+        responses.append(response)
 
         # Print the prompt and response for verification
         print(f"Prompt: {prompt}")

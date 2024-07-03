@@ -10,15 +10,9 @@ def load_prompts(file_path: str):
 
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
-    conversation_history = ""
     max_length = 1024  # Maximum sequence length for the model
     for prompt in prompts:
-        conversation_history += f"User: {prompt}\n"
-
-        # Truncate conversation_history to ensure it does not exceed max_length
-        conversation_history_ids = tokenizer.encode(conversation_history, return_tensors='pt')
-        if conversation_history_ids.size(1) > max_length:
-            conversation_history = tokenizer.decode(conversation_history_ids[0, -max_length:], skip_special_tokens=True)
+        conversation_history = f"User: {prompt}\n"
 
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
 
@@ -33,6 +27,7 @@ def generate_responses(prompts: list, model, tokenizer):
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
+        print("Generating response...")  # Debugging print statement
         output = model.generate(
             input_ids,
             attention_mask=attention_mask,
@@ -46,7 +41,14 @@ def generate_responses(prompts: list, model, tokenizer):
         response = tokenizer.decode(output[0], skip_special_tokens=True)
         conversation_history += f"Bot: {response}\n"
 
+        # Truncate conversation_history again after appending the bot's response
+        conversation_history_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+        if conversation_history_ids.size(1) > max_length:
+            conversation_history = tokenizer.decode(conversation_history_ids[0, -max_length:], skip_special_tokens=True)
+
         responses.append(response)
+        print(f"Prompt: {prompt}")  # Debugging print statement
+        print(f"Response: {response}")  # Debugging print statement
     return responses
 
 def main():

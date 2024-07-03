@@ -8,10 +8,95 @@ import numpy as np
 import yaml
 import pandas as pd
 import logging
-import psutil  # Import psutil for memory profiling
-import time  # Import time for logging timestamps
+from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
+
+import flax.linen as nn
+
 from transformers import AutoTokenizer
+
+def loss_fn(logits, labels):
+    logger.debug(f"Logits: {logits}")
+    logger.debug(f"Labels: {labels}")
+    one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
+    loss = optax.softmax_cross_entropy(logits, one_hot_labels).mean()
+    logger.debug(f"Loss: {loss}")
+    return loss
+
 from bias_analysis import analyze_bias
+
+def update(params, opt_state, batch):
+    def loss_fn_wrapper(params):
+        logger.debug(f"Applying model with params: {params}")
+        logits, _ = model.apply(params, batch['input_ids'])
+        logger.debug(f"Logits after model apply: {logits}")
+        return loss_fn(logits, batch['labels'])
+
+    grads = jax.grad(loss_fn_wrapper)(params)
+    logger.debug(f"Gradients: {grads}")
+    updates, opt_state = optimizer.update(grads, opt_state)
+    logger.debug(f"Updates: {updates}")
+    new_params = optax.apply_updates(params, updates)
+    logger.debug(f"New parameters: {new_params}")
+    return new_params, opt_state
+
+def apply_rotary_pos_emb(x, sincos):
+    sin, cos = sincos
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    sin = sin.reshape(x1.shape)
+    cos = cos.reshape(x1.shape)
+    x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
+    return jnp.concatenate([x_rotated, x2], axis=-1)
+
+class VishwamAILLM(nn.Module):
+    config: Dict
+
+    def setup(self):
+        config_with_head_dim = {**self.config, 'head_dim': 32}  # Add head_dim to the configuration
+        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
+        self.lm_head = nn.Dense(self.config['vocab_size'])
+
+    @nn.compact
+    def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
+        transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
+        lm_logits = self.lm_head(transformer_outputs)
+        return lm_logits, new_kv_cache
+
+    @nn.compact
+    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
+        seq_len = x.shape[1]
+        qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
+        q, k, v = jnp.split(qkv, 3, axis=-1)
+
+        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+
+        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+
+        q = apply_rotary_pos_emb(q, sincos)
+        k = apply_rotary_pos_emb(k, sincos)
+
+        if kv_cache is not None:
+            if kv_cache['k'] is None:
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+            else:
+                k = jnp.concatenate([kv_cache['k'], k], axis=1)
+                v = jnp.concatenate([kv_cache['v'], v], axis=1)
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
+
+        if mask is not None:
+            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
+            attn = jnp.where(mask, attn, float('-inf'))
+
+        attn = jax.nn.softmax(attn, axis=-1)
+
+        output = jnp.matmul(attn, v)
+        return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
+
 from generate_modular_question import generate_modular_question
 from typing import Iterable
 import more_itertools
@@ -52,7 +137,7 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
             tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
             logger.debug(f"Original tokens: {tokens}")
             actual_length = len(tokens)
-            if actual_length > max_length:
+            if (actual_length > max_length):
                 tokens = tokens[:max_length]
             else:
                 tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
@@ -105,7 +190,7 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
 
 def main():
     # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/chat-agent/VishwamAI-main/memory_usage.txt'
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
     with open(memory_log_file, 'w') as f:
         f.write("Timestamp,Memory_Usage(MiB)\n")
 
@@ -167,24 +252,61 @@ def main():
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
-    # Analyze training data for biases
-    logger.info("Analyzing training data for biases...")
-    for batch in train_dataset:
-        text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
-        for text in text_batch:
-            bias_results = analyze_bias(text)
-            logger.info(f"Bias Analysis Results for training data: {bias_results}")
-
     # Initialize model
     def model_fn(inputs):
-        model = VishwamAILLM(config)
-        return model(inputs, is_training=True)
+        logger.debug("Instantiating VishwamAILLM model with config")
+        model = VishwamAILLM(config=config)
+        logger.debug(f"Model instantiated with config: {config}")
+        return model
 
-    model = hk.transform(model_fn)
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    model = model_fn(dummy_input)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.debug(f"Model parameters initialized: {model_params}")
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])
-    opt_state = optimizer.init(model.init(jax.random.PRNGKey(0), jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)))
+    logger.debug(f"Optimizer initialized: {optimizer}")
+
+    # Initialize optimizer state
+    opt_state = optimizer.init(model_params)
+    logger.debug(f"Optimizer state initialized: {opt_state}")
+
+    opt_state = None
+    try:
+        rng_key = jax.random.PRNGKey(0)  # Re-initialize rng_key
+        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        logger.debug(f"Created dummy_input with shape: {dummy_input.shape} and dtype: {dummy_input.dtype}")
+        model_params = model.init(rng_key, dummy_input)['params']
+        logger.debug(f"Model parameters initialized: {model_params}")
+        if not isinstance(model_params, dict):
+            raise TypeError(f"model_params is not a dictionary, but a {type(model_params)}")
+        logger.debug(f"Model parameters type: {type(model_params)}")
+        logger.debug(f"Model parameters structure: {model_params}")
+        logger.debug(f"Model parameters before optimizer init: {model_params}")
+        # Ensure model_params is a dictionary
+        if isinstance(model_params, dict):
+            # Convert model_params to a dictionary if it is not already
+            model_params = hk.data_structures.to_immutable_dict(model_params)
+            logger.debug(f"Model parameters after conversion to immutable dict: {model_params}")
+            logger.debug(f"Model parameters keys: {list(model_params.keys())}")
+            for key, value in model_params.items():
+                logger.debug(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if hasattr(value, 'shape') else 'N/A'}")
+            opt_state = optimizer.init(model_params)
+        else:
+            raise TypeError(f"Expected model_params to be a dictionary, but got {type(model_params)}")
+        logger.debug(f"Optimizer state initialized: {opt_state}")
+    except TypeError as e:
+        logger.error(f"TypeError during optimizer state initialization: {e}")
+        logger.debug(f"rng_key: {rng_key}")
+        logger.debug(f"dummy_input: {dummy_input}")
+        if 'model_params' in locals():
+            logger.debug(f"model_params: {model_params}")
+        if 'optimizer' in locals():
+            logger.debug(f"optimizer: {optimizer}")
+        raise
 
     # Initialize trainer
     trainer = VishwamAITrainer(model, config, optimizer, opt_state)
@@ -200,10 +322,19 @@ def main():
     # Initialize reinforcement learning algorithm
     rl_model = PPO("MlpPolicy", env, verbose=1)
 
-    # Train model
-    rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-    params = model.init(rng_key, dummy_input)
+    # Check for existing checkpoints and load the latest one
+    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_checkpoint')]
+    if checkpoint_files:
+        latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))
+        checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
+        logger.info(f"Loading checkpoint from {checkpoint_path}")
+        params = np.load(checkpoint_path, allow_pickle=True).item()
+    else:
+        rng_key = jax.random.PRNGKey(0)
+        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        params = model.init(rng_key, dummy_input)
 
     logger.info("Starting training process...")
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
@@ -223,8 +354,14 @@ def main():
                 logger.debug(f"Logging memory usage before processing batch {train_steps + 1}")
                 log_memory_usage()
 
+                batch['input_ids'] = jnp.array(batch['input_ids'])
+                logger.debug(f"Input IDs after conversion to JAX array: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
+                logger.debug(f"Input IDs after preprocessing: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
+                logger.debug(f"Input IDs after math preprocessing: {batch['input_ids']}")
+                input_shape = batch['input_ids'].shape
+                logger.debug(f"Input shape: {input_shape}")
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1
@@ -337,9 +474,6 @@ def main():
     logger.info("Training process completed.")
 
     # Save trained parameters
-    model.save_pretrained('/home/ubuntu/chat-agent/VishwamAI-main/saved_models')
-    logger.info("Trained parameters saved.")
-
     # Save final checkpoint
     checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)

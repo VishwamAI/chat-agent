@@ -188,6 +188,7 @@ def main():
         memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
         available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
         timestamp = time.time()
+        logger.info(f"Logging memory usage: {memory_usage:.2f} MiB used, {available_memory:.2f} MiB available")
         with open(memory_log_file, 'a') as f:
             f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
         gc.collect()  # Explicitly call garbage collector to free up memory

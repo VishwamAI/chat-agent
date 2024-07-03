@@ -371,8 +371,6 @@ def main():
 
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
-                if train_steps % 100 == 0:
-                    logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
 
                 # Save intermediate checkpoint
                 if train_steps % 500 == 0:

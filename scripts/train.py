@@ -34,7 +34,7 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
     def load_and_preprocess_data(file_path: str):
         chunk_size = 25  # Further reduce chunk size to manage memory usage
         for chunk in pd.read_csv(file_path, chunksize=chunk_size):
-            logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
+            logger.warning(f"Loaded data chunk from CSV: {chunk.head()}")
             for _, row in chunk.iterrows():
                 prompt = row['prompt']
                 response = row['response']
@@ -64,14 +64,14 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
             log_memory_usage()  # Log memory usage at the end of the epoch
 
             # Temporarily disable reinforcement learning update to reduce memory usage
-            # logger.debug(f"Logging memory usage before reinforcement learning update")
+            # logger.warning(f"Logging memory usage before reinforcement learning update")
             # log_memory_usage()
             # rl_model.learn(total_timesteps=500)
-            # logger.debug(f"Logging memory usage after reinforcement learning update")
+            # logger.warning(f"Logging memory usage after reinforcement learning update")
             # log_memory_usage()
 
             eval_metrics = trainer.evaluate(params, eval_dataset)
-            logger.debug(f"Logging memory usage after evaluation step")
+            logger.warning(f"Logging memory usage after evaluation step")
             log_memory_usage()
 
             gc.collect()  # Explicitly call garbage collector to free up memory

@@ -123,21 +123,6 @@ def model_fn(inputs, config):
     model = VishwamAILLM(config=config)
     return model
 
-# Initialize model parameters
-rng_key = jax.random.PRNGKey(0)
-dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-model = model_fn(dummy_input, config)
-model_params = model.init(rng_key, dummy_input)['params']
-logger.info(f"Model parameters initialized.")
-
-# Initialize optimizer
-optimizer = optax.adam(config['learning_rate'])
-logger.info(f"Optimizer initialized.")
-
-# Initialize optimizer state
-opt_state = optimizer.init(model_params)
-logger.info(f"Optimizer state initialized.")
-
 from bias_analysis import analyze_bias
 
 def update(params, opt_state, batch):
@@ -149,6 +134,27 @@ def update(params, opt_state, batch):
     updates, opt_state = optimizer.update(grads, opt_state)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state
+
+def main():
+    # Load configuration
+    with open('default_config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+    logger.info(f"Configuration loaded: {config}")
+
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+    model = model_fn(dummy_input, config)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.info(f"Model parameters initialized.")
+
+    # Initialize optimizer
+    optimizer = optax.adam(config['learning_rate'])
+    logger.info(f"Optimizer initialized.")
+
+    # Initialize optimizer state
+    opt_state = optimizer.init(model_params)
+    logger.info(f"Optimizer state initialized.")
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos

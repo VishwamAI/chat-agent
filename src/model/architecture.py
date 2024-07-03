@@ -1,88 +1,60 @@
 import jax
 import jax.numpy as jnp
-import haiku as hk
-from transformers import BertModel, BertTokenizer
+from transformers import FlaxBertForSequenceClassification, AutoTokenizer
 from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp
 import optax
+import logging
+import flax.linen as nn
+from flax.training import train_state
+import os
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() in ('true', '1', 't')
 
 def rotate_half(x):
     x1, x2 = jnp.split(x, 2, axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
-def split_and_rotate(x):
-    x1, x2 = jnp.split(x, 2, axis=-1)
-    return jnp.concatenate([-x2, x1], axis=-1)
 
-def apply_rotary_pos_emb(x, sincos):
+def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
     x1, x2 = jnp.split(x, 2, axis=-1)
-    x_rotated = jnp.concatenate([-x2, x1], axis=-1)
-    result = (x * cos) + (x_rotated * sin)
-    del x1, x2, x_rotated, sin, cos  # Ensure intermediate variables are deleted
-    jax.lax.create_token(result)  # Ensure result is materialized
-    return result
+    logger.debug(f"x1 shape: {x1.shape}")
+    logger.debug(f"sin shape: {sin.shape}")
+    logger.debug(f"cos shape: {cos.shape}")
+    sin = jnp.repeat(sin, x1.shape[2] // sin.shape[2], axis=2)
+    cos = jnp.repeat(cos, x1.shape[2] // cos.shape[2], axis=2)
+    x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
+    return jnp.concatenate([x_rotated, x2], axis=-1)
 
-class RotaryEmbedding(hk.Module):
-    def __init__(self, num_heads, head_dim):
-        super().__init__()
-        self.num_heads = num_heads
-        self.head_dim = head_dim
-        self.sin, self.cos = None, None
+class ImprovedAttention(nn.Module):
+    config: Dict
+    def setup(self):
+        self.num_heads = self.config['num_heads']
+        self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
+        self.rotary_emb = lambda batch_size, num_heads, seq_len, head_dim: (
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2))
+        )
 
-    def __call__(self, seq_len):
-        import psutil
-        memory_usage_before = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before RotaryEmbedding calculations: {memory_usage_before:.2f} MiB")
-        if self.sin is None or self.cos is None:
-            inv_freq = 1.0 / (10000 ** (jnp.arange(0, self.head_dim) / self.head_dim))
-            t = jnp.arange(seq_len)
-            freqs = jnp.outer(t, inv_freq)
-            self.sin = jnp.sin(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-            self.cos = jnp.cos(freqs).reshape(seq_len, self.head_dim).repeat(self.num_heads, axis=0).reshape(1, seq_len, self.num_heads, self.head_dim)
-            print(f"RotaryEmbedding - sin shape: {self.sin.shape}")
-            print(f"RotaryEmbedding - cos shape: {self.cos.shape}")
-        memory_usage_after = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after RotaryEmbedding calculations: {memory_usage_after:.2f} MiB")
-        return self.sin, self.cos
-
-class ImprovedAttention(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.num_heads = config['num_heads']
-        self.head_dim = 32  # Adjust head_dim to 32 to match the actual dimensions
-        self.rotary_emb = RotaryEmbedding(self.num_heads, self.head_dim)
-
+    @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         seq_len = x.shape[1]
-        qkv = hk.Linear(3 * self.num_heads * self.head_dim, with_bias=False)(x)
+        qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
-        import psutil
-        memory_usage_before_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before tensor reshaping: {memory_usage_before_reshape:.2f} MiB")
-        q = q.reshape(-1, seq_len, self.num_heads, self.head_dim)
-        k = k.reshape(-1, seq_len, self.num_heads, self.head_dim)
-        v = v.reshape(-1, seq_len, self.num_heads, self.head_dim)
-        memory_usage_after_reshape = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after tensor reshaping: {memory_usage_after_reshape:.2f} MiB")
+        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
+        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
 
-        sincos = self.rotary_emb(seq_len)
-        memory_usage_before_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before apply_rotary_pos_emb (q): {memory_usage_before_q:.2f} MiB")
-        q = apply_rotary_pos_emb(q, sincos)
-        memory_usage_after_q = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after apply_rotary_pos_emb (q): {memory_usage_after_q:.2f} MiB")
-        import gc
-        gc.collect()
-
-        memory_usage_before_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before apply_rotary_pos_emb (k): {memory_usage_before_k:.2f} MiB")
-        k = apply_rotary_pos_emb(k, sincos)
-        memory_usage_after_k = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after apply_rotary_pos_emb (k): {memory_usage_after_k:.2f} MiB")
-        gc.collect()
+        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
+        q = apply_rotary_pos_emb(q, sincos, self.head_dim)
+        k = apply_rotary_pos_emb(k, sincos, self.head_dim)
 
         if kv_cache is not None:
             if kv_cache['k'] is None:
@@ -94,81 +66,39 @@ class ImprovedAttention(hk.Module):
                 kv_cache['k'] = k
                 kv_cache['v'] = v
 
-        memory_usage_before_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before matrix multiplication: {memory_usage_before_matmul:.2f} MiB")
-        print(f"Shape of q before matmul: {q.shape}")  # Debugging statement
-        print(f"Shape of k before matmul: {k.shape}")  # Debugging statement
         attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
-        print(f"Shape of attn after matmul: {attn.shape}")  # Debugging statement
-        attn = attn.reshape(q.shape[0], self.num_heads, seq_len, self.head_dim)  # Adjust shape to match mask tensor
-        print(f"Shape of attn after reshaping: {attn.shape}")  # Debugging statement
-        memory_usage_after_matmul = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after matrix multiplication: {memory_usage_after_matmul:.2f} MiB")
 
         if mask is not None:
-            print(f"Shape of mask before broadcasting: {mask.shape}")  # Debugging statement
-            print(f"Shape of attn before broadcasting: {attn.shape}")  # Debugging statement
-            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
+            logger.debug(f"Mask shape before broadcasting: {mask.shape}")
+            logger.debug(f"Attention tensor shape: {attn.shape}")
+            mask = jnp.reshape(mask, (mask.shape[0], self.num_heads, mask.shape[2], mask.shape[3]))  # Reshape mask to match attention tensor's dimensions
+            mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
+            logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)
-
         output = jnp.matmul(attn, v)
         return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
-class MathReasoningLayer(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
+# Removed unnecessary debug logging statements and print statement used for debugging purposes
+
+class MathReasoningLayer(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.config = self.config
 
     def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Directly return the input tensor without any modifications
         return x
 
     def _tensor_to_expressions(self, x: jnp.ndarray) -> List[str]:
-        # Convert tensor to list of string expressions
         expressions = []
         for val in x.flatten():
             expr = str(val)
-            # Add logic to handle mathematical symbols and expressions
             expressions.append(expr)
         return expressions
 
     def _batch_sympify(self, expressions: List[str], debug: bool = True) -> List[str]:
-        # import time
-        # import tracemalloc
-        # from concurrent.futures import ThreadPoolExecutor
-
-        # # Cache for storing previously computed results
-        # cache = {}
-        # solved_expressions = []
-
-        # # Start memory profiling if debug is enabled
-        # if debug:
-        #     tracemalloc.start()
-
-        # def sympify_expression(expr):
-        #     if expr in cache:
-        #         return cache[expr]
-        #     else:
-        #         solved_expr = sp.sympify(expr).evalf()
-        #         cache[expr] = solved_expr
-        #         return solved_expr
-
-        # start_time = time.time()
-        # with ThreadPoolExecutor() as executor:
-        #     solved_expressions = list(executor.map(sympify_expression, expressions))
-        # end_time = time.time()
-
-        # print(f"Total sympify operation time: {end_time - start_time:.4f} seconds")
-
-        # # Stop memory profiling and get memory usage if debug is enabled
-        # if debug:
-        #     current, peak = tracemalloc.get_traced_memory()
-        #     tracemalloc.stop()
-        #     print(f"Memory usage: Current = {current / 10**6:.2f} MB; Peak = {peak / 10**6:.2f} MB")
-
-        # return solved_expressions
         return expressions
 
     def _expressions_to_tensor(self, expressions: List[str], shape: Tuple[int]) -> jnp.ndarray:
@@ -182,7 +112,6 @@ class MathReasoningLayer(hk.Module):
             tensor_values.append(value)
         return jnp.array(tensor_values).reshape(shape)
 
-    # Generate a sequence of modular mathematical problems
     def _generate_modular_problems(self, num_problems: int) -> List[str]:
         problems = []
         for _ in range(num_problems):
@@ -193,7 +122,6 @@ class MathReasoningLayer(hk.Module):
             problems.append(problem)
         return problems
 
-    # This will involve creating a sequence of mathematical problems where the output of one problem can serve as the input to another
     def _generate_compositional_problems(self, num_problems: int) -> List[str]:
         problems = []
         for _ in range(num_problems):
@@ -204,78 +132,76 @@ class MathReasoningLayer(hk.Module):
             problems.append(problem)
         return problems
 
-class ImprovedTransformerBlock(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.attention = ImprovedAttention(config)
-        self.feed_forward = hk.Sequential([
-            hk.Linear(config['ff_dim']),
-            jax.nn.gelu,
-            hk.Linear(config['embed_dim']),
+
+class ImprovedTransformerBlock(nn.Module):
+    config: Dict
+
+    def setup(self):
+        self.attention = ImprovedAttention(self.config)
+        self.feed_forward = nn.Sequential([
+            nn.Dense(self.config['ff_dim']),
+            nn.gelu,
+            nn.Dense(self.config['embed_dim']),
         ])
-        self.math_reasoning = MathReasoningLayer(config)
-        self.layer_norm1 = hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
-        self.layer_norm2 = hk.LayerNorm(axis=-1, create_scale=True, create_offset=True)
-        self.dropout = lambda x: hk.dropout(hk.next_rng_key(), config['dropout_rate'], x)
-        self.optimizer = optax.adam(config['learning_rate'])
-        self.opt_state = self.optimizer.init(hk.next_rng_key())
+        self.math_reasoning = MathReasoningLayer(self.config)
+        self.layer_norm1 = nn.LayerNorm()
+        self.layer_norm2 = nn.LayerNorm()
+        self.dropout = nn.Dropout(self.config['dropout_rate'])
+        self.optimizer = optax.adam(self.config['learning_rate'])
+        rng_key = jax.random.PRNGKey(0)
+        self.opt_state = self.optimizer.init(rng_key)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
-        import psutil
-        memory_usage_before_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before attention: {memory_usage_before_attention:.2f} MiB")
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
-        attention_output = self.dropout(attention_output) if is_training else attention_output
+        attention_output = self.dropout(attention_output, deterministic=not is_training)
         x = x + attention_output
-        memory_usage_after_attention = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after attention: {memory_usage_after_attention:.2f} MiB")
 
-        memory_usage_before_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage before feed-forward: {memory_usage_before_ff:.2f} MiB")
         ff_output = self.feed_forward(self.layer_norm2(x))
-        ff_output = self.dropout(ff_output) if is_training else ff_output
+        ff_output = self.dropout(ff_output, deterministic=not is_training)
         x = x + ff_output
-        memory_usage_after_ff = psutil.virtual_memory().used / (1024 * 1024)  # Convert to MiB
-        print(f"Memory usage after feed-forward: {memory_usage_after_ff:.2f} MiB")
 
-        # Apply math reasoning layer
         math_output = self.math_reasoning(x)
         x = x + math_output
 
         return x
 
-class ImprovedVishwamAIModel(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
-        self.embed_dim = config['embed_dim']
-        self.num_layers = config['num_layers']
-        self.vocab_size = config['vocab_size']
-        self.head_dim = 32  # Define head_dim as an attribute of the class
-        self.num_heads = config['num_heads']  # Define num_heads as an attribute of the class
-        self.config['head_dim'] = 32  # Add head_dim to the configuration
+class ImprovedVishwamAIModel(nn.Module):
+    config: Dict
 
-        # Instantiate BERT model and tokenizer
-        self.bert_model = BertModel.from_pretrained('bert-base-uncased')
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    def setup(self):
+        self.embed_dim = self.config['embed_dim']
+        self.num_layers = self.config['num_layers']
+        self.vocab_size = self.config['vocab_size']
+        self.head_dim = 32
+        self.num_heads = self.config['num_heads']
+
+        self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
+        self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
+        self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
-        # Tokenize inputs using BERT tokenizer
-        inputs = self.tokenizer(inputs, return_tensors='jax', padding=True, truncation=True)
+        input_ids = inputs.reshape(-1, inputs.shape[-1])
+        attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
 
-        # Pass inputs through BERT model
-        bert_outputs = self.bert_model(**inputs)
-        x = bert_outputs.last_hidden_state
+        if not hasattr(input_ids, 'shape'):
+            raise TypeError("input_ids is not a valid tensor with the shape attribute")
 
-        mask = self._create_mask(inputs['input_ids'])
+        input_ids = jax.device_put(input_ids)
+
+        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
+        x = bert_outputs.logits
+
+        mask = self._create_mask(input_ids)
 
         if kv_cache is None:
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]
 
         for i in range(self.num_layers):
-            x = ImprovedTransformerBlock(self.config)(x, mask, kv_cache[i], is_training)
+            x = self.transformer_blocks[i](x, mask, kv_cache[i], is_training)
 
-        return hk.Linear(self.vocab_size)(x), kv_cache
+        dense_layer = nn.Dense(self.vocab_size)
+        return dense_layer(x), kv_cache
 
     def _embed(self, x: jnp.ndarray) -> jnp.ndarray:
         embedding_matrix = hk.get_parameter("embedding_matrix",
@@ -284,25 +210,47 @@ class ImprovedVishwamAIModel(hk.Module):
         return jnp.take(embedding_matrix, x, axis=0)
 
     def _create_mask(self, inputs: jnp.ndarray) -> jnp.ndarray:
-        print(f"pad_token_id: {self.config['pad_token_id']}")  # Debugging statement
         if self.config['pad_token_id'] is None:
             raise ValueError("pad_token_id is not set in the configuration.")
         mask = jnp.not_equal(inputs, self.config['pad_token_id']).astype(jnp.float32)
-        mask = mask[:, None, None, :]  # Expand mask dimensions to match attention tensor's shape
+        mask = mask[:, None, None, :]
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
-        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))  # Adjust mask dimensions to match attention tensor's shape
-        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))  # Expand causal mask dimensions
-        mask = mask * causal_mask  # Apply causal mask and adjust dimensions
+        mask = jnp.broadcast_to(mask, (mask.shape[0], self.num_heads, seq_length, seq_length))
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (mask.shape[0], self.num_heads, seq_length, seq_length))
+        mask = mask * causal_mask
         return mask
 
-class VishwamAILLM(hk.Module):
-    def __init__(self, config: Dict):
-        super().__init__()
-        self.config = config
-        self.transformer = ImprovedVishwamAIModel(config)
-        self.lm_head = hk.Linear(config['vocab_size'])
+    def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
+        generated_ids = input_ids
+        rng = jax.random.PRNGKey(0)
+        for _ in range(max_length - input_ids.shape[1]):
+            logits, _ = self(generated_ids, is_training=False)
+            next_token_logits = logits[:, -1, :] / temperature
+            next_token = jax.random.categorical(rng, next_token_logits, axis=-1)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
+        return generated_ids
 
+    def generate_with_evaluation(self, input_ids: jnp.ndarray, kv_cache: Optional[Dict] = None, max_length: int = 100, temperature: float = 1.0) -> Tuple[jnp.ndarray, Dict]:
+        generated_ids = input_ids
+        total_log_probs = 0.0
+        rng = jax.random.PRNGKey(0)
+        for _ in range(max_length - input_ids.shape[1]):
+            logits, kv_cache = self(generated_ids, is_training=False, kv_cache=kv_cache)
+            next_token_logits = logits[:, -1, :] / temperature
+            next_token_probs = jax.nn.softmax(next_token_logits, axis=-1)
+            next_token = jax.random.categorical(rng, next_token_logits, axis=-1)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
+
+class VishwamAILLM(nn.Module):
+    config: Dict
+
+    def setup(self):
+        config_with_head_dim = {**self.config, 'head_dim': 32}
+        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
+        self.lm_head = nn.Dense(self.config['vocab_size'])
+
+    @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
@@ -313,7 +261,7 @@ class VishwamAILLM(hk.Module):
         for _ in range(max_length - input_ids.shape[1]):
             logits, _ = self(generated_ids, is_training=False)
             next_token_logits = logits[:, -1, :] / temperature
-            next_token = jax.random.categorical(hk.next_rng_key(), next_token_logits, axis=-1)
+            next_token = jax.random.categorical(jax.random.PRNGKey(0), next_token_logits, axis=-1)
             generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
         return generated_ids
 
@@ -325,7 +273,7 @@ class VishwamAILLM(hk.Module):
             logits, kv_cache = self(generated_ids, is_training=False, kv_cache=kv_cache)
             next_token_logits = logits[:, -1, :] / temperature
             next_token_probs = jax.nn.softmax(next_token_logits, axis=-1)
-            next_token = jax.random.categorical(hk.next_rng_key(), next_token_logits, axis=-1)
+            next_token = jax.random.categorical(jax.random.PRNGKey(0), next_token_logits, axis=-1)
             generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
 
             # Calculate log probability of the chosen token
@@ -346,17 +294,13 @@ class VishwamAILLM(hk.Module):
         return generated_ids, evaluation
 
     def calculate_coherence(self, text: str) -> float:
-        # This is a very simple coherence check. In practice, you'd want a more sophisticated method.
         words = text.split()
         if len(words) < 2:
             return 1.0
 
         coherence = 0
         for i in range(len(words) - 1):
-            # Check if consecutive words often appear together in the training data
-            # This would require access to training data statistics, which we don't have here
-            # So we'll use a placeholder value
-            coherence += 0.5  # placeholder
+            coherence += 0.5
 
         return coherence / (len(words) - 1)
 

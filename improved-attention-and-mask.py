@@ -34,7 +34,7 @@ class ImprovedAttention(hk.Module):
                 kv_cache['v'] = v
 
         attn = jnp.einsum('bqhd,bkhd->bhqk', q, k) / jnp.sqrt(self.head_dim)
-        
+
         if mask is not None:
             # Ensure mask shape matches attention tensor's shape
             mask = jnp.broadcast_to(mask[:, None, None, :], (mask.shape[0], self.num_heads, seq_len, k.shape[1]))
@@ -68,17 +68,17 @@ class ImprovedVishwamAIModel(hk.Module):
     def _create_mask(self, inputs: jnp.ndarray) -> jnp.ndarray:
         if self.config['pad_token_id'] is None:
             raise ValueError("pad_token_id is not set in the configuration.")
-        
+
         # Create padding mask
         padding_mask = jnp.not_equal(inputs, self.config['pad_token_id']).astype(jnp.float32)
-        
+
         # Create causal mask
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), dtype=jnp.float32))
-        
+
         # Combine padding mask and causal mask
         mask = padding_mask[:, None] * causal_mask[None, :]
-        
+
         return mask
 
 # Test function to verify mask creation and attention mechanism
@@ -98,15 +98,14 @@ def test_model():
         return model(inputs)
 
     model = hk.transform(forward_pass)
-    
+
     rng = jax.random.PRNGKey(42)
     params = model.init(rng, jnp.ones((2, 10), dtype=jnp.int32))
-    
+
     # Test with different sequence lengths
     for seq_len in [10, 20, 30]:
         inputs = jax.random.randint(rng, (2, seq_len), 0, config['vocab_size'])
         outputs, _ = model.apply(params, rng, inputs)
-        print(f"Output shape for sequence length {seq_len}: {outputs.shape}")
 
 # Run the test
 test_model()

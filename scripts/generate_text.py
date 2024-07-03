@@ -1,17 +1,22 @@
 import jax
 import jax.numpy as jnp
-import haiku as hk
+from transformers import FlaxBertForSequenceClassification, AutoTokenizer
 import sys
 import os
 import time
 import pandas as pd
+import yaml
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Add the parent directory to the system path to resolve the import issue
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.model.architecture import VishwamAILLM
 from transformers import AutoTokenizer
-import yaml
 
 def load_model(config_path, checkpoint_path):
     # Load configuration
@@ -19,73 +24,55 @@ def load_model(config_path, checkpoint_path):
         config = yaml.safe_load(f)
 
     # Initialize model
-    def model_fn(inputs):
-        model = VishwamAILLM(config)
-        return model(inputs)
-
-    model = hk.transform(model_fn)
+    model = VishwamAILLM(config)
+    logger.debug(f"Model initialized: {model}")
 
     # Initialize parameters
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-    print(f"Shape of dummy_input: {dummy_input.shape}")
-    params = model.init(rng, dummy_input)
-    print(f"Type of initialized params: {type(params)}")
-    if isinstance(params, dict):
-        for key, value in params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
-    elif isinstance(params, jnp.ndarray):
-        print(f"Initialized params shape: {params.shape}")
+    logger.debug(f"Shape of dummy_input: {dummy_input.shape}")
+    params = model.init(rng, dummy_input)['params']
+    logger.debug(f"Parameters initialized: {params}")
 
     # Load trained parameters
     with open(checkpoint_path, 'rb') as f:
         trained_params = jnp.load(f, allow_pickle=True)
 
-    # Log the type and structure of the loaded parameters
-    print(f"Loaded trained parameters type: {type(trained_params)}")
-    if isinstance(trained_params, dict):
-        for key, value in trained_params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
-    elif isinstance(trained_params, jnp.ndarray):
-        print(f"Trained parameters shape: {trained_params.shape}")
-
     # Ensure trained_params is a dictionary
     if isinstance(trained_params, dict):
         params = trained_params
     else:
-        # Convert the loaded parameters to a Haiku Params object if they are not already in that format
-        if isinstance(trained_params, jnp.ndarray):
-            params = hk.data_structures.to_immutable_dict(hk.data_structures.to_mutable_dict({'params': trained_params}))
-        else:
-            raise ValueError("Loaded parameters are not in the expected format")
-
-    # Log the structure and dimensions of the converted parameters
-    print(f"Converted parameters type: {type(params)}")
-    if isinstance(params, dict):
-        for key, value in params.items():
-            print(f"Key: {key}, Shape: {value.shape}")
-
-    # Debugging statement to log the mask shape
-    dummy_mask = model.apply(params, rng, dummy_input)[1][0]['k']
-    print(f"Shape of dummy_mask: {dummy_mask.shape}")
+        raise ValueError("Loaded parameters are not in the expected format")
 
     return model, params, config
 
 def generate_and_evaluate(model, params, input_ids, config, max_length=100):
+    # Ensure input_ids are JAX arrays
+    input_ids = jnp.array(input_ids)
+    print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
+
     @jax.jit
     def generate_step(params, rng, input_ids):
-        print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
-        output = model.apply(params, rng, input_ids)
-        print(f"Shape of output: {output[0].shape}")  # Debugging statement
-        print(f"Shape of attn before matmul: {output[1]['attn'].shape}")  # Debugging statement
-        print(f"Shape of v before matmul: {output[1]['v'].shape}")  # Debugging statement
-        return output
+        try:
+            logger.debug(f"Parameters before apply: {params}")
+            # Pass inputs through the model
+            logits, _ = model.apply(params, rng, input_ids)
+            logger.debug(f"Logits after apply: {logits}")
+            next_token_logits = logits[:, -1, :]
+            next_token = jax.random.categorical(rng, next_token_logits)
+            return next_token
+        except AttributeError as e:
+            logger.error(f"AttributeError in generate_step: {e}")
+            raise
 
     rng = jax.random.PRNGKey(0)  # Initialize RNG
 
     start_time = time.time()
     try:
-        generated_ids, evaluation_metrics = generate_step(params, rng, input_ids)
+        generated_ids = input_ids
+        for _ in range(max_length - input_ids.shape[1]):
+            next_token = generate_step(params, rng, generated_ids)
+            generated_ids = jnp.concatenate([generated_ids, next_token[:, None]], axis=-1)
     except Exception as e:
         print(f"Error during generate_step: {e}")
         raise
@@ -96,19 +83,19 @@ def generate_and_evaluate(model, params, input_ids, config, max_length=100):
     generated_text = tokenizer.decode(generated_ids[0])
 
     try:
-        final_evaluation = VishwamAILLM.self_evaluate(generated_text, evaluation_metrics)
+        final_evaluation = model.self_evaluate(generated_text, {})
     except Exception as e:
         print(f"Error during self_evaluate: {e}")
         raise
 
     # Ensure unnecessary references are deleted to aid garbage collection
-    del generated_ids, evaluation_metrics
+    del generated_ids
 
     return generated_text, final_evaluation, response_time
 
 def main():
-    config_path = '/home/ubuntu/chat-agent/VishwamAI-main/configs/default_config.yaml'
-    checkpoint_path = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints/model_checkpoint.npy'  # Updated to match the expected checkpoint file name
+    config_path = '/home/ubuntu/chat-agent/configs/default_config.yaml'
+    checkpoint_path = '/home/ubuntu/chat-agent/checkpoints/model_checkpoint.npy'  # Ensure this matches the expected checkpoint file name
 
     model, params, config = load_model(config_path, checkpoint_path)
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
@@ -132,8 +119,8 @@ def main():
             reader = pd.read_csv(csvfile)
             for i, row in reader.iterrows():
                 input_text = row['prompt']
-                # Tokenize the current prompt
-                input_ids = tokenizer.encode(input_text, return_tensors='jax')
+                input_ids = tokenizer.encode(input_text, return_tensors='np')  # Tokenize the current prompt and return as JAX tensor
+                print(f"Shape of input_ids: {input_ids.shape}")  # Debugging statement
                 try:
                     generated_text, evaluation, response_time = generate_and_evaluate(model, params, input_ids, config)
                 except Exception as e:
@@ -152,6 +139,9 @@ def main():
                 # Explicitly call garbage collection
                 import gc
                 gc.collect()
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

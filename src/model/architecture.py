@@ -51,18 +51,35 @@ class ImprovedAttention(nn.Module):
         if embed_dim != self.num_heads * self.head_dim:
             raise ValueError(f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}")
 
+        # Log the shape of x before reshaping
+        logger.debug(f"x shape before reshaping: {x.shape}")
+
         # Adjust reshaping operation based on the dimensions of x
         if len(x.shape) == 2:
             x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         else:
             x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
+        # Log the shape of x after reshaping
+        logger.debug(f"x shape after reshaping: {x.shape}")
+
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
+
+        # Log the shapes of qkv, q, k, and v
+        logger.debug(f"qkv shape: {qkv.shape}")
+        logger.debug(f"q shape before reshaping: {q.shape}")
+        logger.debug(f"k shape before reshaping: {k.shape}")
+        logger.debug(f"v shape before reshaping: {v.shape}")
 
         q = q.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         k = k.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         v = v.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+
+        # Log the shapes of q, k, and v after reshaping
+        logger.debug(f"q shape after reshaping: {q.shape}")
+        logger.debug(f"k shape after reshaping: {k.shape}")
+        logger.debug(f"v shape after reshaping: {v.shape}")
 
         sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 

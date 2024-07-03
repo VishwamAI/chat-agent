@@ -102,13 +102,13 @@ from typing import Iterable
 import more_itertools
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Add file handler to write logs to a file
 log_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/train.log'))
 file_handler = logging.FileHandler(log_file_path)
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -241,8 +241,8 @@ def main():
     # Create datasets
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 2, config['max_seq_length'])
-    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 2, config['max_seq_length'])
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
     # Analyze training data for biases
     logger.info("Analyzing training data for biases...")
@@ -261,7 +261,7 @@ def main():
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.float32)
+    dummy_input = jnp.ones((1, 10, config['embed_dim']), dtype=jnp.float32)  # Reduced sequence length for initialization
     model = model_fn(dummy_input)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.debug(f"Model parameters initialized: {model_params}")
@@ -375,7 +375,7 @@ def main():
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
 
                 # Save intermediate checkpoint
-                if train_steps % 500 == 0:
+                if train_steps % 1000 == 0:
                     intermediate_checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_step_{train_steps}.npy')
                     logger.debug(f"Saving intermediate checkpoint to {intermediate_checkpoint_path}")
                     logger.debug(f"Checkpoint parameters before saving: {params}")
@@ -402,7 +402,7 @@ def main():
             # Reinforcement learning update
             logger.debug(f"Logging memory usage before reinforcement learning update")
             log_memory_usage()
-            rl_model.learn(total_timesteps=1000)
+            rl_model.learn(total_timesteps=500)
             logger.debug(f"Logging memory usage after reinforcement learning update")
             log_memory_usage()
 
@@ -507,6 +507,68 @@ def main():
         for text in text_batch:
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for model outputs: {bias_results}")
+
+def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
+    def load_and_preprocess_data(file_path: str):
+        data = pd.read_csv(file_path)
+        logger.info(f"Loaded data from CSV: {data.head()}")
+        for _, row in data.iterrows():
+            prompt = row['prompt']
+            response = row['response']
+
+            # Check for empty or None values in prompt and response
+            if not prompt or not response:
+                logger.warning(f"Warning: Empty or None value encountered in row: {row}")
+                continue
+
+            tokens = tokenizer.encode(prompt.strip() + " " + response.strip())
+            logger.debug(f"Original tokens: {tokens}")
+            actual_length = len(tokens)
+            if (actual_length > max_length):
+                tokens = tokens[:max_length]
+            else:
+                tokens = tokens + [tokenizer.pad_token_id] * (max_length - actual_length)
+
+            # Ensure pad_token_id is valid and replace None values
+            if tokenizer.pad_token_id is None:
+                raise ValueError("pad_token_id is None. Ensure the tokenizer is configured correctly.")
+            tokens = [token if token is not None else tokenizer.pad_token_id for token in tokens]
+
+            logger.debug(f"Padded tokens: {tokens}")
+            input_ids = tokens[:-1]
+            labels = tokens[1:]
+            logger.debug(f"Processed input_ids: {input_ids}")
+            logger.debug(f"Processed labels: {labels}")
+            yield {'input_ids': input_ids, 'labels': labels}
+
+    def create_batch(samples):
+        logger.debug(f"Samples before processing: {samples}")  # Added logging
+        input_ids = []
+        labels = []
+        for s in samples:
+            if s['input_ids'] is None:
+                logger.warning(f"Warning: None value encountered in input_ids: {s}")
+                input_ids.append([tokenizer.pad_token_id] * max_length)
+            else:
+                input_ids.append(s['input_ids'])
+
+            if s['labels'] is None:
+                logger.warning(f"Warning: None value encountered in labels: {s}")
+                labels.append([tokenizer.pad_token_id] * max_length)
+            else:
+                labels.append(s['labels'])
+
+        logger.debug(f"Final input_ids: {input_ids}")
+        logger.debug(f"Final labels: {labels}")
+        batch = {
+            'input_ids': jnp.array(input_ids),
+            'labels': jnp.array(labels)
+        }
+        return batch
+
+    dataset = load_and_preprocess_data(file_path)
+    batched_dataset = (create_batch(samples) for samples in more_itertools.chunked(dataset, batch_size))
+    return batched_dataset
 
 if __name__ == "__main__":
     main()

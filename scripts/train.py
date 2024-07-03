@@ -248,6 +248,11 @@ def main():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
+    # Reduce model complexity
+    config['embed_dim'] = 128  # Further reduce embedding dimension
+    config['num_heads'] = 4  # Further reduce number of attention heads
+    config['num_layers'] = 2  # Further reduce number of layers
+
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
 
@@ -260,6 +265,24 @@ def main():
     # Add mathematical symbols to tokenizer
     math_symbols = ['+', '-', '*', '/', '=', '(', ')', '^', 'sqrt', 'pi', 'e']
     tokenizer.add_tokens(math_symbols)
+
+    # Create datasets with smaller subsets of data for incremental training
+    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
+
+    # Initialize model only once
+    def model_fn(inputs):
+        model = VishwamAILLM(config=config)
+        return model
+
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+    model = model_fn(dummy_input)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.info(f"Model parameters initialized.")
 
     # Define a placeholder reward function
     def reward_function(response: str) -> float:
@@ -276,12 +299,6 @@ def main():
             response = tokenizer.decode(output[0], skip_special_tokens=True)
             responses.append(response)
         return responses
-
-    # Create datasets
-    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
-    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
-    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
     # Temporarily disable bias analysis to save memory and processing time
     # logger.info("Analyzing training data for biases...")

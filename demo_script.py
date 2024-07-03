@@ -11,8 +11,9 @@ def load_prompts(file_path: str):
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
     max_length = 1024  # Maximum sequence length for the model
+    conversation_history = ""  # Initialize conversation history outside the loop
     for prompt in prompts:
-        conversation_history = f"User: {prompt}\n"
+        conversation_history += f"User: {prompt}\n"
 
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
 
@@ -36,7 +37,9 @@ def generate_responses(prompts: list, model, tokenizer):
             temperature=0.7,
             top_k=50,
             top_p=0.9,
-            do_sample=True
+            do_sample=True,
+            repetition_penalty=1.2,  # Added repetition penalty to reduce echoing
+            no_repeat_ngram_size=2  # Added no repeat n-gram size to reduce repetition
         )
         response = tokenizer.decode(output[0], skip_special_tokens=True)
         conversation_history += f"Bot: {response}\n"

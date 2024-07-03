@@ -8,6 +8,7 @@ import numpy as np
 import yaml
 import pandas as pd
 import logging
+import psutil  # Import psutil module
 from typing import Dict, Optional, Tuple  # Import Dict, Optional, and Tuple from typing module
 
 import flax.linen as nn
@@ -18,6 +19,19 @@ def loss_fn(logits, labels):
     one_hot_labels = jax.nn.one_hot(labels, num_classes=logits.shape[-1])
     loss = optax.softmax_cross_entropy(logits, one_hot_labels).mean()
     return loss
+
+def log_memory_usage():
+    logger.info("Executing log_memory_usage function.")  # Added logging statement
+    memory_info = psutil.virtual_memory()
+    memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
+    available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
+    timestamp = time.time()
+    logger.info(f"Logging memory usage: {memory_usage:.2f} MiB used, {available_memory:.2f} MiB available")
+    with open(memory_log_file, 'a') as f:
+        f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
+    logger.info("Memory usage data written to file.")  # Added logging statement
+    logger.info("Memory usage logged successfully.")  # Confirm execution of log_memory_usage
+    gc.collect()  # Explicitly call garbage collector to free up memory
 
 from bias_analysis import analyze_bias
 

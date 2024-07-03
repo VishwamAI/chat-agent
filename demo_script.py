@@ -17,12 +17,15 @@ def generate_responses(prompts: list, model, tokenizer):
         # Add the user's prompt to the conversation history
         conversation_history.append(prompt)
 
-        # Maintain a sliding window of the last 5 user prompts
-        if len(conversation_history) > 5:
-            conversation_history = conversation_history[-5:]
+        # Maintain a sliding window of the last 5 exchanges (user prompt + bot response)
+        if len(conversation_history) > 10:
+            conversation_history = conversation_history[-10:]
 
-        # Encode only the last user prompt
-        input_ids = tokenizer.encode(prompt, return_tensors='pt')
+        # Use the full conversation history for generating the next response
+        conversation_history_str = " ".join(conversation_history)
+
+        # Encode the conversation history
+        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
@@ -40,13 +43,13 @@ def generate_responses(prompts: list, model, tokenizer):
                 input_ids,
                 attention_mask=attention_mask,
                 pad_token_id=tokenizer.eos_token_id,
-                max_new_tokens=50,
+                max_new_tokens=100,  # Increased max_new_tokens for longer responses
                 temperature=0.7,  # Adjusted temperature for more coherent responses
-                top_k=30,  # Adjusted top_k for more focused responses
-                top_p=0.85,  # Adjusted top_p for more focused responses
+                top_k=50,  # Adjusted top_k for more diverse responses
+                top_p=0.9,  # Adjusted top_p for more diverse responses
                 do_sample=True,
-                repetition_penalty=1.5,  # Increased repetition penalty
-                no_repeat_ngram_size=3,  # Increased no repeat n-gram size
+                repetition_penalty=1.5,  # Adjusted repetition penalty
+                no_repeat_ngram_size=2,  # Adjusted no repeat n-gram size
                 num_beams=1,  # Simplified to no beam search
                 num_return_sequences=1  # Return only one sequence
             )
@@ -54,9 +57,12 @@ def generate_responses(prompts: list, model, tokenizer):
         except Exception as e:
             response = f"Error generating response: {str(e)}"
 
-        # Check if the response is echoing the prompt
-        if response.strip().lower() == prompt.strip().lower():
+        # Check if the response is echoing the prompt or conversation history
+        if response.strip().lower() in [prompt.strip().lower(), conversation_history_str.strip().lower()]:
             response = "I'm sorry, I didn't understand that. Can you please rephrase?"
+
+        # Append the bot's response to the conversation history
+        conversation_history.append(response)
 
         # Append the bot's response to the responses list only if it's a valid response
         if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
@@ -65,6 +71,9 @@ def generate_responses(prompts: list, model, tokenizer):
         # Print the prompt and response for verification
         print(f"Prompt: {prompt}")
         print(f"Response: {response}")
+        print(f"Input IDs: {input_ids}")
+        print(f"Attention Mask: {attention_mask}")
+        print(f"Output: {output}")
         print()
 
     return responses

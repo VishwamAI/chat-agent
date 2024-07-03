@@ -182,12 +182,10 @@ def main():
         f.write("Timestamp,Memory_Usage(MiB)\n")
 
     def log_memory_usage():
-        logger.debug("log_memory_usage function called")
         memory_info = psutil.virtual_memory()
         memory_usage = memory_info.used / (1024 * 1024)  # Convert to MiB
         available_memory = memory_info.available / (1024 * 1024)  # Convert to MiB
         timestamp = time.time()
-        logger.debug(f"Memory usage: {memory_usage:.2f} MiB, Available memory: {available_memory:.2f} MiB at timestamp: {timestamp}")
         with open(memory_log_file, 'a') as f:
             f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
         gc.collect()  # Explicitly call garbage collector to free up memory
@@ -232,19 +230,17 @@ def main():
     train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
-    # Analyze training data for biases
-    logger.info("Analyzing training data for biases...")
-    for batch in train_dataset:
-        text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
-        for text in text_batch:
-            bias_results = analyze_bias(text)
-            logger.info(f"Bias Analysis Results for training data: {bias_results}")
+    # Temporarily disable bias analysis to save memory and processing time
+    # logger.info("Analyzing training data for biases...")
+    # for batch in train_dataset:
+    #     text_batch = tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=True)
+    #     for text in text_batch:
+    #         bias_results = analyze_bias(text)
+    #         logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
     # Initialize model
     def model_fn(inputs):
-        logger.debug("Instantiating VishwamAILLM model with config")
         model = VishwamAILLM(config=config)
-        logger.debug(f"Model instantiated with config: {config}")
         return model
 
     # Initialize model parameters

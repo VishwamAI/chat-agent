@@ -153,13 +153,13 @@ from typing import Iterable
 import more_itertools
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Add file handler to write logs to a file
 log_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/train.log'))
 file_handler = logging.FileHandler(log_file_path)
-file_handler.setLevel(logging.INFO)
+file_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)

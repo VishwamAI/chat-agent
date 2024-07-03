@@ -48,14 +48,6 @@ def generate_responses(prompts: list, model, tokenizer):
             print(f"Error during generation: {e}")
             response = "Error generating response."
 
-        # Append the bot's response to the conversation history
-        conversation_history += f"Bot: {response}\n"
-
-        # Truncate conversation_history again after appending the bot's response
-        conversation_history_ids = tokenizer.encode(conversation_history, return_tensors='pt')
-        if conversation_history_ids.size(1) > max_length:
-            conversation_history = tokenizer.decode(conversation_history_ids[0, -max_length:], skip_special_tokens=True)
-
         responses.append(response)
         print(f"Prompt: {prompt}")  # Debugging print statement
         print(f"Response: {response}")  # Debugging print statement

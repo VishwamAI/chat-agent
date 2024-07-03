@@ -415,7 +415,7 @@ def main():
     rl_model = PPO("MlpPolicy", env, verbose=1)
 
     # Check for existing checkpoints and load the latest one
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_checkpoint')]
     if checkpoint_files:
@@ -429,7 +429,7 @@ def main():
         params = model.init(rng_key, dummy_input)
 
     logger.info("Starting training process...")
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     try:
@@ -457,13 +457,6 @@ def main():
 
             log_memory_usage()  # Log memory usage at the end of the epoch
 
-            # Temporarily disable reinforcement learning update to reduce memory usage
-            # logger.debug(f"Logging memory usage before reinforcement learning update")
-            # log_memory_usage()
-            # rl_model.learn(total_timesteps=500)
-            # logger.debug(f"Logging memory usage after reinforcement learning update")
-            # log_memory_usage()
-
             eval_metrics = trainer.evaluate(params, eval_dataset)
             logger.debug(f"Logging memory usage after evaluation step")
             log_memory_usage()
@@ -476,17 +469,11 @@ def main():
             checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
             try:
-                if not os.path.exists(checkpoint_dir):
-                    logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-                else:
-                    model.save_pretrained(checkpoint_path)
-                    tokenizer.save_pretrained(checkpoint_path)
-                    logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
-                    if os.path.exists(checkpoint_path):
-                        logger.info(f"Checkpoint directory {checkpoint_path} created successfully.")
+                model.save_pretrained(checkpoint_path)
+                tokenizer.save_pretrained(checkpoint_path)
+                logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
-                logger.debug(f"Exception details: {e}")
             finally:
                 del params  # Ensure old checkpoints are not kept in memory
             logger.debug(f"Completed attempt to save checkpoint after epoch {epoch + 1}")
@@ -497,40 +484,24 @@ def main():
 
     except KeyboardInterrupt:
         # Save checkpoint on interruption
-        interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted.npy')
+        interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted')
         logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
-        logger.debug(f"Checkpoint parameters before saving: {params}")
-        logger.debug(f"Size of parameters: {params.size}")
-        logger.debug(f"Type of parameters: {type(params)}")
-        logger.debug(f"Shape of parameters: {params.shape}")
         try:
-            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-            np.save(interrupted_checkpoint_path, params_dict)
-            logger.debug(f"Checkpoint parameters: {params}")
+            model.save_pretrained(interrupted_checkpoint_path)
+            tokenizer.save_pretrained(interrupted_checkpoint_path)
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
-            if os.path.exists(interrupted_checkpoint_path):
-                logger.info(f"Checkpoint file {interrupted_checkpoint_path} created successfully.")
-            else:
-                logger.error(f"Checkpoint file {interrupted_checkpoint_path} was not created.")
         except Exception as e:
             logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
-            logger.debug(f"Exception details: {e}")
 
     logger.info("Training process completed.")
 
-    # Save trained parameters
     # Save final checkpoint
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
-    os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final')
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
     try:
-        if not os.path.exists(checkpoint_dir):
-            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-        else:
-            model.save_pretrained(checkpoint_path)
-            tokenizer.save_pretrained(checkpoint_path)
-            logger.info(f"Final checkpoint saved at {checkpoint_path}")
+        model.save_pretrained(checkpoint_path)
+        tokenizer.save_pretrained(checkpoint_path)
+        logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:
         logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")
 

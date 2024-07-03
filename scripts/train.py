@@ -79,16 +79,56 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
     gc.collect()  # Explicitly call garbage collector at the start
 
 # Initialize model only once
-def model_fn(inputs):
+def model_fn(inputs, config):
     model = VishwamAILLM(config=config)
     return model
 
-# Initialize model parameters
-rng_key = jax.random.PRNGKey(0)
-dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-model = model_fn(dummy_input)
-model_params = model.init(rng_key, dummy_input)['params']
-logger.info(f"Model parameters initialized.")
+def main():
+    # Load configuration
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+
+    # Reduce model complexity
+    config['embed_dim'] = 128  # Further reduce embedding dimension
+    config['num_heads'] = 4  # Further reduce number of attention heads
+    config['num_layers'] = 2  # Further reduce number of layers
+
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
+    # Initialize tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
+
+    # Ensure pad_token_id is set correctly
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token_id = config['pad_token_id']
+    else:
+        config['pad_token_id'] = tokenizer.pad_token_id
+
+    # Add mathematical symbols to tokenizer
+    math_symbols = ['+', '-', '*', '/', '=', '(', ')', '^', 'sqrt', 'pi', 'e']
+    tokenizer.add_tokens(math_symbols)
+
+    # Create datasets with smaller subsets of data for incremental training
+    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
+
+    # Initialize model only once
+    def model_fn(inputs, config):
+        model = VishwamAILLM(config=config)
+        return model
+
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+    model = model_fn(dummy_input, config)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.info(f"Model parameters initialized.")
 
 # Save checkpoint after each epoch
 logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
@@ -319,14 +359,14 @@ def main():
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
     # Initialize model only once
-    def model_fn(inputs):
+    def model_fn(inputs, config):
         model = VishwamAILLM(config=config)
         return model
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-    model = model_fn(dummy_input)
+    model = model_fn(dummy_input, config)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.info(f"Model parameters initialized.")
 
@@ -354,15 +394,10 @@ def main():
     #         bias_results = analyze_bias(text)
     #         logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
-    # Initialize model
-    def model_fn(inputs):
-        model = VishwamAILLM(config=config)
-        return model
-
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-    model = model_fn(dummy_input)
+    model = model_fn(dummy_input, config)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.info(f"Model parameters initialized.")
 
@@ -556,6 +591,10 @@ def main():
         for text in text_batch:
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for model outputs: {bias_results}")
+
+if __name__ == "__main__":
+    gc.collect()  # Explicitly call garbage collector at the start
+    main()
 
 if __name__ == "__main__":
     gc.collect()  # Explicitly call garbage collector at the start

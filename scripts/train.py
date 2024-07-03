@@ -188,6 +188,8 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
     updated_dataset = more_itertools.chain(existing_dataset, new_data)
     return updated_dataset
 
+import gc
+
 def main():
     # Initialize memory usage log file
     memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
@@ -203,6 +205,7 @@ def main():
         logger.debug(f"Memory usage: {memory_usage:.2f} MiB, Available memory: {available_memory:.2f} MiB at timestamp: {timestamp}")
         with open(memory_log_file, 'a') as f:
             f.write(f"{timestamp},{memory_usage:.2f},{available_memory:.2f}\n")
+        gc.collect()  # Explicitly call garbage collector to free up memory
 
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
@@ -347,30 +350,22 @@ def main():
             train_loss = 0
             train_steps = 0
 
-            logger.debug(f"Logging memory usage at the beginning of epoch {epoch + 1}")
             log_memory_usage()
 
             for batch in train_dataset:
-                logger.debug(f"Logging memory usage before processing batch {train_steps + 1}")
                 log_memory_usage()
 
                 batch['input_ids'] = jnp.array(batch['input_ids'])
-                logger.debug(f"Input IDs after conversion to JAX array: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_input(batch['input_ids'])
-                logger.debug(f"Input IDs after preprocessing: {batch['input_ids']}")
                 batch['input_ids'] = trainer.preprocess_math_input(batch['input_ids'])
-                logger.debug(f"Input IDs after math preprocessing: {batch['input_ids']}")
                 input_shape = batch['input_ids'].shape
-                logger.debug(f"Input shape: {input_shape}")
                 params, trainer.opt_state, loss, _ = trainer.train_step(params, trainer.opt_state, batch)
                 train_loss += loss
                 train_steps += 1
 
-                logger.debug(f"Logging memory usage after processing batch {train_steps}")
                 log_memory_usage()
+                gc.collect()  # Explicitly call garbage collector to free up memory
 
-                if train_steps % 100 == 0:
-                    logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
                 if train_steps % 100 == 0:
                     logger.info(f"Step {train_steps}: Current Train Loss: {loss:.4f}")
 
@@ -507,6 +502,10 @@ def main():
         for text in text_batch:
             bias_results = analyze_bias(text)
             logger.info(f"Bias Analysis Results for model outputs: {bias_results}")
+
+if __name__ == "__main__":
+    gc.collect()  # Explicitly call garbage collector at the start
+    main()
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):

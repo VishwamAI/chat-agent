@@ -49,6 +49,9 @@ def generate_responses(prompts: list, model, tokenizer):
         responses.append(response)
         print(f"Prompt: {prompt}")  # Debugging print statement
         print(f"Response: {response}")  # Debugging print statement
+        print(f"Conversation History: {conversation_history}")  # Debugging print statement
+        print(f"Input IDs: {input_ids}")  # Debugging print statement
+        print(f"Output: {output}")  # Debugging print statement
     return responses
 
 def main():

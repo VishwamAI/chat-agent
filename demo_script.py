@@ -16,13 +16,13 @@ def generate_responses(prompts: list, model, tokenizer):
         conversation_history += f"User: {prompt}\n"
         input_ids = tokenizer.encode(conversation_history, return_tensors='pt')
 
-        # Truncate input_ids if it exceeds max_length
-        if input_ids.size(1) > max_length:
-            input_ids = input_ids[:, -max_length:]
-
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
+
+        # Truncate input_ids if it exceeds max_length
+        if input_ids.size(1) > max_length:
+            input_ids = input_ids[:, -max_length:]
 
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
@@ -39,6 +39,12 @@ def generate_responses(prompts: list, model, tokenizer):
         )
         response = tokenizer.decode(output[0], skip_special_tokens=True)
         conversation_history += f"Bot: {response}\n"
+
+        # Truncate conversation_history to ensure it does not exceed max_length
+        conversation_history_ids = tokenizer.encode(conversation_history, return_tensors='pt')
+        if conversation_history_ids.size(1) > max_length:
+            conversation_history = tokenizer.decode(conversation_history_ids[0, -max_length:], skip_special_tokens=True)
+
         responses.append(response)
     return responses
 

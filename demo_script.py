@@ -14,14 +14,12 @@ def generate_responses(prompts: list, model, tokenizer):
         input_ids = tokenizer.encode(prompt, return_tensors='pt')
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
-        attention_mask = input_ids.ne(tokenizer.pad_token_id).long()
         output = model.generate(
             input_ids,
-            attention_mask=attention_mask,
             pad_token_id=tokenizer.eos_token_id,
             max_new_tokens=50,
-            temperature=1.0,
-            top_k=30,
+            temperature=0.7,
+            top_k=50,
             top_p=0.9,
             do_sample=True
         )

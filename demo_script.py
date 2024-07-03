@@ -21,9 +21,8 @@ def generate_responses(prompts: list, model, tokenizer):
         if len(conversation_history) > 5:
             conversation_history = conversation_history[-5:]
 
-        # Encode the conversation history
-        conversation_history_str = " ".join(conversation_history)
-        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
+        # Encode only the last user prompt
+        input_ids = tokenizer.encode(prompt, return_tensors='pt')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:

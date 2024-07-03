@@ -155,6 +155,8 @@ class ImprovedTransformerBlock(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
         attention_output = self.attention(self.layer_norm1(x), mask, kv_cache)
         attention_output = self.dropout(attention_output, deterministic=not is_training)
+        logger.debug(f"x shape before addition: {x.shape}")
+        logger.debug(f"attention_output shape: {attention_output.shape}")
         x = x + attention_output
 
         ff_output = self.feed_forward(self.layer_norm2(x))

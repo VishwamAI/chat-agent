@@ -16,9 +16,9 @@ def generate_responses(prompts: list, model, tokenizer):
         # Append the user's prompt to the conversation history
         conversation_history.append(prompt)
 
-        # Maintain a sliding window of the last 5 exchanges
-        if len(conversation_history) > 10:  # 5 exchanges = 10 entries (5 user prompts + 5 bot responses)
-            conversation_history = conversation_history[-10:]
+        # Maintain a sliding window of the last 5 user prompts
+        if len(conversation_history) > 5:  # 5 user prompts
+            conversation_history = conversation_history[-5:]
 
         # Join the conversation history into a single string
         conversation_history_str = "\n".join(conversation_history)
@@ -37,7 +37,6 @@ def generate_responses(prompts: list, model, tokenizer):
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).long()
 
-        print("Generating response...")  # Debugging print statement
         try:
             output = model.generate(
                 input_ids,
@@ -54,24 +53,16 @@ def generate_responses(prompts: list, model, tokenizer):
                 num_return_sequences=1  # Return only one sequence
             )
             response = tokenizer.decode(output[0], skip_special_tokens=True)
-            print(f"Output: {output}")  # Debugging print statement
         except Exception as e:
-            print(f"Error during generation: {e}")
             response = "Error generating response."
 
         # Check if the response is echoing the prompt
         if response.strip().lower() == prompt.strip().lower():
             response = "I'm sorry, I didn't understand that. Can you please rephrase?"
 
-        # Append the bot's response to the conversation history only if it's a valid response
+        # Append the bot's response to the responses list only if it's a valid response
         if response != "Error generating response." and response != "I'm sorry, I didn't understand that. Can you please rephrase?":
-            conversation_history.append(response)
-
-        responses.append(response)
-        print(f"Prompt: {prompt}")  # Debugging print statement
-        print(f"Response: {response}")  # Debugging print statement
-        print(f"Conversation History: {conversation_history}")  # Debugging print statement
-        print(f"Input IDs: {input_ids}")  # Debugging print statement
+            responses.append(response)
 
     return responses
 
@@ -97,6 +88,9 @@ def main():
         print(f"Prompt: {prompt}")
         print(f"Response: {response}")
         print()
+
+    # Terminate the script after processing all prompts
+    print("All prompts have been processed. Terminating the script.")
 
 if __name__ == "__main__":
     main()

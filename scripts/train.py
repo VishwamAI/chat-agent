@@ -86,6 +86,8 @@ def model_fn(inputs, config):
 def main():
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file not found at {config_path}. Current working directory: {os.getcwd()}")
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
@@ -135,24 +137,6 @@ def update(params, opt_state, batch):
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state
 
-def main():
-    # Load configuration
-    with open('default_config.yaml', 'r') as f:
-        config = yaml.safe_load(f)
-    logger.info(f"Configuration loaded: {config}")
-
-    # Initialize model parameters
-    model = AutoModelForCausalLM.from_pretrained(config['model_name'])
-    model_params = model.state_dict()
-    logger.info(f"Model parameters loaded from checkpoint: {config['model_name']}")
-
-    # Initialize optimizer
-    optimizer = optax.adam(config['learning_rate'])
-    logger.info(f"Optimizer initialized.")
-
-    # Initialize optimizer state
-    opt_state = optimizer.init(model_params)
-    logger.info(f"Optimizer state initialized.")
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos

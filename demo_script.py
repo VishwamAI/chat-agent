@@ -47,6 +47,15 @@ def generate_responses(prompts: list, model, tokenizer):
             if len(input_ids.shape) == 2:
                 input_ids = input_ids[:, :, None]  # Add a third dimension if input_ids is two-dimensional
 
+            # Ensure input_ids has the correct number of elements
+            batch_size, seq_len, embed_dim = input_ids.shape
+            expected_embed_dim = model.config['num_heads'] * model.config['head_dim']
+            if embed_dim != expected_embed_dim:
+                if embed_dim * seq_len == expected_embed_dim:
+                    input_ids = input_ids.reshape(batch_size, seq_len, model.config['num_heads'], model.config['head_dim'])
+                else:
+                    raise ValueError(f"Cannot reshape array of shape {input_ids.shape} to (batch_size, seq_len, num_heads, head_dim)")
+
             output, _ = model.apply({'params': model.params}, input_ids, is_training=False)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

@@ -27,8 +27,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
-    sin = jnp.reshape(sin, (sin.shape[0], sin.shape[1], head_dim // 2))
-    cos = jnp.reshape(cos, (cos.shape[0], cos.shape[1], head_dim // 2))
+    sin = jnp.reshape(sin, (sin.shape[0], sin.shape[1], sin.shape[2], head_dim // 2))
+    cos = jnp.reshape(cos, (cos.shape[0], cos.shape[1], cos.shape[2], head_dim // 2))
     sin = jnp.broadcast_to(sin, (x1.shape[0], x1.shape[1], x1.shape[2], head_dim // 2))
     cos = jnp.broadcast_to(cos, (x1.shape[0], x1.shape[1], x1.shape[2], head_dim // 2))
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
@@ -40,8 +40,8 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
         self.rotary_emb = lambda batch_size, num_heads, seq_len, head_dim: (
-            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)),
-            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2))
+            jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)).repeat(batch_size * num_heads, axis=0).reshape((batch_size, num_heads, seq_len, head_dim // 2)),
+            jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)).repeat(batch_size * num_heads, axis=0).reshape((batch_size, num_heads, seq_len, head_dim // 2))
         )
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)
 

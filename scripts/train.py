@@ -11,27 +11,11 @@ import haiku as hk
 import optax
 import yaml
 from typing import Iterable
+from src.model.architecture import ImprovedAttention  # Import ImprovedAttention from architecture.py
 
 # Load configuration
 with open('/home/ubuntu/chat-agent/configs/default_config.yaml', 'r') as file:
     config = yaml.safe_load(file)
-
-# Define the model architecture
-class ImprovedAttention(hk.Module):
-    def __init__(self, num_heads: int, key_size: int, w_init_scale: float):
-        super().__init__()
-        self.num_heads = num_heads
-        self.key_size = key_size
-        self.w_init_scale = w_init_scale
-
-    def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
-        # Reshape input tensor for multi-head attention
-        batch_size, seq_length, embed_dim = x.shape
-        head_dim = embed_dim // self.num_heads
-        if embed_dim != self.num_heads * head_dim:
-            raise ValueError(f"Embedding dimension {embed_dim} is not divisible by the number of heads {self.num_heads}")
-        x = x.reshape(batch_size, seq_length, self.num_heads, head_dim)
-        return x
 
 # Define the training loop
 def train(model, data, config):
@@ -74,11 +58,7 @@ def main():
     eval_data = load_data(config['eval_file'])
 
     # Initialize model
-    model = ImprovedAttention(
-        num_heads=config['num_heads'],
-        key_size=config['embed_dim'] // config['num_heads'],
-        w_init_scale=1.0
-    )
+    model = ImprovedAttention(config)  # Use the imported ImprovedAttention class
 
     # Train model
     train(model, train_data, config)

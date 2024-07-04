@@ -31,6 +31,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     # Ensure x_rotated and x2 have compatible shapes for concatenation
     x_rotated = x_rotated.reshape(x1.shape[:-1] + (head_dim,))
     x2 = x2.reshape(x2.shape[:-1] + (head_dim,))
+    assert x_rotated.shape == x2.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x2 shape {x2.shape}"
     return jnp.concatenate([x_rotated, x2], axis=-1)
 
 class ImprovedAttention(nn.Module):

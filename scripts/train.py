@@ -427,11 +427,11 @@ def main():
         checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
         logger.info(f"Loading checkpoint from {checkpoint_path}")
         model = VishwamAILLM.from_pretrained(checkpoint_path)
-        params = model.state_dict()
+        params = model.init(rng_key, dummy_input)['params']
     else:
         rng_key = jax.random.PRNGKey(0)
         dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
-        params = model.init(rng_key, dummy_input)
+        params = model.init(rng_key, dummy_input)['params']
 
     logger.info("Starting training process...")
     checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'

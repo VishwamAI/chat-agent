@@ -127,9 +127,6 @@ def main():
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
 # Initialize model only once
-def model_fn(inputs, config):
-    model = VishwamAILLM(config=config)
-    return model
 
 from bias_analysis import analyze_bias
 

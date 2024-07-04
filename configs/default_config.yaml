@@ -19,4 +19,4 @@ max_seq_length: 256  # Reduced max sequence length from 512 to 256
 train_file: "data/processed/train.txt"
 eval_file: "/home/ubuntu/chat-agent/VishwamAI-main/scripts/evaluation_problems.txt"
 tokenizer_name: "microsoft/DialoGPT-medium"
-model_name: "/home/ubuntu/chat-agent/checkpoints/model_checkpoint.npy"
+model_name: "/home/ubuntu/chat-agent/checkpoints/model_checkpoint"

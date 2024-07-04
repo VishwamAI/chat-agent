@@ -118,8 +118,8 @@ def main():
     model = model_fn(None, config)
     if os.path.exists(config['model_name']):
         from flax.training import checkpoints
-        model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
-        model = model.replace(params=model_params)
+        model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=None)
+        model = model.apply({'params': model_params}, inputs=None)
 
     # Create datasets with smaller subsets of data for incremental training
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))

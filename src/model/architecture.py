@@ -32,8 +32,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     # Ensure x_rotated and x2 have compatible shapes for concatenation
     logger.debug(f"x_rotated shape before reshaping: {x_rotated.shape}")
-    x_rotated = x_rotated.reshape(x1.shape[:-1] + (head_dim // 2,))
-    x2 = x2.reshape(x2.shape[:-1] + (head_dim // 2,))
+    x_rotated = x_rotated.reshape(x1.shape[:-1] + (head_dim,))
+    x2 = x2.reshape(x2.shape[:-1] + (head_dim,))
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")
     assert x_rotated.shape == x2.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x2 shape {x2.shape}"

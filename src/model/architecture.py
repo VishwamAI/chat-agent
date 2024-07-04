@@ -43,6 +43,7 @@ class ImprovedAttention(nn.Module):
         )
 
     @nn.compact
+    @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
@@ -67,8 +68,7 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
-        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
-        qkv = qkv.transpose(0, 2, 1, 3).reshape(batch_size, self.num_heads, seq_len, 3 * self.head_dim)
+        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3, self.head_dim).transpose(0, 2, 1, 3, 4)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
         # Log the shapes of qkv, q, k, and v

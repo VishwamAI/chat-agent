@@ -426,11 +426,11 @@ def main():
         latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))
         checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
         logger.info(f"Loading checkpoint from {checkpoint_path}")
-        model = VishwamAILLM.from_pretrained(checkpoint_path)
-        params = model.init(rng_key, dummy_input)['params']
+        model = AutoModelForCausalLM.from_pretrained(checkpoint_path)
+        params = model.state_dict()
     else:
         rng_key = jax.random.PRNGKey(0)
-        dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+        dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)
         params = model.init(rng_key, dummy_input)['params']
 
     logger.info("Starting training process...")

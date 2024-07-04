@@ -118,7 +118,7 @@ def main():
     model = model_fn(None, config)
     from flax.training import checkpoints
     model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.init(jax.random.PRNGKey(0), jnp.ones((1, config['max_seq_length']))))
-    model = model.apply({'params': model_params}, inputs=None)
+    model = model.replace(params=model_params)
 
     # Create datasets with smaller subsets of data for incremental training
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))

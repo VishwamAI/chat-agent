@@ -41,7 +41,7 @@ class ImprovedAttention(nn.Module):
             jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)),
             jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2))
         )
-        self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)
+        self.qkv_dense = nn.Dense(self.num_heads * self.head_dim, use_bias=False)
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:

@@ -71,6 +71,7 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
 
                 input_ids = tokens[:-1]
                 labels = tokens[1:]
+                logger.debug(f"Input tensor shape after tokenization and padding: {len(input_ids)}")
                 yield {'input_ids': input_ids, 'labels': labels}
             gc.collect()  # Explicitly call garbage collector to free up memory
 
@@ -231,6 +232,7 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
 
                 input_ids = tokens[:-1]
                 labels = tokens[1:]
+                logger.debug(f"Input tensor shape after tokenization and padding: {len(input_ids)}")
                 yield {'input_ids': input_ids, 'labels': labels}
             gc.collect()  # Explicitly call garbage collector to free up memory
 

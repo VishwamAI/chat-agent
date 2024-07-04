@@ -52,14 +52,11 @@ class ImprovedAttention(nn.Module):
         # Ensure x has the correct shape
         expected_embed_dim = self.num_heads * self.head_dim
         if embed_dim != expected_embed_dim:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim).reshape(batch_size, seq_len, expected_embed_dim)
+            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             embed_dim = expected_embed_dim
         assert embed_dim == expected_embed_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {expected_embed_dim}"
 
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
-
-        # Log the shape of x before reshaping
-        logger.debug(f"x shape before reshaping: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)

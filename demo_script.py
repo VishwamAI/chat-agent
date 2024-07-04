@@ -75,7 +75,10 @@ def main():
 
     # Initialize model
     model = VishwamAILLM(config=config)
-    model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
+    rng = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    params = model.init(rng, dummy_input)['params']
+    model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=params)
     model = model.replace(params=model_state)
 
     # Load prompts from CSV

@@ -117,8 +117,8 @@ def main():
     # Initialize model
     model = model_fn(None, config)
     from flax.training import checkpoints
-    model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
-    model = model.replace(params=model_params)
+    model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=None)
+    model = model_fn(model_params, config)
 
     # Create datasets with smaller subsets of data for incremental training
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
@@ -165,42 +165,6 @@ class VishwamAILLM(nn.Module):
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
         return lm_logits, new_kv_cache
-
-    @nn.compact
-    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
-        seq_len = x.shape[1]
-        qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
-        q, k, v = jnp.split(qkv, 3, axis=-1)
-
-        q = q.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-        k = k.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-        v = v.reshape(x.shape[0], -1, self.num_heads, self.head_dim)
-
-        sincos = self.rotary_emb(x.shape[0], self.num_heads, seq_len, self.head_dim)
-
-        q = apply_rotary_pos_emb(q, sincos)
-        k = apply_rotary_pos_emb(k, sincos)
-
-        if kv_cache is not None:
-            if kv_cache['k'] is None:
-                kv_cache['k'] = k
-                kv_cache['v'] = v
-            else:
-                k = jnp.concatenate([kv_cache['k'], k], axis=1)
-                v = jnp.concatenate([kv_cache['v'], v], axis=1)
-                kv_cache['k'] = k
-                kv_cache['v'] = v
-
-        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
-
-        if mask is not None:
-            mask = jnp.broadcast_to(mask, attn.shape)  # Ensure mask is expanded to match attn tensor's shape
-            attn = jnp.where(mask, attn, float('-inf'))
-
-        attn = jax.nn.softmax(attn, axis=-1)
-
-        output = jnp.matmul(attn, v)
-        return output.reshape(-1, seq_len, self.num_heads * self.head_dim)
 
 from generate_modular_question import generate_modular_question
 from typing import Iterable

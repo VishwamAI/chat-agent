@@ -14,7 +14,7 @@ def load_prompts(file_path: str):
 
 def generate_responses(prompts: list, model, tokenizer):
     responses = []
-    max_length = 1024  # Maximum sequence length for the model
+    max_length = 256  # Maximum sequence length for the model
     conversation_history = []
 
     for prompt in prompts:
@@ -47,7 +47,7 @@ def generate_responses(prompts: list, model, tokenizer):
             if len(input_ids.shape) == 2:
                 input_ids = input_ids[:, :, None]  # Add a third dimension if input_ids is two-dimensional
 
-            output = model.apply({'params': model.params}, input_ids, is_training=False)
+            output, _ = model.apply({'params': model.params}, input_ids, is_training=False)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
             response = f"Error generating response: {str(e)}"

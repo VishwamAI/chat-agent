@@ -44,7 +44,7 @@ class ImprovedAttention(nn.Module):
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)
 
     @nn.compact
-    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
+    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
         batch_size, seq_len, embed_dim = x.shape

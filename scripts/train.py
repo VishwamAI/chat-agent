@@ -117,6 +117,13 @@ def main():
     # Initialize model
     model = model_fn(None, config)
     from flax.training import checkpoints
+
+    # Save model parameters correctly during training
+    def save_checkpoint(model, ckpt_dir):
+        model_params = jax.device_get(model.params)
+        checkpoints.save_checkpoint(ckpt_dir, model_params, step=0, overwrite=True)
+
+    # Restore model parameters correctly
     model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
     model = model.replace(params=model_state)
 
@@ -125,6 +132,15 @@ def main():
     eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
+
+    # Example training loop (simplified)
+    for epoch in range(config['num_epochs']):
+        for batch in train_dataset:
+            # Perform training step
+            # ...
+
+            # Save checkpoint after each epoch
+            save_checkpoint(model, config['model_name'])
 
 # Initialize model only once
 

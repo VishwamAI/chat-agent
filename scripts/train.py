@@ -119,9 +119,9 @@ def main():
     from flax.training import checkpoints
 
     # Save model parameters correctly during training
-    def save_checkpoint(model, ckpt_dir):
+    def save_checkpoint(model, ckpt_dir, step):
         model_params = jax.device_get(model.params)
-        checkpoints.save_checkpoint(ckpt_dir, model_params, step=0, overwrite=True)
+        checkpoints.save_checkpoint(ckpt_dir, model_params, step=step, overwrite=True)
 
     # Restore model parameters correctly
     model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
@@ -139,8 +139,8 @@ def main():
             # Perform training step
             # ...
 
-            # Save checkpoint after each epoch
-            save_checkpoint(model, config['model_name'])
+        # Save checkpoint after each epoch
+        save_checkpoint(model, config['model_name'], step=epoch)
 
 # Initialize model only once
 

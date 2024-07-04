@@ -43,6 +43,10 @@ def generate_responses(prompts: list, model, tokenizer):
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
 
         try:
+            # Ensure input_ids has the correct shape
+            if len(input_ids.shape) == 2:
+                input_ids = input_ids[:, :, None]  # Add a third dimension if input_ids is two-dimensional
+
             output = model.apply({'params': model.params}, input_ids, is_training=False)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

@@ -427,12 +427,12 @@ def main():
         checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
         logger.info(f"Loading checkpoint from {checkpoint_path}")
         model = AutoModelForCausalLM.from_pretrained(checkpoint_path)
-        params = model.state_dict()
+        tokenizer = AutoTokenizer.from_pretrained(checkpoint_path)
     else:
         rng_key = jax.random.PRNGKey(0)
         dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)
         model = model_fn(dummy_input, config)
-        params = model.init(rng_key, dummy_input)['params']
+        model_params = model.init(rng_key, dummy_input)['params']
 
     logger.info("Starting training process...")
     checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'

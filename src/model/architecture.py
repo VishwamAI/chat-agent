@@ -55,7 +55,7 @@ class ImprovedAttention(nn.Module):
             if embed_dim == self.head_dim:
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             elif embed_dim == 1:
-                x = jnp.tile(x, (1, 1, self.num_heads * self.head_dim))
+                x = jnp.tile(x, (1, 1, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             else:
                 raise ValueError(f"Cannot reshape array of shape {x.shape} to (batch_size, seq_len, num_heads, head_dim)")

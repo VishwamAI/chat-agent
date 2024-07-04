@@ -142,11 +142,9 @@ def main():
     logger.info(f"Configuration loaded: {config}")
 
     # Initialize model parameters
-    rng_key = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-    model = model_fn(dummy_input, config)
-    model_params = model.init(rng_key, dummy_input)['params']
-    logger.info(f"Model parameters initialized.")
+    model = AutoModelForCausalLM.from_pretrained(config['model_name'])
+    model_params = model.state_dict()
+    logger.info(f"Model parameters loaded from checkpoint: {config['model_name']}")
 
     # Initialize optimizer
     optimizer = optax.adam(config['learning_rate'])

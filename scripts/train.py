@@ -114,6 +114,11 @@ def main():
     math_symbols = ['+', '-', '*', '/', '=', '(', ')', '^', 'sqrt', 'pi', 'e']
     tokenizer.add_tokens(math_symbols)
 
+    # Initialize model
+    model = model_fn(None, config)
+    if os.path.exists(config['model_name']):
+        model.load_state_dict(jax.device_put(jnp.load(config['model_name'])))
+
     # Create datasets with smaller subsets of data for incremental training
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
     eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))

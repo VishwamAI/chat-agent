@@ -28,6 +28,8 @@ class ImprovedAttention(hk.Module):
         # Reshape input tensor for multi-head attention
         batch_size, seq_length, embed_dim = x.shape
         head_dim = embed_dim // self.num_heads
+        if embed_dim != self.num_heads * head_dim:
+            raise ValueError(f"Embedding dimension {embed_dim} is not divisible by the number of heads {self.num_heads}")
         x = x.reshape(batch_size, seq_length, self.num_heads, head_dim)
         return x
 

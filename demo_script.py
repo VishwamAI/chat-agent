@@ -1,7 +1,11 @@
 import os
 import pandas as pd
 import yaml
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import jax
+import jax.numpy as jnp
+from transformers import AutoTokenizer
+from flax.training import checkpoints
+from src.model.architecture import VishwamAILLM
 
 def load_prompts(file_path: str):
     data = pd.read_csv(file_path)
@@ -25,34 +29,21 @@ def generate_responses(prompts: list, model, tokenizer):
         conversation_history_str = " ".join(conversation_history)
 
         # Encode the conversation history
-        input_ids = tokenizer.encode(conversation_history_str, return_tensors='pt')
+        input_ids = tokenizer.encode(conversation_history_str, return_tensors='np')
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
 
         # Truncate input_ids if it exceeds max_length
-        if input_ids.size(1) > max_length:
+        if (input_ids.shape[1] > max_length):
             input_ids = input_ids[:, -max_length:]
 
         # Create attention mask
-        attention_mask = (input_ids != tokenizer.pad_token_id).long()
+        attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
 
         try:
-            output = model.generate(
-                input_ids,
-                attention_mask=attention_mask,
-                pad_token_id=tokenizer.eos_token_id,
-                max_new_tokens=100,  # Adjusted max_new_tokens for shorter responses
-                temperature=0.7,  # Adjusted temperature for more coherent responses
-                top_k=30,  # Adjusted top_k for more diverse responses
-                top_p=0.85,  # Adjusted top_p for more diverse responses
-                do_sample=True,
-                repetition_penalty=1.1,  # Adjusted repetition penalty
-                no_repeat_ngram_size=2,  # Adjusted no repeat n-gram size
-                num_beams=1,  # Simplified to no beam search
-                num_return_sequences=1  # Return only one sequence
-            )
+            output = model.apply({'params': model.params}, input_ids, is_training=False)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
             response = f"Error generating response: {str(e)}"
@@ -79,9 +70,13 @@ def main():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
-    # Initialize tokenizer and model
+    # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
-    model = AutoModelForCausalLM.from_pretrained(config['model_name'])
+
+    # Initialize model
+    model = VishwamAILLM(config=config)
+    model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
+    model = model.replace(params=model_state)
 
     # Load prompts from CSV
     csv_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'sample_dialogues.csv'))

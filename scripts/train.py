@@ -431,6 +431,7 @@ def main():
     else:
         rng_key = jax.random.PRNGKey(0)
         dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)
+        model = model_fn(dummy_input, config)
         params = model.init(rng_key, dummy_input)['params']
 
     logger.info("Starting training process...")

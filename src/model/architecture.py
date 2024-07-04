@@ -194,7 +194,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.embed_dim = self.config['embed_dim']
         self.num_layers = self.config['num_layers']
         self.vocab_size = self.config['vocab_size']
-        self.head_dim = 32
+        self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
         self.num_heads = self.config['num_heads']
 
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
@@ -268,8 +268,7 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
-        config_with_head_dim = {**self.config, 'head_dim': 32}
-        self.transformer = ImprovedVishwamAIModel(config_with_head_dim)
+        self.transformer = ImprovedVishwamAIModel(self.config)
         self.lm_head = nn.Dense(self.config['vocab_size'])
 
     @nn.compact

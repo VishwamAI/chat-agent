@@ -67,26 +67,14 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
-        qkv = qkv.reshape(batch_size, seq_len, 3, self.num_heads, self.head_dim)
-        q, k, v = jnp.split(qkv, 3, axis=2)
-        q = q.squeeze(2)
-        k = k.squeeze(2)
-        v = v.squeeze(2)
+        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
+        q, k, v = jnp.split(qkv, 3, axis=-1)
 
         # Log the shapes of qkv, q, k, and v
         logger.debug(f"qkv shape: {qkv.shape}")
         logger.debug(f"q shape after splitting: {q.shape}")
         logger.debug(f"k shape after splitting: {k.shape}")
         logger.debug(f"v shape after splitting: {v.shape}")
-
-        q = q.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        k = k.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        v = v.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-
-        # Log the shapes of q, k, and v after reshaping
-        logger.debug(f"q shape after reshaping: {q.shape}")
-        logger.debug(f"k shape after reshaping: {k.shape}")
-        logger.debug(f"v shape after reshaping: {v.shape}")
 
         sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 

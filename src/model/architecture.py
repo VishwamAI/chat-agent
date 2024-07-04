@@ -67,7 +67,7 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = self.qkv_dense(x)
-        qkv = qkv.reshape(batch_size, seq_len, self.num_heads * 3 * self.head_dim)
+        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
         # Log the shapes of qkv, q, k, and v

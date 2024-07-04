@@ -117,7 +117,8 @@ def main():
     # Initialize model
     model = model_fn(None, config)
     if os.path.exists(config['model_name']):
-        model.load_state_dict(jax.device_put(jnp.load(config['model_name'])))
+        model_params = jnp.load(config['model_name'])
+        model = model.replace(params=model_params)
 
     # Create datasets with smaller subsets of data for incremental training
     train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))

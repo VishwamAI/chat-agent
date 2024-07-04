@@ -23,6 +23,7 @@ def rotate_half(x):
 
 def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
+    logger.debug(f"x shape: {x.shape}")
     x1, x2 = jnp.split(x, 2, axis=-1)
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"x2 shape: {x2.shape}")
@@ -36,7 +37,9 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")
     assert x_rotated.shape == x2.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x2 shape {x2.shape}"
-    return jnp.concatenate([x_rotated, x2], axis=-1)
+    concatenated = jnp.concatenate([x_rotated, x2], axis=-1)
+    logger.debug(f"concatenated shape: {concatenated.shape}")
+    return concatenated
 
 class ImprovedAttention(nn.Module):
     config: Dict

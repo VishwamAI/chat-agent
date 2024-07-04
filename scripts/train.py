@@ -419,14 +419,14 @@ def main():
     rl_model = PPO("MlpPolicy", env, verbose=1)
 
     # Check for existing checkpoints and load the latest one
-    checkpoint_dir = config['model_name']
+    checkpoint_dir = os.path.abspath(config['model_name'])
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_checkpoint')]
     if checkpoint_files:
         latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))
         checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
         logger.info(f"Loading checkpoint from {checkpoint_path}")
-        model = AutoModelForCausalLM.from_pretrained(checkpoint_path)
+        model = VishwamAILLM.from_pretrained(checkpoint_path)
         params = model.state_dict()
     else:
         rng_key = jax.random.PRNGKey(0)

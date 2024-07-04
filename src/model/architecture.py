@@ -43,8 +43,6 @@ class ImprovedAttention(nn.Module):
         )
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)
 
-    @nn.compact
-    @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
@@ -68,6 +66,7 @@ class ImprovedAttention(nn.Module):
 
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
+        qkv = self.qkv_dense(x)
         qkv = qkv.reshape(batch_size, seq_len, self.num_heads * 3 * self.head_dim)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
@@ -275,7 +274,6 @@ class VishwamAILLM(nn.Module):
         self.transformer = ImprovedVishwamAIModel(self.config)
         self.lm_head = nn.Dense(self.config['vocab_size'])
 
-    @nn.compact
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
         transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)

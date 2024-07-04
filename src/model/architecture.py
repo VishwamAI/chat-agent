@@ -59,7 +59,7 @@ class ImprovedAttention(nn.Module):
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             else:
                 # Handle cases where embed_dim is not equal to head_dim or 1
-                x = jnp.broadcast_to(x, (batch_size, seq_len, embed_dim))
+                x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
@@ -67,13 +67,17 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
-        q, k, v = jnp.split(qkv, 3, axis=-1)
+        qkv = qkv.reshape(batch_size, seq_len, 3, self.num_heads, self.head_dim)
+        q, k, v = jnp.split(qkv, 3, axis=2)
+        q = q.squeeze(2)
+        k = k.squeeze(2)
+        v = v.squeeze(2)
 
         # Log the shapes of qkv, q, k, and v
         logger.debug(f"qkv shape: {qkv.shape}")
-        logger.debug(f"q shape before reshaping: {q.shape}")
-        logger.debug(f"k shape before reshaping: {k.shape}")
-        logger.debug(f"v shape before reshaping: {v.shape}")
+        logger.debug(f"q shape after splitting: {q.shape}")
+        logger.debug(f"k shape after splitting: {k.shape}")
+        logger.debug(f"v shape after splitting: {v.shape}")
 
         q = q.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         k = k.reshape(batch_size, seq_len, self.num_heads, self.head_dim)

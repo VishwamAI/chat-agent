@@ -14,5 +14,5 @@ def inspect_checkpoint(checkpoint_path):
         print(f"Error loading checkpoint: {e}")
 
 if __name__ == "__main__":
-    checkpoint_path = "/home/ubuntu/chat-agent/VishwamAI-main/checkpoints/model_checkpoint.npy"
+    checkpoint_path = "/home/ubuntu/chat-agent/checkpoints/model_checkpoint.npy"
     inspect_checkpoint(checkpoint_path)

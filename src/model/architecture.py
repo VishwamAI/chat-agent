@@ -47,10 +47,12 @@ class ImprovedAttention(nn.Module):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
         batch_size, seq_len, embed_dim = x.shape
+        logger.debug(f"Input tensor shape: {x.shape}")
         assert embed_dim == self.num_heads * self.head_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}"
 
         # Ensure x has the correct shape
         x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+        logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         # Log the shape of x before reshaping
         logger.debug(f"x shape before reshaping: {x.shape}")

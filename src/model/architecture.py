@@ -44,16 +44,34 @@ class ImprovedAttention(nn.Module):
 
     @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):
+        if len(x.shape) == 2:
+            x = x[:, :, None]  # Add a third dimension if x is two-dimensional
         batch_size, seq_len, embed_dim = x.shape
-        assert embed_dim == self.num_heads * self.head_dim, "Embedding dimension must match num_heads * head_dim"
-        x = x.reshape(batch_size, seq_len, embed_dim)  # Ensure x has the correct shape
+        assert embed_dim == self.num_heads * self.head_dim, f"Embedding dimension must match num_heads * head_dim, but got {embed_dim} instead of {self.num_heads * self.head_dim}"
+
+        # Ensure x has the correct shape
+        x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+
+        # Log the shape of x before reshaping
+        logger.debug(f"x shape before reshaping: {x.shape}")
 
         qkv = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)(x)
         q, k, v = jnp.split(qkv, 3, axis=-1)
 
+        # Log the shapes of qkv, q, k, and v
+        logger.debug(f"qkv shape: {qkv.shape}")
+        logger.debug(f"q shape before reshaping: {q.shape}")
+        logger.debug(f"k shape before reshaping: {k.shape}")
+        logger.debug(f"v shape before reshaping: {v.shape}")
+
         q = q.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         k = k.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
         v = v.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+
+        # Log the shapes of q, k, and v after reshaping
+        logger.debug(f"q shape after reshaping: {q.shape}")
+        logger.debug(f"k shape after reshaping: {k.shape}")
+        logger.debug(f"v shape after reshaping: {v.shape}")
 
         sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 

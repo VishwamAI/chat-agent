@@ -10,6 +10,19 @@ import pandas as pd
 import logging
 import psutil  # Import psutil module
 from typing import Dict, Optional, Tuple, Iterable  # Import Dict, Optional, Tuple, and Iterable from typing module
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig  # Import necessary modules from transformers library
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Add file handler to write logs to a file
+log_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logs/train.log'))
+file_handler = logging.FileHandler(log_file_path)
+file_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 import flax.linen as nn
 
@@ -32,9 +45,9 @@ def log_memory_usage():
 
 def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_length: int) -> Iterable:
     def load_and_preprocess_data(file_path: str):
-        chunk_size = 25  # Further reduce chunk size to manage memory usage
+        chunk_size = 1  # Further reduce chunk size to manage memory usage
         for chunk in pd.read_csv(file_path, chunksize=chunk_size):
-            logger.warning(f"Loaded data chunk from CSV: {chunk.head()}")
+            logger.info(f"Loaded data chunk from CSV: {chunk.head()}")
             for _, row in chunk.iterrows():
                 prompt = row['prompt']
                 response = row['response']
@@ -61,22 +74,54 @@ def create_dataset_from_csv(file_path: str, tokenizer, batch_size: int, max_leng
                 yield {'input_ids': input_ids, 'labels': labels}
             gc.collect()  # Explicitly call garbage collector to free up memory
 
-            log_memory_usage()  # Log memory usage at the end of the epoch
-
-            # Temporarily disable reinforcement learning update to reduce memory usage
-            # logger.warning(f"Logging memory usage before reinforcement learning update")
-            # log_memory_usage()
-            # rl_model.learn(total_timesteps=500)
-            # logger.warning(f"Logging memory usage after reinforcement learning update")
-            # log_memory_usage()
-
-            eval_metrics = trainer.evaluate(params, eval_dataset)
-            logger.warning(f"Logging memory usage after evaluation step")
-            log_memory_usage()
-
-            gc.collect()  # Explicitly call garbage collector to free up memory
+            log_memory_usage()  # Log memory usage at the end of the chunk
 
     gc.collect()  # Explicitly call garbage collector at the start
+
+# Initialize model only once
+def model_fn(inputs, config):
+    model = VishwamAILLM(config=config)
+    return model
+
+def main():
+    # Load configuration
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+
+    # Reduce model complexity
+    config['embed_dim'] = 128  # Further reduce embedding dimension
+    config['num_heads'] = 4  # Further reduce number of attention heads
+    config['num_layers'] = 2  # Further reduce number of layers
+
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
+    # Initialize tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
+
+    # Ensure pad_token_id is set correctly
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token_id = config['pad_token_id']
+    else:
+        config['pad_token_id'] = tokenizer.pad_token_id
+
+    # Add mathematical symbols to tokenizer
+    math_symbols = ['+', '-', '*', '/', '=', '(', ')', '^', 'sqrt', 'pi', 'e']
+    tokenizer.add_tokens(math_symbols)
+
+    # Create datasets with smaller subsets of data for incremental training
+    train_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    eval_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../sample_dialogues.csv'))
+    train_dataset = create_dataset_from_csv(train_file_path, tokenizer, 1, config['max_seq_length'])
+    eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
+
+# Initialize model only once
+def model_fn(inputs, config):
+    model = VishwamAILLM(config=config)
+    return model
 
 from bias_analysis import analyze_bias
 
@@ -89,6 +134,27 @@ def update(params, opt_state, batch):
     updates, opt_state = optimizer.update(grads, opt_state)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state
+
+def main():
+    # Load configuration
+    with open('default_config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+    logger.info(f"Configuration loaded: {config}")
+
+    # Initialize model parameters
+    rng_key = jax.random.PRNGKey(0)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'], config['head_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
+    model = model_fn(dummy_input, config)
+    model_params = model.init(rng_key, dummy_input)['params']
+    logger.info(f"Model parameters initialized.")
+
+    # Initialize optimizer
+    optimizer = optax.adam(config['learning_rate'])
+    logger.info(f"Optimizer initialized.")
+
+    # Initialize optimizer state
+    opt_state = optimizer.init(model_params)
+    logger.info(f"Optimizer state initialized.")
 
 def apply_rotary_pos_emb(x, sincos):
     sin, cos = sincos
@@ -237,12 +303,6 @@ def update_dataset_with_new_data(existing_dataset: Iterable, new_data_file: str,
 import gc
 
 def main():
-    # Initialize memory usage log file
-    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
-    with open(memory_log_file, 'w') as f:
-        f.write("Timestamp,Memory_Usage(MiB)\n")
-
-
     # Load configuration
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../configs/default_config.yaml'))
     with open(config_path, 'r') as f:
@@ -252,6 +312,12 @@ def main():
     config['embed_dim'] = 128  # Further reduce embedding dimension
     config['num_heads'] = 4  # Further reduce number of attention heads
     config['num_layers'] = 2  # Further reduce number of layers
+
+    # Initialize memory usage log file
+    memory_log_file = '/home/ubuntu/chat-agent/memory_usage.txt'
+    with open(memory_log_file, 'w') as f:
+        f.write("Timestamp,Memory_Usage(MiB)\n")
+
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
@@ -273,14 +339,14 @@ def main():
     eval_dataset = create_dataset_from_csv(eval_file_path, tokenizer, 1, config['max_seq_length'])
 
     # Initialize model only once
-    def model_fn(inputs):
+    def model_fn(inputs, config):
         model = VishwamAILLM(config=config)
         return model
 
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-    model = model_fn(dummy_input)
+    model = model_fn(dummy_input, config)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.info(f"Model parameters initialized.")
 
@@ -308,15 +374,10 @@ def main():
     #         bias_results = analyze_bias(text)
     #         logger.info(f"Bias Analysis Results for training data: {bias_results}")
 
-    # Initialize model
-    def model_fn(inputs):
-        model = VishwamAILLM(config=config)
-        return model
-
     # Initialize model parameters
     rng_key = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.int32)  # Ensure correct shape for dummy input
-    model = model_fn(dummy_input)
+    model = model_fn(dummy_input, config)
     model_params = model.init(rng_key, dummy_input)['params']
     logger.info(f"Model parameters initialized.")
 
@@ -360,7 +421,7 @@ def main():
     rl_model = PPO("MlpPolicy", env, verbose=1)
 
     # Check for existing checkpoints and load the latest one
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_checkpoint')]
     if checkpoint_files:
@@ -374,7 +435,7 @@ def main():
         params = model.init(rng_key, dummy_input)
 
     logger.info("Starting training process...")
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
+    checkpoint_dir = '/home/ubuntu/chat-agent/checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     try:
@@ -402,13 +463,6 @@ def main():
 
             log_memory_usage()  # Log memory usage at the end of the epoch
 
-            # Temporarily disable reinforcement learning update to reduce memory usage
-            # logger.debug(f"Logging memory usage before reinforcement learning update")
-            # log_memory_usage()
-            # rl_model.learn(total_timesteps=500)
-            # logger.debug(f"Logging memory usage after reinforcement learning update")
-            # log_memory_usage()
-
             eval_metrics = trainer.evaluate(params, eval_dataset)
             logger.debug(f"Logging memory usage after evaluation step")
             log_memory_usage()
@@ -418,35 +472,16 @@ def main():
             logger.info(f"Eval Metrics: {eval_metrics}")
 
             # Save checkpoint after each epoch
-            logger.debug(f"Attempting to save checkpoint after epoch {epoch + 1}")
-            checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}.npy')
+            checkpoint_path = os.path.join(checkpoint_dir, f'model_checkpoint_epoch_{epoch + 1}')
             logger.debug(f"Saving checkpoint to {checkpoint_path} after epoch {epoch + 1}")
-            logger.debug(f"Checkpoint parameters before saving: {params}")
             try:
-                if not os.path.exists(checkpoint_dir):
-                    logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-                else:
-                    logger.debug(f"Checkpoint directory exists: {checkpoint_dir}")
-                    logger.debug(f"Parameters to be saved: {params}")
-                    params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-                    logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-                    np.save(checkpoint_path, params_dict)
-                    logger.debug(f"Checkpoint parameters: {params}")
-                    logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
-                    if os.path.exists(checkpoint_path):
-                        logger.info(f"Checkpoint file {checkpoint_path} created successfully.")
-                        # Verify the contents of the saved file
-                        loaded_params = np.load(checkpoint_path, allow_pickle=True)
-                        logger.debug(f"Loaded parameters type after saving: {type(loaded_params)}")
-                        if isinstance(loaded_params, dict):
-                            logger.info(f"Parameters are correctly saved as a dictionary at {checkpoint_path}")
-                        else:
-                            logger.error(f"Parameters are NOT saved as a dictionary at {checkpoint_path}")
-                    else:
-                        logger.error(f"Checkpoint file {checkpoint_path} was not created.")
+                model.save_pretrained(checkpoint_path)
+                tokenizer.save_pretrained(checkpoint_path)
+                logger.info(f"Checkpoint saved successfully at {checkpoint_path} after epoch {epoch + 1}")
             except Exception as e:
                 logger.error(f"Failed to save checkpoint at {checkpoint_path} after epoch {epoch + 1}: {e}")
-                logger.debug(f"Exception details: {e}")
+            finally:
+                del params  # Ensure old checkpoints are not kept in memory
             logger.debug(f"Completed attempt to save checkpoint after epoch {epoch + 1}")
 
             if trainer._should_stop_early(eval_metrics):
@@ -455,44 +490,24 @@ def main():
 
     except KeyboardInterrupt:
         # Save checkpoint on interruption
-        interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted.npy')
+        interrupted_checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_interrupted')
         logger.debug(f"Attempting to save checkpoint due to interruption at {interrupted_checkpoint_path}")
-        logger.debug(f"Checkpoint parameters before saving: {params}")
-        logger.debug(f"Size of parameters: {params.size}")
-        logger.debug(f"Type of parameters: {type(params)}")
-        logger.debug(f"Shape of parameters: {params.shape}")
         try:
-            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-            np.save(interrupted_checkpoint_path, params_dict)
-            logger.debug(f"Checkpoint parameters: {params}")
+            model.save_pretrained(interrupted_checkpoint_path)
+            tokenizer.save_pretrained(interrupted_checkpoint_path)
             logger.info(f"Checkpoint saved at {interrupted_checkpoint_path} due to interruption.")
-            if os.path.exists(interrupted_checkpoint_path):
-                logger.info(f"Checkpoint file {interrupted_checkpoint_path} created successfully.")
-            else:
-                logger.error(f"Checkpoint file {interrupted_checkpoint_path} was not created.")
         except Exception as e:
             logger.error(f"Failed to save checkpoint at {interrupted_checkpoint_path} due to interruption: {e}")
-            logger.debug(f"Exception details: {e}")
 
     logger.info("Training process completed.")
 
-    # Save trained parameters
     # Save final checkpoint
-    checkpoint_dir = '/home/ubuntu/chat-agent/VishwamAI-main/checkpoints'
-    os.makedirs(checkpoint_dir, exist_ok=True)
-    checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final.npy')
+    checkpoint_path = os.path.join(checkpoint_dir, 'model_checkpoint_final')
     logger.debug(f"Attempting to save final checkpoint to {checkpoint_path}")
-    logger.debug(f"Checkpoint parameters before saving: {params}")
-    logger.debug(f"Parameters before conversion: {params}")
     try:
-        if not os.path.exists(checkpoint_dir):
-            logger.error(f"Checkpoint directory {checkpoint_dir} does not exist.")
-        else:
-            params_dict = hk.data_structures.to_immutable_dict(params)  # Convert params to dictionary
-            logger.debug(f"Parameters after conversion to dictionary: {params_dict}")
-            np.save(checkpoint_path, params_dict)
-            logger.debug(f"Checkpoint parameters: {params}")
-            logger.info(f"Final checkpoint saved at {checkpoint_path}")
+        model.save_pretrained(checkpoint_path)
+        tokenizer.save_pretrained(checkpoint_path)
+        logger.info(f"Final checkpoint saved at {checkpoint_path}")
     except Exception as e:
         logger.error(f"Failed to save final checkpoint at {checkpoint_path}: {e}")
 
@@ -513,8 +528,4 @@ def main():
 
 if __name__ == "__main__":
     gc.collect()  # Explicitly call garbage collector at the start
-    main()
-
-
-if __name__ == "__main__":
     main()

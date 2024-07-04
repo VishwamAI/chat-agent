@@ -117,7 +117,7 @@ def main():
     # Initialize model
     model = model_fn(None, config)
     from flax.training import checkpoints
-    model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=None)
+    model_params = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=model.params)
     model = model.replace(params=model_params)
 
     # Create datasets with smaller subsets of data for incremental training

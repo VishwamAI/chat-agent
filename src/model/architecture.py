@@ -29,8 +29,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"cos shape: {cos.shape}")
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     # Ensure x_rotated and x2 have compatible shapes for concatenation
-    x_rotated = x_rotated.reshape(x1.shape)
-    x2 = x2.reshape(x2.shape)
+    x_rotated = x_rotated.reshape(x1.shape[:-1] + (head_dim,))
+    x2 = x2.reshape(x2.shape[:-1] + (head_dim,))
     return jnp.concatenate([x_rotated, x2], axis=-1)
 
 class ImprovedAttention(nn.Module):

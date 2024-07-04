@@ -69,9 +69,8 @@ class ImprovedAttention(nn.Module):
         qkv = self.qkv_dense(x)
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
         qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3, self.head_dim)
-        qkv = jnp.transpose(qkv, (0, 1, 3, 2, 4))  # Transpose to (batch_size, seq_len, num_heads, 3, head_dim)
         logger.debug(f"qkv shape after reshaping: {qkv.shape}")
-        q, k, v = jnp.split(qkv, 3, axis=-2)
+        q, k, v = jnp.split(qkv, 3, axis=3)
 
         # Log the shapes of qkv, q, k, and v
         logger.debug(f"qkv shape: {qkv.shape}")

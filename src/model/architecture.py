@@ -296,7 +296,11 @@ class ImprovedTransformerBlock(nn.Module):
                 # Handle cases where the number of dimensions differ
                 while len(x.shape) < len(attention_output.shape):
                     x = jnp.expand_dims(x, axis=1)  # Add new axes at the second dimension
-                x = jnp.broadcast_to(x, attention_output.shape)
+                # Use jnp.tile to repeat x along the new axes to match the shape of attention_output
+                tile_shape = [1] * len(x.shape)
+                for i in range(len(x.shape), len(attention_output.shape)):
+                    tile_shape.append(attention_output.shape[i])
+                x = jnp.tile(x, tile_shape)
                 if x.shape != attention_output.shape:
                     raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
 

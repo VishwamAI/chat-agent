@@ -41,6 +41,7 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
+        attention_mask = jnp.broadcast_to(attention_mask[:, None, None, :], (input_ids.shape[0], model.config['num_heads'], input_ids.shape[1], input_ids.shape[1]))
 
         try:
             output, _ = model.apply({'params': model.params}, input_ids, is_training=False)

@@ -74,7 +74,7 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"k shape after splitting: {k.shape}")
         logger.debug(f"v shape after splitting: {v.shape}")
 
-        sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
+        sincos = self.rotary_emb
 
         # Log the shapes before applying rotary positional embeddings
         logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
@@ -176,7 +176,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
         logger.debug(f"k shape after splitting: {k.shape}")
         logger.debug(f"v shape after splitting: {v.shape}")
 
-        sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
+        sincos = self.rotary_emb
 
         # Log the shapes before applying rotary positional embeddings
         logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")

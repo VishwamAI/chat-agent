@@ -111,6 +111,8 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
         mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
         mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
         logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+        assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
+        attn = jnp.where(mask, attn, float('-inf'))
 
 def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
     if len(x.shape) == 2:
@@ -179,6 +181,8 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
         mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
         mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
         logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+        assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
+        attn = jnp.where(mask, attn, float('-inf'))
 
 class ImprovedAttention(nn.Module):
     config: Dict
@@ -258,6 +262,7 @@ class ImprovedAttention(nn.Module):
             mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
             mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+            assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
             attn = jnp.where(mask, attn, float('-inf'))
 
         attn = jax.nn.softmax(attn, axis=-1)

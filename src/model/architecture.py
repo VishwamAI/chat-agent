@@ -265,6 +265,8 @@ class ImprovedAttention(nn.Module):
             assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
             attn = jnp.where(mask, attn, float('-inf'))
 
+        return attn
+
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes
 

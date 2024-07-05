@@ -408,7 +408,7 @@ class ImprovedVishwamAIModel(nn.Module):
         mask = jnp.broadcast_to(mask, (inputs.shape[0], self.num_heads, seq_length, seq_length))
         causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (inputs.shape[0], self.num_heads, seq_length, seq_length))
         mask = mask * causal_mask
-        return mask
+        return mask[:, :, :seq_length, :seq_length]
 
     def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
         generated_ids = input_ids

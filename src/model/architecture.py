@@ -280,9 +280,23 @@ class ImprovedTransformerBlock(nn.Module):
         attention_output = self.attention(x, mask, kv_cache)
         attention_output = self.dropout(attention_output, deterministic=not is_training)
 
+        # Log the shapes of x and attention_output before broadcasting
+        logger.debug(f"x shape before broadcasting: {x.shape}")
+        logger.debug(f"attention_output shape: {attention_output.shape}")
+
         # Ensure x and attention_output have compatible shapes
         if x.shape != attention_output.shape:
-            x = jnp.broadcast_to(x, attention_output.shape)
+            if x.size == attention_output.size:
+                x = jnp.reshape(x, attention_output.shape)  # Reshape x to match attention_output's shape
+            else:
+                # Adjust the reshaping logic to ensure compatibility
+                x = jnp.broadcast_to(x, attention_output.shape)
+                if x.shape != attention_output.shape:
+                    raise ValueError(f"Incompatible shapes for broadcasting: {x.shape} and {attention_output.shape}")
+
+        # Log the shapes of x and attention_output after reshaping
+        logger.debug(f"x shape after reshaping: {x.shape}")
+        logger.debug(f"attention_output shape after reshaping: {attention_output.shape}")
 
         x = x + attention_output
 

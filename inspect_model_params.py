@@ -20,3 +20,12 @@ model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], targ
 
 # Print the model state to inspect the parameters
 print(model_state)
+
+# Add logging to capture the shapes of x and attention_output
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Log the shapes of x and attention_output
+logger.debug(f"dummy_input shape: {dummy_input.shape}")
+logger.debug(f"params shape: {params.shape}")

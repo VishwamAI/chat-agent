@@ -178,7 +178,7 @@ def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache:
         logger.debug(f"Attention tensor shape: {attn.shape}")
         mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
         mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
-        logger.debug(f"Mask shape after broadcasting
+        logger.debug(f"Mask shape after broadcasting: {mask.shape}")
 
 class ImprovedAttention(nn.Module):
     config: Dict

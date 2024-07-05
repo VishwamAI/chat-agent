@@ -44,6 +44,8 @@ def generate_responses(prompts: list, model, tokenizer):
         attention_mask = jnp.broadcast_to(attention_mask[:, None, :], (input_ids.shape[0], 1, input_ids.shape[1], input_ids.shape[1]))
 
         try:
+            # Debugging: Print the shape of input_ids before passing to the model
+            print(f"input_ids shape: {input_ids.shape}")
             output, _ = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

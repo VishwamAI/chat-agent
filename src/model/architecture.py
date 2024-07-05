@@ -30,9 +30,9 @@ class ImprovedAttention(nn.Module):
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
         self.rotary_emb = self._create_rotary_emb()
 
-    def _create_rotary_emb(self):
-        # Create rotary positional embeddings
-        return jnp.array([jnp.sin(jnp.arange(self.head_dim)), jnp.cos(jnp.arange(self.head_dim))])
+    def _create_rotary_emb(self, batch_size, num_heads, seq_len, head_dim):
+        # Create rotary positional embeddings dynamically
+        return jnp.array([jnp.sin(jnp.arange(head_dim)), jnp.cos(jnp.arange(head_dim))])
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:

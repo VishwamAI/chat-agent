@@ -295,11 +295,12 @@ class ImprovedTransformerBlock(nn.Module):
             else:
                 # Handle cases where the number of dimensions differ
                 while len(x.shape) < len(attention_output.shape):
-                    x = jnp.expand_dims(x, axis=1)  # Add new axes at the second dimension
+                    x = jnp.expand_dims(x, axis=-1)  # Add new axes at the last dimension
                 # Use jnp.tile to repeat x along the new axes to match the shape of attention_output
                 tile_shape = [1] * len(x.shape)
                 for i in range(len(x.shape), len(attention_output.shape)):
-                    tile_shape.append(attention_output.shape[i])
+                    if x.shape[i] != attention_output.shape[i]:
+                        tile_shape[i] = attention_output.shape[i] // x.shape[i]
                 x = jnp.tile(x, tile_shape)
                 logger.debug(f"x shape after tiling: {x.shape}")
                 if x.shape != attention_output.shape:

@@ -294,14 +294,17 @@ class ImprovedTransformerBlock(nn.Module):
                     raise ValueError(f"Incompatible shapes for broadcasting: {x.shape} and {attention_output.shape}")
             else:
                 # Handle cases where the number of dimensions differ
-                raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
+                while len(x.shape) < len(attention_output.shape):
+                    x = jnp.expand_dims(x, axis=-1)  # Add new axes at the end
+                x = jnp.broadcast_to(x, attention_output.shape)
+                if x.shape != attention_output.shape:
+                    raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
 
         # Log the shapes of x and attention_output after reshaping
         logger.debug(f"x shape after reshaping: {x.shape}")
         logger.debug(f"attention_output shape after reshaping: {attention_output.shape}")
 
         x = x + attention_output
-
         x = self.layer_norm2(x)
         ff_output = self.feed_forward(x)
         ff_output = self.dropout(ff_output, deterministic=not is_training)

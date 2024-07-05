@@ -309,6 +309,7 @@ class ImprovedTransformerBlock(nn.Module):
             if ff_output.size == x.size:
                 ff_output = jnp.reshape(ff_output, x.shape)  # Reshape ff_output to match x's shape
             else:
+                # Adjust the reshaping logic to ensure compatibility
                 ff_output = jnp.broadcast_to(ff_output, x.shape)
                 if ff_output.shape != x.shape:
                     raise ValueError(f"Incompatible shapes for broadcasting: {ff_output.shape} and {x.shape}")

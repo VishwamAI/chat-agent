@@ -27,7 +27,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     if x.shape[-1] % (2 * head_dim) != 0:
         # Pad the last dimension of x to be a multiple of 2 * head_dim
         pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
-        x = jnp.pad(x, ((0, 0), (0, 0), (0, pad_size)), mode='constant')
+        x = jnp.pad(x, ((0, 0), (0, 0), (0, 0), (0, pad_size)), mode='constant')
         logger.debug(f"Padded x shape: {x.shape}")
     x1, x2 = jnp.split(x, 2, axis=-1)
     logger.debug(f"x1 shape: {x1.shape}")

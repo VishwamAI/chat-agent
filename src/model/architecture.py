@@ -28,17 +28,16 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
-        self._rotary_emb = self._create_rotary_emb()
 
     @property
     def rotary_emb(self):
         return self._rotary_emb
 
-    def _create_rotary_emb(self):
+    def _create_rotary_emb(self, seq_len, num_heads):
         # Create rotary positional embeddings dynamically
         head_dim = self.head_dim
-        sin = jnp.sin(jnp.arange(head_dim))
-        cos = jnp.cos(jnp.arange(head_dim))
+        sin = jnp.sin(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+        cos = jnp.cos(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
         return sin, cos
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
@@ -78,7 +77,7 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"k shape after splitting: {k.shape}")
         logger.debug(f"v shape after splitting: {v.shape}")
 
-        sincos = self.rotary_emb
+        sincos = self._create_rotary_emb(seq_len, self.num_heads)
 
         # Log the shapes before applying rotary positional embeddings
         logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
@@ -117,6 +116,28 @@ class ImprovedAttention(nn.Module):
 
         return attn_output
 
+def apply_rotary_pos_emb(x, sincos, head_dim):
+    sin, cos = sincos
+    logger.debug(f"x shape: {x.shape}")
+    if x.shape[-1] % (2 * head_dim) != 0:
+        # Pad the last dimension of x to be a multiple of 2 * head_dim
+        pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
+        x = jnp.pad(x, ((0, 0), (0, 0), (0, 0), (0, pad_size)), mode='constant')
+        logger.debug(f"Padded x shape: {x.shape}")
+    x1, x2 = jnp.split(x, 2, axis=-1)
+    logger.debug(f"x1 shape: {x1.shape}")
+    logger.debug(f"x2 shape: {x2.shape}")
+    logger.debug(f"sin shape: {sin.shape}")
+    logger.debug(f"cos shape: {cos.shape}")
+
+    x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
+    logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
+    logger.debug(f"x2 shape after reshaping: {x2.shape}")
+    assert x_rotated.shape == x2.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x2 shape {x2.shape}"
+    concatenated = jnp.concatenate([x_rotated, x2], axis=-1)
+    logger.debug(f"concatenated shape: {concatenated.shape}")
+    return concatenated
+
 
 def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
@@ -131,8 +152,13 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"x2 shape: {x2.shape}")
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
-    sin = sin.reshape((1, x1.shape[1], x1.shape[2], head_dim))
-    cos = cos.reshape((1, x1.shape[1], x1.shape[2], head_dim))
+
+    # Adjust the generation of sin and cos arrays to match the dimensions of x1 and x2
+    seq_len = x1.shape[1]
+    num_heads = x1.shape[2]
+    sin = jnp.sin(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+    cos = jnp.cos(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")

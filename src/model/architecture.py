@@ -145,19 +145,22 @@ class ImprovedAttention(nn.Module):
         if embed_dim != expected_embed_dim:
             if embed_dim == self.head_dim:
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+                logger.debug(f"Reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
             elif embed_dim == 1:
                 x = jnp.tile(x, (1, 1, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+                logger.debug(f"Tiled and reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
             elif embed_dim % self.head_dim == 0:
                 num_heads = embed_dim // self.head_dim
                 x = x.reshape(batch_size, seq_len, num_heads, self.head_dim)
+                logger.debug(f"Reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
                 if num_heads != self.num_heads:
                     x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
+                    logger.debug(f"Broadcasted x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
             else:
                 raise ValueError(f"Embedding dimension {embed_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
-
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense

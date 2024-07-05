@@ -1,5 +1,5 @@
 # Model configuration
-embed_dim: 256  # Reduced embed_dim from 512 to 256
+embed_dim: 8  # Adjusted embed_dim to match num_heads * head_dim
 num_heads: 2  # Adjusted num_heads to match the expected tensor dimensions
 num_layers: 4  # Reduced num_layers from 6 to 4
 vocab_size: 50000

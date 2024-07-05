@@ -163,7 +163,6 @@ class ImprovedAttention(nn.Module):
                 raise ValueError(f"Embedding dimension {head_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
-        print(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")

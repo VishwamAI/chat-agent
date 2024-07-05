@@ -402,8 +402,8 @@ class ImprovedVishwamAIModel(nn.Module):
         mask = mask[:, None, None, :]
         seq_length = inputs.shape[1]
         causal_mask = jnp.tril(jnp.ones((seq_length, seq_length), jnp.float32))
-        mask = jnp.broadcast_to(mask, (inputs.shape[0], self.num_heads, seq_length, seq_length))
-        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (inputs.shape[0], self.num_heads, seq_length, seq_length))
+        mask = jnp.broadcast_to(mask, (inputs.shape[0], self.config['num_heads'], seq_length, seq_length))
+        causal_mask = jnp.broadcast_to(causal_mask[None, None, :, :], (inputs.shape[0], self.config['num_heads'], seq_length, seq_length))
         mask = mask * causal_mask
         return mask
 

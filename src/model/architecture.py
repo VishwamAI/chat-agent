@@ -153,7 +153,8 @@ class ImprovedAttention(nn.Module):
             elif embed_dim % self.head_dim == 0:
                 num_heads = embed_dim // self.head_dim
                 x = x.reshape(batch_size, seq_len, num_heads, self.head_dim)
-                x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
+                if num_heads != self.num_heads:
+                    x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
             else:
                 # Handle cases where embed_dim is not equal to head_dim, 1, or a multiple of head_dim
                 raise ValueError(f"Embedding dimension {embed_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")

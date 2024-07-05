@@ -295,7 +295,7 @@ class ImprovedTransformerBlock(nn.Module):
             else:
                 # Handle cases where the number of dimensions differ
                 while len(x.shape) < len(attention_output.shape):
-                    x = jnp.expand_dims(x, axis=-1)  # Add new axes at the end
+                    x = jnp.expand_dims(x, axis=1)  # Add new axes at the second dimension
                 x = jnp.broadcast_to(x, attention_output.shape)
                 if x.shape != attention_output.shape:
                     raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")

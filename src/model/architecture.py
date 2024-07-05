@@ -136,9 +136,6 @@ class ImprovedAttention(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-        elif len(x.shape) == 4:
-            batch_size, num_heads, seq_len, head_dim = x.shape
-            x = x.reshape(batch_size, seq_len, num_heads * head_dim)
         batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Input tensor shape: {x.shape}")
 
@@ -156,7 +153,6 @@ class ImprovedAttention(nn.Module):
                 if num_heads != self.num_heads:
                     x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
             else:
-                # Handle cases where embed_dim is not equal to head_dim, 1, or a multiple of head_dim
                 raise ValueError(f"Embedding dimension {embed_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"

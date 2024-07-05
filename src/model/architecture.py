@@ -44,145 +44,82 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"concatenated shape: {concatenated.shape}")
     return concatenated
 
-def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
-    if len(x.shape) == 2:
-        x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-    batch_size, seq_len, embed_dim = x.shape
-    logger.debug(f"Input tensor shape: {x.shape}")
+# Removed duplicate and misplaced __call__ method definitions
 
-    # Ensure x has the correct shape
-    expected_embed_dim = self.num_heads * self.head_dim
-    if embed_dim != expected_embed_dim:
-        if embed_dim == self.head_dim:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        elif embed_dim == 1:
-            x = jnp.tile(x, (1, 1, expected_embed_dim))
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        else:
-            # Handle cases where embed_dim is not equal to head_dim or 1
-            x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
+        if len(x.shape) == 2:
+            x = x[:, :, None]  # Add a third dimension if x is two-dimensional
+        batch_size, seq_len, embed_dim = x.shape
+        logger.debug(f"Input tensor shape: {x.shape}")
 
-    assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
+        # Ensure x has the correct shape
+        expected_embed_dim = self.num_heads * self.head_dim
+        if embed_dim != expected_embed_dim:
+            if embed_dim == self.head_dim:
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            elif embed_dim == 1:
+                x = jnp.tile(x, (1, 1, expected_embed_dim))
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            else:
+                # Handle cases where embed_dim is not equal to head_dim or 1
+                x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 
-    logger.debug(f"Reshaped input tensor shape: {x.shape}")
+        assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
 
-    qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
-    logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
-    expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
-    assert qkv.shape == (batch_size, seq_len, 3 * self.num_heads * self.head_dim), f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
-    qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
-    q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
+        logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
-    # Log the shapes of qkv, q, k, and v
-    logger.debug(f"qkv shape: {qkv.shape}")
-    logger.debug(f"q shape after splitting: {q.shape}")
-    logger.debug(f"k shape after splitting: {k.shape}")
-    logger.debug(f"v shape after splitting: {v.shape}")
+        qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
+        logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
+        expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
+        assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
+        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
+        q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
 
-    sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
+        # Log the shapes of qkv, q, k, and v
+        logger.debug(f"qkv shape: {qkv.shape}")
+        logger.debug(f"q shape after splitting: {q.shape}")
+        logger.debug(f"k shape after splitting: {k.shape}")
+        logger.debug(f"v shape after splitting: {v.shape}")
 
-    # Log the shapes before applying rotary positional embeddings
-    logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
-    logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
+        sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 
-    q = apply_rotary_pos_emb(q, sincos, self.head_dim)
-    k = apply_rotary_pos_emb(k, sincos, self.head_dim)
+        # Log the shapes before applying rotary positional embeddings
+        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
 
-    # Log the shapes after applying rotary positional embeddings
-    logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
-    logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
+        q = apply_rotary_pos_emb(q, sincos, self.head_dim)
+        k = apply_rotary_pos_emb(k, sincos, self.head_dim)
 
-    if kv_cache is not None:
-        if kv_cache['k'] is None:
-            kv_cache['k'] = k
-            kv_cache['v'] = v
-        else:
-            k = jnp.concatenate([kv_cache['k'], k], axis=1)
-            v = jnp.concatenate([kv_cache['v'], v], axis=1)
-            kv_cache['k'] = k
-            kv_cache['v'] = v
+        # Log the shapes after applying rotary positional embeddings
+        logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
 
-    attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
+        if kv_cache is not None:
+            if kv_cache['k'] is None:
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+            else:
+                k = jnp.concatenate([kv_cache['k'], k], axis=1)
+                v = jnp.concatenate([kv_cache['v'], v], axis=1)
+                kv_cache['k'] = k
+                kv_cache['v'] = v
 
-    if mask is not None:
-        logger.debug(f"Mask shape before broadcasting: {mask.shape}")
-        logger.debug(f"Attention tensor shape: {attn.shape}")
-        mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
-        mask = jnp.broadcast_to(mask, (batch_size, attn.shape[1], attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
-        logger.debug(f"Mask shape after broadcasting: {mask.shape}")
-        assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
-        attn = jnp.where(mask, attn, float('-inf'))
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
 
-def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
-    if len(x.shape) == 2:
-        x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-    batch_size, seq_len, embed_dim = x.shape
-    logger.debug(f"Input tensor shape: {x.shape}")
+        if mask is not None:
+            logger.debug(f"Mask shape before broadcasting: {mask.shape}")
+            logger.debug(f"Attention tensor shape: {attn.shape}")
+            mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
+            mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
+            logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+            assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
+            attn = jnp.where(mask, attn, float('-inf'))
 
-    # Ensure x has the correct shape
-    expected_embed_dim = self.num_heads * self.head_dim
-    if embed_dim != expected_embed_dim:
-        if embed_dim == self.head_dim:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        elif embed_dim == 1:
-            x = jnp.tile(x, (1, 1, expected_embed_dim))
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-        else:
-            # Handle cases where embed_dim is not equal to head_dim or 1
-            x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+        attn_weights = jax.nn.softmax(attn, axis=-1)
+        attn_output = jnp.matmul(attn_weights, v)
 
-    assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
-
-    logger.debug(f"Reshaped input tensor shape: {x.shape}")
-
-    qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
-    logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
-    expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
-    assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
-    qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
-    q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
-
-    # Log the shapes of qkv, q, k, and v
-    logger.debug(f"qkv shape: {qkv.shape}")
-    logger.debug(f"q shape after splitting: {q.shape}")
-    logger.debug(f"k shape after splitting: {k.shape}")
-    logger.debug(f"v shape after splitting: {v.shape}")
-
-    sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
-
-    # Log the shapes before applying rotary positional embeddings
-    logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
-    logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
-
-    q = apply_rotary_pos_emb(q, sincos, self.head_dim)
-    k = apply_rotary_pos_emb(k, sincos, self.head_dim)
-
-    # Log the shapes after applying rotary positional embeddings
-    logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
-    logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
-
-    if kv_cache is not None:
-        if kv_cache['k'] is None:
-            kv_cache['k'] = k
-            kv_cache['v'] = v
-        else:
-            k = jnp.concatenate([kv_cache['k'], k], axis=1)
-            v = jnp.concatenate([kv_cache['v'], v], axis=1)
-            kv_cache['k'] = k
-            kv_cache['v'] = v
-
-    attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
-
-    if mask is not None:
-        logger.debug(f"Mask shape before broadcasting: {mask.shape}")
-        logger.debug(f"Attention tensor shape: {attn.shape}")
-        mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
-        mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
-        logger.debug(f"Mask shape after broadcasting: {mask.shape}")
-        assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
-        attn = jnp.where(mask, attn, float('-inf'))
+        return attn_output
 
 class ImprovedAttention(nn.Module):
     config: Dict
@@ -195,6 +132,80 @@ class ImprovedAttention(nn.Module):
         )
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim, use_bias=False)
 
+    def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
+        if len(x.shape) == 2:
+            x = x[:, :, None]  # Add a third dimension if x is two-dimensional
+        batch_size, seq_len, embed_dim = x.shape
+        logger.debug(f"Input tensor shape: {x.shape}")
+
+        # Ensure x has the correct shape
+        expected_embed_dim = self.num_heads * self.head_dim
+        if embed_dim != expected_embed_dim:
+            if embed_dim == self.head_dim:
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            elif embed_dim == 1:
+                x = jnp.tile(x, (1, 1, expected_embed_dim))
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            else:
+                # Handle cases where embed_dim is not equal to head_dim or 1
+                x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+
+        assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
+
+        logger.debug(f"Reshaped input tensor shape: {x.shape}")
+
+        qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
+        logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
+        expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
+        assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
+        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
+        q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
+
+        # Log the shapes of qkv, q, k, and v
+        logger.debug(f"qkv shape: {qkv.shape}")
+        logger.debug(f"q shape after splitting: {q.shape}")
+        logger.debug(f"k shape after splitting: {k.shape}")
+        logger.debug(f"v shape after splitting: {v.shape}")
+
+        sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
+
+        # Log the shapes before applying rotary positional embeddings
+        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
+
+        q = apply_rotary_pos_emb(q, sincos, self.head_dim)
+        k = apply_rotary_pos_emb(k, sincos, self.head_dim)
+
+        # Log the shapes after applying rotary positional embeddings
+        logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
+
+        if kv_cache is not None:
+            if kv_cache['k'] is None:
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+            else:
+                k = jnp.concatenate([kv_cache['k'], k], axis=1)
+                v = jnp.concatenate([kv_cache['v'], v], axis=1)
+                kv_cache['k'] = k
+                kv_cache['v'] = v
+
+        attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
+
+        if mask is not None:
+            logger.debug(f"Mask shape before broadcasting: {mask.shape}")
+            logger.debug(f"Attention tensor shape: {attn.shape}")
+            mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
+            mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
+            logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+            assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
+            attn = jnp.where(mask, attn, float('-inf'))
+
+        attn_weights = jax.nn.softmax(attn, axis=-1)
+        attn_output = jnp.matmul(attn_weights, v)
+
+        return attn_output
 
 
 # Removed unnecessary debug logging statements and print statement used for debugging purposes

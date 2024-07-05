@@ -93,8 +93,16 @@ class ImprovedAttention(nn.Module):
 
         sincos = self.rotary_emb(batch_size, self.num_heads, seq_len, self.head_dim)
 
+        # Log the shapes before applying rotary positional embeddings
+        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
+
         q = apply_rotary_pos_emb(q, sincos, self.head_dim)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim)
+
+        # Log the shapes after applying rotary positional embeddings
+        logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
 
         if kv_cache is not None:
             if kv_cache['k'] is None:

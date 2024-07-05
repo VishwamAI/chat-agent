@@ -28,7 +28,11 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
-        self.rotary_emb = self._create_rotary_emb
+        self._rotary_emb = self._create_rotary_emb()
+
+    @property
+    def rotary_emb(self):
+        return self._rotary_emb
 
     def _create_rotary_emb(self):
         # Create rotary positional embeddings dynamically

@@ -141,7 +141,6 @@ class ImprovedAttention(nn.Module):
         print(f"Input tensor shape before unpacking: {x.shape}")
         batch_size, seq_len, num_heads, head_dim = x.shape
         print(f"Input tensor shape after unpacking: batch_size={batch_size}, seq_len={seq_len}, num_heads={num_heads}, head_dim={head_dim}")
-        print(f"Input tensor shape: {x.shape}")
 
         # Ensure x has the correct shape
         expected_embed_dim = self.num_heads * self.head_dim

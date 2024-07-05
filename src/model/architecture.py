@@ -298,7 +298,7 @@ class ImprovedTransformerBlock(nn.Module):
                     x = jnp.expand_dims(x, axis=-1)  # Add new axes at the last dimension
                 # Use jnp.tile to repeat x along the new axes to match the shape of attention_output
                 tile_shape = [1] * len(x.shape)
-                for i in range(len(x.shape), len(attention_output.shape)):
+                for i in range(len(x.shape)):
                     if x.shape[i] != attention_output.shape[i]:
                         tile_shape[i] = attention_output.shape[i] // x.shape[i]
                 x = jnp.tile(x, tile_shape)

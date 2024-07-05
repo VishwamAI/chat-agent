@@ -24,8 +24,8 @@ def rotate_half(x):
 def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
     logger.debug(f"x shape: {x.shape}")
-    if x.shape[-1] % head_dim != 0:
-        raise ValueError(f"Last dimension of x must be a multiple of head_dim, but got {x.shape[-1]} and head_dim {head_dim}")
+    if x.shape[-1] % (2 * head_dim) != 0:
+        raise ValueError(f"Last dimension of x must be a multiple of 2 * head_dim, but got {x.shape[-1]} and head_dim {head_dim}")
     x1, x2 = jnp.split(x, 2, axis=-1)
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"x2 shape: {x2.shape}")

@@ -25,17 +25,17 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     sin, cos = sincos
     logger.debug(f"x shape: {x.shape}")
     if x.shape[-1] % (2 * head_dim) != 0:
-        raise ValueError(f"Last dimension of x must be a multiple of 2 * head_dim, but got {x.shape[-1]} and head_dim {head_dim}")
+        # Pad the last dimension of x to be a multiple of 2 * head_dim
+        pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
+        x = jnp.pad(x, ((0, 0), (0, 0), (0, pad_size)), mode='constant')
+        logger.debug(f"Padded x shape: {x.shape}")
     x1, x2 = jnp.split(x, 2, axis=-1)
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"x2 shape: {x2.shape}")
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
-    # Ensure x_rotated and x2 have compatible shapes for concatenation
     logger.debug(f"x_rotated shape before reshaping: {x_rotated.shape}")
-    if x1.shape[-1] != head_dim:
-        raise ValueError(f"Last dimension of x1 must be equal to head_dim, but got {x1.shape[-1]} and head_dim {head_dim}")
     x_rotated = x_rotated.reshape(x1.shape[:-1] + (head_dim,))
     x2 = x2.reshape(x2.shape[:-1] + (head_dim,))
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")

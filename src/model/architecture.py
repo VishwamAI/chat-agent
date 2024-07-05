@@ -303,6 +303,16 @@ class ImprovedTransformerBlock(nn.Module):
         x = self.layer_norm2(x)
         ff_output = self.feed_forward(x)
         ff_output = self.dropout(ff_output, deterministic=not is_training)
+
+        # Ensure ff_output has the same shape as x before addition
+        if ff_output.shape != x.shape:
+            if ff_output.size == x.size:
+                ff_output = jnp.reshape(ff_output, x.shape)  # Reshape ff_output to match x's shape
+            else:
+                ff_output = jnp.broadcast_to(ff_output, x.shape)
+                if ff_output.shape != x.shape:
+                    raise ValueError(f"Incompatible shapes for broadcasting: {ff_output.shape} and {x.shape}")
+
         x = x + ff_output
 
         return x

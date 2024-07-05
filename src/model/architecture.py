@@ -149,10 +149,12 @@ class ImprovedAttention(nn.Module):
             elif embed_dim == 1:
                 x = jnp.tile(x, (1, 1, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-            elif embed_dim == expected_embed_dim:
-                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            elif embed_dim % self.head_dim == 0:
+                num_heads = embed_dim // self.head_dim
+                x = x.reshape(batch_size, seq_len, num_heads, self.head_dim)
+                x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
             else:
-                # Handle cases where embed_dim is not equal to head_dim, 1, or expected_embed_dim
+                # Handle cases where embed_dim is not equal to head_dim, 1, or a multiple of head_dim
                 x = jnp.broadcast_to(x, (batch_size, seq_len, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
 

@@ -286,10 +286,15 @@ class ImprovedTransformerBlock(nn.Module):
 
         # Ensure x and attention_output have compatible shapes
         if x.shape != attention_output.shape:
-            if x.size == attention_output.size:
-                x = jnp.reshape(x, attention_output.shape)  # Reshape x to match attention_output's shape
+            if len(x.shape) == len(attention_output.shape):
+                if x.size == attention_output.size:
+                    x = jnp.reshape(x, attention_output.shape)  # Reshape x to match attention_output's shape
+                else:
+                    # Handle cases where the shapes are not directly compatible for reshaping
+                    raise ValueError(f"Incompatible shapes for broadcasting: {x.shape} and {attention_output.shape}")
             else:
-                raise ValueError(f"Incompatible shapes for broadcasting: {x.shape} and {attention_output.shape}")
+                # Handle cases where the number of dimensions differ
+                raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
 
         # Log the shapes of x and attention_output after reshaping
         logger.debug(f"x shape after reshaping: {x.shape}")

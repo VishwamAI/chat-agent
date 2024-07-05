@@ -139,9 +139,6 @@ class ImprovedAttention(nn.Module):
         elif len(x.shape) == 4:
             batch_size, num_heads, seq_len, head_dim = x.shape
             x = x.reshape(batch_size, seq_len, num_heads * head_dim)
-        elif len(x.shape) == 4:
-            batch_size, num_heads, seq_len, head_dim = x.shape
-            x = x.reshape(batch_size, seq_len, num_heads * head_dim)
         batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Input tensor shape: {x.shape}")
 

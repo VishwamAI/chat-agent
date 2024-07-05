@@ -301,6 +301,7 @@ class ImprovedTransformerBlock(nn.Module):
                 for i in range(len(x.shape), len(attention_output.shape)):
                     tile_shape.append(attention_output.shape[i])
                 x = jnp.tile(x, tile_shape)
+                logger.debug(f"x shape after tiling: {x.shape}")
                 if x.shape != attention_output.shape:
                     raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
 

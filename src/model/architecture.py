@@ -136,6 +136,11 @@ class ImprovedAttention(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
+        elif len(x.shape) == 4:
+            batch_size, seq_len, num_heads, head_dim = x.shape
+            if num_heads != self.num_heads or head_dim != self.head_dim:
+                raise ValueError(f"Input tensor has incorrect shape: expected (batch_size, seq_len, {self.num_heads}, {self.head_dim}), but got {x.shape}")
+            x = x.reshape(batch_size, seq_len, -1)  # Flatten the last two dimensions
         batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Input tensor shape: {x.shape}")
 

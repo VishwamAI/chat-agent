@@ -137,28 +137,29 @@ class ImprovedAttention(nn.Module):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
         print(f"Input tensor shape before unpacking: {x.shape}")
-        batch_size, seq_len, embed_dim = x.shape
+        batch_size, seq_len, num_heads, head_dim = x.shape
+        print(f"Input tensor shape after unpacking: batch_size={batch_size}, seq_len={seq_len}, num_heads={num_heads}, head_dim={head_dim}")
         print(f"Input tensor shape: {x.shape}")
 
         # Ensure x has the correct shape
         expected_embed_dim = self.num_heads * self.head_dim
-        if embed_dim != expected_embed_dim:
-            if embed_dim == self.head_dim:
+        if head_dim != self.head_dim or num_heads != self.num_heads:
+            if head_dim == self.head_dim:
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
                 print(f"Reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
-            elif embed_dim == 1:
+            elif head_dim == 1:
                 x = jnp.tile(x, (1, 1, expected_embed_dim))
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
                 print(f"Tiled and reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
-            elif embed_dim % self.head_dim == 0:
-                num_heads = embed_dim // self.head_dim
+            elif head_dim % self.head_dim == 0:
+                num_heads = head_dim // self.head_dim
                 x = x.reshape(batch_size, seq_len, num_heads, self.head_dim)
                 print(f"Reshaped x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
                 if num_heads != self.num_heads:
                     x = jnp.broadcast_to(x, (batch_size, seq_len, self.num_heads, self.head_dim))
                     print(f"Broadcasted x to (batch_size, seq_len, num_heads, head_dim): {x.shape}")
             else:
-                raise ValueError(f"Embedding dimension {embed_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")
+                raise ValueError(f"Embedding dimension {head_dim} is not compatible with num_heads {self.num_heads} and head_dim {self.head_dim}. Please ensure embed_dim is a multiple of head_dim.")
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
         print(f"Reshaped input tensor shape: {x.shape}")

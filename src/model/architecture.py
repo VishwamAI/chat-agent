@@ -30,8 +30,9 @@ class ImprovedAttention(nn.Module):
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
         self.rotary_emb = self._create_rotary_emb
 
-    def _create_rotary_emb(self, batch_size, num_heads, seq_len, head_dim):
+    def _create_rotary_emb(self):
         # Create rotary positional embeddings dynamically
+        head_dim = self.head_dim
         sin = jnp.sin(jnp.arange(head_dim))
         cos = jnp.cos(jnp.arange(head_dim))
         return sin, cos

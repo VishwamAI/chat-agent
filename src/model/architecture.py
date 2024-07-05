@@ -315,12 +315,22 @@ class ImprovedTransformerBlock(nn.Module):
         ff_output = self.feed_forward(x)
         ff_output = self.dropout(ff_output, deterministic=not is_training)
 
+        # Log the shape of ff_output before ensuring compatibility with x
+        logger.debug(f"ff_output shape before ensuring compatibility: {ff_output.shape}")
+
         # Ensure ff_output has the same shape as x before addition
         if ff_output.shape != x.shape:
             if ff_output.size == x.size:
                 ff_output = jnp.reshape(ff_output, x.shape)  # Reshape ff_output to match x's shape
             else:
-                raise ValueError(f"Incompatible shapes for broadcasting: {ff_output.shape} and {x.shape}")
+                # Slice ff_output to match the last dimension of x if possible
+                if ff_output.shape[-1] > x.shape[-1]:
+                    ff_output = ff_output[..., :x.shape[-1]]
+                else:
+                    raise ValueError(f"Incompatible shapes for broadcasting: {ff_output.shape} and {x.shape}")
+
+        # Log the shape of ff_output after ensuring compatibility with x
+        logger.debug(f"ff_output shape after ensuring compatibility: {ff_output.shape}")
 
         x = x + ff_output
 

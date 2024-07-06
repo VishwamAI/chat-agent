@@ -16,7 +16,7 @@ except Exception as e:
 
 # Load the spaCy model for keyword extraction
 try:
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_lg")
 except spacy.errors.ModelNotFoundError as e:
     logger.error(f"Model not found: {e}")
     nlp = None
@@ -82,37 +82,24 @@ def generate_content(processed_query: dict, max_length: int = 100) -> dict:
         logger.error(f"Error generating content: {e}")
         return {"error": "An error occurred during content generation"}
 
-def extract_keywords(text: str) -> set:
-    """
-    Extract keywords from a given text using spaCy.
 
-    Args:
-    text (str): The input text.
-
-    Returns:
-    set: A set of keywords extracted from the text.
-    """
-    if nlp is None:
-        logger.error("spaCy model not loaded")
-        return set()
-
-    doc = nlp(text)
-    keywords = {token.lemma_ for token in doc if token.is_alpha and not token.is_stop}
-    return keywords
-
-def evaluate_relevance(query: str, generated_content: str, threshold: float = 0.2) -> bool:
+def evaluate_relevance(query: str, generated_content: str, threshold: float = 0.7) -> bool:
     """
     Evaluate the relevance of the generated content to the original query.
 
     Args:
     query (str): The original user query.
     generated_content (str): The generated content.
-    threshold (float): The relevance threshold. Default is 0.2.
+    threshold (float): The relevance threshold based on semantic similarity. Default is 0.7.
 
     Returns:
     bool: True if the generated content is relevant to the query, False otherwise.
     """
-    query_keywords = extract_keywords(query)
-    content_keywords = extract_keywords(generated_content)
-    common_keywords = query_keywords.intersection(content_keywords)
-    return len(common_keywords) >= len(query_keywords) * threshold
+    if nlp is None:
+        logger.error("spaCy model not loaded")
+        return False
+
+    query_doc = nlp(query)
+    content_doc = nlp(generated_content)
+    similarity = query_doc.similarity(content_doc)
+    return similarity >= threshold

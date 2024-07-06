@@ -7,14 +7,14 @@ This document provides an overview of the development process, architecture, and
 The generative AI search engine consists of the following main components:
 1. **Query Processing**: This component processes user queries to extract relevant information and prepare them for content generation.
 2. **Content Generation**: This component uses pre-trained generative AI models to generate content based on the processed queries.
-3. **Relevance Assessment**: This component (to be implemented) will evaluate the relevance of the generated content to ensure it meets the search intent.
+3. **Relevance Assessment**: This component evaluates the relevance of the generated content using semantic similarity with the spaCy `en_core_web_lg` model to ensure it meets the search intent.
 
 ### Data Flow
 1. The user submits a query to the search engine.
 2. The query is processed by the Query Processing component.
 3. The processed query is passed to the Content Generation component.
 4. The Content Generation component generates content based on the query.
-5. The generated content is evaluated for relevance (future enhancement).
+5. The generated content is evaluated for relevance using semantic similarity.
 6. The relevant content is returned to the user.
 
 ## Development Process
@@ -64,7 +64,6 @@ The initial tests of the generative AI search engine revealed the following obse
 - Refine the `evaluate_relevance` function to improve the accuracy of relevance assessment.
 - Adjust the generation parameters to better align the generated content with the input queries.
 - Implement a configurable relevance threshold to allow fine-tuning of relevance criteria.
-- Enhance the `extract_keywords` function with more sophisticated NLP techniques for better keyword extraction.
 - Add comprehensive error handling and logging to improve debugging and maintainability.
 - Continue testing and refining the search engine.
 - Seek user feedback and adjust the project based on their input.

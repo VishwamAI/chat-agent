@@ -1,6 +1,6 @@
 # Generative AI Search Engine
 
-This project is a generative AI search engine that uses advanced natural language processing (NLP) techniques to generate relevant content based on user queries. The search engine leverages pre-trained models from the `transformers` library and spaCy for keyword extraction and relevance assessment.
+This project is a generative AI search engine that uses advanced natural language processing (NLP) techniques to generate relevant content based on user queries. The search engine leverages pre-trained models from the `transformers` library and spaCy for relevance assessment.
 
 ## Setup Instructions
 
@@ -34,7 +34,7 @@ This project is a generative AI search engine that uses advanced natural languag
 4. Download the spaCy English language model:
 
    ```bash
-   python -m spacy download en_core_web_sm
+   python -m spacy download en_core_web_lg
    ```
 
 ### Running the Search Engine
@@ -62,22 +62,20 @@ This project is a generative AI search engine that uses advanced natural languag
 
 - `tensorflow==2.16.2`
 - `spacy==3.7.5`
-- `en-core-web-sm==3.7.1`
+- `en-core-web-lg==3.7.1`
 - `torch==2.0.1`
 - `transformers==4.30.2`
 
 ### Notes
 
 - The `generate_content` function uses a pre-trained GPT-2 model from the `transformers` library.
-- The `extract_keywords` function uses spaCy for keyword extraction, including lemmatization and stop word removal.
-- The `evaluate_relevance` function assesses the relevance of generated content based on a configurable threshold.
+- The `evaluate_relevance` function assesses the relevance of generated content based on a configurable threshold using semantic similarity.
 
 ## Next Steps
 
 - Refine the `evaluate_relevance` function to improve the accuracy of relevance assessment.
 - Adjust the generation parameters to better align the generated content with the input queries.
 - Implement a configurable relevance threshold to allow fine-tuning of relevance criteria.
-- Enhance the `extract_keywords` function with more sophisticated NLP techniques for better keyword extraction.
 - Add comprehensive error handling and logging to improve debugging and maintainability.
 
 ## Contact

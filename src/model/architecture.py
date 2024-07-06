@@ -56,16 +56,19 @@ class ImprovedAttention(nn.Module):
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             else:
                 # Handle cases where embed_dim is not equal to head_dim or 1
-                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+                x = x.reshape(batch_size, seq_len, embed_dim // self.head_dim, self.head_dim)
                 if x.shape[2] != self.num_heads:
                     raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")
             if x.shape[-1] != self.head_dim:
                 raise ValueError(f"Head dimension mismatch: expected {self.head_dim}, but got {x.shape[-1]}")
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
 
+        # Reshape x to (batch_size, seq_len, embed_dim) before unpacking
+        x = x.reshape(batch_size, seq_len, -1)
+        batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
-        qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
+        qkv = self.qkv_dense(x)  # Pass x directly to qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
         expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
         assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"

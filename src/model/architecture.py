@@ -181,7 +181,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     # Ensure x1 has the correct shape before rotation
     if x1.shape[-1] != split_index:
         raise ValueError(f"Shape mismatch: x1 last dimension {x1.shape[-1]} does not match split_index {split_index}")
-    x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, split_index // num_heads))
+    x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, head_dim))
     print(f"x1 shape after reshaping: {x1.shape}")
 
     x1_rotated = (x1 * cos) + (rotate_half(x1) * sin)

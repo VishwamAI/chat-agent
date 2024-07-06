@@ -159,7 +159,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
         raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
 
     # Perform the split operation and ensure the correct number of resulting arrays
-    split_result = jnp.split(x, indices_or_sections=split_index, axis=-1)
+    split_result = jnp.split(x, indices_or_sections=2, axis=-1)
     if len(split_result) != 2:
         raise ValueError(f"Expected 2 arrays from split, but got {len(split_result)} arrays with shapes: {[arr.shape for arr in split_result]}")
     x1, x2 = split_result

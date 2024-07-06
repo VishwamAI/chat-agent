@@ -18,9 +18,7 @@ DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() in ('true', '1', 't')
 
 def rotate_half(x):
     split_index = x.shape[-1] // 2
-    if x.shape[-1] % 2 != 0:
-        split_index += 1
-    x1, x2 = jnp.split(x, [split_index, x.shape[-1]], axis=-1)
+    x1, x2 = jnp.split(x, [split_index], axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
 # Define the ImprovedAttention class
@@ -162,10 +160,10 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
         raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
 
     # Perform the split operation using the calculated split_index
-    split_result = jnp.split(x, indices_or_sections=split_index, axis=-1)
-    if len(split_result) != 2:
-        raise ValueError(f"Expected 2 arrays from split, but got {len(split_result)} arrays with shapes: {[arr.shape for arr in split_result]}")
-    x1, x2 = split_result
+    x1, x2 = jnp.split(x, [split_index], axis=-1)
+    if x1.shape[-1] != split_index or x2.shape[-1] != (expected_embed_dim - split_index):
+        raise ValueError(f"Shape mismatch after split: x1 shape {x1.shape}, x2 shape {x2.shape}")
+
     print(f"x1 shape after split: {x1.shape}")
     print(f"x2 shape after split: {x2.shape}")
 

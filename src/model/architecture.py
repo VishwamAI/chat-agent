@@ -147,7 +147,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     logger.debug(f"cos shape after reshaping: {cos.shape}")
 
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
-    x_rotated = x_rotated.reshape(x2.shape)  # Ensure x_rotated has the same shape as x2
+    x_rotated = x_rotated.reshape(x1.shape)  # Ensure x_rotated has the same shape as x1
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")
     assert x_rotated.shape == x2.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x2 shape {x2.shape}"

@@ -20,7 +20,7 @@ def rotate_half(x):
     split_index = x.shape[-1] // 2
     if x.shape[-1] % 2 != 0:
         split_index += 1
-    x1, x2 = jnp.split(x, [split_index], axis=-1)
+    x1, x2 = jnp.split(x, [split_index, x.shape[-1]], axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
 # Define the ImprovedAttention class

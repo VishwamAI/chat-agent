@@ -55,7 +55,7 @@ This project is a generative AI search engine that uses advanced natural languag
 
 - `content_generation.py`: Contains the `generate_content` function for generating content based on processed queries.
 - `query_processing.py`: Contains the `process_query` function for processing user queries.
-- `search_engine_test.py`: Script for testing the search engine with example queries.
+- `search_engine_test.py`: Script for testing the search engine with example queries and relevance assessment.
 - `requirements.txt`: Lists the required dependencies for the project.
 
 ### Dependencies
@@ -65,6 +65,13 @@ This project is a generative AI search engine that uses advanced natural languag
 - `en-core-web-lg==3.7.1`
 - `torch==2.0.1`
 - `transformers==4.30.2`
+- `dm-haiku==0.0.5`
+- `jax==0.4.10`
+- `Pillow==9.4.0`
+- `numpy==1.24.2`
+- `scipy==1.10.1`
+- `requests==2.28.2`
+- `datasets==2.10.1`
 
 ### Notes
 

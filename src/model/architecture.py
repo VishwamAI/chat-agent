@@ -476,5 +476,3 @@ class VishwamAILLM(nn.Module):
             evaluation_metrics['overall_quality'] = 'Low'
 
         return evaluation_metrics
-print(f"Shape of q before apply_rotary_pos_emb: {q.shape}")
-print(f"Shape of k before apply_rotary_pos_emb: {k.shape}")

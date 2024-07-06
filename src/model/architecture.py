@@ -56,7 +56,7 @@ class ImprovedAttention(nn.Module):
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             else:
                 # Handle cases where embed_dim is not equal to head_dim or 1
-                x = x.reshape(batch_size, seq_len, embed_dim // self.head_dim, self.head_dim)
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
                 if x.shape[2] != self.num_heads:
                     raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")
             if x.shape[-1] != self.head_dim:

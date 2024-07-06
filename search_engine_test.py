@@ -1,12 +1,12 @@
 import logging
 from query_processing import process_query
-from content_generation import generate_content
+from content_generation import generate_content, evaluate_relevance
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def test_search_engine(query, max_length=100):
+def test_search_engine(query, max_length=100, relevance_threshold=0.7):
     """
     Simulates a user query and captures the search engine's response.
     """
@@ -19,7 +19,15 @@ def test_search_engine(query, max_length=100):
     response = generate_content(processed_query, max_length=max_length)
 
     # Log the response
-    logger.info(f"Search engine response: {response}")
+    if "generated_content" in response:
+        generated_content = response["generated_content"]
+        logger.info(f"Generated content: {generated_content}")
+
+        # Evaluate relevance of the generated content
+        is_relevant = evaluate_relevance(query, generated_content, threshold=relevance_threshold)
+        logger.info(f"Relevance: {'Relevant' if is_relevant else 'Not Relevant'}")
+    else:
+        logger.error(f"Error: {response['error']}")
 
     return response
 

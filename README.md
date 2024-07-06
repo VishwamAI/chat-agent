@@ -14,7 +14,7 @@ This project is a generative AI search engine that uses advanced natural languag
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/VishwamAI/chat-agent.git
    cd generative_ai_project
    ```
 

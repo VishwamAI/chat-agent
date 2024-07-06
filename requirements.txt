@@ -1,0 +1,5 @@
+tensorflow==2.16.2
+spacy==3.7.5
+en-core-web-sm==3.7.1
+torch==2.0.1
+transformers==4.30.2

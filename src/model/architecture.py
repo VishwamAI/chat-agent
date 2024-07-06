@@ -99,6 +99,10 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
         logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
 
+        # Print the shapes of q and k before calling apply_rotary_pos_emb
+        print(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        print(f"k shape before apply_rotary_pos_emb: {k.shape}")
+
         q = apply_rotary_pos_emb(q, sincos, self.head_dim, self.num_heads)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim, self.num_heads)
 
@@ -141,7 +145,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     print(f"cos shape before split: {cos.shape}")
 
     # Ensure x has the correct shape before the split
-    expected_embed_dim = num_heads * head_dim
+    expected_embed_dim = num_heads * head_dim * 2
     if x.shape[-1] != expected_embed_dim:
         raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
 
@@ -472,3 +476,5 @@ class VishwamAILLM(nn.Module):
             evaluation_metrics['overall_quality'] = 'Low'
 
         return evaluation_metrics
+print(f"Shape of q before apply_rotary_pos_emb: {q.shape}")
+print(f"Shape of k before apply_rotary_pos_emb: {k.shape}")

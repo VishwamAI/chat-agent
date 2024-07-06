@@ -60,7 +60,7 @@ def generate_content(processed_query: dict, max_length: int = 100) -> dict:
         logger.info(f"Random seed: {random_seed}")
 
         # Generate content using the GPT model
-        generated = generator(query_text, max_length=max_length, num_return_sequences=1)
+        generated = generator(query_text, max_length=max_length, num_return_sequences=1, truncation=True)
         generated_text = generated[0]['generated_text']
         logger.info(f"Generated text: {generated_text}")
 
@@ -102,4 +102,5 @@ def evaluate_relevance(query: str, generated_content: str, threshold: float = 0.
     query_doc = nlp(query)
     content_doc = nlp(generated_content)
     similarity = query_doc.similarity(content_doc)
+    logger.info(f"Semantic similarity: {similarity}")
     return similarity >= threshold

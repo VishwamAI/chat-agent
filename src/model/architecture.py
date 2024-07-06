@@ -144,7 +144,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     if x.shape[-1] != expected_embed_dim:
         raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
 
-    split_index = expected_embed_dim // 2
+    split_index = [expected_embed_dim // 2]
     print(f"split_index: {split_index}")
     print(f"x shape before split: {x.shape}")
     if x.shape[-1] != expected_embed_dim:
@@ -154,17 +154,18 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     print(f"x shape right before split: {x.shape}")
     print(f"split_index value: {split_index}")
 
-    # Adjust split_index if it exceeds the last dimension of x
-    if split_index > x.shape[-1]:
-        split_index = x.shape[-1] // 2
-        print(f"Adjusted split_index: {split_index}")
-
     # Ensure split_index is valid
-    if split_index <= 0 or split_index >= x.shape[-1]:
+    if split_index[0] <= 0 or split_index[0] >= x.shape[-1]:
         raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
 
     # Perform the split operation and ensure the correct number of resulting arrays
-    x1, x2 = jnp.split(x, indices_or_sections=split_index, axis=-1)
+    x_split = jnp.split(x, indices_or_sections=split_index, axis=-1)
+    print(f"Number of arrays from split: {len(x_split)}")
+    for i, arr in enumerate(x_split):
+        print(f"Shape of array {i} after split: {arr.shape}")
+    if len(x_split) != 2:
+        raise ValueError(f"Expected 2 arrays from split, but got {len(x_split)} arrays with shapes: {[arr.shape for arr in x_split]}")
+    x1, x2 = x_split
     print(f"x1 shape after split: {x1.shape}")
     print(f"x2 shape after split: {x2.shape}")
 

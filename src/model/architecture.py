@@ -138,7 +138,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     split_index = expected_embed_dim // 2
     logger.debug(f"split_index: {split_index}")
     logger.debug(f"x shape before split: {x.shape}")
-    x1, x2 = jnp.split(x, indices_or_sections=split_index, axis=-1)
+    x1, x2 = jnp.split(x, indices_or_sections=[split_index, expected_embed_dim], axis=-1)
     logger.debug(f"x1 shape after split: {x1.shape}")
     logger.debug(f"x2 shape after split: {x2.shape}")
 

@@ -135,11 +135,10 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
         logger.debug(f"Padded x shape: {x.shape}")
     # Adjust the split to ensure it produces two parts
     split_index = num_heads * head_dim
-    x1, x2 = jnp.split(x, indices_or_sections=[split_index, x.shape[-1]], axis=-1)
-    logger.debug(f"x1 shape: {x1.shape}")
-    logger.debug(f"x2 shape: {x2.shape}")
-    logger.debug(f"sin shape: {sin.shape}")
-    logger.debug(f"cos shape: {cos.shape}")
+    logger.debug(f"split_index: {split_index}")
+    x1, x2 = jnp.split(x, indices_or_sections=[split_index], axis=-1)
+    logger.debug(f"x1 shape after split: {x1.shape}")
+    logger.debug(f"x2 shape after split: {x2.shape}")
 
     # Reshape sin and cos to match the dimensions of x1 for broadcasting
     sin = sin.reshape((1, x1.shape[1], num_heads, head_dim))

@@ -89,8 +89,8 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"sin shape before apply_rotary_pos_emb: {sincos[0].shape}")
         logger.debug(f"cos shape before apply_rotary_pos_emb: {sincos[1].shape}")
 
-        q = apply_rotary_pos_emb(q, sincos, self.head_dim)
-        k = apply_rotary_pos_emb(k, sincos, self.head_dim)
+        q = apply_rotary_pos_emb(q, sincos, self.head_dim, self.num_heads)
+        k = apply_rotary_pos_emb(k, sincos, self.head_dim, self.num_heads)
 
         # Log the shapes after applying rotary positional embeddings
         logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
@@ -122,7 +122,7 @@ class ImprovedAttention(nn.Module):
 
         return attn_output
 
-def apply_rotary_pos_emb(x, sincos, head_dim):
+def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     sin, cos = sincos
     logger.debug(f"x shape: {x.shape}")
     if x.shape[-1] % (2 * head_dim) != 0:
@@ -137,8 +137,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"cos shape: {cos.shape}")
 
     # Reshape sin and cos to match the dimensions of x1 and x2 for broadcasting
-    sin = sin.reshape((1, x1.shape[1], self.num_heads, head_dim))
-    cos = cos.reshape((1, x1.shape[1], self.num_heads, head_dim))
+    sin = sin.reshape((1, x1.shape[1], num_heads, head_dim))
+    cos = cos.reshape((1, x1.shape[1], num_heads, head_dim))
 
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")

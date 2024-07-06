@@ -64,11 +64,11 @@ class ImprovedAttention(nn.Module):
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
-        qkv = self.qkv_dense(x)  # Pass x directly to qkv_dense
+        qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
         expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
         assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
-        qkv = qkv.reshape(batch_size, seq_len, self.num_heads, 3 * self.head_dim)
+        qkv = qkv.reshape(batch_size, seq_len, 3 * self.num_heads * self.head_dim)  # Reshape to match the expected shape
         q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
 
         # Log the shapes of qkv, q, k, and v

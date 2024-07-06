@@ -147,7 +147,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     logger.debug(f"cos shape after reshaping: {cos.shape}")
 
     # Ensure x1 has the correct shape before rotation
-    x1 = x1.reshape((x1.shape[0], x1.shape[1], head_dim))
+    x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, head_dim))
     logger.debug(f"x1 shape after reshaping: {x1.shape}")
 
     x1_rotated = (x1 * cos) + (rotate_half(x1) * sin)

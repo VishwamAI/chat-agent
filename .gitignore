@@ -27,3 +27,6 @@ data/
 
 # Ignore nohup output file
 scripts/nohup.out
+
+# Ignore backup test script
+search_engine_test_backup.py

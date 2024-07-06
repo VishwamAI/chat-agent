@@ -43,8 +43,6 @@ class ImprovedAttention(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-        elif len(x.shape) == 4:
-            x = x.reshape(x.shape[0], x.shape[1], -1)  # Flatten the last two dimensions if x is four-dimensional
         batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Input tensor shape: {x.shape}")
 
@@ -58,6 +56,8 @@ class ImprovedAttention(nn.Module):
                 x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
             else:
                 # Handle cases where embed_dim is not equal to head_dim or 1
+                if embed_dim % self.head_dim != 0:
+                    raise ValueError(f"Embedding dimension {embed_dim} is not a multiple of head_dim {self.head_dim}")
                 x = x.reshape(batch_size, seq_len, embed_dim // self.head_dim, self.head_dim)
                 if x.shape[2] != self.num_heads:
                     raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")

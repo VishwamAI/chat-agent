@@ -135,7 +135,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     if x.shape[-1] != expected_embed_dim:
         raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
 
-    split_index = num_heads * head_dim
+    split_index = head_dim
     logger.debug(f"split_index: {split_index}")
     logger.debug(f"x shape before split: {x.shape}")
     x1, x2 = jnp.split(x, indices_or_sections=[split_index], axis=-1)

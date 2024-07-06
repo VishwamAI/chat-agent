@@ -130,15 +130,15 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
         pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
         x = jnp.pad(x, ((0, 0), (0, 0), (0, 0), (0, pad_size)), mode='constant')
         logger.debug(f"Padded x shape: {x.shape}")
-    x1, x2 = jnp.split(x, 2, axis=-1)
+    x1, x2 = jnp.split(x, indices_or_sections=2, axis=-1)
     logger.debug(f"x1 shape: {x1.shape}")
     logger.debug(f"x2 shape: {x2.shape}")
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
 
     # Reshape sin and cos to match the dimensions of x1 for broadcasting
-    sin = sin.reshape((1, x1.shape[1], num_heads, head_dim))
-    cos = cos.reshape((1, x1.shape[1], num_heads, head_dim))
+    sin = sin.reshape((1, x1.shape[1], x1.shape[2], head_dim))
+    cos = cos.reshape((1, x1.shape[1], x1.shape[2], head_dim))
 
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")

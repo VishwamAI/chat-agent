@@ -158,8 +158,8 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     if split_index <= 0 or split_index >= x.shape[-1]:
         raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
 
-    # Perform the split operation and ensure the correct number of resulting arrays
-    split_result = jnp.split(x, indices_or_sections=2, axis=-1)
+    # Perform the split operation using the calculated split_index
+    split_result = jnp.split(x, indices_or_sections=split_index, axis=-1)
     if len(split_result) != 2:
         raise ValueError(f"Expected 2 arrays from split, but got {len(split_result)} arrays with shapes: {[arr.shape for arr in split_result]}")
     x1, x2 = split_result
@@ -180,7 +180,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     # Ensure x1 has the correct shape before rotation
     if x1.shape[-1] != head_dim:
         raise ValueError(f"Shape mismatch: x1 last dimension {x1.shape[-1]} does not match head_dim {head_dim}")
-    x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, head_dim))
+    x1 = x1.reshape((x1.shape[0], x1.shape[1], head_dim))
     print(f"x1 shape after reshaping: {x1.shape}")
 
     x1_rotated = (x1 * cos) + (rotate_half(x1) * sin)

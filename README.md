@@ -57,6 +57,7 @@ This project is a generative AI search engine that uses advanced natural languag
 - `query_processing.py`: Contains the `process_query` function for processing user queries.
 - `search_engine_test.py`: Script for testing the search engine with example queries and relevance assessment.
 - `requirements.txt`: Lists the required dependencies for the project.
+- `.gitignore`: Specifies files and directories to be ignored by Git, including the backup test script `search_engine_test_backup.py`.
 
 ### Dependencies
 
@@ -77,6 +78,7 @@ This project is a generative AI search engine that uses advanced natural languag
 
 - The `generate_content` function uses a pre-trained GPT-2 model from the `transformers` library.
 - The `evaluate_relevance` function assesses the relevance of generated content based on a configurable threshold using semantic similarity.
+- The `search_engine_test.py` script includes diverse queries to test the search engine's performance across different topics and scenarios.
 
 ## Next Steps
 

@@ -33,7 +33,9 @@ The generative AI search engine consists of the following main components:
 
 ### Testing
 - Created a test script `search_engine_test.py` to simulate user queries and evaluate the search engine's responses.
-- Ran the test script with various queries and logged the generated responses.
+- Expanded the test script to include diverse queries covering various topics and scenarios in generative AI.
+- Ran the test script with the expanded set of queries and logged the generated responses.
+- Updated the `.gitignore` file to exclude the backup test script `search_engine_test_backup.py`.
 
 ## Results
 The search engine successfully generates content in response to user queries. However, the relevance and accuracy of the responses vary. Some responses are on-topic, while others may contain irrelevant information. Further refinement is needed to improve the relevance of the generated content.
@@ -65,7 +67,7 @@ The initial tests of the generative AI search engine revealed the following obse
 - Adjust the generation parameters to better align the generated content with the input queries.
 - Implement a configurable relevance threshold to allow fine-tuning of relevance criteria.
 - Add comprehensive error handling and logging to improve debugging and maintainability.
-- Continue testing and refining the search engine.
+- Continue testing and refining the search engine with the expanded set of queries.
 - Seek user feedback and adjust the project based on their input.
 
 ## Conclusion

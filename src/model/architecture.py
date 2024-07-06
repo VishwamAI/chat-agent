@@ -49,7 +49,18 @@ class ImprovedAttention(nn.Module):
         # Ensure x has the correct shape
         expected_embed_dim = self.num_heads * self.head_dim
         if embed_dim != expected_embed_dim:
-            x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            if embed_dim == self.head_dim:
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            elif embed_dim == 1:
+                x = jnp.tile(x, (1, 1, expected_embed_dim))
+                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
+            else:
+                # Handle cases where embed_dim is not equal to head_dim or 1
+                x = x.reshape(batch_size, seq_len, embed_dim // self.head_dim, self.head_dim)
+                if x.shape[2] != self.num_heads:
+                    raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")
+            if x.shape[-1] != self.head_dim:
+                raise ValueError(f"Head dimension mismatch: expected {self.head_dim}, but got {x.shape[-1]}")
 
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
         x = x.reshape(batch_size, seq_len, self.num_heads * self.head_dim)  # Ensure x is reshaped to the correct dimensions before unpacking

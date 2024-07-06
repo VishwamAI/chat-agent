@@ -129,12 +129,12 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     logger.debug(f"num_heads: {num_heads}")
     logger.debug(f"sin shape before split: {sin.shape}")
     logger.debug(f"cos shape before split: {cos.shape}")
-    if x.shape[-1] % (2 * head_dim) != 0:
-        # Pad the last dimension of x to be a multiple of 2 * head_dim
-        pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
-        x = jnp.pad(x, ((0, 0), (0, 0), (0, 0), (0, pad_size)), mode='constant')
-        logger.debug(f"Padded x shape: {x.shape}")
-    # Adjust the split to ensure it produces two parts
+
+    # Ensure x has the correct shape before the split
+    expected_embed_dim = num_heads * head_dim
+    if x.shape[-1] != expected_embed_dim:
+        raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
+
     split_index = num_heads * head_dim
     logger.debug(f"split_index: {split_index}")
     logger.debug(f"x shape before split: {x.shape}")

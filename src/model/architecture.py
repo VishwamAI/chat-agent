@@ -147,6 +147,22 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     split_index = expected_embed_dim // 2
     logger.debug(f"split_index: {split_index}")
     logger.debug(f"x shape before split: {x.shape}")
+    if x.shape[-1] != expected_embed_dim:
+        raise ValueError(f"Expected x's last dimension to be {expected_embed_dim}, but got {x.shape[-1]}")
+
+    # Additional debug logging to trace the shape of x and the value of split_index
+    logger.debug(f"x shape right before split: {x.shape}")
+    logger.debug(f"split_index value: {split_index}")
+
+    # Adjust split_index if it exceeds the last dimension of x
+    if split_index > x.shape[-1]:
+        split_index = x.shape[-1] // 2
+        logger.debug(f"Adjusted split_index: {split_index}")
+
+    # Ensure split_index is valid
+    if split_index <= 0 or split_index >= x.shape[-1]:
+        raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
+
     x1, x2 = jnp.split(x, indices_or_sections=split_index, axis=-1)
     logger.debug(f"x1 shape after split: {x1.shape}")
     logger.debug(f"x2 shape after split: {x2.shape}")

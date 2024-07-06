@@ -36,8 +36,10 @@ class ImprovedAttention(nn.Module):
     def _create_rotary_emb(self, seq_len, num_heads):
         # Create rotary positional embeddings dynamically
         head_dim = self.head_dim
-        sin = jnp.sin(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
-        cos = jnp.cos(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+        sin = jnp.sin(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, 1, head_dim))
+        cos = jnp.cos(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, 1, head_dim))
+        sin = jnp.broadcast_to(sin, (1, seq_len, num_heads, head_dim))
+        cos = jnp.broadcast_to(cos, (1, seq_len, num_heads, head_dim))
         logger.debug(f"Generated sin shape: {sin.shape}")
         logger.debug(f"Generated cos shape: {cos.shape}")
         return sin, cos

@@ -36,8 +36,8 @@ class ImprovedAttention(nn.Module):
     def _create_rotary_emb(self, seq_len, num_heads):
         # Create rotary positional embeddings dynamically
         head_dim = self.head_dim
-        sin = jnp.sin(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, 1, head_dim))
-        cos = jnp.cos(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, 1, head_dim))
+        sin = jnp.sin(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, head_dim))
+        cos = jnp.cos(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, head_dim))
         sin = jnp.broadcast_to(sin, (1, seq_len, num_heads, head_dim))
         cos = jnp.broadcast_to(cos, (1, seq_len, num_heads, head_dim))
         logger.debug(f"Generated sin shape: {sin.shape}")
@@ -125,6 +125,10 @@ class ImprovedAttention(nn.Module):
 def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     sin, cos = sincos
     logger.debug(f"x shape: {x.shape}")
+    logger.debug(f"head_dim: {head_dim}")
+    logger.debug(f"head_dim // 2: {head_dim // 2}")
+    logger.debug(f"sin shape before split: {sin.shape}")
+    logger.debug(f"cos shape before split: {cos.shape}")
     if x.shape[-1] % (2 * head_dim) != 0:
         # Pad the last dimension of x to be a multiple of 2 * head_dim
         pad_size = (2 * head_dim) - (x.shape[-1] % (2 * head_dim))
@@ -139,6 +143,9 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     # Reshape sin and cos to match the dimensions of x1 for broadcasting
     sin = sin.reshape((1, x1.shape[1], num_heads, head_dim // 2))
     cos = cos.reshape((1, x1.shape[1], num_heads, head_dim // 2))
+
+    logger.debug(f"sin shape after reshaping: {sin.shape}")
+    logger.debug(f"cos shape after reshaping: {cos.shape}")
 
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")

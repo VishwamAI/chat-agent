@@ -8,6 +8,7 @@ The generative AI search engine consists of the following main components:
 1. **Query Processing**: This component processes user queries to extract relevant information and prepare them for content generation.
 2. **Content Generation**: This component uses pre-trained generative AI models to generate content based on the processed queries.
 3. **Relevance Assessment**: This component evaluates the relevance of the generated content using semantic similarity with the spaCy `en_core_web_lg` model to ensure it meets the search intent.
+- Implemented logging of semantic similarity scores to provide more insight into the relevance assessment process.
 
 ### Data Flow
 1. The user submits a query to the search engine.
@@ -29,6 +30,7 @@ The generative AI search engine consists of the following main components:
 ### Content Generation
 - Implemented the `generate_content` function using a pre-trained GPT-2 model from the `transformers` library.
 - Added input validation, relevance check, and error handling to the `generate_content` function.
+- Introduced a truncation parameter to ensure the generated content does not exceed the maximum length limit.
 - Created unit tests for the `generate_content` function to ensure its correctness.
 
 ### Testing
@@ -45,6 +47,8 @@ The initial tests of the generative AI search engine revealed the following obse
 1. The generated content is generally coherent and grammatically correct.
 2. The relevance of the generated content to the input queries varies, with some responses being off-topic or containing unrelated information.
 3. The current relevance assessment mechanism needs improvement to better align the generated content with the search intent.
+
+4. The logging of semantic similarity scores provides valuable insights into the relevance of the generated content.
 
 ### Example Queries and Responses
 1. **Query**: What is the impact of generative AI on search engines?
@@ -65,7 +69,7 @@ The initial tests of the generative AI search engine revealed the following obse
 ## Next Steps
 - Refine the `evaluate_relevance` function to improve the accuracy of relevance assessment.
 - Adjust the generation parameters to better align the generated content with the input queries.
-- Implement a configurable relevance threshold to allow fine-tuning of relevance criteria.
+- Implement configurable parameters for minimum content length and relevance threshold to allow fine-tuning of relevance criteria.
 - Add comprehensive error handling and logging to improve debugging and maintainability.
 - Continue testing and refining the search engine with the expanded set of queries.
 - Seek user feedback and adjust the project based on their input.

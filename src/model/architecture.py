@@ -130,6 +130,12 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
 
+    # Adjust the generation of sin and cos arrays to match the dimensions of x1 and x2
+    seq_len = x1.shape[1]
+    num_heads = x1.shape[2]
+    sin = jnp.sin(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+    cos = jnp.cos(jnp.arange(seq_len * num_heads * head_dim)).reshape((1, seq_len, num_heads, head_dim))
+
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")

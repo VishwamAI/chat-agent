@@ -61,7 +61,7 @@ class ImprovedAttention(nn.Module):
                     raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")
             if x.shape[-1] != self.head_dim:
                 raise ValueError(f"Head dimension mismatch: expected {self.head_dim}, but got {x.shape[-1]}")
-
+        x = x.reshape(batch_size, seq_len, self.num_heads * self.head_dim)  # Ensure x is reshaped to the correct dimensions before unpacking
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
         x = x.reshape(batch_size, seq_len, self.num_heads * self.head_dim)  # Ensure x is reshaped to the correct dimensions before unpacking
 

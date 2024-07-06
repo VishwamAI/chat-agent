@@ -146,10 +146,10 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     logger.debug(f"sin shape after reshaping: {sin.shape}")
     logger.debug(f"cos shape after reshaping: {cos.shape}")
 
-    x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
-    logger.debug(f"x_rotated shape after element-wise operations: {x_rotated.shape}")
-    assert x_rotated.shape == x1.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x1 shape {x1.shape}"
-    concatenated = jnp.concatenate([x_rotated, x2], axis=-1)
+    x1_rotated = (x1 * cos) + (rotate_half(x1) * sin)
+    logger.debug(f"x1_rotated shape after element-wise operations: {x1_rotated.shape}")
+    assert x1_rotated.shape == x1.shape, f"Shape mismatch: x1_rotated shape {x1_rotated.shape}, x1 shape {x1.shape}"
+    concatenated = jnp.concatenate([x1_rotated, x2], axis=-1)
     logger.debug(f"concatenated shape: {concatenated.shape}")
     return concatenated
 

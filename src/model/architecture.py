@@ -130,6 +130,10 @@ def apply_rotary_pos_emb(x, sincos, head_dim):
     logger.debug(f"sin shape: {sin.shape}")
     logger.debug(f"cos shape: {cos.shape}")
 
+    # Reshape sin and cos to match the dimensions of x1 and x2 for broadcasting
+    sin = sin.reshape((1, 1, head_dim))
+    cos = cos.reshape((1, 1, head_dim))
+
     x_rotated = (x1 * cos) + (rotate_half(x1) * sin)
     logger.debug(f"x_rotated shape after reshaping: {x_rotated.shape}")
     logger.debug(f"x2 shape after reshaping: {x2.shape}")

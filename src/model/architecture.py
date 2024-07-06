@@ -62,10 +62,6 @@ class ImprovedAttention(nn.Module):
             if x.shape[-1] != self.head_dim:
                 raise ValueError(f"Head dimension mismatch: expected {self.head_dim}, but got {x.shape[-1]}")
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
-
-        # Reshape x to (batch_size, seq_len, embed_dim) before unpacking
-        x = x.reshape(batch_size, seq_len, -1)
-        batch_size, seq_len, embed_dim = x.shape
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 
         qkv = self.qkv_dense(x)  # Pass x directly to qkv_dense

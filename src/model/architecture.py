@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() in ('true', '1', 't')
 
 def rotate_half(x):
-    x1, x2 = jnp.split(x, 2, axis=-1)
+    split_index = x.shape[-1] // 2
+    x1, x2 = jnp.split(x, [split_index], axis=-1)
     return jnp.concatenate([-x2, x1], axis=-1)
 
 # Define the ImprovedAttention class

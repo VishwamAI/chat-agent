@@ -89,6 +89,15 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"sin shape before apply_rotary_pos_emb: {sincos[0].shape}")
         logger.debug(f"cos shape before apply_rotary_pos_emb: {sincos[1].shape}")
 
+        # Ensure q and k have the correct shape before applying rotary positional embeddings
+        expected_embed_dim = self.num_heads * self.head_dim
+        if q.shape[-1] != expected_embed_dim or k.shape[-1] != expected_embed_dim:
+            raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got q shape {q.shape[-1]} and k shape {k.shape[-1]}")
+
+        # Additional debug logging to track tensor shapes
+        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
+
         q = apply_rotary_pos_emb(q, sincos, self.head_dim, self.num_heads)
         k = apply_rotary_pos_emb(k, sincos, self.head_dim, self.num_heads)
 
@@ -138,7 +147,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     split_index = expected_embed_dim // 2
     logger.debug(f"split_index: {split_index}")
     logger.debug(f"x shape before split: {x.shape}")
-    x1, x2 = jnp.split(x, indices_or_sections=[split_index, expected_embed_dim], axis=-1)
+    x1, x2 = jnp.split(x, indices_or_sections=split_index, axis=-1)
     logger.debug(f"x1 shape after split: {x1.shape}")
     logger.debug(f"x2 shape after split: {x2.shape}")
 

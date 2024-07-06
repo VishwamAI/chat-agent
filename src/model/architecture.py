@@ -145,7 +145,7 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     print(f"cos shape before split: {cos.shape}")
 
     # Ensure x has the correct shape before the split
-    expected_embed_dim = num_heads * head_dim * 2
+    expected_embed_dim = num_heads * head_dim
     if x.shape[-1] != expected_embed_dim:
         raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
 

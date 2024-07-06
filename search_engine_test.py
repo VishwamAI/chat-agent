@@ -38,7 +38,12 @@ if __name__ == "__main__":
         "How does GPT-3 differ from GPT-2?",
         "What are the latest advancements in image generation?",
         "Can generative AI create music?",
-        "What are the ethical considerations of using generative AI?"
+        "What are the ethical considerations of using generative AI?",
+        "How can generative AI be used in healthcare?",
+        "What are the challenges of using generative AI in finance?",
+        "Can generative AI improve customer service?",
+        "What are the environmental impacts of generative AI?",
+        "How does generative AI affect job markets?"
     ]
 
     # Run the test for each query

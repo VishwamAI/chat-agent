@@ -176,15 +176,15 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
         raise ValueError(f"x2 is empty after split. x2 shape: {x2.shape}")
 
     # Reshape sin and cos to match the dimensions of x1 for broadcasting
-    sin = sin.reshape((1, x1.shape[1], num_heads, head_dim))
-    cos = cos.reshape((1, x1.shape[1], num_heads, head_dim))
+    sin = sin.reshape((1, x1.shape[1], 1, head_dim))
+    cos = cos.reshape((1, x1.shape[1], 1, head_dim))
 
     print(f"sin shape after reshaping: {sin.shape}")
     print(f"cos shape after reshaping: {cos.shape}")
 
     # Ensure x1 has the correct shape before rotation
     if len(x1.shape) != 4:
-        x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, head_dim))
+        x1 = x1.reshape((x1.shape[0], x1.shape[1], 1, head_dim))
     if x1.shape[-1] != head_dim:
         raise ValueError(f"Shape mismatch: x1 last dimension {x1.shape[-1]} does not match head_dim {head_dim}")
     print(f"x1 shape after reshaping: {x1.shape}")

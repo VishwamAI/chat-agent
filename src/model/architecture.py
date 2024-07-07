@@ -144,8 +144,9 @@ class ImprovedAttention(nn.Module):
         if mask is not None:
             print(f"Mask shape before broadcasting: {mask.shape}")
             print(f"Attention tensor shape: {attn.shape}")
-            mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
-            mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
+            # Ensure mask is expanded to match attn tensor's shape
+            mask = jnp.expand_dims(mask, axis=1)  # Expand dimensions to [batch_size, 1, sequence_length]
+            mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, seq_len))  # Broadcast to [batch_size, num_heads, sequence_length]
             print(f"Mask shape after broadcasting: {mask.shape}")
             assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
             attn = jnp.where(mask, attn, float('-inf'))

@@ -99,7 +99,7 @@ def main():
     # Initialize model
     model = VishwamAILLM(config=config)
     rng = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'] * config['head_dim']), dtype=jnp.float32)
 
     # Debugging: Print the shape and values of dummy_input
     print(f"dummy_input shape: {dummy_input.shape}")

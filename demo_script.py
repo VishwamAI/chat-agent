@@ -47,10 +47,17 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
-        attention_mask = jnp.broadcast_to(attention_mask[:, None, :], (input_ids.shape[0], 1, input_ids.shape[1], input_ids.shape[1]))
 
         # Debugging: Print the shape of attention_mask
         print(f"attention_mask shape: {attention_mask.shape}")
+
+        # Ensure attention_mask has the correct shape
+        attention_mask = jnp.expand_dims(attention_mask, axis=1)
+        attention_mask = jnp.broadcast_to(attention_mask, (input_ids.shape[0], model.config['num_heads'], input_ids.shape[1]))
+
+        # Debugging: Print the shape of attention_mask after expanding dimensions
+        print(f"attention_mask shape after expanding dimensions: {attention_mask.shape}")
+        print(f"attention_mask values after expanding dimensions: {attention_mask}")
 
         try:
             # Debugging: Print the shape of input_ids and attention_mask before passing to the model
@@ -58,13 +65,6 @@ def generate_responses(prompts: list, model, tokenizer):
             print(f"attention_mask shape before model: {attention_mask.shape}")
             print(f"input_ids values before model: {input_ids}")
             print(f"attention_mask values before model: {attention_mask}")
-
-            # Ensure attention_mask has the correct shape
-            attention_mask = jnp.broadcast_to(attention_mask, (input_ids.shape[0], model.config['num_heads'], input_ids.shape[1], input_ids.shape[1]))
-
-            # Debugging: Print the shape of attention_mask after broadcasting
-            print(f"attention_mask shape after broadcasting: {attention_mask.shape}")
-            print(f"attention_mask values after broadcasting: {attention_mask}")
 
             output, _ = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)

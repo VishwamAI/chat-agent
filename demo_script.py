@@ -96,9 +96,17 @@ def main():
     model = VishwamAILLM(config=config)
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length']), dtype=jnp.int32)
+
+    # Debugging: Print the shape and values of dummy_input
+    print(f"dummy_input shape: {dummy_input.shape}")
+    print(f"dummy_input values: {dummy_input}")
+
     params = model.init(rng, dummy_input)['params']
     model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=params)
     model = model.replace(params=model_state)
+
+    # Debugging: Print the model parameters after initialization
+    print(f"Model parameters after initialization: {model.params}")
 
     # Load prompts from CSV
     csv_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'sample_dialogues.csv'))

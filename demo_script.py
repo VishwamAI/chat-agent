@@ -191,6 +191,16 @@ def generate_responses(prompts: list, model, tokenizer):
             # Explicitly reshape attention_mask to ensure it is a 2D tensor
             attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
 
+            # Additional debugging: Print the shape, values, dtype, and type of attention_mask after reshaping
+            print(f"attention_mask shape after reshaping: {attention_mask.shape}")
+            print(f"attention_mask values after reshaping: {attention_mask}")
+            print(f"attention_mask dtype after reshaping: {attention_mask.dtype}")
+            print(f"attention_mask type after reshaping: {type(attention_mask)}")
+
+            # Ensure attention_mask is correctly shaped before passing to the model
+            if attention_mask.shape != (input_ids.shape[0], input_ids.shape[1]):
+                raise ValueError(f"Attention mask shape mismatch before model: expected {(input_ids.shape[0], input_ids.shape[1])}, but got {attention_mask.shape}")
+
             output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
 
             # Additional debugging: Print the shape and values of output after model.apply

@@ -29,7 +29,7 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
-        logger.debug(f"Setup - num_heads: {self.num_heads}, head_dim: {self.head_dim}")
+        logger.debug(f"Setup - num_heads: {self.num_heads}, head_dim: {self.head_dim}, qkv_dense output dim: {3 * self.num_heads * self.head_dim}")
 
     @property
     def rotary_emb(self):
@@ -66,7 +66,6 @@ class ImprovedAttention(nn.Module):
                 logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
                 raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)  # Reshape to match the expected shape
-            x = x.reshape(batch_size, seq_len, -1)  # Flatten the last two dimensions before passing to qkv_dense
         else:
             raise ValueError(f"Input tensor must have 2 or 3 dimensions, but got {len(x.shape)} dimensions")
 

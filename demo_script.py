@@ -31,19 +31,24 @@ def generate_responses(prompts: list, model, tokenizer):
         # Encode the conversation history
         input_ids = tokenizer.encode(conversation_history_str, return_tensors='np')
 
-        # Debugging: Print the shape of input_ids after encoding
+        # Debugging: Print the shape and values of input_ids after encoding
         print(f"input_ids shape after encoding: {input_ids.shape}")
+        print(f"input_ids values after encoding: {input_ids}")
 
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
 
+        # Debugging: Print the pad_token_id
+        print(f"tokenizer.pad_token_id: {tokenizer.pad_token_id}")
+
         # Truncate input_ids if it exceeds max_length
         if (input_ids.shape[1] > max_length):
             input_ids = input_ids[:, -max_length:]
 
-        # Debugging: Print the shape of input_ids after truncation
+        # Debugging: Print the shape and values of input_ids after truncation
         print(f"input_ids shape after truncation: {input_ids.shape}")
+        print(f"input_ids values after truncation: {input_ids}")
 
         # Create attention mask
         print(f"input_ids before attention_mask creation: {input_ids}")

@@ -11,7 +11,12 @@ import haiku as hk
 import optax
 import yaml
 from typing import Iterable
-from src.model.architecture import ImprovedAttention  # Import ImprovedAttention from architecture.py
+import sys
+
+# Add the src directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from model.architecture import ImprovedAttention  # Import ImprovedAttention from architecture.py
 
 # Load configuration
 with open('/home/ubuntu/chat-agent/configs/default_config.yaml', 'r') as file:

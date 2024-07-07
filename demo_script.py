@@ -31,6 +31,9 @@ def generate_responses(prompts: list, model, tokenizer):
         # Encode the conversation history
         input_ids = tokenizer.encode(conversation_history_str, return_tensors='np')
 
+        # Debugging: Print the shape of input_ids after encoding
+        print(f"input_ids shape after encoding: {input_ids.shape}")
+
         # Ensure pad_token_id is set
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -39,14 +42,26 @@ def generate_responses(prompts: list, model, tokenizer):
         if (input_ids.shape[1] > max_length):
             input_ids = input_ids[:, -max_length:]
 
+        # Debugging: Print the shape of input_ids after truncation
+        print(f"input_ids shape after truncation: {input_ids.shape}")
+
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
         attention_mask = jnp.broadcast_to(attention_mask[:, None, :], (input_ids.shape[0], 1, input_ids.shape[1], input_ids.shape[1]))
 
+        # Debugging: Print the shape of attention_mask
+        print(f"attention_mask shape: {attention_mask.shape}")
+
         try:
             # Debugging: Print the shape of input_ids and attention_mask before passing to the model
-            print(f"input_ids shape: {input_ids.shape}")
-            print(f"attention_mask shape: {attention_mask.shape}")
+            print(f"input_ids shape before model: {input_ids.shape}")
+            print(f"attention_mask shape before model: {attention_mask.shape}")
+            print(f"input_ids values before model: {input_ids}")
+            print(f"attention_mask values before model: {attention_mask}")
+
+            # Ensure attention_mask has the correct shape
+            attention_mask = jnp.broadcast_to(attention_mask, (input_ids.shape[0], model.config['num_heads'], input_ids.shape[1], input_ids.shape[1]))
+
             output, _ = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

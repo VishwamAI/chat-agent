@@ -35,6 +35,10 @@ class VishwamAILLM(nn.Module):
         # Compute attention scores
         attn_scores = jnp.einsum('...qd,...kd->...qk', q, k) / jnp.sqrt(self.head_dim)
 
+        # Additional debugging: Print the shape and values of attn_scores before applying attention_mask
+        print(f"attn_scores shape before applying attention_mask: {attn_scores.shape}")
+        print(f"attn_scores values before applying attention_mask: {attn_scores}")
+
         # Apply attention mask
         if attention_mask is not None:
             attn_scores = attn_scores + attention_mask
@@ -173,6 +177,14 @@ def generate_responses(prompts: list, model, tokenizer):
             # Additional debugging: Print the type of attention_mask immediately before model.apply
             print(f"attention_mask type immediately before model.apply: {type(attention_mask)}")
 
+            # Ensure attention_mask is a 2D tensor
+            if attention_mask.ndim != 2:
+                raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
+
+            # Additional debugging: Print the shape and values of attention_mask right before model.apply
+            print(f"attention_mask shape right before model.apply: {attention_mask.shape}")
+            print(f"attention_mask values right before model.apply: {attention_mask}")
+
             output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
 
             # Additional debugging: Print the shape and values of output after model.apply
@@ -184,7 +196,7 @@ def generate_responses(prompts: list, model, tokenizer):
             response = f"Error generating response: {str(e)}"
             print(f"Exception: {str(e)}")
             print(f"input_ids shape at exception: {input_ids.shape}")
-            print(f"attention_mask shape at exception: {attention_mask.shape}")
+            print(f"attention_mask shape at exception: {attention_mask}")
             print(f"input_ids values at exception: {input_ids}")
             print(f"attention_mask values at exception: {attention_mask}")
 

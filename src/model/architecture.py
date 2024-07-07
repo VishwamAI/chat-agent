@@ -362,9 +362,10 @@ class ImprovedVishwamAIModel(nn.Module):
 
         # Ensure inputs is a 2D tensor before reshaping
         if inputs.ndim != 2:
-            raise ValueError(f"inputs must be a 2D tensor, but got shape {inputs.shape}")
+            inputs = inputs.reshape(inputs.shape[0], -1)
+            print(f"inputs reshaped to 2D tensor: {inputs.shape}")
 
-        input_ids = inputs.reshape(-1, inputs.shape[-1])
+        input_ids = inputs
 
         # Log the shape of input_ids after reshaping
         print(f"input_ids shape after reshaping: {input_ids.shape}")

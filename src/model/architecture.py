@@ -144,8 +144,12 @@ class ImprovedAttention(nn.Module):
         if mask is not None:
             print(f"Mask shape before broadcasting: {mask.shape}")
             print(f"Attention tensor shape: {attn.shape}")
-            # Ensure mask is used as a 2D tensor [batch_size, sequence_length]
-            attn = attn + mask  # Add mask to attention scores without expanding dimensions
+            # Ensure mask is a 2D tensor [batch_size, sequence_length]
+            if len(mask.shape) == 2:
+                mask = jnp.expand_dims(mask, axis=(-3, -2))  # Expand dimensions to [batch_size, 1, 1, sequence_length]
+            elif len(mask.shape) != 4:
+                raise ValueError(f"Mask must be a 2D or 4D tensor, but got {len(mask.shape)}D tensor")
+            attn = attn + mask  # Add mask to attention scores
             print(f"Mask shape after adding to attention scores: {mask.shape}")
 
         attn_weights = jax.nn.softmax(attn, axis=-1)

@@ -368,7 +368,11 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
-        self.transformer = ImprovedVishwamAIModel(self.config)
+        tokenizer = AutoTokenizer.from_pretrained(self.config['tokenizer_name'])
+        bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
+        num_layers = self.config['num_layers']
+        vocab_size = self.config['vocab_size']
+        self.transformer = ImprovedVishwamAIModel(config=self.config, tokenizer=tokenizer, bert_model=bert_model, num_layers=num_layers, vocab_size=vocab_size)
         self.lm_head = nn.Dense(self.config['vocab_size'])
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:

@@ -48,6 +48,10 @@ def generate_responses(prompts: list, model, tokenizer):
         # Create attention mask
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
 
+        # Ensure attention_mask is not empty and has the correct shape
+        if attention_mask.shape != (input_ids.shape[0], input_ids.shape[1]):
+            raise ValueError(f"Attention mask shape mismatch: expected {(input_ids.shape[0], input_ids.shape[1])}, but got {attention_mask.shape}")
+
         # Debugging: Print the shape and values of input_ids and attention_mask
         print(f"input_ids shape: {input_ids.shape}")
         print(f"input_ids values: {input_ids}")

@@ -29,6 +29,7 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
+        logger.debug(f"Setup - num_heads: {self.num_heads}, head_dim: {self.head_dim}")
 
     @property
     def rotary_emb(self):
@@ -57,6 +58,7 @@ class ImprovedAttention(nn.Module):
             head_dim = embed_dim // num_heads
             logger.debug(f"Configuration values - num_heads: {num_heads}, head_dim: {head_dim}, embed_dim: {embed_dim}")
             if head_dim == 0 or num_heads == 0:
+                logger.error(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
                 raise ValueError(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)
         else:
@@ -70,18 +72,8 @@ class ImprovedAttention(nn.Module):
         # Ensure x has the correct shape
         expected_embed_dim = self.num_heads * self.head_dim
         if embed_dim != expected_embed_dim:
-            if embed_dim == self.head_dim:
-                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-            elif embed_dim == 1:
-                x = jnp.tile(x, (1, 1, expected_embed_dim))
-                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-            else:
-                # Handle cases where embed_dim is not equal to head_dim or 1
-                x = x.reshape(batch_size, seq_len, self.num_heads, self.head_dim)
-                if x.shape[2] != self.num_heads:
-                    raise ValueError(f"Number of heads mismatch: expected {self.num_heads}, but got {x.shape[2]}")
-            if x.shape[-1] != self.head_dim:
-                raise ValueError(f"Head dimension mismatch: expected {self.head_dim}, but got {x.shape[-1]}")
+            logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+            raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
         assert x.shape == (batch_size, seq_len, self.num_heads, self.head_dim), f"Embedding dimension must match num_heads * head_dim, but got {x.shape} instead of {(batch_size, seq_len, self.num_heads, self.head_dim)}"
         logger.debug(f"Reshaped input tensor shape: {x.shape}")
 

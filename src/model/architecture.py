@@ -149,52 +149,30 @@ def apply_rotary_pos_emb(x, sincos, head_dim, num_heads):
     if x.shape[-1] != expected_embed_dim:
         raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {x.shape[-1]}")
 
-    split_index = expected_embed_dim // 2
-    print(f"split_index: {split_index}")
-    print(f"x shape before split: {x.shape}")
-    if x.shape[-1] != expected_embed_dim:
-        raise ValueError(f"Expected x's last dimension to be {expected_embed_dim}, but got {x.shape[-1]}")
+    # Directly reshape x to the desired shape
+    print(f"x shape before reshaping: {x.shape}")
+    x = x.reshape((x.shape[0], x.shape[1], num_heads, head_dim))
+    print(f"x shape after reshaping: {x.shape}")
 
-    # Additional debug logging to trace the shape of x and the value of split_index
-    print(f"x shape right before split: {x.shape}")
-    print(f"split_index value: {split_index}")
-
-    # Ensure split_index is valid
-    if split_index <= 0 or split_index >= x.shape[-1]:
-        raise ValueError(f"Invalid split_index: {split_index}. It must be between 1 and {x.shape[-1] - 1}")
-
-    # Perform the split operation using the calculated split_index
-    x1, x2 = jnp.split(x, [split_index], axis=-1)
-    if x1.shape[-1] != split_index or x2.shape[-1] != (expected_embed_dim - split_index):
-        raise ValueError(f"Shape mismatch after split: x1 shape {x1.shape}, x2 shape {x2.shape}")
-
-    print(f"x1 shape after split: {x1.shape}")
-    print(f"x2 shape after split: {x2.shape}")
-
-    # Ensure x2 is not empty
-    if x2.shape[-1] == 0:
-        raise ValueError(f"x2 is empty after split. x2 shape: {x2.shape}")
-
-    # Reshape sin and cos to match the dimensions of x1 for broadcasting
-    sin = sin.reshape((1, x1.shape[1], num_heads, head_dim))
-    cos = cos.reshape((1, x1.shape[1], num_heads, head_dim))
-
+    # Reshape sin and cos to match the dimensions of x for broadcasting
+    print(f"sin shape before reshaping: {sin.shape}")
+    print(f"cos shape before reshaping: {cos.shape}")
+    sin = sin.reshape((1, x.shape[1], num_heads, head_dim))
+    cos = cos.reshape((1, x.shape[1], num_heads, head_dim))
     print(f"sin shape after reshaping: {sin.shape}")
     print(f"cos shape after reshaping: {cos.shape}")
 
-    # Ensure x1 has the correct shape before rotation
-    if len(x1.shape) != 4:
-        x1 = x1.reshape((x1.shape[0], x1.shape[1], num_heads, head_dim))
-    if x1.shape[-1] != head_dim:
-        raise ValueError(f"Shape mismatch: x1 last dimension {x1.shape[-1]} does not match head_dim {head_dim}")
-    print(f"x1 shape after reshaping: {x1.shape}")
+    # Ensure x has the correct shape before rotation
+    if len(x.shape) != 4:
+        x = x.reshape((x.shape[0], x.shape[1], num_heads, head_dim))
+    if x.shape[-1] != head_dim:
+        raise ValueError(f"Shape mismatch: x last dimension {x.shape[-1]} does not match head_dim {head_dim}")
+    print(f"x shape after reshaping: {x.shape}")
 
-    x1_rotated = (x1 * cos) + (rotate_half(x1) * sin)
-    print(f"x1_rotated shape after element-wise operations: {x1_rotated.shape}")
-    assert x1_rotated.shape == x1.shape, f"Shape mismatch: x1_rotated shape {x1_rotated.shape}, x1 shape {x1.shape}"
-    concatenated = jnp.concatenate([x1_rotated, x2], axis=-1)
-    print(f"concatenated shape: {concatenated.shape}")
-    return concatenated
+    x_rotated = (x * cos) + (rotate_half(x) * sin)
+    print(f"x_rotated shape after element-wise operations: {x_rotated.shape}")
+    assert x_rotated.shape == x.shape, f"Shape mismatch: x_rotated shape {x_rotated.shape}, x shape {x.shape}"
+    return x_rotated
 
 
 

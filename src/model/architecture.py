@@ -143,14 +143,20 @@ class ImprovedAttention(nn.Module):
 
         if mask is not None:
             print(f"Mask shape before broadcasting: {mask.shape}")
-            print(f"Attention tensor shape: {attn.shape}")
+            print(f"Mask values before broadcasting: {mask}")
+
             # Ensure mask is a 2D tensor [batch_size, sequence_length]
             if len(mask.shape) == 2:
                 mask = jnp.expand_dims(mask, axis=(-3, -2))  # Expand dimensions to [batch_size, 1, 1, sequence_length]
             elif len(mask.shape) != 4:
                 raise ValueError(f"Mask must be a 2D or 4D tensor, but got {len(mask.shape)}D tensor")
+
+            print(f"Mask shape after broadcasting: {mask.shape}")
+            print(f"Mask values after broadcasting: {mask}")
+
             attn = attn + mask  # Add mask to attention scores
-            print(f"Mask shape after adding to attention scores: {mask.shape}")
+            print(f"Attention scores shape after adding mask: {attn.shape}")
+            print(f"Attention scores values after adding mask: {attn}")
 
         attn_weights = jax.nn.softmax(attn, axis=-1)
         attn_output = jnp.matmul(attn_weights, v)
@@ -339,8 +345,9 @@ class ImprovedVishwamAIModel(nn.Module):
 
         attention_mask = self._create_mask(input_ids)
 
-        # Log the shape of attention_mask
+        # Log the shape and values of attention_mask
         print(f"attention_mask shape: {attention_mask.shape}")
+        print(f"attention_mask values: {attention_mask}")
 
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
@@ -355,8 +362,9 @@ class ImprovedVishwamAIModel(nn.Module):
 
         mask = self._create_mask(input_ids)
 
-        # Log the shape of mask
+        # Log the shape and values of mask
         print(f"mask shape: {mask.shape}")
+        print(f"mask values: {mask}")
 
         if kv_cache is None:
             kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]

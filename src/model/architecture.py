@@ -340,7 +340,8 @@ class ImprovedVishwamAIModel(nn.Module):
         if input_ids.ndim != 2 or input_ids.size == 0:
             raise ValueError(f"input_ids must be a non-empty 2D tensor, but got shape {input_ids.shape} and size {input_ids.size}")
 
-        mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
+        # Correctly create the attention mask as a 2D tensor
+        mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
 
         # Log the shape and values of the mask after creation
         print(f"mask shape after creation: {mask.shape}")
@@ -358,6 +359,10 @@ class ImprovedVishwamAIModel(nn.Module):
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Log the shape of inputs before reshaping
         print(f"inputs shape before reshaping: {inputs.shape}")
+
+        # Ensure inputs is a 2D tensor before reshaping
+        if inputs.ndim != 2:
+            raise ValueError(f"inputs must be a 2D tensor, but got shape {inputs.shape}")
 
         input_ids = inputs.reshape(-1, inputs.shape[-1])
 

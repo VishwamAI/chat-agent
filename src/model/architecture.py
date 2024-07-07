@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
 from transformers import FlaxBertForSequenceClassification, AutoTokenizer
+from transformers import PreTrainedTokenizer
 from typing import Dict, Optional, Tuple, List
 from functools import partial
 import sympy as sp

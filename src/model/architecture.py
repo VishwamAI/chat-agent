@@ -332,7 +332,11 @@ class ImprovedVishwamAIModel(nn.Module):
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
-        return jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
+        mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype:jnp.float32)
+        # Ensure the mask is a 2D tensor
+        if mask.ndim != 2:
+            mask = mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+        return mask
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Log the shape of inputs before reshaping
@@ -345,9 +349,9 @@ class ImprovedVishwamAIModel(nn.Module):
 
         attention_mask = self._create_mask(input_ids)
 
-        # Log the shape and values of attention_mask
-        print(f"attention_mask shape: {attention_mask.shape}")
-        print(f"attention_mask values: {attention_mask}")
+        # Log the shape and values of attention_mask after creation
+        print(f"attention_mask shape after creation: {attention_mask.shape}")
+        print(f"attention_mask values after creation: {attention_mask}")
 
         if not hasattr(input_ids, 'shape'):
             raise TypeError("input_ids is not a valid tensor with the shape attribute")
@@ -360,6 +364,14 @@ class ImprovedVishwamAIModel(nn.Module):
 
         # Explicitly reshape attention_mask to ensure it is a 2D tensor
         attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+
+        # Log the shape and values of attention_mask after reshaping
+        print(f"attention_mask shape after reshaping: {attention_mask.shape}")
+        print(f"attention_mask values after reshaping: {attention_mask}")
+
+        # Log the shape and values of attention_mask immediately before passing to bert_model
+        print(f"attention_mask shape before bert_model: {attention_mask.shape}")
+        print(f"attention_mask values before bert_model: {attention_mask}")
 
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.logits

@@ -67,14 +67,14 @@ class ImprovedAttention(nn.Module):
                 raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)
         else:
-            batch_size, seq_len, num_heads, head_dim = x.shape
+            batch_size, seq_len, embed_dim = x.shape
+            num_heads = self.num_heads
+            head_dim = self.head_dim
             expected_embed_dim = num_heads * head_dim
-            if head_dim != self.head_dim or num_heads != self.num_heads:
-                logger.error(f"Configuration mismatch: expected num_heads={self.num_heads}, head_dim={self.head_dim}, but got num_heads={num_heads}, head_dim={head_dim}")
-                raise ValueError(f"Configuration mismatch: expected num_heads={self.num_heads}, head_dim={self.head_dim}, but got num_heads={num_heads}, head_dim={head_dim}")
-            if x.shape[-1] != head_dim:
-                logger.error(f"Shape mismatch: x last dimension {x.shape[-1]} does not match head_dim {head_dim}")
-                raise ValueError(f"Shape mismatch: x last dimension {x.shape[-1]} does not match head_dim {head_dim}")
+            if embed_dim != expected_embed_dim:
+                logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+                raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+            x = x.reshape(batch_size, seq_len, num_heads, head_dim)
 
         logger.debug(f"Input tensor shape after unpacking: {x.shape}")
 

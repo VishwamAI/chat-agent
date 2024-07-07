@@ -50,6 +50,10 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"input_ids shape after truncation: {input_ids.shape}")
         print(f"input_ids values after truncation: {input_ids}")
 
+        # Ensure input_ids is not empty
+        if input_ids.size == 0:
+            raise ValueError("input_ids is empty after encoding")
+
         # Create attention mask
         print(f"input_ids before attention_mask creation: {input_ids}")
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)

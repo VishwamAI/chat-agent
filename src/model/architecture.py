@@ -55,7 +55,7 @@ class ImprovedAttention(nn.Module):
         if len(x.shape) == 3:
             batch_size, seq_len, embed_dim = x.shape
             num_heads = self.num_heads
-            head_dim = embed_dim // num_heads
+            head_dim = self.head_dim
             logger.debug(f"Configuration values - num_heads: {num_heads}, head_dim: {head_dim}, embed_dim: {embed_dim}")
             if head_dim == 0 or num_heads == 0:
                 logger.error(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")

@@ -319,7 +319,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
-        return (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
+        return jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Log the shape of inputs before reshaping
@@ -330,7 +330,7 @@ class ImprovedVishwamAIModel(nn.Module):
         # Log the shape of input_ids after reshaping
         print(f"input_ids shape after reshaping: {input_ids.shape}")
 
-        attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
+        attention_mask = self._create_mask(input_ids)
 
         # Log the shape of attention_mask
         print(f"attention_mask shape: {attention_mask.shape}")

@@ -81,7 +81,7 @@ def generate_responses(prompts: list, model, tokenizer):
             print(f"input_ids values before model: {input_ids}")
             print(f"attention_mask values before model: {attention_mask}")
 
-            output, _ = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
+            output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
             response = f"Error generating response: {str(e)}"

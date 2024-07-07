@@ -60,6 +60,11 @@ class ImprovedAttention(nn.Module):
             if head_dim == 0 or num_heads == 0:
                 logger.error(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
                 raise ValueError(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
+            # Ensure embed_dim matches the expected value
+            expected_embed_dim = num_heads * head_dim
+            if embed_dim != expected_embed_dim:
+                logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+                raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)
         else:
             batch_size, seq_len, num_heads, head_dim = x.shape

@@ -332,7 +332,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
-        mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype:jnp.float32)
+        mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
         # Ensure the mask is a 2D tensor
         if mask.ndim != 2:
             mask = mask.reshape((input_ids.shape[0], input_ids.shape[1]))

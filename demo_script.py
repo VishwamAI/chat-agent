@@ -63,6 +63,8 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"attention_mask values after creation: {attention_mask}")
 
         # Ensure attention_mask is not empty and has the correct shape
+        if attention_mask.size == 0:
+            raise ValueError("attention_mask is empty after creation")
         if attention_mask.shape != (input_ids.shape[0], input_ids.shape[1]):
             raise ValueError(f"Attention mask shape mismatch: expected {(input_ids.shape[0], input_ids.shape[1])}, but got {attention_mask.shape}")
 

@@ -29,7 +29,7 @@ class ImprovedAttention(nn.Module):
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
         self.qkv_dense = nn.Dense(3 * self.num_heads * self.head_dim)
-        logger.debug(f"Setup - num_heads: {self.num_heads}, head_dim: {self.head_dim}, qkv_dense output dim: {3 * self.num_heads * self.head_dim}")
+        print(f"Setup - num_heads: {self.num_heads}, head_dim: {self.head_dim}, qkv_dense output dim: {3 * self.num_heads * self.head_dim}")
 
     @property
     def rotary_emb(self):
@@ -42,69 +42,69 @@ class ImprovedAttention(nn.Module):
         cos = jnp.cos(jnp.arange(seq_len * head_dim)).reshape((1, seq_len, head_dim))
         sin = jnp.broadcast_to(sin, (1, seq_len, num_heads, head_dim))
         cos = jnp.broadcast_to(cos, (1, seq_len, num_heads, head_dim))
-        logger.debug(f"Generated sin shape: {sin.shape}")
-        logger.debug(f"Generated cos shape: {cos.shape}")
+        print(f"Generated sin shape: {sin.shape}")
+        print(f"Generated cos shape: {cos.shape}")
         return sin, cos
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-        logger.debug(f"Input tensor shape before unpacking: {x.shape}")
+        print(f"Input tensor shape before unpacking: {x.shape}")
 
         # Check if x has three dimensions and reshape accordingly
         if len(x.shape) == 3:
             batch_size, seq_len, embed_dim = x.shape
             num_heads = self.num_heads
             head_dim = self.head_dim
-            logger.debug(f"Configuration values - num_heads: {num_heads}, head_dim: {head_dim}, embed_dim: {embed_dim}")
+            print(f"Configuration values - num_heads: {num_heads}, head_dim: {head_dim}, embed_dim: {embed_dim}")
             if head_dim == 0 or num_heads == 0:
-                logger.error(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
+                print(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
                 raise ValueError(f"Invalid head_dim or num_heads: head_dim={head_dim}, num_heads={num_heads}")
             # Ensure embed_dim matches the expected value
             expected_embed_dim = num_heads * head_dim
             if embed_dim != expected_embed_dim:
-                logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+                print(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
                 raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)  # Reshape to match the expected shape
         else:
             raise ValueError(f"Input tensor must have 2 or 3 dimensions, but got {len(x.shape)} dimensions")
 
-        logger.debug(f"Input tensor shape after unpacking: {x.shape}")
+        print(f"Input tensor shape after unpacking: {x.shape}")
 
         # Log the shape of x before applying qkv_dense
-        logger.debug(f"Input tensor shape before qkv_dense: {x.shape}")
-        logger.debug(f"Input tensor values before qkv_dense: {x}")
+        print(f"Input tensor shape before qkv_dense: {x.shape}")
+        print(f"Input tensor values before qkv_dense: {x}")
 
         # Apply qkv_dense to the reshaped tensor
         qkv = self.qkv_dense(x)  # Pass the reshaped tensor to qkv_dense
 
         # Log the shape and values of qkv after applying qkv_dense
-        logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
-        logger.debug(f"qkv values after qkv_dense: {qkv}")
+        print(f"qkv shape after qkv_dense: {qkv.shape}")
+        print(f"qkv values after qkv_dense: {qkv}")
 
         # Ensure qkv has the expected shape
         expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
-        logger.debug(f"Expected qkv shape: {expected_qkv_shape}")
+        print(f"Expected qkv shape: {expected_qkv_shape}")
         assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
 
         # Reshape qkv to match the expected shape and split into q, k, v
         qkv = qkv.reshape(batch_size, seq_len, 3, self.num_heads, self.head_dim)  # Reshape to match the expected shape
-        logger.debug(f"qkv shape after reshaping: {qkv.shape}")
+        print(f"qkv shape after reshaping: {qkv.shape}")
         q, k, v = jnp.split(qkv, 3, axis=2)  # Split along the third axis to ensure correct shapes
 
         # Log the shapes of qkv, q, k, and v
-        logger.debug(f"qkv shape: {qkv.shape}")
-        logger.debug(f"q shape after splitting: {q.shape}")
-        logger.debug(f"k shape after splitting: {k.shape}")
-        logger.debug(f"v shape after splitting: {v.shape}")
+        print(f"qkv shape: {qkv.shape}")
+        print(f"q shape after splitting: {q.shape}")
+        print(f"k shape after splitting: {k.shape}")
+        print(f"v shape after splitting: {v.shape}")
 
         sincos = self._create_rotary_emb(seq_len, self.num_heads)
 
         # Log the shapes before applying rotary positional embeddings
-        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
-        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
-        logger.debug(f"sin shape before apply_rotary_pos_emb: {sincos[0].shape}")
-        logger.debug(f"cos shape before apply_rotary_pos_emb: {sincos[1].shape}")
+        print(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        print(f"k shape before apply_rotary_pos_emb: {k.shape}")
+        print(f"sin shape before apply_rotary_pos_emb: {sincos[0].shape}")
+        print(f"cos shape before apply_rotary_pos_emb: {sincos[1].shape}")
 
         # Ensure q and k have the correct shape before applying rotary positional embeddings
         expected_embed_dim = self.num_heads * self.head_dim
@@ -112,8 +112,8 @@ class ImprovedAttention(nn.Module):
             raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got q shape {q.shape[-1]} and k shape {k.shape[-1]}")
 
         # Additional debug logging to track tensor shapes
-        logger.debug(f"q shape before apply_rotary_pos_emb: {q.shape}")
-        logger.debug(f"k shape before apply_rotary_pos_emb: {k.shape}")
+        print(f"q shape before apply_rotary_pos_emb: {q.shape}")
+        print(f"k shape before apply_rotary_pos_emb: {k.shape}")
 
         # Print the shapes of q and k before calling apply_rotary_pos_emb
         print(f"q shape before apply_rotary_pos_emb: {q.shape}")
@@ -123,8 +123,8 @@ class ImprovedAttention(nn.Module):
         k = apply_rotary_pos_emb(k, sincos, self.head_dim, self.num_heads)
 
         # Log the shapes after applying rotary positional embeddings
-        logger.debug(f"q shape after apply_rotary_pos_emb: {q.shape}")
-        logger.debug(f"k shape after apply_rotary_pos_emb: {k.shape}")
+        print(f"q shape after apply_rotary_pos_emb: {q.shape}")
+        print(f"k shape after apply_rotary_pos_emb: {k.shape}")
 
         if kv_cache is not None:
             if kv_cache['k'] is None:
@@ -139,11 +139,11 @@ class ImprovedAttention(nn.Module):
         attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / jnp.sqrt(self.head_dim)
 
         if mask is not None:
-            logger.debug(f"Mask shape before broadcasting: {mask.shape}")
-            logger.debug(f"Attention tensor shape: {attn.shape}")
+            print(f"Mask shape before broadcasting: {mask.shape}")
+            print(f"Attention tensor shape: {attn.shape}")
             mask = mask[:, :, :attn.shape[-2], :attn.shape[-1]]  # Slice mask to match attention tensor's dimensions
             mask = jnp.broadcast_to(mask, (batch_size, self.num_heads, attn.shape[-2], attn.shape[-1]))  # Ensure mask is expanded to match attn tensor's shape
-            logger.debug(f"Mask shape after broadcasting: {mask.shape}")
+            print(f"Mask shape after broadcasting: {mask.shape}")
             assert mask.shape == attn.shape, f"Mask shape {mask.shape} does not match attention tensor shape {attn.shape}"
             attn = jnp.where(mask, attn, float('-inf'))
 

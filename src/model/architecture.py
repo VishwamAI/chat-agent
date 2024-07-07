@@ -332,10 +332,27 @@ class ImprovedVishwamAIModel(nn.Module):
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
+        # Log the shape and values of input_ids before creating the mask
+        print(f"input_ids shape before creating mask: {input_ids.shape}")
+        print(f"input_ids values before creating mask: {input_ids}")
+
+        # Ensure input_ids is a non-empty array with the correct dimensions
+        if input_ids.ndim != 2 or input_ids.size == 0:
+            raise ValueError(f"input_ids must be a non-empty 2D tensor, but got shape {input_ids.shape} and size {input_ids.size}")
+
         mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
+
+        # Log the shape and values of the mask after creation
+        print(f"mask shape after creation: {mask.shape}")
+        print(f"mask values after creation: {mask}")
+
         # Ensure the mask is a 2D tensor
         if mask.ndim != 2:
+            print(f"Mask is not a 2D tensor, reshaping mask with shape {mask.shape}")
             mask = mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+            print(f"Mask shape after reshaping: {mask.shape}")
+            print(f"Mask values after reshaping: {mask}")
+
         return mask
 
     def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:

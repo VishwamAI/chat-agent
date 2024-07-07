@@ -136,7 +136,12 @@ def generate_responses(prompts: list, model, tokenizer):
         # Correctly create the attention mask as a 2D tensor
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
 
-        # Explicitly reshape attention_mask to ensure it is a 2D tensor
+        # Ensure attention_mask is a 2D tensor
+        if attention_mask.ndim == 0:
+            attention_mask = jnp.expand_dims(attention_mask, axis=0)
+        if attention_mask.ndim == 1:
+            attention_mask = jnp.expand_dims(attention_mask, axis=1)
+
         attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
 
         # Debugging: Print the shape and values of attention_mask after creation

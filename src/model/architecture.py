@@ -350,7 +350,7 @@ class ImprovedVishwamAIModel(nn.Module):
         # Ensure the mask is a 2D tensor
         if mask.ndim != 2:
             print(f"Mask is not a 2D tensor, reshaping mask with shape {mask.shape}")
-            mask = mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+            mask = jnp.broadcast_to(mask, (input_ids.shape[0], input_ids.shape[1]))
             print(f"Mask shape after reshaping: {mask.shape}")
             print(f"Mask values after reshaping: {mask}")
 

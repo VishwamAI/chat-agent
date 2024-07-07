@@ -46,18 +46,13 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"input_ids shape after truncation: {input_ids.shape}")
 
         # Create attention mask
-        attention_mask = (input_ids != tokenizer.pad_token_id).astype(int)
+        attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
 
-        # Debugging: Print the shape of attention_mask
+        # Debugging: Print the shape and values of input_ids and attention_mask
+        print(f"input_ids shape: {input_ids.shape}")
+        print(f"input_ids values: {input_ids}")
         print(f"attention_mask shape: {attention_mask.shape}")
-
-        # Ensure attention_mask has the correct shape
-        attention_mask = jnp.expand_dims(attention_mask, axis=1)
-        attention_mask = jnp.broadcast_to(attention_mask, (input_ids.shape[0], model.config['num_heads'], input_ids.shape[1]))
-
-        # Debugging: Print the shape of attention_mask after expanding dimensions
-        print(f"attention_mask shape after expanding dimensions: {attention_mask.shape}")
-        print(f"attention_mask values after expanding dimensions: {attention_mask}")
+        print(f"attention_mask values: {attention_mask}")
 
         try:
             # Debugging: Print the shape of input_ids and attention_mask before passing to the model

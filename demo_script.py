@@ -134,7 +134,7 @@ def generate_responses(prompts: list, model, tokenizer):
             raise ValueError("input_ids or tokenizer.pad_token_id is not correctly defined")
 
         # Correctly create the attention mask as a 2D tensor
-        attention_mask = jnp.array(input_ids != tokenizer.pad_token_id, dtype=jnp.float32)
+        attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
 
         # Debugging: Print the shape and values of attention_mask after creation
         print(f"attention_mask shape after creation: {attention_mask.shape}")

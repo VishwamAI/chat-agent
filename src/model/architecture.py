@@ -77,7 +77,7 @@ class ImprovedAttention(nn.Module):
         logger.debug(f"Input tensor values before qkv_dense: {x}")
 
         # Apply qkv_dense to the reshaped tensor
-        qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
+        qkv = self.qkv_dense(x)  # Pass the reshaped tensor to qkv_dense
 
         # Log the shape and values of qkv after applying qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
@@ -89,8 +89,8 @@ class ImprovedAttention(nn.Module):
         assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
 
         # Reshape qkv to match the expected shape and split into q, k, v
-        qkv = qkv.reshape(batch_size, seq_len, 3 * self.num_heads * self.head_dim)  # Reshape to match the expected shape
-        q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes
+        qkv = qkv.reshape(batch_size, seq_len, 3, self.num_heads, self.head_dim)  # Reshape to match the expected shape
+        q, k, v = jnp.split(qkv, 3, axis=2)  # Split along the third axis to ensure correct shapes
 
         # Log the shapes of qkv, q, k, and v
         logger.debug(f"qkv shape: {qkv.shape}")

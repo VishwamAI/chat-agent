@@ -65,7 +65,9 @@ class ImprovedAttention(nn.Module):
             if embed_dim != expected_embed_dim:
                 print(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
                 raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
+            print(f"Input tensor shape before reshaping: {x.shape}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)  # Reshape to match the expected shape
+            print(f"Input tensor shape after reshaping: {x.shape}")
         else:
             raise ValueError(f"Input tensor must have 2 or 3 dimensions, but got {len(x.shape)} dimensions")
 
@@ -260,65 +262,105 @@ class ImprovedTransformerBlock(nn.Module):
         self.dropout = nn.Dropout(self.config['dropout_rate'])
 
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None, is_training: bool = False) -> jnp.ndarray:
+        # Log the shape of x before layer normalization
+        print(f"x shape before layer_norm1: {x.shape}")
+
         x = self.layer_norm1(x)
+
+        # Log the shape of x after layer normalization
+        print(f"x shape after layer_norm1: {x.shape}")
+
         attention_output = self.attention(x, mask, kv_cache)
+
+        # Log the shape of attention_output after attention mechanism
+        print(f"attention_output shape: {attention_output.shape}")
+
         attention_output = self.dropout(attention_output, deterministic=not is_training)
 
-        # Log the shapes of x and attention_output before broadcasting
-        logger.debug(f"x shape before broadcasting: {x.shape}")
-        logger.debug(f"attention_output shape: {attention_output.shape}")
-
-        # Ensure x and attention_output have compatible shapes
-        if x.shape != attention_output.shape:
-            if len(x.shape) == len(attention_output.shape):
-                if x.size == attention_output.size:
-                    x = jnp.reshape(x, attention_output.shape)  # Reshape x to match attention_output's shape
-                else:
-                    # Handle cases where the shapes are not directly compatible for reshaping
-                    raise ValueError(f"Incompatible shapes for broadcasting: {x.shape} and {attention_output.shape}")
-            else:
-                # Handle cases where the number of dimensions differ
-                while len(x.shape) < len(attention_output.shape):
-                    x = jnp.expand_dims(x, axis=-1)  # Add new axes at the last dimension
-                # Use jnp.tile to repeat x along the new axes to match the shape of attention_output
-                tile_shape = [1] * len(x.shape)
-                for i in range(len(x.shape)):
-                    if x.shape[i] != attention_output.shape[i]:
-                        tile_shape[i] = attention_output.shape[i] // x.shape[i]
-                x = jnp.tile(x, tile_shape)
-                logger.debug(f"x shape after tiling: {x.shape}")
-                if x.shape != attention_output.shape:
-                    raise ValueError(f"Incompatible number of dimensions for broadcasting: {x.shape} and {attention_output.shape}")
-
-        # Log the shapes of x and attention_output after reshaping
-        logger.debug(f"x shape after reshaping: {x.shape}")
-        logger.debug(f"attention_output shape after reshaping: {attention_output.shape}")
+        # Log the shape of attention_output after dropout
+        print(f"attention_output shape after dropout: {attention_output.shape}")
 
         x = x + attention_output
+
+        # Log the shape of x after adding attention_output
+        print(f"x shape after adding attention_output: {x.shape}")
+
         x = self.layer_norm2(x)
+
+        # Log the shape of x after layer normalization
+        print(f"x shape after layer_norm2: {x.shape}")
+
         ff_output = self.feed_forward(x)
+
+        # Log the shape of ff_output after feed-forward network
+        print(f"ff_output shape: {ff_output.shape}")
+
         ff_output = self.dropout(ff_output, deterministic=not is_training)
 
-        # Log the shape of ff_output before ensuring compatibility with x
-        logger.debug(f"ff_output shape before ensuring compatibility: {ff_output.shape}")
-
-        # Ensure ff_output has the same shape as x before addition
-        if ff_output.shape != x.shape:
-            if ff_output.size == x.size:
-                ff_output = jnp.reshape(ff_output, x.shape)  # Reshape ff_output to match x's shape
-            else:
-                # Slice ff_output to match the last dimension of x if possible
-                if ff_output.shape[-1] > x.shape[-1]:
-                    ff_output = ff_output[..., :x.shape[-1]]
-                else:
-                    raise ValueError(f"Incompatible shapes for broadcasting: {ff_output.shape} and {x.shape}")
-
-        # Log the shape of ff_output after ensuring compatibility with x
-        logger.debug(f"ff_output shape after ensuring compatibility: {ff_output.shape}")
+        # Log the shape of ff_output after dropout
+        print(f"ff_output shape after dropout: {ff_output.shape}")
 
         x = x + ff_output
 
+        # Log the shape of x after adding ff_output
+        print(f"x shape after adding ff_output: {x.shape}")
+
         return x
+
+class ImprovedVishwamAIModel(nn.Module):
+    config: Dict
+    tokenizer: PreTrainedTokenizer
+    bert_model: nn.Module
+    num_layers: int
+    vocab_size: int
+
+    def setup(self):
+        self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
+
+    def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
+        return (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
+
+    def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
+        # Log the shape of inputs before reshaping
+        print(f"inputs shape before reshaping: {inputs.shape}")
+
+        input_ids = inputs.reshape(-1, inputs.shape[-1])
+
+        # Log the shape of input_ids after reshaping
+        print(f"input_ids shape after reshaping: {input_ids.shape}")
+
+        attention_mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
+
+        # Log the shape of attention_mask
+        print(f"attention_mask shape: {attention_mask.shape}")
+
+        if not hasattr(input_ids, 'shape'):
+            raise TypeError("input_ids is not a valid tensor with the shape attribute")
+
+        input_ids = jax.device_put(input_ids)
+
+        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
+        x = bert_outputs.logits
+
+        # Log the shape of x after BERT model
+        print(f"x shape after BERT model: {x.shape}")
+
+        mask = self._create_mask(input_ids)
+
+        # Log the shape of mask
+        print(f"mask shape: {mask.shape}")
+
+        if kv_cache is None:
+            kv_cache = [{'k': None, 'v': None} for _ in range(self.num_layers)]
+
+        for i in range(self.num_layers):
+            x = self.transformer_blocks[i](x, mask, kv_cache[i], is_training)
+
+            # Log the shape of x after each transformer block
+            print(f"x shape after transformer block {i}: {x.shape}")
+
+        dense_layer = nn.Dense(self.vocab_size)
+        return dense_layer(x), kv_cache
 
 class ImprovedVishwamAIModel(nn.Module):
     config: Dict

@@ -1,3 +1,62 @@
+import flax.linen as nn
+
+class VishwamAILLM(nn.Module):
+    config: dict
+
+    def setup(self):
+        self.embed_dim = self.config['embed_dim']
+        self.num_heads = self.config['num_heads']
+        self.head_dim = self.config['head_dim']
+        self.qkv_dense = nn.Dense(self.embed_dim * 3)
+        self.out_dense = nn.Dense(self.embed_dim)
+
+    def __call__(self, input_ids, attention_mask=None, is_training=False):
+        # Debugging: Print the shape and values of attention_mask at the start of __call__
+        print(f"attention_mask shape at start of __call__: {attention_mask.shape}")
+        print(f"attention_mask values at start of __call__: {attention_mask}")
+
+        # Ensure attention_mask is a 2D tensor
+        if attention_mask is not None and attention_mask.ndim != 2:
+            raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
+
+        # Additional debugging: Print the shape and values of attention_mask before any operations
+        print(f"attention_mask shape before operations: {attention_mask.shape}")
+        print(f"attention_mask values before operations: {attention_mask}")
+
+        # Apply the attention mechanism
+        qkv = self.qkv_dense(input_ids)
+        q, k, v = jnp.split(qkv, 3, axis=-1)
+
+        # Additional debugging: Print the shape and values of q, k, v
+        print(f"q shape: {q.shape}")
+        print(f"k shape: {k.shape}")
+        print(f"v shape: {v.shape}")
+
+        # Compute attention scores
+        attn_scores = jnp.einsum('...qd,...kd->...qk', q, k) / jnp.sqrt(self.head_dim)
+
+        # Apply attention mask
+        if attention_mask is not None:
+            attn_scores = attn_scores + attention_mask
+
+        # Additional debugging: Print the shape and values of attn_scores after applying attention_mask
+        print(f"attn_scores shape after applying attention_mask: {attn_scores.shape}")
+        print(f"attn_scores values after applying attention_mask: {attn_scores}")
+
+        # Compute attention weights
+        attn_weights = nn.softmax(attn_scores, axis=-1)
+
+        # Compute attention output
+        attn_output = jnp.einsum('...qk,...vd->...qd', attn_weights, v)
+
+        # Apply output dense layer
+        output = self.out_dense(attn_output)
+
+        # Additional debugging: Print the shape and values of output
+        print(f"output shape: {output.shape}")
+        print(f"output values: {output}")
+
+        return output
 import os
 import pandas as pd
 import yaml
@@ -57,6 +116,20 @@ def generate_responses(prompts: list, model, tokenizer):
         # Create attention mask
         print(f"input_ids before attention_mask creation: {input_ids}")
         print(f"tokenizer.pad_token_id: {tokenizer.pad_token_id}")
+
+        # Ensure input_ids is a 2D tensor
+        if input_ids.ndim != 2:
+            raise ValueError(f"input_ids is not a 2D tensor: {input_ids.shape}")
+
+        # Debugging: Print the values of input_ids and tokenizer.pad_token_id before comparison
+        print(f"input_ids values before comparison: {input_ids}")
+        print(f"tokenizer.pad_token_id value: {tokenizer.pad_token_id}")
+
+        # Ensure input_ids and tokenizer.pad_token_id are correctly defined
+        if input_ids.size == 0 or tokenizer.pad_token_id is None:
+            raise ValueError("input_ids or tokenizer.pad_token_id is not correctly defined")
+
+        # Correctly create the attention mask as a 2D tensor
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
 
         # Debugging: Print the shape and values of attention_mask after creation
@@ -64,22 +137,16 @@ def generate_responses(prompts: list, model, tokenizer):
         print(f"attention_mask values after creation: {attention_mask}")
 
         # Ensure attention_mask is a 2D tensor
-        if attention_mask.ndim < 2:
-            attention_mask = jnp.expand_dims(attention_mask, axis=0)
-
-        # Additional check to ensure attention_mask is 2D
         if attention_mask.ndim != 2:
-            raise ValueError(f"Attention mask is not 2D after reshaping: {attention_mask.shape}")
-
-        # Debugging: Print the shape and values of attention_mask after ensuring 2D
-        print(f"attention_mask shape after ensuring 2D: {attention_mask.shape}")
-        print(f"attention_mask values after ensuring 2D: {attention_mask}")
+            raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
 
         # Ensure attention_mask is not empty and has the correct shape
         if attention_mask.size == 0:
             raise ValueError("attention_mask is empty after creation")
         if attention_mask.shape != (input_ids.shape[0], input_ids.shape[1]):
-            raise ValueError(f"Attention mask shape mismatch: expected {(input_ids.shape[0], input_ids.shape[1])}, but got {attention_mask.shape}")
+            # Reshape attention_mask to match the expected shape
+            attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+            print(f"attention_mask reshaped to: {attention_mask.shape}")
 
         # Debugging: Print the shape and values of input_ids and attention_mask
         print(f"input_ids shape: {input_ids.shape}")
@@ -101,11 +168,25 @@ def generate_responses(prompts: list, model, tokenizer):
             # Additional debugging: Print the shape of attention_mask immediately before model.apply
             print(f"attention_mask shape immediately before model.apply: {attention_mask.shape}")
             print(f"attention_mask values immediately before model.apply: {attention_mask}")
+            print(f"attention_mask dtype immediately before model.apply: {attention_mask.dtype}")
+
+            # Additional debugging: Print the type of attention_mask immediately before model.apply
+            print(f"attention_mask type immediately before model.apply: {type(attention_mask)}")
 
             output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
+
+            # Additional debugging: Print the shape and values of output after model.apply
+            print(f"output shape after model.apply: {output.shape}")
+            print(f"output values after model.apply: {output}")
+
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:
             response = f"Error generating response: {str(e)}"
+            print(f"Exception: {str(e)}")
+            print(f"input_ids shape at exception: {input_ids.shape}")
+            print(f"attention_mask shape at exception: {attention_mask.shape}")
+            print(f"input_ids values at exception: {input_ids}")
+            print(f"attention_mask values at exception: {attention_mask}")
 
         # Append the bot's response to the conversation history
         conversation_history.append(response)

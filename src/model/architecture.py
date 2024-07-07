@@ -67,14 +67,7 @@ class ImprovedAttention(nn.Module):
                 raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
             x = x.reshape(batch_size, seq_len, num_heads, head_dim)
         else:
-            batch_size, seq_len, embed_dim = x.shape
-            num_heads = self.num_heads
-            head_dim = self.head_dim
-            expected_embed_dim = num_heads * head_dim
-            if embed_dim != expected_embed_dim:
-                logger.error(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
-                raise ValueError(f"Embedding dimension mismatch: expected {expected_embed_dim}, but got {embed_dim}")
-            x = x.reshape(batch_size, seq_len, num_heads, head_dim)
+            raise ValueError(f"Input tensor must have 2 or 3 dimensions, but got {len(x.shape)} dimensions")
 
         logger.debug(f"Input tensor shape after unpacking: {x.shape}")
 

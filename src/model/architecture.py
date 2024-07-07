@@ -71,6 +71,8 @@ class ImprovedAttention(nn.Module):
 
         logger.debug(f"Input tensor shape after unpacking: {x.shape}")
 
+        # Log the shape of x before applying qkv_dense
+        logger.debug(f"Input tensor shape before qkv_dense: {x.shape}")
         qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
         expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)

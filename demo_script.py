@@ -56,7 +56,12 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Create attention mask
         print(f"input_ids before attention_mask creation: {input_ids}")
+        print(f"tokenizer.pad_token_id: {tokenizer.pad_token_id}")
         attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
+
+        # Debugging: Print the shape and values of attention_mask after creation
+        print(f"attention_mask shape after creation: {attention_mask.shape}")
+        print(f"attention_mask values after creation: {attention_mask}")
 
         # Ensure attention_mask is a 2D tensor
         if attention_mask.ndim < 2:
@@ -66,9 +71,9 @@ def generate_responses(prompts: list, model, tokenizer):
         if attention_mask.ndim != 2:
             raise ValueError(f"Attention mask is not 2D after reshaping: {attention_mask.shape}")
 
-        # Debugging: Print the shape and values of attention_mask after creation
-        print(f"attention_mask shape after creation: {attention_mask.shape}")
-        print(f"attention_mask values after creation: {attention_mask}")
+        # Debugging: Print the shape and values of attention_mask after ensuring 2D
+        print(f"attention_mask shape after ensuring 2D: {attention_mask.shape}")
+        print(f"attention_mask values after ensuring 2D: {attention_mask}")
 
         # Ensure attention_mask is not empty and has the correct shape
         if attention_mask.size == 0:
@@ -95,6 +100,7 @@ def generate_responses(prompts: list, model, tokenizer):
 
             # Additional debugging: Print the shape of attention_mask immediately before model.apply
             print(f"attention_mask shape immediately before model.apply: {attention_mask.shape}")
+            print(f"attention_mask values immediately before model.apply: {attention_mask}")
 
             output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)

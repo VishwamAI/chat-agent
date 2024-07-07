@@ -354,6 +354,10 @@ class ImprovedVishwamAIModel(nn.Module):
 
         input_ids = jax.device_put(input_ids)
 
+        # Ensure attention_mask is a 2D tensor before passing to the bert_model
+        if attention_mask.ndim != 2:
+            raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
+
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.logits
 

@@ -145,9 +145,8 @@ class ImprovedAttention(nn.Module):
             print(f"Mask shape before broadcasting: {mask.shape}")
             print(f"Attention tensor shape: {attn.shape}")
             # Ensure mask is used as a 2D tensor [batch_size, sequence_length]
-            mask = mask[:, None, :]  # Expand dimensions to [batch_size, 1, sequence_length]
-            print(f"Mask shape after expand_dims: {mask.shape}")
-            attn = attn + mask  # Add mask to attention scores
+            attn = attn + mask  # Add mask to attention scores without expanding dimensions
+            print(f"Mask shape after adding to attention scores: {mask.shape}")
 
         attn_weights = jax.nn.softmax(attn, axis=-1)
         attn_output = jnp.matmul(attn_weights, v)

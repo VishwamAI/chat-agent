@@ -134,7 +134,7 @@ def generate_responses(prompts: list, model, tokenizer):
             raise ValueError("input_ids or tokenizer.pad_token_id is not correctly defined")
 
         # Correctly create the attention mask as a 2D tensor
-        attention_mask = (input_ids != tokenizer.pad_token_id).astype(jnp.float32)
+        attention_mask = jnp.array(input_ids != tokenizer.pad_token_id, dtype=jnp.float32)
 
         # Debugging: Print the shape and values of attention_mask after creation
         print(f"attention_mask shape after creation: {attention_mask.shape}")
@@ -142,7 +142,7 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Ensure attention_mask is a 2D tensor
         if attention_mask.ndim != 2:
-            raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
+            attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
 
         # Ensure attention_mask is not empty and has the correct shape
         if attention_mask.size == 0:

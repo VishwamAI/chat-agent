@@ -142,7 +142,7 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Ensure attention_mask is a 2D tensor
         if attention_mask.ndim != 2:
-            attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+            raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
 
         # Ensure attention_mask is not empty and has the correct shape
         if attention_mask.size == 0:

@@ -358,6 +358,9 @@ class ImprovedVishwamAIModel(nn.Module):
         if attention_mask.ndim != 2:
             raise ValueError(f"Attention mask is not a 2D tensor: {attention_mask.shape}")
 
+        # Explicitly reshape attention_mask to ensure it is a 2D tensor
+        attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
+
         bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.logits
 

@@ -93,13 +93,18 @@ def main():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
+    # Ensure embed_dim matches num_heads * head_dim
+    expected_embed_dim = config['num_heads'] * config['head_dim']
+    if config['embed_dim'] != expected_embed_dim:
+        raise ValueError(f"Configuration error: embed_dim {config['embed_dim']} does not match num_heads * head_dim {expected_embed_dim}")
+
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
 
     # Initialize model
     model = VishwamAILLM(config=config)
     rng = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length'], config['num_heads'] * config['head_dim']), dtype=jnp.float32)
+    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.float32)
 
     # Debugging: Print the shape and values of dummy_input
     print(f"dummy_input shape: {dummy_input.shape}")

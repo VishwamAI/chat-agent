@@ -341,7 +341,7 @@ class ImprovedVishwamAIModel(nn.Module):
             raise ValueError(f"input_ids must be a non-empty 2D tensor, but got shape {input_ids.shape} and size {input_ids.size}")
 
         # Correctly create the attention mask as a 2D tensor
-        mask = (input_ids != self.tokenizer.pad_token_id).astype(jnp.float32)
+        mask = jnp.array(input_ids != self.tokenizer.pad_token_id, dtype=jnp.float32)
 
         # Log the shape and values of the mask after creation
         print(f"mask shape after creation: {mask.shape}")

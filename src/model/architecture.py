@@ -76,6 +76,7 @@ class ImprovedAttention(nn.Module):
         qkv = self.qkv_dense(x.reshape(batch_size, seq_len, -1))  # Flatten the last two dimensions before passing to qkv_dense
         logger.debug(f"qkv shape after qkv_dense: {qkv.shape}")
         expected_qkv_shape = (batch_size, seq_len, 3 * self.num_heads * self.head_dim)
+        logger.debug(f"Expected qkv shape: {expected_qkv_shape}")
         assert qkv.shape == expected_qkv_shape, f"Expected qkv shape {expected_qkv_shape}, but got {qkv.shape}"
         qkv = qkv.reshape(batch_size, seq_len, 3 * self.num_heads * self.head_dim)  # Reshape to match the expected shape
         q, k, v = jnp.split(qkv, 3, axis=-1)  # Split along the last axis to ensure correct shapes

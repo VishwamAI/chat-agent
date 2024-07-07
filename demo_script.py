@@ -83,6 +83,10 @@ def generate_responses(prompts: list, model, tokenizer):
             print(f"input_ids values before model: {input_ids}")
             print(f"attention_mask values before model: {attention_mask}")
 
+            # Ensure attention_mask is correctly shaped before passing to the model
+            if attention_mask.shape != (input_ids.shape[0], 1, 1, input_ids.shape[1]):
+                raise ValueError(f"Attention mask shape mismatch before model: expected {(input_ids.shape[0], 1, 1, input_ids.shape[1])}, but got {attention_mask.shape}")
+
             output = model.apply({'params': model.params}, input_ids, is_training=False, attention_mask=attention_mask)
             response = tokenizer.decode(output[0], skip_special_tokens=True)
         except Exception as e:

@@ -48,8 +48,18 @@ class ImprovedAttention(nn.Module):
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[jnp.ndarray] = None):
         if len(x.shape) == 2:
             x = x[:, :, None]  # Add a third dimension if x is two-dimensional
-        batch_size, seq_len, num_heads, head_dim = x.shape
-        logger.debug(f"Input tensor shape: {x.shape}")
+        logger.debug(f"Input tensor shape before unpacking: {x.shape}")
+
+        # Check if x has three dimensions and reshape accordingly
+        if len(x.shape) == 3:
+            batch_size, seq_len, embed_dim = x.shape
+            num_heads = self.num_heads
+            head_dim = embed_dim // num_heads
+            x = x.reshape(batch_size, seq_len, num_heads, head_dim)
+        else:
+            batch_size, seq_len, num_heads, head_dim = x.shape
+
+        logger.debug(f"Input tensor shape after unpacking: {x.shape}")
 
         # Define embed_dim
         embed_dim = num_heads * head_dim

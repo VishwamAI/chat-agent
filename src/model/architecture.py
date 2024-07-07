@@ -89,6 +89,7 @@ class ImprovedAttention(nn.Module):
 
         # Reshape qkv to match the expected shape and split into q, k, v
         qkv = qkv.reshape(batch_size, seq_len, 3, self.num_heads, self.head_dim)  # Reshape to match the expected shape
+        logger.debug(f"qkv shape after reshaping: {qkv.shape}")
         q, k, v = jnp.split(qkv, 3, axis=2)  # Split along the third axis to ensure correct shapes
 
         # Log the shapes of qkv, q, k, and v

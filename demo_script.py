@@ -68,17 +68,6 @@ def generate_responses(prompts: list, model, tokenizer):
         if attention_mask.shape != (input_ids.shape[0], input_ids.shape[1]):
             raise ValueError(f"Attention mask shape mismatch: expected {(input_ids.shape[0], input_ids.shape[1])}, but got {attention_mask.shape}")
 
-        # Expand attention_mask to match the expected shape for the model
-        print(f"attention_mask before expansion: {attention_mask}")
-        attention_mask = jnp.expand_dims(attention_mask, axis=1)  # Expand dimensions to [batch_size, 1, sequence_length]
-        print(f"attention_mask after expand_dims: {attention_mask}")
-        attention_mask = jnp.broadcast_to(attention_mask, (input_ids.shape[0], config['num_heads'], input_ids.shape[1]))  # Broadcast to [batch_size, num_heads, sequence_length]
-        print(f"attention_mask after broadcast_to: {attention_mask}")
-
-        # Debugging: Print the shape and values of attention_mask after expansion
-        print(f"attention_mask shape after expansion: {attention_mask.shape}")
-        print(f"attention_mask values after expansion: {attention_mask}")
-
         # Debugging: Print the shape and values of input_ids and attention_mask
         print(f"input_ids shape: {input_ids.shape}")
         print(f"input_ids values: {input_ids}")

@@ -138,9 +138,9 @@ def generate_responses(prompts: list, model, tokenizer):
 
         # Ensure attention_mask is a 2D tensor
         if attention_mask.ndim == 0:
-            attention_mask = jnp.expand_dims(attention_mask, axis=0)
+            attention_mask = np.expand_dims(attention_mask, axis=0)
         if attention_mask.ndim == 1:
-            attention_mask = jnp.expand_dims(attention_mask, axis=1)
+            attention_mask = np.expand_dims(attention_mask, axis=1)
 
         attention_mask = attention_mask.reshape((input_ids.shape[0], input_ids.shape[1]))
 

@@ -317,6 +317,7 @@ class ImprovedVishwamAIModel(nn.Module):
         self.vocab_size = self.config['vocab_size']
         self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
         self.num_heads = self.config['num_heads']
+        logger.debug(f"Model setup - embed_dim: {self.embed_dim}, num_layers: {self.num_layers}, vocab_size: {self.vocab_size}, head_dim: {self.head_dim}, num_heads: {self.num_heads}")
 
         self.bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')

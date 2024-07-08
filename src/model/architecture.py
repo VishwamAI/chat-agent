@@ -331,6 +331,8 @@ class ImprovedVishwamAIModel(nn.Module):
     vocab_size: int
 
     def setup(self):
+        self.num_layers = self.config['num_layers']
+        self.vocab_size = self.config['vocab_size']
         self.transformer_blocks = [ImprovedTransformerBlock(self.config) for _ in range(self.num_layers)]
 
     def _create_mask(self, input_ids: jnp.ndarray) -> jnp.ndarray:
@@ -358,7 +360,7 @@ class ImprovedVishwamAIModel(nn.Module):
 
         return mask
 
-    def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
+    def __call__(self, inputs: jnp.ndarray, tokenizer: PreTrainedTokenizer, bert_model: nn.Module, is_training: bool = False, kv_cache: Optional[Dict] = None) -> jnp.ndarray:
         # Log the shape of inputs before reshaping
         print(f"inputs shape before reshaping: {inputs.shape}")
 
@@ -398,7 +400,7 @@ class ImprovedVishwamAIModel(nn.Module):
         print(f"attention_mask shape before bert_model: {attention_mask.shape}")
         print(f"attention_mask values before bert_model: {attention_mask}")
 
-        bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask)
+        bert_outputs = bert_model(input_ids=input_ids, attention_mask=attention_mask)
         x = bert_outputs.logits
 
         # Log the shape of x after BERT model
@@ -427,15 +429,13 @@ class VishwamAILLM(nn.Module):
     config: Dict
 
     def setup(self):
-        tokenizer = AutoTokenizer.from_pretrained(self.config['tokenizer_name'])
-        bert_model = FlaxBertForSequenceClassification.from_pretrained('bert-base-uncased')
         num_layers = self.config['num_layers']
         vocab_size = self.config['vocab_size']
-        self.transformer = ImprovedVishwamAIModel(config=self.config, tokenizer=tokenizer, bert_model=bert_model, num_layers=num_layers, vocab_size=vocab_size)
+        self.transformer = ImprovedVishwamAIModel(config=self.config, num_layers=num_layers, vocab_size=vocab_size)
         self.lm_head = nn.Dense(self.config['vocab_size'])
 
-    def __call__(self, inputs: jnp.ndarray, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
-        transformer_outputs, new_kv_cache = self.transformer(inputs, is_training, kv_cache)
+    def __call__(self, inputs: jnp.ndarray, tokenizer: PreTrainedTokenizer, bert_model: nn.Module, is_training: bool = False, kv_cache: Optional[Dict] = None) -> Tuple[jnp.ndarray, Dict]:
+        transformer_outputs, new_kv_cache = self.transformer(inputs, tokenizer, bert_model, is_training, kv_cache)
         lm_logits = self.lm_head(transformer_outputs)
         return lm_logits, new_kv_cache
 

@@ -215,16 +215,25 @@ def main():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
+    # Debugging: Print the loaded configuration
+    print(f"Loaded configuration: {config}")
+
     # Ensure embed_dim matches num_heads * head_dim
     expected_embed_dim = config['num_heads'] * config['head_dim']
     if config['embed_dim'] != expected_embed_dim:
         raise ValueError(f"Configuration error: embed_dim {config['embed_dim']} does not match num_heads * head_dim {expected_embed_dim}")
 
+    # Debugging: Print the expected_embed_dim
+    print(f"Expected embed_dim: {expected_embed_dim}")
+
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
 
-    # Initialize model
-    model = VishwamAILLM(config=config)
+    # Initialize BERT model
+    bert_model = FlaxBertForSequenceClassification.from_pretrained(config['bert_model_name'])
+
+    # Initialize VishwamAILLM model with tokenizer and bert_model
+    model = VishwamAILLM(config=config, tokenizer=tokenizer, bert_model=bert_model)
     rng = jax.random.PRNGKey(0)
     dummy_input = jnp.ones((1, config['max_seq_length'], expected_embed_dim), dtype=jnp.float32)
 

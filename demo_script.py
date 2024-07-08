@@ -12,6 +12,10 @@ class VishwamAILLM(nn.Module):
         self.out_dense = nn.Dense(self.embed_dim)
 
     def __call__(self, input_ids, attention_mask=None, is_training=False):
+        # Debugging: Print the shape and values of input_ids at the start of __call__
+        print(f"input_ids shape at start of __call__: {input_ids.shape}")
+        print(f"input_ids values at start of __call__: {input_ids}")
+
         # Debugging: Print the shape and values of attention_mask at the start of __call__
         print(f"attention_mask shape at start of __call__: {attention_mask.shape}")
         print(f"attention_mask values at start of __call__: {attention_mask}")
@@ -26,6 +30,10 @@ class VishwamAILLM(nn.Module):
 
         # Apply the attention mechanism
         attention_output = self.attention(input_ids, attention_mask)
+
+        # Debugging: Print the shape and values of attention_output after attention mechanism
+        print(f"attention_output shape: {attention_output.shape}")
+        print(f"attention_output values: {attention_output}")
 
         # Apply output dense layer
         output = self.out_dense(attention_output)

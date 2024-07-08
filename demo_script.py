@@ -233,6 +233,11 @@ def main():
     print(f"dummy_input values: {dummy_input}")
 
     params = model.init(rng, dummy_input)['params']
+
+    # Debugging: Print the shape and values of params
+    print(f"params shape: {jax.tree_map(lambda x: x.shape, params)}")
+    print(f"params values: {params}")
+
     model_state = checkpoints.restore_checkpoint(ckpt_dir=config['model_name'], target=params)
     model = model.replace(params=model_state)
 

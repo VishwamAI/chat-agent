@@ -229,14 +229,14 @@ def main():
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
 
-    # Debugging: Print the value of config['bert_model_name']
-    print(f"config['bert_model_name']: {config['bert_model_name']}")
+    # Debugging: Print the value of config['model_name']
+    print(f"config['model_name']: {config['model_name']}")
 
     # Debugging: Confirm the accessibility of FlaxBertForSequenceClassification
     print(f"FlaxBertForSequenceClassification: {FlaxBertForSequenceClassification}")
 
     # Initialize BERT model
-    bert_model = FlaxBertForSequenceClassification.from_pretrained(config['bert_model_name'])
+    bert_model = FlaxBertForSequenceClassification.from_pretrained(config['model_name'])
 
     # Initialize VishwamAILLM model with tokenizer and bert_model
     model = VishwamAILLM(config=config, tokenizer=tokenizer, bert_model=bert_model)

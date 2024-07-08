@@ -1,4 +1,5 @@
-import flax.linen as nn
+from flax import linen as nn
+from src.model.architecture import ImprovedAttention
 
 class VishwamAILLM(nn.Module):
     config: dict
@@ -7,7 +8,7 @@ class VishwamAILLM(nn.Module):
         self.embed_dim = self.config['embed_dim']
         self.num_heads = self.config['num_heads']
         self.head_dim = self.config['head_dim']
-        self.qkv_dense = nn.Dense(self.embed_dim * 3)
+        self.attention = ImprovedAttention(self.config)
         self.out_dense = nn.Dense(self.embed_dim)
 
     def __call__(self, input_ids, attention_mask=None, is_training=False):
@@ -24,37 +25,10 @@ class VishwamAILLM(nn.Module):
         print(f"attention_mask values before operations: {attention_mask}")
 
         # Apply the attention mechanism
-        qkv = self.qkv_dense(input_ids)
-        q, k, v = jnp.split(qkv, 3, axis=-1)
-
-        # Additional debugging: Print the shape and values of q, k, v
-        print(f"q shape: {q.shape}")
-        print(f"k shape: {k.shape}")
-        print(f"v shape: {v.shape}")
-
-        # Compute attention scores
-        attn_scores = jnp.einsum('...qd,...kd->...qk', q, k) / jnp.sqrt(self.head_dim)
-
-        # Additional debugging: Print the shape and values of attn_scores before applying attention_mask
-        print(f"attn_scores shape before applying attention_mask: {attn_scores.shape}")
-        print(f"attn_scores values before applying attention_mask: {attn_scores}")
-
-        # Apply attention mask
-        if attention_mask is not None:
-            attn_scores = attn_scores + attention_mask
-
-        # Additional debugging: Print the shape and values of attn_scores after applying attention_mask
-        print(f"attn_scores shape after applying attention_mask: {attn_scores.shape}")
-        print(f"attn_scores values after applying attention_mask: {attn_scores}")
-
-        # Compute attention weights
-        attn_weights = nn.softmax(attn_scores, axis=-1)
-
-        # Compute attention output
-        attn_output = jnp.einsum('...qk,...vd->...qd', attn_weights, v)
+        attention_output = self.attention(input_ids, attention_mask)
 
         # Apply output dense layer
-        output = self.out_dense(attn_output)
+        output = self.out_dense(attention_output)
 
         # Additional debugging: Print the shape and values of output
         print(f"output shape: {output.shape}")
@@ -244,7 +218,7 @@ def main():
     # Initialize model
     model = VishwamAILLM(config=config)
     rng = jax.random.PRNGKey(0)
-    dummy_input = jnp.ones((1, config['max_seq_length'], config['embed_dim']), dtype=jnp.float32)
+    dummy_input = jnp.ones((1, config['max_seq_length'], expected_embed_dim), dtype=jnp.float32)
 
     # Debugging: Print the shape and values of dummy_input
     print(f"dummy_input shape: {dummy_input.shape}")

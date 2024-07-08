@@ -48,7 +48,7 @@ import pandas as pd
 import yaml
 import jax
 import jax.numpy as jnp
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, FlaxBertForSequenceClassification
 from flax.training import checkpoints
 from src.model.architecture import VishwamAILLM
 
@@ -228,6 +228,12 @@ def main():
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer_name'])
+
+    # Debugging: Print the value of config['bert_model_name']
+    print(f"config['bert_model_name']: {config['bert_model_name']}")
+
+    # Debugging: Confirm the accessibility of FlaxBertForSequenceClassification
+    print(f"FlaxBertForSequenceClassification: {FlaxBertForSequenceClassification}")
 
     # Initialize BERT model
     bert_model = FlaxBertForSequenceClassification.from_pretrained(config['bert_model_name'])

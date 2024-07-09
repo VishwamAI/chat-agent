@@ -648,19 +648,28 @@ class VishwamaiForCausalLM(nn.Module):
             print(f"Error initializing grok-1 components: {e}")
             self.grok_inference_runner = None
 
-        # Define a simple grammar for the Earley parser
+        # Define an expanded grammar for the Earley parser
         grammar = """
-            start: noun_phrase verb_phrase
+            start: sentence
+
+            sentence: noun_phrase verb_phrase
+                    | noun_phrase verb_phrase conjunction sentence
 
             noun_phrase: article noun
+                       | article adjective noun
+
             verb_phrase: verb noun_phrase
+                       | verb adverb noun_phrase
 
             article: "a" | "the"
-            noun: "cat" | "dog"
-            verb: "sees" | "likes"
+            noun: "cat" | "dog" | "man" | "woman"
+            verb: "sees" | "likes" | "chases" | "finds"
+            adjective: "big" | "small" | "quick" | "lazy"
+            adverb: "quickly" | "slowly"
+            conjunction: "and" | "but"
         """
 
-        # Initialize the Earley parser with the defined grammar
+        # Initialize the Earley parser with the expanded grammar
         self.earley_parser = Lark(grammar, start='start', ambiguity='explicit')
 
     @torch.no_grad()

@@ -98,6 +98,10 @@ class ImprovedAttention(nn.Module):
             logger.debug(f"Mask shape after broadcasting: {mask.shape}")
             attn = jnp.where(mask, attn, float('-inf'))
 
+        # Apply causal attention mask
+        causal_mask = jnp.tril(jnp.ones((seq_len, seq_len), dtype=jnp.bool_))
+        attn = jnp.where(causal_mask, attn, float('-inf'))
+
         attn = jax.nn.softmax(attn, axis=-1)
         output = jnp.matmul(attn, v)
         return output.reshape(batch_size, seq_len, self.num_heads * self.head_dim)

@@ -1,16 +1,3 @@
-dm-haiku
-jax
-transformers
-tensorflow
+numpy == 1.24.4
+sentencepiece == 0.1.99
 torch
-onnx
-onnx2keras
-tf-keras
-Pillow
-numpy
-scipy
-requests
-PyMuPDF
-datasets
-pydub
-speechrecognition

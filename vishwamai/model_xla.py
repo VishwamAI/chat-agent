@@ -1,4 +1,4 @@
-# Copyright 2024 Google LLC
+# Copyright 2024 Vishwamai Org
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -294,6 +294,21 @@ class VishwamaiAttention(nn.Module):
         self.sliding_window_size = sliding_window_size
         self.attn_logit_softcapping = attn_logit_softcapping
 
+    def make_causal_attn_mask(self, input_mask: torch.Tensor) -> torch.Tensor:
+        """Attention mask in batch mode.
+
+        Args:
+            input_mask: Input mask for the input
+
+        Returns:
+            Attention mask.
+        """
+        seq_len = input_mask.shape[-1]
+        attn_mask = input_mask[..., None, :]
+        causal_mask = torch.tril(torch.ones((seq_len, seq_len), dtype=torch.bool))
+        attn_mask *= causal_mask[None, ...]
+        return attn_mask
+
     def forward(
         self,
         hidden_states: torch.Tensor,
@@ -356,7 +371,8 @@ class VishwamaiAttention(nn.Module):
             scores = scores / self.attn_logit_softcapping
             scores = torch.tanh(scores)
             scores = scores * self.attn_logit_softcapping
-        scores = scores + mask
+        causal_mask = self.make_causal_attn_mask(mask)
+        scores = scores + causal_mask
         scores = F.softmax(scores.float(), dim=-1).type_as(q)
 
         # [batch_size, n_local_heads, input_len, head_dim]

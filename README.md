@@ -17,35 +17,25 @@ VishwamAI is an advanced language model based on the Transformer architecture, d
 
 ## Usage
 
-### Training the model
+### Running the model
 
-To train the VishwamAI model, run:
-
-```
-python scripts/train.py
-```
-
-This script will load the configuration from `configs/default_config.yaml`, initialize the model and datasets, and start the training process.
-
-### Generating text
-
-To generate text using a trained model, use:
+To run the VishwamAI model, use:
 
 ```
-python scripts/generate_text.py --prompt "Your prompt here" --max_length 100
+python scripts/run.py
 ```
 
-### Evaluating the model
+This script will initialize the model and datasets, and start the process.
 
-To evaluate the model on a test dataset, run:
+### Running the model with XLA
+
+To run the VishwamAI model with XLA, use:
 
 ```
-python scripts/evaluate.py --test_file path/to/test/file.txt
+python scripts/run_xla.py
 ```
 
-## Configuration
-
-You can modify the model and training configuration by editing the `configs/default_config.yaml` file.
+This script will initialize the model and datasets, and start the process with XLA support.
 
 ## Documentation
 

@@ -23,10 +23,10 @@ import numpy as np
 import torch
 import torch.multiprocessing
 
-from gemma.config import GemmaConfig, get_model_config
-from gemma.model_xla import GemmaForCausalLM
-from gemma.tokenizer import Tokenizer
-import gemma.xla_model_parallel as xla_model_parallel
+from vishwamai.config import VishwamaiConfig, get_model_config
+from vishwamai.model_xla import VishwamaiForCausalLM
+from vishwamai.tokenizer import Tokenizer
+import vishwamai.xla_model_parallel as xla_model_parallel
 
 USE_CUDA = os.environ.get('USE_CUDA', False)
 if not USE_CUDA:
@@ -51,7 +51,7 @@ def _set_default_tensor_type(dtype: torch.dtype):
 
 def generate(
     i: int,
-    model_config: GemmaConfig,
+    model_config: VishwamaiConfig,
     ckpt_path: str,
     prompts: List[str],
     output_lens: List[int],
@@ -86,7 +86,7 @@ def generate(
 
     # build, load and compile model.
     with _set_default_tensor_type(model_config.get_dtype()):
-        model = GemmaForCausalLM(model_config, world_size, rank, device)
+        model = VishwamaiForCausalLM(model_config, world_size, rank, device)
         model.load_weights(ckpt_path)
         model = model.to(device).eval()
 

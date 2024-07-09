@@ -1,14 +1,13 @@
 # VishwamAI
 
-
 VishwamAI is an advanced language model based on the Transformer architecture, designed for various natural language processing tasks.
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/vishwam_ai.git
-   cd vishwam_ai
+   git clone https://github.com/VishwamAI/chat-agent.git
+   cd chat-agent
    ```
 
 2. Install the required packages:
@@ -59,7 +58,6 @@ Contributions to VishwamAI are welcome! Please refer to the `CONTRIBUTING.md` fi
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-```
 
 This structure and these files provide a solid foundation for your improved VishwamAI model. The code is more modular and organized, making it easier to maintain and extend. The `README.md` file gives users an overview of how to use your model.
 

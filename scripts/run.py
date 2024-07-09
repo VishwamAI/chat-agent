@@ -18,8 +18,8 @@ import random
 import numpy as np
 import torch
 
-from gemma import config
-from gemma import model as gemma_model
+from vishwamai import config
+from vishwamai import model as vishwamai_model
 
 
 @contextlib.contextmanager
@@ -44,7 +44,7 @@ def main(args):
     # Create the model and load the weights.
     device = torch.device(args.device)
     with _set_default_tensor_type(model_config.get_dtype()):
-        model = gemma_model.GemmaForCausalLM(model_config)
+        model = vishwamai_model.vishwamaiForCausalLM(model_config)
         model.load_weights(args.ckpt)
         model = model.to(device).eval()
     print("Model loading done")

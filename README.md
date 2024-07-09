@@ -25,7 +25,7 @@ To train the VishwamAI model, run:
 python scripts/train.py
 ```
 
-This script will load the configuration from `configs/default_config.yaml`, initialize the model and datasets, and start the training process.
+This script will initialize the model and datasets, and start the training process.
 
 ### Generating text
 
@@ -45,7 +45,7 @@ python scripts/evaluate.py --test_file path/to/test/file.txt
 
 ## Configuration
 
-You can modify the model and training configuration by editing the `configs/default_config.yaml` file.
+You can modify the model and training configuration by editing the configuration files in the `configs/` directory.
 
 ## Documentation
 
@@ -57,7 +57,7 @@ Contributions to VishwamAI are welcome! Please refer to the `CONTRIBUTING.md` fi
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the Apache 2.0 License. See the `LICENSE` file for details.
 
 This structure and these files provide a solid foundation for your improved VishwamAI model. The code is more modular and organized, making it easier to maintain and extend. The `README.md` file gives users an overview of how to use your model.
 

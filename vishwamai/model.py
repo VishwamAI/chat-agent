@@ -190,7 +190,7 @@ class RMSNorm(torch.nn.Module):
         return output.type_as(x)
 
 
-class VishwamaiMLP(nn.Module):
+class GemmaMLP(nn.Module):
 
     def __init__(
         self,
@@ -212,7 +212,7 @@ class VishwamaiMLP(nn.Module):
         return outputs
 
 
-class VishwamaiAttention(nn.Module):
+class GemmaAttention(nn.Module):
 
     def __init__(
         self,
@@ -340,7 +340,7 @@ class VishwamaiDecoderLayer(nn.Module):
         config: vishwamai_config.VishwamaiConfig,
     ):
         super().__init__()
-        self.self_attn = VishwamaiAttention(
+        self.self_attn = GemmaAttention(
             hidden_size=config.hidden_size,
             num_heads=config.num_attention_heads,
             num_kv_heads=config.num_key_value_heads,
@@ -350,7 +350,7 @@ class VishwamaiDecoderLayer(nn.Module):
             quant=config.quant,
             attn_type=vishwamai_config.AttentionType.GLOBAL,
         )
-        self.mlp = VishwamaiMLP(
+        self.mlp = GemmaMLP(
             hidden_size=config.hidden_size,
             intermediate_size=config.intermediate_size,
             quant=config.quant,

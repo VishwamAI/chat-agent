@@ -22,6 +22,6 @@ def load_and_preprocess_dataset(dataset_name, split, tokenizer_model_path):
 if __name__ == "__main__":
     dataset_name = "nvidia/ChatRAG-Bench"
     split = "train"
-    tokenizer_model_path = "path/to/vishwamai/tokenizer/model"
+    tokenizer_model_path = "tokenizer/tokenizer.model"
     tokenized_dataset = load_and_preprocess_dataset(dataset_name, split, tokenizer_model_path)
     print(tokenized_dataset)

@@ -25,6 +25,9 @@ from typing import Any, List, Optional, Sequence, Tuple, Union
 from vishwamai import config as vishwamai_config
 from vishwamai import tokenizer
 
+# Import necessary components from grok-1
+from grok_1.model import LanguageModelConfig, TransformerConfig
+from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
 class Sampler(nn.Module):
 
@@ -211,7 +214,7 @@ class GemmaMLP(nn.Module):
         return outputs
 
 
-class GemmaAttention(nn.Module):
+class VishwamaiAttention(nn.Module):
 
     def __init__(
         self,
@@ -339,7 +342,7 @@ class VishwamaiDecoderLayer(nn.Module):
         config: vishwamai_config.VishwamaiConfig,
     ):
         super().__init__()
-        self.self_attn = GemmaAttention(
+        self.self_attn = VishwamaiAttention(
             hidden_size=config.hidden_size,
             num_heads=config.num_attention_heads,
             num_kv_heads=config.num_key_value_heads,
@@ -528,6 +531,45 @@ class VishwamaiForCausalLM(nn.Module):
                                          theta=rope_theta)
         self.register_buffer('freqs_cis', freqs_cis)
 
+        # Initialize grok-1 components with error handling
+        try:
+            self.grok_config = LanguageModelConfig(
+                model=TransformerConfig(
+                    emb_size=config.hidden_size,
+                    key_size=config.head_dim,
+                    num_q_heads=config.num_attention_heads,
+                    num_kv_heads=config.num_key_value_heads,
+                    num_layers=config.num_hidden_layers,
+                    vocab_size=config.vocab_size,
+                    widening_factor=4.0,
+                    attn_output_multiplier=1.0,
+                ),
+                vocab_size=config.vocab_size,
+                pad_token=self.tokenizer.pad_id,
+                eos_token=self.tokenizer.eos_id,
+                sequence_len=config.max_position_embeddings,
+                model_size=config.hidden_size,
+                embedding_init_scale=1.0,
+                embedding_multiplier_scale=1.0,
+                output_multiplier_scale=1.0,
+                name="grok_vishwamai",
+                fprop_dtype=torch.float32,
+                model_type="transformer",
+                init_scale_override=None,
+                shard_embeddings=True,
+            )
+            self.grok_model_runner = ModelRunner(self.grok_config)
+            self.grok_inference_runner = InferenceRunner(
+                name="grok_inference",
+                runner=self.grok_model_runner,
+                load="/home/ubuntu/grok-1/checkpoints/ckpt-0",
+                tokenizer_path="/home/ubuntu/grok-1/tokenizer.model"
+            )
+            self.grok_inference_runner.initialize()
+        except Exception as e:
+            print(f"Error initializing grok-1 components: {e}")
+            self.grok_inference_runner = None
+
     @torch.no_grad()
     def forward(
         self,
@@ -564,14 +606,29 @@ class VishwamaiForCausalLM(nn.Module):
         if self.config.quant:
             embedder_weight = (
                 embedder_weight * self.embedder.weight_scaler.unsqueeze(-1))
-        next_tokens, logits = self.sampler(
-            embedding=embedder_weight,
-            hidden_states=hidden_states,
-            output_positions=output_positions,
-            temperatures=temperatures,
-            top_ps=top_ps,
-            top_ks=top_ks,
-        )
+
+        if self.grok_inference_runner:
+            next_tokens, logits = self.grok_inference_runner.run(
+                input_token_ids=input_token_ids,
+                input_positions=input_positions,
+                kv_write_indices=kv_write_indices,
+                kv_caches=kv_caches,
+                mask=mask,
+                output_positions=output_positions,
+                temperatures=temperatures,
+                top_ps=top_ps,
+                top_ks=top_ks,
+                **kwargs,
+            )
+        else:
+            next_tokens, logits = self.sampler(
+                embedding=embedder_weight,
+                hidden_states=hidden_states,
+                output_positions=output_positions,
+                temperatures=temperatures,
+                top_ps=top_ps,
+                top_ks=top_ks,
+            )
         return next_tokens, logits
 
     def generate(
@@ -637,17 +694,30 @@ class VishwamaiForCausalLM(nn.Module):
         # Prefill up to min_prompt_len tokens, then treat other prefill as
         # decode and ignore output.
         for i in range(max_seq_len - min_prompt_len):
-            next_token_ids, _ = self(
-                input_token_ids=input_token_ids_tensor,
-                input_positions=input_positions_tensor,
-                kv_write_indices=None,
-                kv_caches=kv_caches,
-                mask=curr_mask_tensor,
-                output_positions=output_positions_tensor,
-                temperatures=temperatures_tensor,
-                top_ps=top_ps_tensor,
-                top_ks=top_ks_tensor,
-            )
+            if self.grok_inference_runner:
+                next_token_ids, _ = self.grok_inference_runner.run(
+                    input_token_ids=input_token_ids_tensor,
+                    input_positions=input_positions_tensor,
+                    kv_write_indices=None,
+                    kv_caches=kv_caches,
+                    mask=curr_mask_tensor,
+                    output_positions=output_positions_tensor,
+                    temperatures=temperatures_tensor,
+                    top_ps=top_ps_tensor,
+                    top_ks=top_ks_tensor,
+                )
+            else:
+                next_token_ids, _ = self(
+                    input_token_ids=input_token_ids_tensor,
+                    input_positions=input_positions_tensor,
+                    kv_write_indices=None,
+                    kv_caches=kv_caches,
+                    mask=curr_mask_tensor,
+                    output_positions=output_positions_tensor,
+                    temperatures=temperatures_tensor,
+                    top_ps=top_ps_tensor,
+                    top_ks=top_ks_tensor,
+                )
 
             curr_prompt_mask = prompt_mask_tensor.index_select(
                 1, output_index).squeeze(dim=1)

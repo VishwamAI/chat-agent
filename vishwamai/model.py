@@ -31,7 +31,7 @@ from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
 class Sampler(nn.Module):
 
-    def __init__(self, vocab_size: int, config: vishwamai_config.GemmaConfig):
+    def __init__(self, vocab_size: int, config: vishwamai_config.VishwamaiConfig):
         super().__init__()
         self.vocab_size = vocab_size
         self.config = config
@@ -352,7 +352,7 @@ class VishwamaiDecoderLayer(nn.Module):
             quant=config.quant,
             attn_type=vishwamai_config.AttentionType.GLOBAL,
         )
-        self.mlp = GemmaMLP(
+        self.mlp = VishwamaiMLP(
             hidden_size=config.hidden_size,
             intermediate_size=config.intermediate_size,
             quant=config.quant,

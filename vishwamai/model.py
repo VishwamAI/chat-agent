@@ -13,6 +13,21 @@
 # limitations under the License.
 """Inference-only Gemma model implementation."""
 
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Inference-only Gemma model implementation."""
+
 import json
 import gc
 import os
@@ -26,8 +41,14 @@ from vishwamai import config as vishwamai_config
 from vishwamai import tokenizer
 
 # Import necessary components from grok-1
-from grok_1.model import LanguageModelConfig, TransformerConfig
+from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
+
 from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
+
+def rotate_half(x: torch.Tensor) -> torch.Tensor:
+    """Obtain the rotated counterpart of each feature"""
+    x1, x2 = torch.split(x, 2, dim=-1)
+    return torch.cat((-x2, x1), dim=-1)
 
 class Sampler(nn.Module):
 
@@ -92,27 +113,56 @@ class Sampler(nn.Module):
         return next_token_ids, logits
 
 
-def precompute_freqs_cis(dim: int,
-                         end: int,
-                         theta: float = 10000.0) -> torch.Tensor:
-    """Precomputes the frequency cis."""
-    freqs = 1.0 / (theta**(torch.arange(0, dim, 2)[:(dim // 2)].float() / dim))
-    t = torch.arange(end, device=freqs.device)
-    freqs = torch.outer(t, freqs).float()
-    freqs_cis = torch.polar(torch.ones_like(freqs), freqs)  # complex64
-    return freqs_cis
 
 
-def apply_rotary_emb(x: torch.Tensor, freqs_cis: torch.Tensor) -> torch.Tensor:
-    """Applies the rotary embedding to the query and key tensors."""
-    x_ = torch.view_as_complex(
-        torch.stack(torch.chunk(x.transpose(1, 2).float(), 2, dim=-1),
-                    dim=-1))
-    x_out = torch.view_as_real(x_ * freqs_cis).type_as(x)
-    x_out = torch.cat(torch.chunk(x_out, 2, dim=-1), dim=-2)
-    x_out = x_out.reshape(x_out.shape[0], x_out.shape[1], x_out.shape[2],
-                          -1).transpose(1, 2)
-    return x_out
+class RotaryEmbedding(nn.Module):
+    """Applies rotary embeddings (RoPE) to the input sequence tensor,
+    as described in https://arxiv.org/abs/2104.09864.
+
+    Attributes:
+        dim (int): Dimensionality of the feature vectors
+        base_exponent (int): Base exponent to compute embeddings from
+    """
+
+    def __init__(
+        self,
+        dim: int,
+        base_exponent: int = 10000,
+    ):
+        super().__init__()
+        self.dim = dim
+        self.base_exponent = base_exponent
+        assert self.dim % 2 == 0
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        seq_dim: int,
+        offset: torch.Tensor,
+        const_position: Optional[int] = None,
+        t: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        fprop_dtype = x.dtype
+        exponents = torch.arange(0, self.dim, 2, dtype=torch.float32)
+        inv_freq = 1.0 / (self.base_exponent ** (exponents / self.dim))
+
+        if offset.shape == ():
+            offset = offset.unsqueeze(0)
+
+        if const_position:
+            t = const_position * torch.ones(
+                (1, x.shape[seq_dim]),
+                dtype=torch.float32,
+            )
+        elif t is None:
+            t = torch.arange(x.shape[seq_dim], dtype=torch.float32) + offset.unsqueeze(-1)
+        phase = torch.einsum("bi,j->bij", t, inv_freq)
+        phase = torch.tile(phase, (1, 2))[:, :, None, :]
+
+        x = x * torch.cos(phase) + rotate_half(x) * torch.sin(phase)
+        x = x.to(fprop_dtype)
+
+        return x
 
 
 class Linear(nn.Module):
@@ -263,7 +313,6 @@ class VishwamaiAttention(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -282,8 +331,9 @@ class VishwamaiAttention(nn.Module):
         xv = xv.view(batch_size, -1, self.num_kv_heads, self.head_dim)
 
         # Positional embedding.
-        xq = apply_rotary_emb(xq, freqs_cis=freqs_cis)
-        xk = apply_rotary_emb(xk, freqs_cis=freqs_cis)
+        rotary_embedding = RotaryEmbedding(dim=self.head_dim)
+        xq = rotary_embedding(xq, seq_dim=1, offset=kv_write_indices)
+        xk = rotary_embedding(xk, seq_dim=1, offset=kv_write_indices)
 
         # Write new kv cache.
         # [batch_size, input_len, n_local_kv_heads, head_dim]
@@ -365,7 +415,6 @@ class VishwamaiDecoderLayer(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -375,7 +424,6 @@ class VishwamaiDecoderLayer(nn.Module):
         hidden_states = self.input_layernorm(hidden_states)
         hidden_states = self.self_attn(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_cache=kv_cache,
             mask=mask,
@@ -432,7 +480,6 @@ class Vishwamai2DecoderLayer(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -442,7 +489,6 @@ class Vishwamai2DecoderLayer(nn.Module):
         hidden_states = self.input_layernorm(hidden_states)
         hidden_states = self.self_attn(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_cache=kv_cache,
             mask=mask,
@@ -487,7 +533,6 @@ class VishwamaiModel(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_caches: List[Tuple[torch.Tensor, torch.Tensor]],
         mask: torch.Tensor,
@@ -496,7 +541,6 @@ class VishwamaiModel(nn.Module):
             layer = self.layers[i]
             hidden_states = layer(
                 hidden_states=hidden_states,
-                freqs_cis=freqs_cis,
                 kv_write_indices=kv_write_indices,
                 kv_cache=kv_caches[i],
                 mask=mask,
@@ -524,12 +568,7 @@ class VishwamaiForCausalLM(nn.Module):
         self.model = VishwamaiModel(config)
         self.sampler = Sampler(vocab_size, config)
 
-        # Pre-compute rotary embedding table.
-        rope_theta = getattr(config, 'rope_theta', 10000)
-        freqs_cis = precompute_freqs_cis(head_dim,
-                                         max_seq_len * 2,
-                                         theta=rope_theta)
-        self.register_buffer('freqs_cis', freqs_cis)
+        # Removed pre-compute rotary embedding table and freqs_cis buffer
 
         # Initialize grok-1 components with error handling
         try:
@@ -584,10 +623,7 @@ class VishwamaiForCausalLM(nn.Module):
         top_ks: torch.Tensor,
         **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        freqs_cis = self.freqs_cis.index_select(0, input_positions)
-        kv_write_indices = input_positions
-
-        # [batch_size, input_len, hidden_size]
+        # Removed freqs_cis calculation and parameter passing
         hidden_states = self.embedder(input_token_ids)
         # Gemma normalizes the embedding by sqrt(hidden_size).
         # Gemma2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
@@ -597,7 +633,6 @@ class VishwamaiForCausalLM(nn.Module):
 
         hidden_states = self.model(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_caches=kv_caches,
             mask=mask,

@@ -72,6 +72,8 @@ from vishwamai import tokenizer
 from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
 from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
+from lark import Lark
+
 def rotate_half(x: torch.Tensor) -> torch.Tensor:
     """Obtain the rotated counterpart of each feature"""
     x1, x2 = torch.split(x, 2, dim=-1)
@@ -646,6 +648,21 @@ class VishwamaiForCausalLM(nn.Module):
             print(f"Error initializing grok-1 components: {e}")
             self.grok_inference_runner = None
 
+        # Define a simple grammar for the Earley parser
+        grammar = """
+            start: noun_phrase verb_phrase
+
+            noun_phrase: article noun
+            verb_phrase: verb noun_phrase
+
+            article: "a" | "the"
+            noun: "cat" | "dog"
+            verb: "sees" | "likes"
+        """
+
+        # Initialize the Earley parser with the defined grammar
+        self.earley_parser = Lark(grammar, start='start', ambiguity='explicit')
+
     @torch.no_grad()
     def forward(
         self,
@@ -791,12 +808,25 @@ class VishwamaiForCausalLM(nn.Module):
                     top_ks=top_ks_tensor,
                 )
 
+            # Grammar masking: validate sequences using Earley parser
+            valid_tokens = []
+            for token in next_token_ids:
+                sequence = token_ids_tensor[0, :output_index.item()].tolist() + [token]
+                sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                try:
+                    self.earley_parser.parse(sequence_str)
+                    valid_tokens.append(token)
+                except:
+                    continue
+            if not valid_tokens:
+                valid_tokens = [self.tokenizer.pad_id] * batch_size
+
             curr_prompt_mask = prompt_mask_tensor.index_select(
                 1, output_index).squeeze(dim=1)
             curr_token_ids = token_ids_tensor.index_select(
                 1, output_index).squeeze(dim=1)
             output_token_ids = torch.where(curr_prompt_mask, curr_token_ids,
-                                           next_token_ids).unsqueeze(dim=1)
+                                           torch.tensor(valid_tokens).to(device)).unsqueeze(dim=1)
             token_ids_tensor.index_copy_(1, output_index, output_token_ids)
 
             input_token_ids_tensor = output_token_ids

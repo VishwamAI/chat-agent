@@ -189,7 +189,7 @@ class RMSNorm(torch.nn.Module):
         return output.type_as(x)
 
 
-class VishwamaiMLP(nn.Module):
+class GemmaMLP(nn.Module):
 
     def __init__(
         self,

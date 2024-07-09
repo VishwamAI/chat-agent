@@ -38,11 +38,11 @@ def get_requirements() -> List[str]:
 
 
 setuptools.setup(
-    name="gemma",
+    name="vishwamai",
     version="0.1",
-    author="Gemma contributors",
+    author="vishwamai contributors",
     license="Apache 2.0",
-    description=("Gemma model implementation"),
+    description=("vishwamai model implementation"),
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     classifiers=[

@@ -22,6 +22,27 @@
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
+import fairscale.nn.model_parallel.initialize as fs_init
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Inference-only Gemma model implementation."""
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
@@ -37,12 +58,18 @@ from torch import nn
 import torch.nn.functional as F
 from typing import Any, List, Optional, Sequence, Tuple, Union
 
+import fairscale.nn.model_parallel.initialize as fs_init
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+
 from vishwamai import config as vishwamai_config
 from vishwamai import tokenizer
 
 # Import necessary components from grok-1
 from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
-
 from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
 def rotate_half(x: torch.Tensor) -> torch.Tensor:
@@ -114,7 +141,6 @@ class Sampler(nn.Module):
 
 
 
-
 class RotaryEmbedding(nn.Module):
     """Applies rotary embeddings (RoPE) to the input sequence tensor,
     as described in https://arxiv.org/abs/2104.09864.
@@ -169,6 +195,7 @@ class Linear(nn.Module):
 
     def __init__(self, in_features: int, out_features: int, quant: bool):
         super().__init__()
+        self.quant = quant
         if quant:
             self.weight = nn.Parameter(
                 torch.empty((out_features, in_features), dtype=torch.int8),
@@ -176,17 +203,16 @@ class Linear(nn.Module):
             )
             self.weight_scaler = nn.Parameter(torch.Tensor(out_features))
         else:
-            self.weight = nn.Parameter(
-                torch.empty((out_features, in_features)),
-                requires_grad=False,
+            self.weight = ColumnParallelLinear(
+                in_features, out_features, bias=False, gather_output=False
             )
-        self.quant = quant
 
     def forward(self, x):
-        weight = self.weight
         if self.quant:
-            weight = weight * self.weight_scaler.unsqueeze(-1)
-        output = F.linear(x, weight)
+            weight = self.weight * self.weight_scaler.unsqueeze(-1)
+            output = F.linear(x, weight)
+        else:
+            output = self.weight(x)
         return output
 
 
@@ -194,6 +220,7 @@ class Embedding(nn.Module):
 
     def __init__(self, num_embeddings: int, embedding_dim: int, quant: bool):
         super().__init__()
+        self.quant = quant
         if quant:
             self.weight = nn.Parameter(
                 torch.empty((num_embeddings, embedding_dim), dtype=torch.int8),
@@ -201,17 +228,16 @@ class Embedding(nn.Module):
             )
             self.weight_scaler = nn.Parameter(torch.Tensor(num_embeddings))
         else:
-            self.weight = nn.Parameter(
-                torch.empty((num_embeddings, embedding_dim)),
-                requires_grad=False,
+            self.weight = VocabParallelEmbedding(
+                num_embeddings, embedding_dim, gather_output=False
             )
-        self.quant = quant
 
     def forward(self, x):
-        weight = self.weight
         if self.quant:
-            weight = weight * self.weight_scaler.unsqueeze(-1)
-        output = F.embedding(x, weight)
+            weight = self.weight * self.weight_scaler.unsqueeze(-1)
+            output = F.embedding(x, weight)
+        else:
+            output = self.weight(x)
         return output
 
 
@@ -242,7 +268,8 @@ class RMSNorm(torch.nn.Module):
         return output.type_as(x)
 
 
-class GemmaMLP(nn.Module):
+
+class VishwamaiMLP(nn.Module):
 
     def __init__(
         self,
@@ -251,9 +278,15 @@ class GemmaMLP(nn.Module):
         quant: bool,
     ):
         super().__init__()
-        self.gate_proj = Linear(hidden_size, intermediate_size, quant)
-        self.up_proj = Linear(hidden_size, intermediate_size, quant)
-        self.down_proj = Linear(intermediate_size, hidden_size, quant)
+        self.gate_proj = ColumnParallelLinear(
+            hidden_size, intermediate_size, bias=False, gather_output=False
+        )
+        self.up_proj = ColumnParallelLinear(
+            hidden_size, intermediate_size, bias=False, gather_output=False
+        )
+        self.down_proj = RowParallelLinear(
+            intermediate_size, hidden_size, bias=False, input_is_parallel=True
+        )
 
     def forward(self, x):
         gate = self.gate_proj(x)
@@ -297,14 +330,18 @@ class VishwamaiAttention(nn.Module):
         else:
             self.scaling = self.head_dim**-0.5
 
-        self.qkv_proj = Linear(
+        self.qkv_proj = ColumnParallelLinear(
             self.hidden_size,
             (self.num_heads + 2 * self.num_kv_heads) * self.head_dim,
-            quant=quant)
-        self.o_proj = Linear(
+            bias=False,
+            gather_output=False,
+        )
+        self.o_proj = RowParallelLinear(
             self.num_heads * self.head_dim,
             self.hidden_size,
-            quant=quant)
+            bias=False,
+            input_is_parallel=True,
+        )
 
         self.attn_type = attn_type
         self.sliding_window_size = sliding_window_size

@@ -12,6 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Copyright 2024 Vishwamaiorg
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 import jax
 import jax.numpy as jnp
@@ -51,11 +65,15 @@ class ImprovedAttention(nn.Module):
     config: Dict
     def setup(self):
         self.num_heads = self.config['num_heads']
-        self.head_dim = self.config['head_dim']  # Use head_dim from the configuration
+        self.head_dim = self.config['head_dim']
         self.rotary_emb = lambda batch_size, num_heads, seq_len, head_dim: (
             jnp.sin(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2)),
             jnp.cos(jnp.arange(seq_len)[:, None] * jnp.arange(head_dim // 2)[None, :]).reshape((1, 1, seq_len, head_dim // 2))
         )
+        self.wq = ColumnParallelLinear(self.config['embed_dim'], self.num_heads * self.head_dim, bias=False)
+        self.wk = ColumnParallelLinear(self.config['embed_dim'], self.num_heads * self.head_dim, bias=False)
+        self.wv = ColumnParallelLinear(self.config['embed_dim'], self.num_heads * self.head_dim, bias=False)
+        self.wo = RowParallelLinear(self.num_heads * self.head_dim, self.config['embed_dim'], bias=False)
 
     @nn.compact
     def __call__(self, x: jnp.ndarray, mask: Optional[jnp.ndarray] = None, kv_cache: Optional[Dict] = None):

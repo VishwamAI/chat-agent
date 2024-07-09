@@ -280,12 +280,27 @@ class ImprovedVishwamAIModel(nn.Module):
         mask = mask * causal_mask
         return mask
 
-    def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0) -> jnp.ndarray:
+    def generate(self, input_ids: jnp.ndarray, max_length: int = 100, temperature: float = 1.0, top_k: int = 50, top_p: float = 0.9) -> jnp.ndarray:
         generated_ids = input_ids
         rng = jax.random.PRNGKey(0)
         for _ in range(max_length - input_ids.shape[1]):
             logits, _ = self(generated_ids, is_training=False)
             next_token_logits = logits[:, -1, :] / temperature
+
+            # Apply top-k and top-p sampling
+            sorted_logits = jnp.sort(next_token_logits, axis=-1)[::-1]
+            cumulative_probs = jnp.cumsum(jax.nn.softmax(sorted_logits, axis=-1), axis=-1)
+            sorted_indices = jnp.argsort(next_token_logits, axis=-1)[::-1]
+
+            # Remove tokens with cumulative probability above top_p
+            sorted_indices_to_remove = cumulative_probs > top_p
+            sorted_indices_to_remove = sorted_indices_to_remove.at[:, 1:].set(sorted_indices_to_remove[:, :-1])
+            sorted_indices_to_remove = sorted_indices_to_remove.at[:, 0].set(False)
+
+            # Set logits of removed tokens to negative infinity
+            next_token_logits = next_token_logits.at[sorted_indices[sorted_indices_to_remove]].set(float('-inf'))
+
+            # Sample from the filtered distribution
             next_token = jax.random.categorical(rng, next_token_logits, axis=-1)
             generated_ids = jnp.concatenate([generated_ids, next_token[:, jnp.newaxis]], axis=-1)
         return generated_ids

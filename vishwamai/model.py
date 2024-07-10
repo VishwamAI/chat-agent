@@ -729,16 +729,59 @@ class VishwamaiForCausalLM(nn.Module):
             )
         return next_tokens, logits
 
+    def sample_top_p(self, probs, p):
+        """
+        Perform top-p (nucleus) sampling on a probability distribution.
+
+        Args:
+            probs (torch.Tensor): Probability distribution tensor.
+            p (float): Probability threshold for top-p sampling.
+
+        Returns:
+            torch.Tensor: Sampled token indices.
+
+        Note:
+            Top-p sampling selects the smallest set of tokens whose cumulative probability mass
+            exceeds the threshold p. The distribution is renormalized based on the selected tokens.
+        """
+        probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
+        probs_sum = torch.cumsum(probs_sort, dim=-1)
+        mask = probs_sum - probs_sort > p
+        probs_sort[mask] = 0.0
+        probs_sort.div_(probs_sort.sum(dim=-1, keepdim=True))
+        next_token = torch.multinomial(probs_sort, num_samples=1)
+        next_token = torch.gather(probs_idx, -1, next_token)
+        return next_token
+
     def generate(
         self,
         prompts: Union[str, Sequence[str]],
         device: Any,
         output_len: int = 100,
-        temperature: Union[float, None] = 0.95,
+        temperature: float = 0.95,
         top_p: float = 1.0,
         top_k: int = 100,
     ) -> Union[str, Sequence[str]]:
-        """Generates responses for given prompts using Vishwamai model."""
+        """
+        Generates responses for given prompts using Vishwamai model.
+
+        Args:
+            prompts (Union[str, Sequence[str]]): Input prompts for text generation.
+            device (Any): Device to run the model on (e.g., 'cpu' or 'cuda').
+            output_len (int, optional): Length of the generated output. Defaults to 100.
+            temperature (float, optional): Sampling temperature. Defaults to 0.95.
+            top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
+            top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+
+        Returns:
+            Union[str, Sequence[str]]: Generated responses.
+        """
+        # Input validation
+        if not (0.0 < temperature <= 1.0):
+            raise ValueError("Temperature must be between 0.0 and 1.0")
+        if not (0.0 < top_p <= 1.0):
+            raise ValueError("Top-p must be between 0.0 and 1.0")
+
         # If a single prompt is provided, treat it as a batch of 1.
         is_str_prompt = isinstance(prompts, str)
         if is_str_prompt:
@@ -782,8 +825,7 @@ class VishwamaiForCausalLM(nn.Module):
         curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
         output_positions_tensor = torch.LongTensor([min_prompt_len - 1]).to(
             device)
-        temperatures_tensor = None if not temperature else torch.FloatTensor(
-            [temperature] * batch_size).to(device)
+        temperatures_tensor = torch.FloatTensor([temperature] * batch_size).to(device)
         top_ps_tensor = torch.FloatTensor([top_p] * batch_size).to(device)
         top_ks_tensor = torch.LongTensor([top_k] * batch_size).to(device)
         output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
@@ -805,7 +847,7 @@ class VishwamaiForCausalLM(nn.Module):
                     top_ks=top_ks_tensor,
                 )
             else:
-                next_token_ids, _ = self(
+                logits = self(
                     input_token_ids=input_token_ids_tensor,
                     input_positions=input_positions_tensor,
                     kv_write_indices=None,
@@ -815,7 +857,9 @@ class VishwamaiForCausalLM(nn.Module):
                     temperatures=temperatures_tensor,
                     top_ps=top_ps_tensor,
                     top_ks=top_ks_tensor,
-                )
+                )[1]
+                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+                next_token_ids = self.sample_top_p(probs, top_p)
 
             # Grammar masking: validate sequences using Earley parser
             valid_tokens = []
@@ -860,7 +904,29 @@ class VishwamaiForCausalLM(nn.Module):
         # If a string was provided as input, return a string as output.
         return results[0] if is_str_prompt else results
 
-    def bi_directional_generate(self, prompts, device, output_len=100, temperature=0.95, top_p=1.0, top_k=100):
+    def bi_directional_generate(
+        self,
+        prompts: Union[str, Sequence[str]],
+        device: Any,
+        output_len: int = 100,
+        temperature: float = 0.95,
+        top_p: float = 1.0,
+        top_k: int = 100,
+    ) -> Union[str, Sequence[str]]:
+        """
+        Generates responses for given prompts using Vishwamai model in both forward and backward directions.
+
+        Args:
+            prompts (Union[str, Sequence[str]]): Input prompts for text generation.
+            device (Any): Device to run the model on (e.g., 'cpu' or 'cuda').
+            output_len (int, optional): Length of the generated output. Defaults to 100.
+            temperature (float, optional): Sampling temperature. Defaults to 0.95.
+            top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
+            top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+
+        Returns:
+            Union[str, Sequence[str]]: Generated responses.
+        """
         # Forward generation
         forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k)
 

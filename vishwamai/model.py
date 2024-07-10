@@ -534,13 +534,27 @@ class Vishwamai2DecoderLayer(nn.Module):
         return hidden_states
 
 
-class VishwamaiModel(nn.Module):
+class MathReasoningModule(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        # Define neural network components for math reasoning
+        self.linear1 = nn.Linear(config.hidden_size, config.intermediate_size)
+        self.linear2 = nn.Linear(config.intermediate_size, config.hidden_size)
+        self.activation = nn.ReLU()
 
+    def forward(self, input_ids, attention_mask=None):
+        # Implement forward pass for math reasoning
+        output = self.linear1(input_ids)
+        output = self.activation(output)
+        output = self.linear2(output)
+        return output
+
+class VishwamaiModel(nn.Module):
     def __init__(self, config: vishwamai_config.VishwamaiConfig):
         super().__init__()
         self.config = config
-        self.vocab_size = config.vocab_size
-
+        self.math_reasoning_module = MathReasoningModule(config)
         self.layers = nn.ModuleList()
         for i in range(config.num_hidden_layers):
             if config.architecture == vishwamai_config.Architecture.VISHWAMAI_1:
@@ -563,6 +577,7 @@ class VishwamaiModel(nn.Module):
         kv_caches: List[Tuple[torch.Tensor, torch.Tensor]],
         mask: torch.Tensor,
     ) -> torch.Tensor:
+        math_reasoning_output = self.math_reasoning_module(hidden_states)
         for i in range(len(self.layers)):
             layer = self.layers[i]
             hidden_states = layer(

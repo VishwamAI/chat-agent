@@ -1,0 +1,24 @@
+model:
+  type: Vishwamai
+  size: 2b
+  layers: 24
+  hidden_size: 2048
+  attention_heads: 16
+  dropout: 0.1
+
+training:
+  batch_size: 32
+  learning_rate: 3e-5
+  epochs: 10
+  optimizer: AdamW
+  scheduler: linear
+
+data:
+  train_dataset: path/to/train_dataset
+  validation_dataset: path/to/validation_dataset
+
+evaluation:
+  metrics:
+    - name: Perplexity
+    - name: BLEU
+    - name: ROUGE

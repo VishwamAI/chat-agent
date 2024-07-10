@@ -1,9 +1,8 @@
 import torch
-from transformers import T5Tokenizer
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 from datasets import load_dataset
 import argparse
 from vishwamai import config as vishwamai_config
-from vishwamai.model import VishwamaiForCausalLM
 
 def preprocess_data(data, tokenizer, max_length=512):
     inputs = [item['input'] for item in data]
@@ -18,8 +17,7 @@ def main(args):
 
     # Initialize the tokenizer and model
     tokenizer = T5Tokenizer.from_pretrained('t5-small')
-    config = vishwamai_config.get_model_config('7b')
-    model = VishwamaiForCausalLM(config)
+    model = T5ForConditionalGeneration.from_pretrained('t5-small')
 
     # Preprocess the data
     input_encodings, target_encodings = preprocess_data(dataset['train'], tokenizer)

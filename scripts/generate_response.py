@@ -2,6 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from huggingface_hub import login
 import os
+import traceback
 
 def generate_response(prompt):
     try:
@@ -33,6 +34,7 @@ def generate_response(prompt):
 
     except Exception as e:
         print(f"An error occurred: {e}")
+        traceback.print_exc()
         return None
 
 if __name__ == "__main__":

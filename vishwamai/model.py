@@ -779,10 +779,10 @@ class VishwamaiForCausalLM(nn.Module):
             raise ValueError("Both use_nucleus_sampling and use_beam_search cannot be True simultaneously")
         elif use_beam_search:
             # Beam search initialization
-            beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
+            beams = [(token_ids_tensor.clone(), 0.0, 0.0)] * num_beams  # (token_ids, score, coverage)
             for i in range(max_seq_len - min_prompt_len):
                 new_beams = []
-                for beam_token_ids, beam_score in beams:
+                for beam_token_ids, beam_score, beam_coverage in beams:
                     logits = self(
                         input_token_ids=beam_token_ids,
                         input_positions=input_positions_tensor,
@@ -827,7 +827,14 @@ class VishwamaiForCausalLM(nn.Module):
                         new_beam_token_ids = beam_token_ids.clone()
                         new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
                         new_beam_score = beam_score + torch.log(probs[0, token]).item()
-                        new_beams.append((new_beam_token_ids, new_beam_score))
+                        new_beam_coverage = beam_coverage + probs[0, token].item()
+                        new_beams.append((new_beam_token_ids, new_beam_score, new_beam_coverage))
+
+                # Apply length and coverage penalties
+                for j in range(len(new_beams)):
+                    new_beam_token_ids, new_beam_score, new_beam_coverage = new_beams[j]
+                    new_beam_score /= (len(new_beam_token_ids[0]) ** length_penalty)
+                    new_beam_score += coverage_penalty * new_beam_coverage
 
                 # Select top beams
                 beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]

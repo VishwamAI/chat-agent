@@ -704,6 +704,8 @@ class VishwamaiForCausalLM(nn.Module):
         top_p: float = 1.0,
         top_k: int = 100,
         num_beams: int = 5,
+        repetition_penalty: float = 1.0,
+        no_repeat_ngram_size: int = 0,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -716,6 +718,8 @@ class VishwamaiForCausalLM(nn.Module):
             top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
             top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
             num_beams (int, optional): Number of beams for beam search. Defaults to 5.
+            repetition_penalty (float, optional): Penalty for repeated tokens. Defaults to 1.0.
+            no_repeat_ngram_size (int, optional): Size of n-grams that should not be repeated. Defaults to 0.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -793,6 +797,19 @@ class VishwamaiForCausalLM(nn.Module):
                 )[1]
                 probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
                 next_token_ids = self.sample_top_p(probs, top_p)
+
+                # Apply repetition penalty
+                if repetition_penalty != 1.0:
+                    for token in set(next_token_ids.tolist()):
+                        if token in beam_token_ids[0].tolist():
+                            probs[:, token] /= repetition_penalty
+
+                # Apply no-repeat n-gram penalty
+                if no_repeat_ngram_size > 0:
+                    for token in set(next_token_ids.tolist()):
+                        ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
+                        if ngram.count(token) > 0:
+                            probs[:, token] = 0.0
 
                 # Grammar masking: validate sequences using Earley parser
                 valid_tokens = []

@@ -31,7 +31,9 @@ def generate_response(prompt, temperature=0.95, top_p=1.0, top_k=100):
             max_length=100,
             temperature=temperature,
             top_p=top_p,
-            top_k=top_k
+            top_k=top_k,
+            length_penalty=1.0,
+            coverage_penalty=0.0
         )
         generated_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
         return generated_response

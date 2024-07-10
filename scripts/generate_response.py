@@ -26,7 +26,11 @@ def generate_response(prompt):
         input_ids = tokenizer(prompt, return_tensors="pt").to(device)
 
         # Generate output
-        outputs = model.generate(**input_ids)
+        outputs = model.generate(
+            **input_ids,
+            length_penalty=1.0,
+            coverage_penalty=0.0
+        )
         generated_response = tokenizer.decode(outputs[0])
 
         return generated_response

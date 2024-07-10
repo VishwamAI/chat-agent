@@ -23,3 +23,6 @@ data/
 
 # Ignore nohup output file
 scripts/nohup.out
+
+# Ignore T5X training script
+t5x_train.py

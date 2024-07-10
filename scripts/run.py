@@ -50,7 +50,13 @@ def main(args):
     print("Model loading done")
 
     # Generate the response.
-    result = model.generate(args.prompt, device, output_len=args.output_len)
+    result = model.generate(
+        args.prompt,
+        device,
+        output_len=args.output_len,
+        length_penalty=args.length_penalty,
+        coverage_penalty=args.coverage_penalty
+    )
 
     # Print the prompts and results.
     print('======================================')
@@ -74,6 +80,8 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=12345)
     parser.add_argument("--quant", action='store_true')
     parser.add_argument("--prompt", type=str, default="The meaning of life is")
+    parser.add_argument("--length_penalty", type=float, default=1.0)
+    parser.add_argument("--coverage_penalty", type=float, default=0.0)
     args = parser.parse_args()
 
     main(args)

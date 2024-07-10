@@ -11,43 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Inference-only Gemma model implementation."""
-
-# Copyright 2024 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-import fairscale.nn.model_parallel.initialize as fs_init
-from fairscale.nn.model_parallel.layers import (
-    ColumnParallelLinear,
-    RowParallelLinear,
-    VocabParallelEmbedding,
-)
-
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""Inference-only Gemma model implementation."""
-# Copyright 2024 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""Inference-only Gemma model implementation."""
+"""Inference-only Vishwamai model implementation."""
 
 import json
 import gc
@@ -73,6 +37,8 @@ from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
 from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
 
 from lark import Lark
+
+from basaran.model import load_model
 
 def rotate_half(x: torch.Tensor) -> torch.Tensor:
     """Obtain the rotated counterpart of each feature"""
@@ -260,7 +226,7 @@ class RMSNorm(torch.nn.Module):
         return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
 
     def forward(self, x):
-        # Llama does x.to(float16) * w whilst Gemma2 is (x * w).to(float16)
+        # Llama does x.to(float16) * w whilst Vishwamai2 is (x * w).to(float16)
         # See https://github.com/huggingface/transformers/pull/29402
         output = self._norm(x.float())
         if self.add_unit_offset:
@@ -556,9 +522,9 @@ class VishwamaiModel(nn.Module):
 
         self.layers = nn.ModuleList()
         for i in range(config.num_hidden_layers):
-            if config.architecture == vishwamai_config.Architecture.GEMMA_1:
+            if config.architecture == vishwamai_config.Architecture.VISHWAMAI_1:
                 self.layers.append(VishwamaiDecoderLayer(config))
-            elif config.architecture == vishwamai_config.Architecture.GEMMA_2:
+            elif config.architecture == vishwamai_config.Architecture.VISHWAMAI_2:
                 attn_type = (
                     config.attn_types[i]
                     if config.attn_types is not None
@@ -652,8 +618,8 @@ class VishwamaiForCausalLM(nn.Module):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         # Removed freqs_cis calculation and parameter passing
         hidden_states = self.embedder(input_token_ids)
-        # Gemma normalizes the embedding by sqrt(hidden_size).
-        # Gemma2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
+        # Vishwamai normalizes the embedding by sqrt(hidden_size).
+        # Vishwamai2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
         # See https://github.com/huggingface/transformers/pull/29402
         normalizer = torch.tensor(self.config.hidden_size**0.5, dtype=hidden_states.dtype)
         hidden_states = hidden_states * normalizer
@@ -703,6 +669,34 @@ class VishwamaiForCausalLM(nn.Module):
         next_token = torch.gather(probs_idx, -1, next_token)
         return next_token
 
+    def sample_advanced(self, probs, top_p, top_k):
+        """
+        Perform advanced sampling on a probability distribution.
+
+        Args:
+            probs (torch.Tensor): Probability distribution tensor.
+            top_p (float): Probability threshold for top-p sampling.
+            top_k (int): Number of top tokens to consider for top-k sampling.
+
+        Returns:
+            torch.Tensor: Sampled token indices.
+
+        Note:
+            This method combines top-p and top-k sampling techniques to improve the diversity and quality of generated text.
+        """
+        # Top-p (nucleus) sampling
+        probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
+        probs_sum = torch.cumsum(probs_sort, dim=-1)
+        mask = probs_sum - probs_sort > top_p
+        probs_sort[mask] = 0.0
+
+        # Top-k sampling
+        top_k_probs, top_k_indices = torch.topk(probs_sort, top_k, dim=-1)
+        top_k_probs.div_(top_k_probs.sum(dim=-1, keepdim=True))
+        next_token = torch.multinomial(top_k_probs, num_samples=1)
+        next_token = torch.gather(top_k_indices, -1, next_token)
+        return next_token
+
     def generate(
         self,
         prompts: Union[str, Sequence[str]],
@@ -711,6 +705,7 @@ class VishwamaiForCausalLM(nn.Module):
         temperature: float = 0.95,
         top_p: float = 1.0,
         top_k: int = 100,
+        advanced_sampling: bool = False,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -722,6 +717,7 @@ class VishwamaiForCausalLM(nn.Module):
             temperature (float, optional): Sampling temperature. Defaults to 0.95.
             top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
             top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+            advanced_sampling (bool, optional): Whether to use advanced sampling techniques. Defaults to False.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -796,8 +792,10 @@ class VishwamaiForCausalLM(nn.Module):
                 top_ks=top_ks_tensor,
             )[1]
             probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-            next_token_ids = self.sample_top_p(probs, top_p)
-
+            if advanced_sampling:
+                next_token_ids = self.sample_advanced(probs, top_p, top_k)
+            else:
+                next_token_ids = self.sample_top_p(probs, top_p)
             # Grammar masking: validate sequences using Earley parser
             valid_tokens = []
             for token in next_token_ids:

@@ -1,15 +1,16 @@
 import torch
-from transformers import AutoTokenizer
 from datasets import load_dataset
 import argparse
 from vishwamai import config as vishwamai_config
 from vishwamai.model import VishwamaiForCausalLM
+from vishwamai.tokenizer import Tokenizer
+import os
 
 def preprocess_data(data, tokenizer, max_length=512):
     inputs = [item['input'] for item in data]
     targets = [item['target'] for item in data]
-    input_encodings = tokenizer(inputs, max_length=max_length, truncation=True, padding=True, return_tensors='pt')
-    target_encodings = tokenizer(targets, max_length=max_length, truncation=True, padding=True, return_tensors='pt')
+    input_encodings = tokenizer.encode(inputs, max_length=max_length, truncation=True, padding=True, return_tensors='pt')
+    target_encodings = tokenizer.encode(targets, max_length=max_length, truncation=True, padding=True, return_tensors='pt')
     return input_encodings, target_encodings
 
 def main(args):
@@ -17,7 +18,11 @@ def main(args):
     dataset = load_dataset(args.dataset)
 
     # Initialize the tokenizer and model
-    tokenizer = AutoTokenizer.from_pretrained('t5-base')
+    tokenizer_model_path = 'vishwamai/tokenizer/tokenizer.model'
+    if not os.path.isfile(tokenizer_model_path):
+        raise FileNotFoundError(f"Tokenizer model file not found: {tokenizer_model_path}")
+
+    tokenizer = Tokenizer(tokenizer_model_path)
     config = vishwamai_config.get_model_config(args.model_size)
     model = VishwamaiForCausalLM(config)
 

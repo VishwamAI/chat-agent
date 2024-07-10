@@ -1,5 +1,5 @@
 import torch
-from transformers import T5Tokenizer
+from transformers import AutoTokenizer
 from datasets import load_dataset
 import argparse
 from vishwamai import config as vishwamai_config
@@ -17,8 +17,8 @@ def main(args):
     dataset = load_dataset(args.dataset)
 
     # Initialize the tokenizer and model
-    tokenizer = T5Tokenizer.from_pretrained('t5-small')
-    config = vishwamai_config.get_model_config('7b')
+    tokenizer = AutoTokenizer.from_pretrained('t5-base')
+    config = vishwamai_config.get_model_config(args.model_size)
     model = VishwamaiForCausalLM(config)
 
     # Preprocess the data
@@ -48,6 +48,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset from Hugging Face datasets library")
+    parser.add_argument("--model_size", type=str, required=True, choices=['2b', '7b', '9b', '27b'], help="Size of the Vishwamai model to train")
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
     parser.add_argument("--batch_size", type=int, default=8, help="Batch size for training")
     args = parser.parse_args()

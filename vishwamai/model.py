@@ -848,6 +848,7 @@ class VishwamaiForCausalLM(nn.Module):
 
         elif use_nucleus_sampling:
             # Nucleus sampling initialization
+            coverage = 0.0
             for i in range(max_seq_len - min_prompt_len):
                 logits = self(
                     input_token_ids=input_token_ids_tensor,
@@ -891,6 +892,12 @@ class VishwamaiForCausalLM(nn.Module):
 
                 for token in valid_tokens:
                     input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
+                    coverage += probs[0, token].item()
+
+                # Apply length and coverage penalties
+                score = torch.log(probs[0, valid_tokens[0]]).item()
+                score /= (len(input_token_ids_tensor[0]) ** length_penalty)
+                score += coverage_penalty * coverage
 
                 # Update input tensors for the next iteration
                 input_positions_tensor = output_index.unsqueeze(dim=-1)

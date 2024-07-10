@@ -21,6 +21,7 @@ import re
 import torch
 from torch import nn
 import torch.nn.functional as F
+from transformers import T5ForConditionalGeneration, T5Tokenizer
 from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import fairscale.nn.model_parallel.initialize as fs_init
@@ -580,9 +581,8 @@ class VishwamaiForCausalLM(nn.Module):
         head_dim = config.head_dim
         vocab_size = config.vocab_size
 
-        self.tokenizer = tokenizer.Tokenizer(config.tokenizer)
-        self.embedder = Embedding(vocab_size, config.hidden_size, config.quant)
-        self.model = VishwamaiModel(config)
+        self.tokenizer = T5Tokenizer.from_pretrained("t5-base")
+        self.model = T5ForConditionalGeneration.from_pretrained("t5-base")
         self.sampler = Sampler(vocab_size, config)
 
         # Removed pre-compute rotary embedding table and freqs_cis buffer
@@ -628,24 +628,21 @@ class VishwamaiForCausalLM(nn.Module):
         top_ks: torch.Tensor,
         **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        # Removed freqs_cis calculation and parameter passing
-        hidden_states = self.embedder(input_token_ids)
-        # Vishwamai normalizes the embedding by sqrt(hidden_size).
-        # Vishwamai2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
-        # See https://github.com/huggingface/transformers/pull/29402
-        normalizer = torch.tensor(self.config.hidden_size**0.5, dtype=hidden_states.dtype)
-        hidden_states = hidden_states * normalizer
-
-        hidden_states = self.model(
-            hidden_states=hidden_states,
-            kv_write_indices=kv_write_indices,
-            kv_caches=kv_caches,
-            mask=mask,
+        # Use T5 model for the forward pass
+        outputs = self.model(
+            input_ids=input_token_ids,
+            attention_mask=mask,
+            decoder_input_ids=output_positions,
+            return_dict=True,
+            output_hidden_states=True,
         )
-        embedder_weight = self.embedder.weight
+        hidden_states = outputs.last_hidden_state
+
+        embedder_weight = self.model.shared.weight
         if self.config.quant:
             embedder_weight = (
-                embedder_weight * self.embedder.weight_scaler.unsqueeze(-1))
+                embedder_weight * self.model.shared.weight_scaler.unsqueeze(-1)
+            )
 
         next_tokens, logits = self.sampler(
             embedding=embedder_weight,
@@ -698,6 +695,7 @@ class VishwamaiForCausalLM(nn.Module):
         coverage_penalty: float = 0.0,
         use_top_k_sampling: bool = False,
         use_greedy_decoding: bool = False,
+        constraints: Optional[List[str]] = None,  # New parameter for constrained decoding
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -718,6 +716,7 @@ class VishwamaiForCausalLM(nn.Module):
             coverage_penalty (float, optional): Penalty for coverage. Defaults to 0.0.
             use_top_k_sampling (bool, optional): Whether to use top-k sampling. Defaults to False.
             use_greedy_decoding (bool, optional): Whether to use greedy decoding. Defaults to False.
+            constraints (Optional[List[str]], optional): List of constraints for constrained decoding. Defaults to None.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -735,299 +734,26 @@ class VishwamaiForCausalLM(nn.Module):
         if is_str_prompt:
             prompts = [prompts]
 
-        batch_size = len(prompts)
-        prompt_tokens = [self.tokenizer.encode(prompt) for prompt in prompts]
-        min_prompt_len = min(len(p) for p in prompt_tokens)
-        max_prompt_len = max(len(p) for p in prompt_tokens)
-        max_seq_len = max_prompt_len + output_len
-        assert max_seq_len <= self.config.max_position_embeddings
+        # Tokenize prompts
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(device)
 
-        # build KV caches
-        kv_caches = []
-        for _ in range(self.config.num_hidden_layers):
-            size = (batch_size, max_seq_len, self.config.num_key_value_heads,
-                    self.config.head_dim)
-            dtype = self.config.get_dtype()
-            k_cache = torch.zeros(size=size, dtype=dtype, device=device)
-            v_cache = torch.zeros(size=size, dtype=dtype, device=device)
-            kv_caches.append((k_cache, v_cache))
+        # Generate text using T5 model
+        outputs = self.model.generate(
+            input_ids=inputs.input_ids,
+            attention_mask=inputs.attention_mask,
+            max_length=output_len,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            num_beams=num_beams,
+            repetition_penalty=repetition_penalty,
+            no_repeat_ngram_size=no_repeat_ngram_size,
+            length_penalty=length_penalty,
+            early_stopping=True,
+        )
 
-        # prepare inputs
-        token_ids_tensor = torch.full((batch_size, max_seq_len),
-                                      self.tokenizer.pad_id, dtype=torch.int64)
-        input_token_ids_tensor = torch.full((batch_size, min_prompt_len),
-                                            self.tokenizer.pad_id,
-                                            dtype=torch.int64)
-        for i, p in enumerate(prompt_tokens):
-            token_ids_tensor[i, :len(p)] = torch.tensor(p)
-            input_token_ids_tensor[i, :min_prompt_len] = torch.tensor(
-                p[:min_prompt_len])
-        token_ids_tensor = token_ids_tensor.to(device)
-        input_token_ids_tensor = input_token_ids_tensor.to(device)
-        prompt_mask_tensor = token_ids_tensor != self.tokenizer.pad_id
-        input_positions_tensor = torch.arange(0, min_prompt_len,
-                                              dtype=torch.int64).to(device)
-        mask_tensor = torch.full((1, 1, max_seq_len, max_seq_len),
-                                 -2.3819763e38).to(torch.float)
-        mask_tensor = torch.triu(mask_tensor, diagonal=1).to(device)
-        curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-        output_positions_tensor = torch.LongTensor([min_prompt_len - 1]).to(
-            device)
-        temperatures_tensor = torch.FloatTensor([temperature] * batch_size).to(device)
-        top_ps_tensor = torch.FloatTensor([top_p] * batch_size).to(device)
-        top_ks_tensor = torch.LongTensor([top_k] * batch_size).to(device)
-        output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
-            device)
-
-        if use_beam_search and use_nucleus_sampling:
-            raise ValueError("Both use_nucleus_sampling and use_beam_search cannot be True simultaneously")
-        elif use_beam_search:
-            # Beam search initialization
-            beams = [(token_ids_tensor.clone(), 0.0, 0.0)] * num_beams  # (token_ids, score, coverage)
-            for i in range(max_seq_len - min_prompt_len):
-                new_beams = []
-                for beam_token_ids, beam_score, beam_coverage in beams:
-                    logits = self(
-                        input_token_ids=beam_token_ids,
-                        input_positions=input_positions_tensor,
-                        kv_write_indices=None,
-                        kv_caches=kv_caches,
-                        mask=curr_mask_tensor,
-                        output_positions=output_positions_tensor,
-                        temperatures=temperatures_tensor,
-                        top_ps=top_ps_tensor,
-                        top_ks=top_ks_tensor,
-                    )[1]
-                    probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-                    next_token_ids = self.sample_top_p(probs, top_p)
-
-                    # Apply repetition penalty
-                    if repetition_penalty != 1.0:
-                        for token in set(next_token_ids.tolist()):
-                            if token in beam_token_ids[0].tolist():
-                                probs[:, token] /= repetition_penalty
-
-                    # Apply no-repeat n-gram penalty
-                    if no_repeat_ngram_size > 0:
-                        for token in set(next_token_ids.tolist()):
-                            ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
-                            if ngram.count(token) > 0:
-                                probs[:, token] = 0.0
-
-                    # Grammar masking: validate sequences using Earley parser
-                    valid_tokens = []
-                    for token in next_token_ids:
-                        sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
-                        sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                        try:
-                            self.earley_parser.parse(sequence_str)
-                            valid_tokens.append(token)
-                        except:
-                            continue
-                    if not valid_tokens:
-                        valid_tokens = [self.tokenizer.pad_id] * batch_size
-
-                    for token in valid_tokens:
-                        new_beam_token_ids = beam_token_ids.clone()
-                        new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
-                        new_beam_score = beam_score + torch.log(probs[0, token]).item()
-                        new_beam_coverage = beam_coverage + probs[0, token].item()
-                        new_beams.append((new_beam_token_ids, new_beam_score, new_beam_coverage))
-
-                # Apply length and coverage penalties
-                for j in range(len(new_beams)):
-                    new_beam_token_ids, new_beam_score, new_beam_coverage = new_beams[j]
-                    new_beam_score /= (len(new_beam_token_ids[0]) ** length_penalty)
-                    new_beam_score += coverage_penalty * new_beam_coverage
-
-                # Select top beams
-                beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
-
-                # Update input tensors for the next iteration
-                input_token_ids_tensor = beams[0][0]
-                input_positions_tensor = output_index.unsqueeze(dim=-1)
-                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-                output_index = output_index + 1
-
-        elif use_nucleus_sampling:
-            # Nucleus sampling initialization
-            coverage = 0.0
-            for i in range(max_seq_len - min_prompt_len):
-                logits = self(
-                    input_token_ids=input_token_ids_tensor,
-                    input_positions=input_positions_tensor,
-                    kv_write_indices=None,
-                    kv_caches=kv_caches,
-                    mask=curr_mask_tensor,
-                    output_positions=output_positions_tensor,
-                    temperatures=temperatures_tensor,
-                    top_ps=top_ps_tensor,
-                    top_ks=top_ks_tensor,
-                )[1]
-                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-                next_token_ids = self.sample_top_p(probs, top_p)
-
-                # Apply repetition penalty
-                if repetition_penalty != 1.0:
-                    for token in set(next_token_ids.tolist()):
-                        if token in input_token_ids_tensor[0].tolist():
-                            probs[:, token] /= repetition_penalty
-
-                # Apply no-repeat n-gram penalty
-                if no_repeat_ngram_size > 0:
-                    for token in set(next_token_ids.tolist()):
-                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
-                        if ngram.count(token) > 0:
-                            probs[:, token] = 0.0
-
-                # Grammar masking: validate sequences using Earley parser
-                valid_tokens = []
-                for token in next_token_ids:
-                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
-                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                    try:
-                        self.earley_parser.parse(sequence_str)
-                        valid_tokens.append(token)
-                    except:
-                        continue
-                if not valid_tokens:
-                    valid_tokens = [self.tokenizer.pad_id] * batch_size
-
-                for token in valid_tokens:
-                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
-                    coverage += probs[0, token].item()
-
-                # Apply length and coverage penalties
-                score = torch.log(probs[0, valid_tokens[0]]).item()
-                score /= (len(input_token_ids_tensor[0]) ** length_penalty)
-                score += coverage_penalty * coverage
-
-                # Update input tensors for the next iteration
-                input_positions_tensor = output_index.unsqueeze(dim=-1)
-                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-                output_index = output_index + 1
-
-        elif use_top_k_sampling:
-            # Top-k sampling initialization
-            for i in range(max_seq_len - min_prompt_len):
-                logits = self(
-                    input_token_ids=input_token_ids_tensor,
-                    input_positions=input_positions_tensor,
-                    kv_write_indices=None,
-                    kv_caches=kv_caches,
-                    mask=curr_mask_tensor,
-                    output_positions=output_positions_tensor,
-                    temperatures=temperatures_tensor,
-                    top_ps=top_ps_tensor,
-                    top_ks=top_ks_tensor,
-                )[1]
-                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-                top_k_probs, top_k_indices = torch.topk(probs, top_k, dim=-1)
-                top_k_probs.div_(top_k_probs.sum(dim=-1, keepdim=True))
-                next_token_ids = torch.multinomial(top_k_probs, num_samples=1)
-                next_token_ids = torch.gather(top_k_indices, -1, next_token_ids)
-
-                # Apply repetition penalty
-                if repetition_penalty != 1.0:
-                    for token in set(next_token_ids.tolist()):
-                        if token in input_token_ids_tensor[0].tolist():
-                            probs[:, token] /= repetition_penalty
-
-                # Apply no-repeat n-gram penalty
-                if no_repeat_ngram_size > 0:
-                    for token in set(next_token_ids.tolist()):
-                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
-                        if ngram.count(token) > 0:
-                            probs[:, token] = 0.0
-
-                # Grammar masking: validate sequences using Earley parser
-                valid_tokens = []
-                for token in next_token_ids:
-                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
-                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                    try:
-                        self.earley_parser.parse(sequence_str)
-                        valid_tokens.append(token)
-                    except:
-                        continue
-                if not valid_tokens:
-                    valid_tokens = [self.tokenizer.pad_id] * batch_size
-
-                for token in valid_tokens:
-                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
-
-                # Update input tensors for the next iteration
-                input_positions_tensor = output_index.unsqueeze(dim=-1)
-                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-                output_index = output_index + 1
-
-        elif use_greedy_decoding:
-            # Greedy decoding initialization
-            for i in range(max_seq_len - min_prompt_len):
-                logits = self(
-                    input_token_ids=input_token_ids_tensor,
-                    input_positions=input_positions_tensor,
-                    kv_write_indices=None,
-                    kv_caches=kv_caches,
-                    mask=curr_mask_tensor,
-                    output_positions=output_positions_tensor,
-                    temperatures=temperatures_tensor,
-                    top_ps=top_ps_tensor,
-                    top_ks=top_ks_tensor,
-                )[1]
-                next_token_ids = torch.argmax(logits[:, -1], dim=-1, keepdim=True)
-
-                # Apply repetition penalty
-                if repetition_penalty != 1.0:
-                    for token in set(next_token_ids.tolist()):
-                        if token in input_token_ids_tensor[0].tolist():
-                            logits[:, token] /= repetition_penalty
-
-                # Apply no-repeat n-gram penalty
-                if no_repeat_ngram_size > 0:
-                    for token in set(next_token_ids.tolist()):
-                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
-                        if ngram.count(token) > 0:
-                            logits[:, token] = -float('inf')
-
-                # Grammar masking: validate sequences using Earley parser
-                valid_tokens = []
-                for token in next_token_ids:
-                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
-                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                    try:
-                        self.earley_parser.parse(sequence_str)
-                        valid_tokens.append(token)
-                    except:
-                        continue
-                if not valid_tokens:
-                    valid_tokens = [self.tokenizer.pad_id] * batch_size
-
-                for token in valid_tokens:
-                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
-
-                # Update input tensors for the next iteration
-                input_positions_tensor = output_index.unsqueeze(dim=-1)
-                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-                output_index = output_index + 1
-
-        else:
-            raise ValueError("At least one of use_nucleus_sampling or use_beam_search must be True")
-
-        # Detokenization.
-        token_ids = beams[0][0].tolist()
-        results = []
-        for i, tokens in enumerate(token_ids):
-            trimmed_output = tokens[len(prompt_tokens[i]):len(prompt_tokens[i])
-                                    + output_len]
-            if self.tokenizer.eos_id in trimmed_output:
-                eos_index = trimmed_output.index(self.tokenizer.eos_id)
-                trimmed_output = trimmed_output[:eos_index]
-            results.append(self.tokenizer.decode(trimmed_output))
+        # Decode generated text
+        results = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
 
         # If a string was provided as input, return a string as output.
         return results[0] if is_str_prompt else results
@@ -1143,3 +869,21 @@ class VishwamaiForCausalLM(nn.Module):
             "METEOR": meteor_score,
             "CIDEr": cider_score,
         }
+
+    def validate_tokens_with_constraints(self, next_token_ids, current_sequence, constraints):
+        valid_tokens = []
+        for token in next_token_ids:
+            sequence = current_sequence + [token]
+            sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+            try:
+                self.earley_parser.parse(sequence_str)
+                if constraints:
+                    if all(constraint in sequence_str for constraint in constraints):
+                        valid_tokens.append(token)
+                else:
+                    valid_tokens.append(token)
+            except:
+                continue
+        if not valid_tokens:
+            valid_tokens = [self.tokenizer.pad_id] * len(next_token_ids)
+        return valid_tokens

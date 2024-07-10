@@ -3,6 +3,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 import argparse
 from vishwamai import config as vishwamai_config
+from vishwamai.model import VishwamaiForCausalLM
 
 def preprocess_data(data, tokenizer, max_length=512):
     inputs = [item['input'] for item in data]

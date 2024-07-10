@@ -43,9 +43,35 @@ To evaluate the model on a test dataset, run:
 python scripts/evaluate.py --test_file path/to/test/file.txt
 ```
 
+### Testing Sampling Parameters
+
+To test the VishwamAI model with different sampling parameters (temperature, top-p, top-k) across various prompts, use:
+
+```
+python scripts/sampling_test.py --prompt "Your prompt here" --temperature 0.7 --top_p 0.9 --top_k 50
+```
+
+### Note
+
+Before running any scripts that depend on the Hugging Face API, ensure that the `HUGGING_FACE_TOKEN` environment variable is set up as described in the "Setting Up Environment Variables" section.
+
 ## Configuration
 
 You can modify the model and training configuration by editing the configuration files in the `configs/` directory.
+
+## Setting Up Environment Variables
+
+To securely use the Hugging Face API, set the `HUGGING_FACE_TOKEN` environment variable with your Hugging Face token. This can be done by adding the following line to your shell profile (e.g., `.bashrc`, `.zshrc`):
+
+```
+export HUGGING_FACE_TOKEN=your_hugging_face_token
+```
+
+After adding the line, reload your shell profile:
+
+```
+source ~/.bashrc  # or source ~/.zshrc
+```
 
 ## Documentation
 
@@ -58,13 +84,3 @@ Contributions to VishwamAI are welcome! Please refer to the `CONTRIBUTING.md` fi
 ## License
 
 This project is licensed under the Apache 2.0 License. See the `LICENSE` file for details.
-
-This structure and these files provide a solid foundation for your improved VishwamAI model. The code is more modular and organized, making it easier to maintain and extend. The `README.md` file gives users an overview of how to use your model.
-
-To use this improved version:
-
-1. Set up the folder structure as shown above.
-2. Copy the provided code into their respective files.
-3. Implement any missing functions (e.g., evaluation logic, text generation).
-4. Add necessary dependencies to `requirements.txt`.
-5. Create appropriate documentation in the `docs/` directory.

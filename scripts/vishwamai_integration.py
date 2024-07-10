@@ -1,8 +1,25 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from huggingface_hub import login
+import os
 
 def generate_text_with_vishwamai(input_text):
+    """
+    Generate text using the Vishwamai model.
+
+    Parameters:
+    input_text (str): The input text prompt for text generation.
+
+    Returns:
+    str: The generated text based on the input prompt.
+    """
     try:
+        # Authenticate with Hugging Face
+        hf_token = os.getenv("HUGGING_FACE_TOKEN")
+        if not hf_token:
+            raise ValueError("HUGGING_FACE_TOKEN environment variable is not set.")
+        login(token=hf_token)
+
         # Check for CUDA availability
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -23,6 +40,9 @@ def generate_text_with_vishwamai(input_text):
 
         return generated_text
 
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+        return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None

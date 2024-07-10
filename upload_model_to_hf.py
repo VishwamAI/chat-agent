@@ -2,7 +2,9 @@ import os
 from huggingface_hub import HfApi
 
 # Get the Hugging Face token from the environment variable
-hf_token = os.getenv("Hugging_Face_Hugging_Face")
+hf_token = os.getenv("HUGGING_FACE_TOKEN")
+if not hf_token:
+    raise ValueError("HUGGING_FACE_TOKEN environment variable is not set.")
 
 # Define the file path to the model checkpoint
 file_path = "vishwamai_model/vishwamai_model_checkpoint.bin"

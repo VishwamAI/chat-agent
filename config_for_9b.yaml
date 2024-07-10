@@ -14,7 +14,7 @@ training:
   scheduler: linear
 
 data:
-  train_dataset: datasets/train.json
+  train_dataset: datasets/dev.json
   validation_dataset: datasets/dev.json
 
 evaluation:

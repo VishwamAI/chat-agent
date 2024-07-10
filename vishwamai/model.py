@@ -696,6 +696,8 @@ class VishwamaiForCausalLM(nn.Module):
         use_beam_search: bool = True,
         length_penalty: float = 1.0,
         coverage_penalty: float = 0.0,
+        use_top_k_sampling: bool = False,
+        use_greedy_decoding: bool = False,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -714,6 +716,8 @@ class VishwamaiForCausalLM(nn.Module):
             use_beam_search (bool, optional): Whether to use beam search. Defaults to True.
             length_penalty (float, optional): Penalty for sequence length. Defaults to 1.0.
             coverage_penalty (float, optional): Penalty for coverage. Defaults to 0.0.
+            use_top_k_sampling (bool, optional): Whether to use top-k sampling. Defaults to False.
+            use_greedy_decoding (bool, optional): Whether to use greedy decoding. Defaults to False.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -723,8 +727,8 @@ class VishwamaiForCausalLM(nn.Module):
             raise ValueError("Temperature must be between 0.0 and 1.0")
         if not (0.0 < top_p <= 1.0):
             raise ValueError("Top-p must be between 0.0 and 1.0")
-        if not (use_nucleus_sampling or use_beam_search):
-            raise ValueError("At least one of use_nucleus_sampling or use_beam_search must be True")
+        if not (use_nucleus_sampling or use_beam_search or use_top_k_sampling or use_greedy_decoding):
+            raise ValueError("At least one of use_nucleus_sampling, use_beam_search, use_top_k_sampling, or use_greedy_decoding must be True")
 
         # If a single prompt is provided, treat it as a batch of 1.
         is_str_prompt = isinstance(prompts, str)
@@ -904,6 +908,113 @@ class VishwamaiForCausalLM(nn.Module):
                 curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
                 output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
                 output_index = output_index + 1
+
+        elif use_top_k_sampling:
+            # Top-k sampling initialization
+            for i in range(max_seq_len - min_prompt_len):
+                logits = self(
+                    input_token_ids=input_token_ids_tensor,
+                    input_positions=input_positions_tensor,
+                    kv_write_indices=None,
+                    kv_caches=kv_caches,
+                    mask=curr_mask_tensor,
+                    output_positions=output_positions_tensor,
+                    temperatures=temperatures_tensor,
+                    top_ps=top_ps_tensor,
+                    top_ks=top_ks_tensor,
+                )[1]
+                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+                top_k_probs, top_k_indices = torch.topk(probs, top_k, dim=-1)
+                top_k_probs.div_(top_k_probs.sum(dim=-1, keepdim=True))
+                next_token_ids = torch.multinomial(top_k_probs, num_samples=1)
+                next_token_ids = torch.gather(top_k_indices, -1, next_token_ids)
+
+                # Apply repetition penalty
+                if repetition_penalty != 1.0:
+                    for token in set(next_token_ids.tolist()):
+                        if token in input_token_ids_tensor[0].tolist():
+                            probs[:, token] /= repetition_penalty
+
+                # Apply no-repeat n-gram penalty
+                if no_repeat_ngram_size > 0:
+                    for token in set(next_token_ids.tolist()):
+                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
+                        if ngram.count(token) > 0:
+                            probs[:, token] = 0.0
+
+                # Grammar masking: validate sequences using Earley parser
+                valid_tokens = []
+                for token in next_token_ids:
+                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
+                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                    try:
+                        self.earley_parser.parse(sequence_str)
+                        valid_tokens.append(token)
+                    except:
+                        continue
+                if not valid_tokens:
+                    valid_tokens = [self.tokenizer.pad_id] * batch_size
+
+                for token in valid_tokens:
+                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
+
+                # Update input tensors for the next iteration
+                input_positions_tensor = output_index.unsqueeze(dim=-1)
+                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
+                output_index = output_index + 1
+
+        elif use_greedy_decoding:
+            # Greedy decoding initialization
+            for i in range(max_seq_len - min_prompt_len):
+                logits = self(
+                    input_token_ids=input_token_ids_tensor,
+                    input_positions=input_positions_tensor,
+                    kv_write_indices=None,
+                    kv_caches=kv_caches,
+                    mask=curr_mask_tensor,
+                    output_positions=output_positions_tensor,
+                    temperatures=temperatures_tensor,
+                    top_ps=top_ps_tensor,
+                    top_ks=top_ks_tensor,
+                )[1]
+                next_token_ids = torch.argmax(logits[:, -1], dim=-1, keepdim=True)
+
+                # Apply repetition penalty
+                if repetition_penalty != 1.0:
+                    for token in set(next_token_ids.tolist()):
+                        if token in input_token_ids_tensor[0].tolist():
+                            logits[:, token] /= repetition_penalty
+
+                # Apply no-repeat n-gram penalty
+                if no_repeat_ngram_size > 0:
+                    for token in set(next_token_ids.tolist()):
+                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
+                        if ngram.count(token) > 0:
+                            logits[:, token] = -float('inf')
+
+                # Grammar masking: validate sequences using Earley parser
+                valid_tokens = []
+                for token in next_token_ids:
+                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
+                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                    try:
+                        self.earley_parser.parse(sequence_str)
+                        valid_tokens.append(token)
+                    except:
+                        continue
+                if not valid_tokens:
+                    valid_tokens = [self.tokenizer.pad_id] * batch_size
+
+                for token in valid_tokens:
+                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
+
+                # Update input tensors for the next iteration
+                input_positions_tensor = output_index.unsqueeze(dim=-1)
+                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
+                output_index = output_index + 1
+
         else:
             raise ValueError("At least one of use_nucleus_sampling or use_beam_search must be True")
 
@@ -931,6 +1042,8 @@ class VishwamaiForCausalLM(nn.Module):
         top_k: int = 100,
         use_nucleus_sampling: bool = True,
         use_beam_search: bool = True,
+        use_top_k_sampling: bool = False,
+        use_greedy_decoding: bool = False,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model in both forward and backward directions.
@@ -944,16 +1057,30 @@ class VishwamaiForCausalLM(nn.Module):
             top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
             use_nucleus_sampling (bool, optional): Whether to use nucleus sampling. Defaults to True.
             use_beam_search (bool, optional): Whether to use beam search. Defaults to True.
+            use_top_k_sampling (bool, optional): Whether to use top-k sampling. Defaults to False.
+            use_greedy_decoding (bool, optional): Whether to use greedy decoding. Defaults to False.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
         """
         # Forward generation
-        forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k, use_nucleus_sampling=use_nucleus_sampling, use_beam_search=use_beam_search)
+        forward_results = self.generate(
+            prompts, device, output_len, temperature, top_p, top_k,
+            use_nucleus_sampling=use_nucleus_sampling,
+            use_beam_search=use_beam_search,
+            use_top_k_sampling=use_top_k_sampling,
+            use_greedy_decoding=use_greedy_decoding
+        )
 
         # Reverse prompts for backward generation
         reversed_prompts = [prompt[::-1] for prompt in prompts]
-        backward_results = self.generate(reversed_prompts, device, output_len, temperature, top_p, top_k, use_nucleus_sampling=use_nucleus_sampling, use_beam_search=use_beam_search)
+        backward_results = self.generate(
+            reversed_prompts, device, output_len, temperature, top_p, top_k,
+            use_nucleus_sampling=use_nucleus_sampling,
+            use_beam_search=use_beam_search,
+            use_top_k_sampling=use_top_k_sampling,
+            use_greedy_decoding=use_greedy_decoding
+        )
 
         # Combine forward and backward results
         combined_results = [f + b[::-1] for f, b in zip(forward_results, backward_results)]

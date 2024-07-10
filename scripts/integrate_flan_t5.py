@@ -12,8 +12,14 @@ def integrate_flan_t5():
         tokenizer = T5Tokenizer.from_pretrained("google/flan-t5-xxl")
         model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-xxl")
         logger.info("Model and tokenizer loaded successfully.")
+    except OSError as e:
+        logger.error(f"File or network error: {e}")
+        return
+    except ValueError as e:
+        logger.error(f"Invalid model configuration: {e}")
+        return
     except Exception as e:
-        logger.error(f"Error loading model or tokenizer: {e}")
+        logger.error(f"Unexpected error: {e}")
         return
 
     try:
@@ -30,8 +36,10 @@ def integrate_flan_t5():
         generated_text = tokenizer.decode(outputs[0])
 
         logger.info(f"Generated Text: {generated_text}")
-    except Exception as e:
+    except RuntimeError as e:
         logger.error(f"Error during text generation: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error during text generation: {e}")
 
 if __name__ == "__main__":
     integrate_flan_t5()

@@ -917,13 +917,15 @@ class VishwamaiForCausalLM(nn.Module):
             reference_texts (List[str]): List of reference text sequences.
 
         Returns:
-            dict: Dictionary containing evaluation metrics (e.g., BLEU, ROUGE).
+            dict: Dictionary containing evaluation metrics (e.g., BLEU, ROUGE, METEOR, CIDEr).
         """
         from datasets import load_metric
 
-        # Load BLEU and ROUGE metrics
+        # Load BLEU, ROUGE, METEOR, and CIDEr metrics
         bleu_metric = load_metric("bleu")
         rouge_metric = load_metric("rouge")
+        meteor_metric = load_metric("meteor")
+        cider_metric = load_metric("cider")
 
         # Compute BLEU score
         bleu_score = bleu_metric.compute(predictions=generated_texts, references=reference_texts)
@@ -931,7 +933,15 @@ class VishwamaiForCausalLM(nn.Module):
         # Compute ROUGE score
         rouge_score = rouge_metric.compute(predictions=generated_texts, references=reference_texts)
 
+        # Compute METEOR score
+        meteor_score = meteor_metric.compute(predictions=generated_texts, references=reference_texts)
+
+        # Compute CIDEr score
+        cider_score = cider_metric.compute(predictions=generated_texts, references=reference_texts)
+
         return {
             "BLEU": bleu_score,
             "ROUGE": rouge_score,
+            "METEOR": meteor_score,
+            "CIDEr": cider_score,
         }

@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Gemma model config."""
+"""Vishwamai model config."""
 
 import dataclasses
 import enum
 import torch
 from typing import Optional, Sequence
-
 
 # Keep a mapping from dtype strings to the supported torch dtypes.
 _STR_DTYPE_TO_TORCH_DTYPE = dict({
@@ -28,21 +27,18 @@ _STR_DTYPE_TO_TORCH_DTYPE = dict({
     'bfloat16': torch.bfloat16,
 })
 
-
 class AttentionType(enum.Enum):
     GLOBAL = 1
     LOCAL_SLIDING = 2
 
-
 class Architecture(enum.Enum):
-    GEMMA_1 = 1
-    GEMMA_2 = 2
-
+    VISHWAMAI_1 = 1
+    VISHWAMAI_2 = 2
 
 @dataclasses.dataclass
-class GemmaConfig:
+class VishwamaiConfig:
     # The architecture of the model.
-    architecture: Architecture = Architecture.GEMMA_1
+    architecture: Architecture = Architecture.VISHWAMAI_1
     # The number of tokens in the vocabulary.
     vocab_size: int = 256000
     # The maximum sequence length that this model might ever be used with.
@@ -82,29 +78,29 @@ class GemmaConfig:
     use_pre_ffw_norm: bool = False
     # Whether to use post mlp normalization.
     use_post_ffw_norm: bool = False
+    # Whether to use advanced sampling techniques.
+    advanced_sampling: bool = False
 
     def get_dtype(self) -> Optional[torch.dtype]:
         """Gets the torch dtype from the config dtype string."""
         return _STR_DTYPE_TO_TORCH_DTYPE.get(self.dtype, None)
 
+def get_vishwamai_config_for_7b() -> VishwamaiConfig:
+    return VishwamaiConfig(advanced_sampling=True)
 
-def get_config_for_7b() -> GemmaConfig:
-    return GemmaConfig()
-
-
-def get_config_for_2b() -> GemmaConfig:
-    return GemmaConfig(
+def get_vishwamai_config_for_2b() -> VishwamaiConfig:
+    return VishwamaiConfig(
         num_hidden_layers=18,
         num_attention_heads=8,
         num_key_value_heads=1,
         hidden_size=2048,
-        intermediate_size=16384
+        intermediate_size=16384,
+        advanced_sampling=True
     )
 
-
-def get_config_for_9b() -> GemmaConfig:
-    return GemmaConfig(
-        architecture=Architecture.GEMMA_2,
+def get_vishwamai_config_for_9b() -> VishwamaiConfig:
+    return VishwamaiConfig(
+        architecture=Architecture.VISHWAMAI_2,
         num_hidden_layers=42,
         num_attention_heads=16,
         num_key_value_heads=8,
@@ -118,12 +114,12 @@ def get_config_for_9b() -> GemmaConfig:
         attn_types=[AttentionType.LOCAL_SLIDING, AttentionType.GLOBAL] * 21,
         sliding_window_size=4096,
         query_pre_attn_scalar=224, # hidden_size / num_attention_heads
+        advanced_sampling=True
     )
 
-
-def get_config_for_27b() -> GemmaConfig:
-    return GemmaConfig(
-        architecture=Architecture.GEMMA_2,
+def get_vishwamai_config_for_27b() -> VishwamaiConfig:
+    return VishwamaiConfig(
+        architecture=Architecture.VISHWAMAI_2,
         num_hidden_layers=46,
         num_attention_heads=32,
         num_key_value_heads=16,
@@ -137,20 +133,31 @@ def get_config_for_27b() -> GemmaConfig:
         attn_types=[AttentionType.LOCAL_SLIDING, AttentionType.GLOBAL] * 23,
         sliding_window_size=4096,
         query_pre_attn_scalar=144,  # hidden_size / num_attention_heads
+        advanced_sampling=True
     )
 
+def get_vishwamai_model_config(variant: str, advanced_sampling: bool = False) -> VishwamaiConfig:
+    """
+    Returns the Vishwamai model configuration for the specified variant.
 
-def get_model_config(variant: str) -> GemmaConfig:
+    Args:
+        variant (str): The model variant. Supported variants are "2b", "7b", "9b", and "27b".
+        advanced_sampling (bool): Whether to use advanced sampling techniques.
+
+    Returns:
+        VishwamaiConfig: The configuration for the specified model variant.
+    """
     if variant == '7b':
-        return get_config_for_7b()
+        config = get_vishwamai_config_for_7b()
     elif variant == '2b':
-        return get_config_for_2b()
+        config = get_vishwamai_config_for_2b()
     elif variant == '9b':
-        return get_config_for_9b()
+        config = get_vishwamai_config_for_9b()
     elif variant == '27b':
-        return get_config_for_27b()
+        config = get_vishwamai_config_for_27b()
     else:
         raise ValueError(
-                f'Invalid variant {variant}. Supported variants are "2b"'
-                 'and "7b" and "9b" and "27b".')
+            f'Invalid variant {variant}. Supported variants are "2b", "7b", "9b", and "27b".')
 
+    config.advanced_sampling = advanced_sampling
+    return config

@@ -4,7 +4,7 @@ import argparse
 from vishwamai import config as vishwamai_config
 from vishwamai.model import VishwamaiForCausalLM
 from vishwamai.tokenizer import Tokenizer
-from torch.optim import Adafactor
+from transformers.optimization import Adafactor
 import os
 
 def preprocess_data(tasks, tokenizer, max_length=1024):

@@ -55,9 +55,7 @@ from fairscale.nn.model_parallel.layers import (
 from vishwamai import config as vishwamai_config
 from vishwamai import tokenizer
 
-# Import necessary components from grok-1
-from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
-from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
+# Removed unnecessary imports from grok-1
 
 from lark import Lark
 

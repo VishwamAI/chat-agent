@@ -1,8 +1,12 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from huggingface_hub import login
 
 def generate_response(prompt):
     try:
+        # Authenticate with Hugging Face
+        login(token="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")
+
         # Check for CUDA availability
         device = "cuda" if torch.cuda.is_available() else "cpu"
 

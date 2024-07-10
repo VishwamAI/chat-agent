@@ -14,6 +14,42 @@
 
 """Inference-only Gemma model implementation."""
 
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+import fairscale.nn.model_parallel.initialize as fs_init
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Inference-only Gemma model implementation."""
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Inference-only Gemma model implementation."""
+
 import json
 import gc
 import os
@@ -23,13 +59,30 @@ from torch import nn
 import torch.nn.functional as F
 from typing import Any, List, Optional, Sequence, Tuple, Union
 
+import fairscale.nn.model_parallel.initialize as fs_init
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+
 from vishwamai import config as vishwamai_config
 from vishwamai import tokenizer
 
+# Import necessary components from grok-1
+from grok_1.model import LanguageModelConfig, TransformerConfig, RotaryEmbedding
+from grok_1.runners import InferenceRunner, ModelRunner, sample_from_model
+
+from lark import Lark
+
+def rotate_half(x: torch.Tensor) -> torch.Tensor:
+    """Obtain the rotated counterpart of each feature"""
+    x1, x2 = torch.split(x, 2, dim=-1)
+    return torch.cat((-x2, x1), dim=-1)
 
 class Sampler(nn.Module):
 
-    def __init__(self, vocab_size: int, config: vishwamai_config.GemmaConfig):
+    def __init__(self, vocab_size: int, config: vishwamai_config.VishwamaiConfig):
         super().__init__()
         self.vocab_size = vocab_size
         self.config = config
@@ -90,33 +143,62 @@ class Sampler(nn.Module):
         return next_token_ids, logits
 
 
-def precompute_freqs_cis(dim: int,
-                         end: int,
-                         theta: float = 10000.0) -> torch.Tensor:
-    """Precomputes the frequency cis."""
-    freqs = 1.0 / (theta**(torch.arange(0, dim, 2)[:(dim // 2)].float() / dim))
-    t = torch.arange(end, device=freqs.device)
-    freqs = torch.outer(t, freqs).float()
-    freqs_cis = torch.polar(torch.ones_like(freqs), freqs)  # complex64
-    return freqs_cis
 
+class RotaryEmbedding(nn.Module):
+    """Applies rotary embeddings (RoPE) to the input sequence tensor,
+    as described in https://arxiv.org/abs/2104.09864.
 
-def apply_rotary_emb(x: torch.Tensor, freqs_cis: torch.Tensor) -> torch.Tensor:
-    """Applies the rotary embedding to the query and key tensors."""
-    x_ = torch.view_as_complex(
-        torch.stack(torch.chunk(x.transpose(1, 2).float(), 2, dim=-1),
-                    dim=-1))
-    x_out = torch.view_as_real(x_ * freqs_cis).type_as(x)
-    x_out = torch.cat(torch.chunk(x_out, 2, dim=-1), dim=-2)
-    x_out = x_out.reshape(x_out.shape[0], x_out.shape[1], x_out.shape[2],
-                          -1).transpose(1, 2)
-    return x_out
+    Attributes:
+        dim (int): Dimensionality of the feature vectors
+        base_exponent (int): Base exponent to compute embeddings from
+    """
+
+    def __init__(
+        self,
+        dim: int,
+        base_exponent: int = 10000,
+    ):
+        super().__init__()
+        self.dim = dim
+        self.base_exponent = base_exponent
+        assert self.dim % 2 == 0
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        seq_dim: int,
+        offset: torch.Tensor,
+        const_position: Optional[int] = None,
+        t: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        fprop_dtype = x.dtype
+        exponents = torch.arange(0, self.dim, 2, dtype=torch.float32)
+        inv_freq = 1.0 / (self.base_exponent ** (exponents / self.dim))
+
+        if offset.shape == ():
+            offset = offset.unsqueeze(0)
+
+        if const_position:
+            t = const_position * torch.ones(
+                (1, x.shape[seq_dim]),
+                dtype=torch.float32,
+            )
+        elif t is None:
+            t = torch.arange(x.shape[seq_dim], dtype=torch.float32) + offset.unsqueeze(-1)
+        phase = torch.einsum("bi,j->bij", t, inv_freq)
+        phase = torch.tile(phase, (1, 2))[:, :, None, :]
+
+        x = x * torch.cos(phase) + rotate_half(x) * torch.sin(phase)
+        x = x.to(fprop_dtype)
+
+        return x
 
 
 class Linear(nn.Module):
 
     def __init__(self, in_features: int, out_features: int, quant: bool):
         super().__init__()
+        self.quant = quant
         if quant:
             self.weight = nn.Parameter(
                 torch.empty((out_features, in_features), dtype=torch.int8),
@@ -124,17 +206,16 @@ class Linear(nn.Module):
             )
             self.weight_scaler = nn.Parameter(torch.Tensor(out_features))
         else:
-            self.weight = nn.Parameter(
-                torch.empty((out_features, in_features)),
-                requires_grad=False,
+            self.weight = ColumnParallelLinear(
+                in_features, out_features, bias=False, gather_output=False
             )
-        self.quant = quant
 
     def forward(self, x):
-        weight = self.weight
         if self.quant:
-            weight = weight * self.weight_scaler.unsqueeze(-1)
-        output = F.linear(x, weight)
+            weight = self.weight * self.weight_scaler.unsqueeze(-1)
+            output = F.linear(x, weight)
+        else:
+            output = self.weight(x)
         return output
 
 
@@ -142,6 +223,7 @@ class Embedding(nn.Module):
 
     def __init__(self, num_embeddings: int, embedding_dim: int, quant: bool):
         super().__init__()
+        self.quant = quant
         if quant:
             self.weight = nn.Parameter(
                 torch.empty((num_embeddings, embedding_dim), dtype=torch.int8),
@@ -149,17 +231,16 @@ class Embedding(nn.Module):
             )
             self.weight_scaler = nn.Parameter(torch.Tensor(num_embeddings))
         else:
-            self.weight = nn.Parameter(
-                torch.empty((num_embeddings, embedding_dim)),
-                requires_grad=False,
+            self.weight = VocabParallelEmbedding(
+                num_embeddings, embedding_dim, gather_output=False
             )
-        self.quant = quant
 
     def forward(self, x):
-        weight = self.weight
         if self.quant:
-            weight = weight * self.weight_scaler.unsqueeze(-1)
-        output = F.embedding(x, weight)
+            weight = self.weight * self.weight_scaler.unsqueeze(-1)
+            output = F.embedding(x, weight)
+        else:
+            output = self.weight(x)
         return output
 
 
@@ -190,7 +271,8 @@ class RMSNorm(torch.nn.Module):
         return output.type_as(x)
 
 
-class GemmaMLP(nn.Module):
+
+class VishwamaiMLP(nn.Module):
 
     def __init__(
         self,
@@ -199,9 +281,15 @@ class GemmaMLP(nn.Module):
         quant: bool,
     ):
         super().__init__()
-        self.gate_proj = Linear(hidden_size, intermediate_size, quant)
-        self.up_proj = Linear(hidden_size, intermediate_size, quant)
-        self.down_proj = Linear(intermediate_size, hidden_size, quant)
+        self.gate_proj = ColumnParallelLinear(
+            hidden_size, intermediate_size, bias=False, gather_output=False
+        )
+        self.up_proj = ColumnParallelLinear(
+            hidden_size, intermediate_size, bias=False, gather_output=False
+        )
+        self.down_proj = RowParallelLinear(
+            intermediate_size, hidden_size, bias=False, input_is_parallel=True
+        )
 
     def forward(self, x):
         gate = self.gate_proj(x)
@@ -212,7 +300,7 @@ class GemmaMLP(nn.Module):
         return outputs
 
 
-class GemmaAttention(nn.Module):
+class VishwamaiAttention(nn.Module):
 
     def __init__(
         self,
@@ -245,14 +333,18 @@ class GemmaAttention(nn.Module):
         else:
             self.scaling = self.head_dim**-0.5
 
-        self.qkv_proj = Linear(
+        self.qkv_proj = ColumnParallelLinear(
             self.hidden_size,
             (self.num_heads + 2 * self.num_kv_heads) * self.head_dim,
-            quant=quant)
-        self.o_proj = Linear(
+            bias=False,
+            gather_output=False,
+        )
+        self.o_proj = RowParallelLinear(
             self.num_heads * self.head_dim,
             self.hidden_size,
-            quant=quant)
+            bias=False,
+            input_is_parallel=True,
+        )
 
         self.attn_type = attn_type
         self.sliding_window_size = sliding_window_size
@@ -261,7 +353,6 @@ class GemmaAttention(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -280,8 +371,9 @@ class GemmaAttention(nn.Module):
         xv = xv.view(batch_size, -1, self.num_kv_heads, self.head_dim)
 
         # Positional embedding.
-        xq = apply_rotary_emb(xq, freqs_cis=freqs_cis)
-        xk = apply_rotary_emb(xk, freqs_cis=freqs_cis)
+        rotary_embedding = RotaryEmbedding(dim=self.head_dim)
+        xq = rotary_embedding(xq, seq_dim=1, offset=kv_write_indices)
+        xk = rotary_embedding(xk, seq_dim=1, offset=kv_write_indices)
 
         # Write new kv cache.
         # [batch_size, input_len, n_local_kv_heads, head_dim]
@@ -340,7 +432,7 @@ class VishwamaiDecoderLayer(nn.Module):
         config: vishwamai_config.VishwamaiConfig,
     ):
         super().__init__()
-        self.self_attn = GemmaAttention(
+        self.self_attn = VishwamaiAttention(
             hidden_size=config.hidden_size,
             num_heads=config.num_attention_heads,
             num_kv_heads=config.num_key_value_heads,
@@ -350,7 +442,7 @@ class VishwamaiDecoderLayer(nn.Module):
             quant=config.quant,
             attn_type=vishwamai_config.AttentionType.GLOBAL,
         )
-        self.mlp = GemmaMLP(
+        self.mlp = VishwamaiMLP(
             hidden_size=config.hidden_size,
             intermediate_size=config.intermediate_size,
             quant=config.quant,
@@ -363,7 +455,6 @@ class VishwamaiDecoderLayer(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -373,7 +464,6 @@ class VishwamaiDecoderLayer(nn.Module):
         hidden_states = self.input_layernorm(hidden_states)
         hidden_states = self.self_attn(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_cache=kv_cache,
             mask=mask,
@@ -430,7 +520,6 @@ class Vishwamai2DecoderLayer(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_cache: Tuple[torch.Tensor, torch.Tensor],
         mask: torch.Tensor,
@@ -440,7 +529,6 @@ class Vishwamai2DecoderLayer(nn.Module):
         hidden_states = self.input_layernorm(hidden_states)
         hidden_states = self.self_attn(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_cache=kv_cache,
             mask=mask,
@@ -485,7 +573,6 @@ class VishwamaiModel(nn.Module):
     def forward(
         self,
         hidden_states: torch.Tensor,
-        freqs_cis: torch.Tensor,
         kv_write_indices: torch.Tensor,
         kv_caches: List[Tuple[torch.Tensor, torch.Tensor]],
         mask: torch.Tensor,
@@ -494,7 +581,6 @@ class VishwamaiModel(nn.Module):
             layer = self.layers[i]
             hidden_states = layer(
                 hidden_states=hidden_states,
-                freqs_cis=freqs_cis,
                 kv_write_indices=kv_write_indices,
                 kv_cache=kv_caches[i],
                 mask=mask,
@@ -522,12 +608,34 @@ class VishwamaiForCausalLM(nn.Module):
         self.model = VishwamaiModel(config)
         self.sampler = Sampler(vocab_size, config)
 
-        # Pre-compute rotary embedding table.
-        rope_theta = getattr(config, 'rope_theta', 10000)
-        freqs_cis = precompute_freqs_cis(head_dim,
-                                         max_seq_len * 2,
-                                         theta=rope_theta)
-        self.register_buffer('freqs_cis', freqs_cis)
+        # Removed pre-compute rotary embedding table and freqs_cis buffer
+
+        # Initialize grok-1 components with error handling
+        # Removed grok-1 components initialization
+
+        # Define an expanded grammar for the Earley parser
+        grammar = """
+            start: sentence
+
+            sentence: noun_phrase verb_phrase
+                    | noun_phrase verb_phrase conjunction sentence
+
+            noun_phrase: article noun
+                       | article adjective noun
+
+            verb_phrase: verb noun_phrase
+                       | verb adverb noun_phrase
+
+            article: "a" | "the"
+            noun: "cat" | "dog" | "man" | "woman"
+            verb: "sees" | "likes" | "chases" | "finds"
+            adjective: "big" | "small" | "quick" | "lazy"
+            adverb: "quickly" | "slowly"
+            conjunction: "and" | "but"
+        """
+
+        # Initialize the Earley parser with the expanded grammar
+        self.earley_parser = Lark(grammar, start='start', ambiguity='explicit')
 
     @torch.no_grad()
     def forward(
@@ -543,10 +651,7 @@ class VishwamaiForCausalLM(nn.Module):
         top_ks: torch.Tensor,
         **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        freqs_cis = self.freqs_cis.index_select(0, input_positions)
-        kv_write_indices = input_positions
-
-        # [batch_size, input_len, hidden_size]
+        # Removed freqs_cis calculation and parameter passing
         hidden_states = self.embedder(input_token_ids)
         # Gemma normalizes the embedding by sqrt(hidden_size).
         # Gemma2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
@@ -556,7 +661,6 @@ class VishwamaiForCausalLM(nn.Module):
 
         hidden_states = self.model(
             hidden_states=hidden_states,
-            freqs_cis=freqs_cis,
             kv_write_indices=kv_write_indices,
             kv_caches=kv_caches,
             mask=mask,
@@ -565,6 +669,7 @@ class VishwamaiForCausalLM(nn.Module):
         if self.config.quant:
             embedder_weight = (
                 embedder_weight * self.embedder.weight_scaler.unsqueeze(-1))
+
         next_tokens, logits = self.sampler(
             embedding=embedder_weight,
             hidden_states=hidden_states,
@@ -575,16 +680,59 @@ class VishwamaiForCausalLM(nn.Module):
         )
         return next_tokens, logits
 
+    def sample_top_p(self, probs, p):
+        """
+        Perform top-p (nucleus) sampling on a probability distribution.
+
+        Args:
+            probs (torch.Tensor): Probability distribution tensor.
+            p (float): Probability threshold for top-p sampling.
+
+        Returns:
+            torch.Tensor: Sampled token indices.
+
+        Note:
+            Top-p sampling selects the smallest set of tokens whose cumulative probability mass
+            exceeds the threshold p. The distribution is renormalized based on the selected tokens.
+        """
+        probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
+        probs_sum = torch.cumsum(probs_sort, dim=-1)
+        mask = probs_sum - probs_sort > p
+        probs_sort[mask] = 0.0
+        probs_sort.div_(probs_sort.sum(dim=-1, keepdim=True))
+        next_token = torch.multinomial(probs_sort, num_samples=1)
+        next_token = torch.gather(probs_idx, -1, next_token)
+        return next_token
+
     def generate(
         self,
         prompts: Union[str, Sequence[str]],
         device: Any,
         output_len: int = 100,
-        temperature: Union[float, None] = 0.95,
+        temperature: float = 0.95,
         top_p: float = 1.0,
         top_k: int = 100,
     ) -> Union[str, Sequence[str]]:
-        """Generates responses for given prompts using Vishwamai model."""
+        """
+        Generates responses for given prompts using Vishwamai model.
+
+        Args:
+            prompts (Union[str, Sequence[str]]): Input prompts for text generation.
+            device (Any): Device to run the model on (e.g., 'cpu' or 'cuda').
+            output_len (int, optional): Length of the generated output. Defaults to 100.
+            temperature (float, optional): Sampling temperature. Defaults to 0.95.
+            top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
+            top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+
+        Returns:
+            Union[str, Sequence[str]]: Generated responses.
+        """
+        # Input validation
+        if not (0.0 < temperature <= 1.0):
+            raise ValueError("Temperature must be between 0.0 and 1.0")
+        if not (0.0 < top_p <= 1.0):
+            raise ValueError("Top-p must be between 0.0 and 1.0")
+
         # If a single prompt is provided, treat it as a batch of 1.
         is_str_prompt = isinstance(prompts, str)
         if is_str_prompt:
@@ -628,8 +776,7 @@ class VishwamaiForCausalLM(nn.Module):
         curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
         output_positions_tensor = torch.LongTensor([min_prompt_len - 1]).to(
             device)
-        temperatures_tensor = None if not temperature else torch.FloatTensor(
-            [temperature] * batch_size).to(device)
+        temperatures_tensor = torch.FloatTensor([temperature] * batch_size).to(device)
         top_ps_tensor = torch.FloatTensor([top_p] * batch_size).to(device)
         top_ks_tensor = torch.LongTensor([top_k] * batch_size).to(device)
         output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
@@ -638,7 +785,7 @@ class VishwamaiForCausalLM(nn.Module):
         # Prefill up to min_prompt_len tokens, then treat other prefill as
         # decode and ignore output.
         for i in range(max_seq_len - min_prompt_len):
-            next_token_ids, _ = self(
+            logits = self(
                 input_token_ids=input_token_ids_tensor,
                 input_positions=input_positions_tensor,
                 kv_write_indices=None,
@@ -648,14 +795,29 @@ class VishwamaiForCausalLM(nn.Module):
                 temperatures=temperatures_tensor,
                 top_ps=top_ps_tensor,
                 top_ks=top_ks_tensor,
-            )
+            )[1]
+            probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+            next_token_ids = self.sample_top_p(probs, top_p)
+
+            # Grammar masking: validate sequences using Earley parser
+            valid_tokens = []
+            for token in next_token_ids:
+                sequence = token_ids_tensor[0, :output_index.item()].tolist() + [token]
+                sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                try:
+                    self.earley_parser.parse(sequence_str)
+                    valid_tokens.append(token)
+                except:
+                    continue
+            if not valid_tokens:
+                valid_tokens = [self.tokenizer.pad_id] * batch_size
 
             curr_prompt_mask = prompt_mask_tensor.index_select(
                 1, output_index).squeeze(dim=1)
             curr_token_ids = token_ids_tensor.index_select(
                 1, output_index).squeeze(dim=1)
             output_token_ids = torch.where(curr_prompt_mask, curr_token_ids,
-                                           next_token_ids).unsqueeze(dim=1)
+                                           torch.tensor(valid_tokens).to(device)).unsqueeze(dim=1)
             token_ids_tensor.index_copy_(1, output_index, output_token_ids)
 
             input_token_ids_tensor = output_token_ids
@@ -679,6 +841,40 @@ class VishwamaiForCausalLM(nn.Module):
 
         # If a string was provided as input, return a string as output.
         return results[0] if is_str_prompt else results
+
+    def bi_directional_generate(
+        self,
+        prompts: Union[str, Sequence[str]],
+        device: Any,
+        output_len: int = 100,
+        temperature: float = 0.95,
+        top_p: float = 1.0,
+        top_k: int = 100,
+    ) -> Union[str, Sequence[str]]:
+        """
+        Generates responses for given prompts using Vishwamai model in both forward and backward directions.
+
+        Args:
+            prompts (Union[str, Sequence[str]]): Input prompts for text generation.
+            device (Any): Device to run the model on (e.g., 'cpu' or 'cuda').
+            output_len (int, optional): Length of the generated output. Defaults to 100.
+            temperature (float, optional): Sampling temperature. Defaults to 0.95.
+            top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
+            top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+
+        Returns:
+            Union[str, Sequence[str]]: Generated responses.
+        """
+        # Forward generation
+        forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k)
+
+        # Reverse prompts for backward generation
+        reversed_prompts = [prompt[::-1] for prompt in prompts]
+        backward_results = self.generate(reversed_prompts, device, output_len, temperature, top_p, top_k)
+
+        # Combine forward and backward results
+        combined_results = [f + b[::-1] for f, b in zip(forward_results, backward_results)]
+        return combined_results
 
     def load_weights(self, model_path: str):
         if os.path.isfile(model_path):

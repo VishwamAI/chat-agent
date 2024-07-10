@@ -1,15 +1,15 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-def generate_text_with_gemma(input_text):
+def generate_text_with_vishwamai(input_text):
     try:
         # Check for CUDA availability
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
         # Load the tokenizer and model
-        tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-9b")
+        tokenizer = AutoTokenizer.from_pretrained("VishwamAI/vishwamai-model")
         model = AutoModelForCausalLM.from_pretrained(
-            "google/gemma-2-9b",
+            "VishwamAI/vishwamai-model",
             device_map="auto" if device == "cuda" else None,
             torch_dtype=torch.bfloat16 if device == "cuda" else torch.float32
         )
@@ -29,7 +29,7 @@ def generate_text_with_gemma(input_text):
 
 if __name__ == "__main__":
     input_text = "Write me a poem about Machine Learning."
-    generated_text = generate_text_with_gemma(input_text)
+    generated_text = generate_text_with_vishwamai(input_text)
     if generated_text:
         print(generated_text)
     else:

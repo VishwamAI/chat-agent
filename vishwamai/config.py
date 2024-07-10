@@ -89,7 +89,13 @@ class VishwamaiConfig:
 
 
 def get_config_for_7b() -> VishwamaiConfig:
-    return VishwamaiConfig()
+    return VishwamaiConfig(
+        num_hidden_layers=28,
+        num_attention_heads=16,
+        num_key_value_heads=16,
+        hidden_size=3072,
+        intermediate_size=24576
+    )
 
 
 def get_config_for_2b() -> VishwamaiConfig:

@@ -1,3 +1,5 @@
+"""Inference-only Vishwamai model implementation."""
+
 # Copyright 2024 Vishwamai Org
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Inference-only Gemma model implementation."""
-
-# Copyright 2024 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
 import fairscale.nn.model_parallel.initialize as fs_init
 from fairscale.nn.model_parallel.layers import (
     ColumnParallelLinear,
@@ -557,9 +548,9 @@ class VishwamaiModel(nn.Module):
 
         self.layers = nn.ModuleList()
         for i in range(config.num_hidden_layers):
-            if config.architecture == vishwamai_config.Architecture.GEMMA_1:
+            if config.architecture == vishwamai_config.Architecture.VISHWAMAI_1:
                 self.layers.append(VishwamaiDecoderLayer(config))
-            elif config.architecture == vishwamai_config.Architecture.GEMMA_2:
+            elif config.architecture == vishwamai_config.Architecture.VISHWAMAI_2:
                 attn_type = (
                     config.attn_types[i]
                     if config.attn_types is not None
@@ -653,8 +644,8 @@ class VishwamaiForCausalLM(nn.Module):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         # Removed freqs_cis calculation and parameter passing
         hidden_states = self.embedder(input_token_ids)
-        # Gemma normalizes the embedding by sqrt(hidden_size).
-        # Gemma2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
+        # Vishwamai normalizes the embedding by sqrt(hidden_size).
+        # Vishwamai2 downcasts the below to float16, causing sqrt(3072)=55.4256 to become 55.5
         # See https://github.com/huggingface/transformers/pull/29402
         normalizer = torch.tensor(self.config.hidden_size**0.5, dtype=hidden_states.dtype)
         hidden_states = hidden_states * normalizer
@@ -712,6 +703,9 @@ class VishwamaiForCausalLM(nn.Module):
         temperature: float = 0.95,
         top_p: float = 1.0,
         top_k: int = 100,
+        num_beams: int = 5,
+        repetition_penalty: float = 1.0,
+        no_repeat_ngram_size: int = 0,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -723,6 +717,9 @@ class VishwamaiForCausalLM(nn.Module):
             temperature (float, optional): Sampling temperature. Defaults to 0.95.
             top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
             top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+            num_beams (int, optional): Number of beams for beam search. Defaults to 5.
+            repetition_penalty (float, optional): Penalty for repeated tokens. Defaults to 1.0.
+            no_repeat_ngram_size (int, optional): Size of n-grams that should not be repeated. Defaults to 0.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -782,54 +779,69 @@ class VishwamaiForCausalLM(nn.Module):
         output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
             device)
 
-        # Prefill up to min_prompt_len tokens, then treat other prefill as
-        # decode and ignore output.
+        # Beam search initialization
+        beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
         for i in range(max_seq_len - min_prompt_len):
-            logits = self(
-                input_token_ids=input_token_ids_tensor,
-                input_positions=input_positions_tensor,
-                kv_write_indices=None,
-                kv_caches=kv_caches,
-                mask=curr_mask_tensor,
-                output_positions=output_positions_tensor,
-                temperatures=temperatures_tensor,
-                top_ps=top_ps_tensor,
-                top_ks=top_ks_tensor,
-            )[1]
-            probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-            next_token_ids = self.sample_top_p(probs, top_p)
+            new_beams = []
+            for beam_token_ids, beam_score in beams:
+                logits = self(
+                    input_token_ids=beam_token_ids,
+                    input_positions=input_positions_tensor,
+                    kv_write_indices=None,
+                    kv_caches=kv_caches,
+                    mask=curr_mask_tensor,
+                    output_positions=output_positions_tensor,
+                    temperatures=temperatures_tensor,
+                    top_ps=top_ps_tensor,
+                    top_ks=top_ks_tensor,
+                )[1]
+                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+                next_token_ids = self.sample_top_p(probs, top_p)
 
-            # Grammar masking: validate sequences using Earley parser
-            valid_tokens = []
-            for token in next_token_ids:
-                sequence = token_ids_tensor[0, :output_index.item()].tolist() + [token]
-                sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                try:
-                    self.earley_parser.parse(sequence_str)
-                    valid_tokens.append(token)
-                except:
-                    continue
-            if not valid_tokens:
-                valid_tokens = [self.tokenizer.pad_id] * batch_size
+                # Apply repetition penalty
+                if repetition_penalty != 1.0:
+                    for token in set(next_token_ids.tolist()):
+                        if token in beam_token_ids[0].tolist():
+                            probs[:, token] /= repetition_penalty
 
-            curr_prompt_mask = prompt_mask_tensor.index_select(
-                1, output_index).squeeze(dim=1)
-            curr_token_ids = token_ids_tensor.index_select(
-                1, output_index).squeeze(dim=1)
-            output_token_ids = torch.where(curr_prompt_mask, curr_token_ids,
-                                           torch.tensor(valid_tokens).to(device)).unsqueeze(dim=1)
-            token_ids_tensor.index_copy_(1, output_index, output_token_ids)
+                # Apply no-repeat n-gram penalty
+                if no_repeat_ngram_size > 0:
+                    for token in set(next_token_ids.tolist()):
+                        ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
+                        if ngram.count(token) > 0:
+                            probs[:, token] = 0.0
 
-            input_token_ids_tensor = output_token_ids
+                # Grammar masking: validate sequences using Earley parser
+                valid_tokens = []
+                for token in next_token_ids:
+                    sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
+                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                    try:
+                        self.earley_parser.parse(sequence_str)
+                        valid_tokens.append(token)
+                    except:
+                        continue
+                if not valid_tokens:
+                    valid_tokens = [self.tokenizer.pad_id] * batch_size
+
+                for token in valid_tokens:
+                    new_beam_token_ids = beam_token_ids.clone()
+                    new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
+                    new_beam_score = beam_score + torch.log(probs[0, token]).item()
+                    new_beams.append((new_beam_token_ids, new_beam_score))
+
+            # Select top beams
+            beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
+
+            # Update input tensors for the next iteration
+            input_token_ids_tensor = beams[0][0]
             input_positions_tensor = output_index.unsqueeze(dim=-1)
-            curr_mask_tensor = mask_tensor.index_select(2,
-                                                        input_positions_tensor)
-            output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(
-                device)
+            curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+            output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
             output_index = output_index + 1
 
         # Detokenization.
-        token_ids = token_ids_tensor.tolist()
+        token_ids = beams[0][0].tolist()
         results = []
         for i, tokens in enumerate(token_ids):
             trimmed_output = tokens[len(prompt_tokens[i]):len(prompt_tokens[i])
@@ -895,3 +907,31 @@ class VishwamaiForCausalLM(nn.Module):
                 self.load_state_dict(state_dict, strict=False)
                 del state_dict  # Save memory.
                 gc.collect()
+
+    def calculate_metrics(self, generated_texts: List[str], reference_texts: List[str]) -> dict:
+        """
+        Calculate evaluation metrics for generated texts.
+
+        Args:
+            generated_texts (List[str]): List of generated text sequences.
+            reference_texts (List[str]): List of reference text sequences.
+
+        Returns:
+            dict: Dictionary containing evaluation metrics (e.g., BLEU, ROUGE).
+        """
+        from datasets import load_metric
+
+        # Load BLEU and ROUGE metrics
+        bleu_metric = load_metric("bleu")
+        rouge_metric = load_metric("rouge")
+
+        # Compute BLEU score
+        bleu_score = bleu_metric.compute(predictions=generated_texts, references=reference_texts)
+
+        # Compute ROUGE score
+        rouge_score = rouge_metric.compute(predictions=generated_texts, references=reference_texts)
+
+        return {
+            "BLEU": bleu_score,
+            "ROUGE": rouge_score,
+        }

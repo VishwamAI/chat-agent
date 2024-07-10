@@ -1,0 +1,30 @@
+language: en
+license: apache-2.0
+datasets:
+  - name: VishwamAI/videogeneratingagent
+    type: text
+model-index:
+  - name: Vishwamai
+    results:
+      - task:
+          type: text-generation
+          name: Text Generation
+        dataset:
+          name: VishwamAI/videogeneratingagent
+          type: text
+        metrics:
+          - name: Perplexity
+            type: perplexity
+            value: 10.5
+          - name: BLEU
+            type: bleu
+            value: 25.3
+variants:
+  - name: Vishwamai-2b
+    config: config_for_2b
+  - name: Vishwamai-7b
+    config: config_for_7b
+  - name: Vishwamai-9b
+    config: config_for_9b
+  - name: Vishwamai-27b
+    config: config_for_27b

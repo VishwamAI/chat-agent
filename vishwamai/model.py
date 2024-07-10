@@ -698,6 +698,7 @@ class VishwamaiForCausalLM(nn.Module):
         coverage_penalty: float = 0.0,
         use_top_k_sampling: bool = False,
         use_greedy_decoding: bool = False,
+        constraints: Optional[List[str]] = None,  # New parameter for constrained decoding
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -718,6 +719,7 @@ class VishwamaiForCausalLM(nn.Module):
             coverage_penalty (float, optional): Penalty for coverage. Defaults to 0.0.
             use_top_k_sampling (bool, optional): Whether to use top-k sampling. Defaults to False.
             use_greedy_decoding (bool, optional): Whether to use greedy decoding. Defaults to False.
+            constraints (Optional[List[str]], optional): List of constraints for constrained decoding. Defaults to None.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.

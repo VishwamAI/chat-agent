@@ -796,6 +796,7 @@ class VishwamaiForCausalLM(nn.Module):
                 next_token_ids = self.sample_advanced(probs, top_p, top_k)
             else:
                 next_token_ids = self.sample_top_p(probs, top_p)
+
             # Grammar masking: validate sequences using Earley parser
             valid_tokens = []
             for token in next_token_ids:
@@ -806,8 +807,10 @@ class VishwamaiForCausalLM(nn.Module):
                     valid_tokens.append(token)
                 except:
                     continue
+
+            # If no valid tokens are found, use the original next_token_ids
             if not valid_tokens:
-                valid_tokens = [self.tokenizer.pad_id] * batch_size
+                valid_tokens = next_token_ids.tolist()
 
             curr_prompt_mask = prompt_mask_tensor.index_select(
                 1, output_index).squeeze(dim=1)

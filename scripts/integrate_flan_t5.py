@@ -51,7 +51,11 @@ def integrate_flan_t5(device='cpu', precision='fp32', task_type='translation'):
         input_ids = tokenizer(preprocessed_input, return_tensors="pt").input_ids.to(device)
 
         # Generate output using the FLAN-T5-XXL model
-        outputs = model.generate(input_ids)
+        outputs = model.generate(
+            input_ids,
+            length_penalty=1.0,
+            coverage_penalty=0.0
+        )
 
         # Decode the output into human-readable text
         generated_text = tokenizer.decode(outputs[0])

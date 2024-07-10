@@ -1,5 +1,5 @@
 import torch
-from transformers import T5Tokenizer
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 from datasets import load_dataset
 import argparse
 from vishwamai import config as vishwamai_config

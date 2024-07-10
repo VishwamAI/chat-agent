@@ -14,12 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import fairscale.nn.model_parallel.initialize as fs_init
-from fairscale.nn.model_parallel.layers import (
-    ColumnParallelLinear,
-    RowParallelLinear,
-    VocabParallelEmbedding,
-)
+# Removed unnecessary imports
 
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -539,13 +534,27 @@ class Vishwamai2DecoderLayer(nn.Module):
         return hidden_states
 
 
-class VishwamaiModel(nn.Module):
+class MathReasoningModule(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        # Define neural network components for math reasoning
+        self.linear1 = nn.Linear(config.hidden_size, config.intermediate_size)
+        self.linear2 = nn.Linear(config.intermediate_size, config.hidden_size)
+        self.activation = nn.ReLU()
 
+    def forward(self, input_ids, attention_mask=None):
+        # Implement forward pass for math reasoning
+        output = self.linear1(input_ids)
+        output = self.activation(output)
+        output = self.linear2(output)
+        return output
+
+class VishwamaiModel(nn.Module):
     def __init__(self, config: vishwamai_config.VishwamaiConfig):
         super().__init__()
         self.config = config
-        self.vocab_size = config.vocab_size
-
+        self.math_reasoning_module = MathReasoningModule(config)
         self.layers = nn.ModuleList()
         for i in range(config.num_hidden_layers):
             if config.architecture == vishwamai_config.Architecture.VISHWAMAI_1:
@@ -568,6 +577,7 @@ class VishwamaiModel(nn.Module):
         kv_caches: List[Tuple[torch.Tensor, torch.Tensor]],
         mask: torch.Tensor,
     ) -> torch.Tensor:
+        math_reasoning_output = self.math_reasoning_module(hidden_states)
         for i in range(len(self.layers)):
             layer = self.layers[i]
             hidden_states = layer(
@@ -706,6 +716,8 @@ class VishwamaiForCausalLM(nn.Module):
         num_beams: int = 5,
         repetition_penalty: float = 1.0,
         no_repeat_ngram_size: int = 0,
+        use_nucleus_sampling: bool = True,
+        use_beam_search: bool = True,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -720,6 +732,8 @@ class VishwamaiForCausalLM(nn.Module):
             num_beams (int, optional): Number of beams for beam search. Defaults to 5.
             repetition_penalty (float, optional): Penalty for repeated tokens. Defaults to 1.0.
             no_repeat_ngram_size (int, optional): Size of n-grams that should not be repeated. Defaults to 0.
+            use_nucleus_sampling (bool, optional): Whether to use nucleus sampling. Defaults to True.
+            use_beam_search (bool, optional): Whether to use beam search. Defaults to True.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
@@ -729,6 +743,8 @@ class VishwamaiForCausalLM(nn.Module):
             raise ValueError("Temperature must be between 0.0 and 1.0")
         if not (0.0 < top_p <= 1.0):
             raise ValueError("Top-p must be between 0.0 and 1.0")
+        if not (use_nucleus_sampling or use_beam_search):
+            raise ValueError("At least one of use_nucleus_sampling or use_beam_search must be True")
 
         # If a single prompt is provided, treat it as a batch of 1.
         is_str_prompt = isinstance(prompts, str)
@@ -779,13 +795,75 @@ class VishwamaiForCausalLM(nn.Module):
         output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
             device)
 
-        # Beam search initialization
-        beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
-        for i in range(max_seq_len - min_prompt_len):
-            new_beams = []
-            for beam_token_ids, beam_score in beams:
+        if use_beam_search and use_nucleus_sampling:
+            raise ValueError("Both use_nucleus_sampling and use_beam_search cannot be True simultaneously")
+        elif use_beam_search:
+            # Beam search initialization
+            beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
+            for i in range(max_seq_len - min_prompt_len):
+                new_beams = []
+                for beam_token_ids, beam_score in beams:
+                    logits = self(
+                        input_token_ids=beam_token_ids,
+                        input_positions=input_positions_tensor,
+                        kv_write_indices=None,
+                        kv_caches=kv_caches,
+                        mask=curr_mask_tensor,
+                        output_positions=output_positions_tensor,
+                        temperatures=temperatures_tensor,
+                        top_ps=top_ps_tensor,
+                        top_ks=top_ks_tensor,
+                    )[1]
+                    probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+                    next_token_ids = self.sample_top_p(probs, top_p)
+
+                    # Apply repetition penalty
+                    if repetition_penalty != 1.0:
+                        for token in set(next_token_ids.tolist()):
+                            if token in beam_token_ids[0].tolist():
+                                probs[:, token] /= repetition_penalty
+
+                    # Apply no-repeat n-gram penalty
+                    if no_repeat_ngram_size > 0:
+                        for token in set(next_token_ids.tolist()):
+                            ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
+                            if ngram.count(token) > 0:
+                                probs[:, token] = 0.0
+
+                    # Grammar masking: validate sequences using Earley parser
+                    valid_tokens = []
+                    for token in next_token_ids:
+                        sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
+                        sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                        try:
+                            self.earley_parser.parse(sequence_str)
+                            valid_tokens.append(token)
+                        except:
+                            continue
+                    if not valid_tokens:
+                        valid_tokens = [self.tokenizer.pad_id] * batch_size
+
+                    for token in valid_tokens:
+                        new_beam_token_ids = beam_token_ids.clone()
+                        new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
+                        new_beam_score = beam_score + torch.log(probs[0, token]).item()
+                        new_beams.append((new_beam_token_ids, new_beam_score))
+
+                # Select top beams
+                beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
+
+                # Update input tensors for the next iteration
+                input_token_ids_tensor = beams[0][0]
+                input_positions_tensor = output_index.unsqueeze(dim=-1)
+                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
+                output_index = output_index + 1
+
+        elif use_nucleus_sampling:
+            # Nucleus sampling initialization
+            for i in range(max_seq_len - min_prompt_len):
                 logits = self(
-                    input_token_ids=beam_token_ids,
+                    input_token_ids=input_token_ids_tensor,
                     input_positions=input_positions_tensor,
                     kv_write_indices=None,
                     kv_caches=kv_caches,
@@ -801,20 +879,20 @@ class VishwamaiForCausalLM(nn.Module):
                 # Apply repetition penalty
                 if repetition_penalty != 1.0:
                     for token in set(next_token_ids.tolist()):
-                        if token in beam_token_ids[0].tolist():
+                        if token in input_token_ids_tensor[0].tolist():
                             probs[:, token] /= repetition_penalty
 
                 # Apply no-repeat n-gram penalty
                 if no_repeat_ngram_size > 0:
                     for token in set(next_token_ids.tolist()):
-                        ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
+                        ngram = input_token_ids_tensor[0, -no_repeat_ngram_size:].tolist()
                         if ngram.count(token) > 0:
                             probs[:, token] = 0.0
 
                 # Grammar masking: validate sequences using Earley parser
                 valid_tokens = []
                 for token in next_token_ids:
-                    sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
+                    sequence = input_token_ids_tensor[0, :output_index.item()].tolist() + [token]
                     sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
                     try:
                         self.earley_parser.parse(sequence_str)
@@ -825,20 +903,15 @@ class VishwamaiForCausalLM(nn.Module):
                     valid_tokens = [self.tokenizer.pad_id] * batch_size
 
                 for token in valid_tokens:
-                    new_beam_token_ids = beam_token_ids.clone()
-                    new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
-                    new_beam_score = beam_score + torch.log(probs[0, token]).item()
-                    new_beams.append((new_beam_token_ids, new_beam_score))
+                    input_token_ids_tensor.index_copy_(1, output_index, torch.tensor([token]).to(device))
 
-            # Select top beams
-            beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
-
-            # Update input tensors for the next iteration
-            input_token_ids_tensor = beams[0][0]
-            input_positions_tensor = output_index.unsqueeze(dim=-1)
-            curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-            output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-            output_index = output_index + 1
+                # Update input tensors for the next iteration
+                input_positions_tensor = output_index.unsqueeze(dim=-1)
+                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
+                output_index = output_index + 1
+        else:
+            raise ValueError("At least one of use_nucleus_sampling or use_beam_search must be True")
 
         # Detokenization.
         token_ids = beams[0][0].tolist()
@@ -862,6 +935,8 @@ class VishwamaiForCausalLM(nn.Module):
         temperature: float = 0.95,
         top_p: float = 1.0,
         top_k: int = 100,
+        use_nucleus_sampling: bool = True,
+        use_beam_search: bool = True,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model in both forward and backward directions.
@@ -873,16 +948,18 @@ class VishwamaiForCausalLM(nn.Module):
             temperature (float, optional): Sampling temperature. Defaults to 0.95.
             top_p (float, optional): Probability threshold for top-p (nucleus) sampling. Defaults to 1.0.
             top_k (int, optional): Number of top tokens to consider for top-k sampling. Defaults to 100.
+            use_nucleus_sampling (bool, optional): Whether to use nucleus sampling. Defaults to True.
+            use_beam_search (bool, optional): Whether to use beam search. Defaults to True.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.
         """
         # Forward generation
-        forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k)
+        forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k, use_nucleus_sampling=use_nucleus_sampling, use_beam_search=use_beam_search)
 
         # Reverse prompts for backward generation
         reversed_prompts = [prompt[::-1] for prompt in prompts]
-        backward_results = self.generate(reversed_prompts, device, output_len, temperature, top_p, top_k)
+        backward_results = self.generate(reversed_prompts, device, output_len, temperature, top_p, top_k, use_nucleus_sampling=use_nucleus_sampling, use_beam_search=use_beam_search)
 
         # Combine forward and backward results
         combined_results = [f + b[::-1] for f, b in zip(forward_results, backward_results)]
@@ -917,13 +994,15 @@ class VishwamaiForCausalLM(nn.Module):
             reference_texts (List[str]): List of reference text sequences.
 
         Returns:
-            dict: Dictionary containing evaluation metrics (e.g., BLEU, ROUGE).
+            dict: Dictionary containing evaluation metrics (e.g., BLEU, ROUGE, METEOR, CIDEr).
         """
         from datasets import load_metric
 
-        # Load BLEU and ROUGE metrics
+        # Load BLEU, ROUGE, METEOR, and CIDEr metrics
         bleu_metric = load_metric("bleu")
         rouge_metric = load_metric("rouge")
+        meteor_metric = load_metric("meteor")
+        cider_metric = load_metric("cider")
 
         # Compute BLEU score
         bleu_score = bleu_metric.compute(predictions=generated_texts, references=reference_texts)
@@ -931,7 +1010,15 @@ class VishwamaiForCausalLM(nn.Module):
         # Compute ROUGE score
         rouge_score = rouge_metric.compute(predictions=generated_texts, references=reference_texts)
 
+        # Compute METEOR score
+        meteor_score = meteor_metric.compute(predictions=generated_texts, references=reference_texts)
+
+        # Compute CIDEr score
+        cider_score = cider_metric.compute(predictions=generated_texts, references=reference_texts)
+
         return {
             "BLEU": bleu_score,
             "ROUGE": rouge_score,
+            "METEOR": meteor_score,
+            "CIDEr": cider_score,
         }

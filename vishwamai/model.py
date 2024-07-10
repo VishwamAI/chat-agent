@@ -694,6 +694,8 @@ class VishwamaiForCausalLM(nn.Module):
         no_repeat_ngram_size: int = 0,
         use_nucleus_sampling: bool = True,
         use_beam_search: bool = True,
+        length_penalty: float = 1.0,
+        coverage_penalty: float = 0.0,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -710,6 +712,8 @@ class VishwamaiForCausalLM(nn.Module):
             no_repeat_ngram_size (int, optional): Size of n-grams that should not be repeated. Defaults to 0.
             use_nucleus_sampling (bool, optional): Whether to use nucleus sampling. Defaults to True.
             use_beam_search (bool, optional): Whether to use beam search. Defaults to True.
+            length_penalty (float, optional): Penalty for sequence length. Defaults to 1.0.
+            coverage_penalty (float, optional): Penalty for coverage. Defaults to 0.0.
 
         Returns:
             Union[str, Sequence[str]]: Generated responses.

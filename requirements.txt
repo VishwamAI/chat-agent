@@ -1,3 +1,12 @@
 numpy == 1.24.4
 sentencepiece == 0.1.99
 torch
+numpy
+sentencepiece
+torch
+jax
+haiku
+fairscale
+transformers
+datasets
+huggingface_hub

@@ -706,6 +706,8 @@ class VishwamaiForCausalLM(nn.Module):
         num_beams: int = 5,
         repetition_penalty: float = 1.0,
         no_repeat_ngram_size: int = 0,
+        use_nucleus_sampling: bool = True,
+        use_beam_search: bool = True,
     ) -> Union[str, Sequence[str]]:
         """
         Generates responses for given prompts using Vishwamai model.
@@ -779,66 +781,67 @@ class VishwamaiForCausalLM(nn.Module):
         output_index = torch.tensor(min_prompt_len, dtype=torch.int64).to(
             device)
 
-        # Beam search initialization
-        beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
-        for i in range(max_seq_len - min_prompt_len):
-            new_beams = []
-            for beam_token_ids, beam_score in beams:
-                logits = self(
-                    input_token_ids=beam_token_ids,
-                    input_positions=input_positions_tensor,
-                    kv_write_indices=None,
-                    kv_caches=kv_caches,
-                    mask=curr_mask_tensor,
-                    output_positions=output_positions_tensor,
-                    temperatures=temperatures_tensor,
-                    top_ps=top_ps_tensor,
-                    top_ks=top_ks_tensor,
-                )[1]
-                probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
-                next_token_ids = self.sample_top_p(probs, top_p)
+        if use_beam_search:
+            # Beam search initialization
+            beams = [(token_ids_tensor.clone(), 0.0)] * num_beams
+            for i in range(max_seq_len - min_prompt_len):
+                new_beams = []
+                for beam_token_ids, beam_score in beams:
+                    logits = self(
+                        input_token_ids=beam_token_ids,
+                        input_positions=input_positions_tensor,
+                        kv_write_indices=None,
+                        kv_caches=kv_caches,
+                        mask=curr_mask_tensor,
+                        output_positions=output_positions_tensor,
+                        temperatures=temperatures_tensor,
+                        top_ps=top_ps_tensor,
+                        top_ks=top_ks_tensor,
+                    )[1]
+                    probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+                    next_token_ids = self.sample_top_p(probs, top_p)
 
-                # Apply repetition penalty
-                if repetition_penalty != 1.0:
-                    for token in set(next_token_ids.tolist()):
-                        if token in beam_token_ids[0].tolist():
-                            probs[:, token] /= repetition_penalty
+                    # Apply repetition penalty
+                    if repetition_penalty != 1.0:
+                        for token in set(next_token_ids.tolist()):
+                            if token in beam_token_ids[0].tolist():
+                                probs[:, token] /= repetition_penalty
 
-                # Apply no-repeat n-gram penalty
-                if no_repeat_ngram_size > 0:
-                    for token in set(next_token_ids.tolist()):
-                        ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
-                        if ngram.count(token) > 0:
-                            probs[:, token] = 0.0
+                    # Apply no-repeat n-gram penalty
+                    if no_repeat_ngram_size > 0:
+                        for token in set(next_token_ids.tolist()):
+                            ngram = beam_token_ids[0, -no_repeat_ngram_size:].tolist()
+                            if ngram.count(token) > 0:
+                                probs[:, token] = 0.0
 
-                # Grammar masking: validate sequences using Earley parser
-                valid_tokens = []
-                for token in next_token_ids:
-                    sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
-                    sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
-                    try:
-                        self.earley_parser.parse(sequence_str)
-                        valid_tokens.append(token)
-                    except:
-                        continue
-                if not valid_tokens:
-                    valid_tokens = [self.tokenizer.pad_id] * batch_size
+                    # Grammar masking: validate sequences using Earley parser
+                    valid_tokens = []
+                    for token in next_token_ids:
+                        sequence = beam_token_ids[0, :output_index.item()].tolist() + [token]
+                        sequence_str = ' '.join([self.tokenizer.decode([t]) for t in sequence])
+                        try:
+                            self.earley_parser.parse(sequence_str)
+                            valid_tokens.append(token)
+                        except:
+                            continue
+                    if not valid_tokens:
+                        valid_tokens = [self.tokenizer.pad_id] * batch_size
 
-                for token in valid_tokens:
-                    new_beam_token_ids = beam_token_ids.clone()
-                    new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
-                    new_beam_score = beam_score + torch.log(probs[0, token]).item()
-                    new_beams.append((new_beam_token_ids, new_beam_score))
+                    for token in valid_tokens:
+                        new_beam_token_ids = beam_token_ids.clone()
+                        new_beam_token_ids.index_copy_(1, output_index, torch.tensor([token]).to(device))
+                        new_beam_score = beam_score + torch.log(probs[0, token]).item()
+                        new_beams.append((new_beam_token_ids, new_beam_score))
 
-            # Select top beams
-            beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
+                # Select top beams
+                beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:num_beams]
 
-            # Update input tensors for the next iteration
-            input_token_ids_tensor = beams[0][0]
-            input_positions_tensor = output_index.unsqueeze(dim=-1)
-            curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
-            output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
-            output_index = output_index + 1
+                # Update input tensors for the next iteration
+                input_token_ids_tensor = beams[0][0]
+                input_positions_tensor = output_index.unsqueeze(dim=-1)
+                curr_mask_tensor = mask_tensor.index_select(2, input_positions_tensor)
+                output_positions_tensor = torch.tensor(0, dtype=torch.int64).to(device)
+                output_index = output_index + 1
 
         # Detokenization.
         token_ids = beams[0][0].tolist()

@@ -860,6 +860,18 @@ class VishwamaiForCausalLM(nn.Module):
         # If a string was provided as input, return a string as output.
         return results[0] if is_str_prompt else results
 
+    def bi_directional_generate(self, prompts, device, output_len=100, temperature=0.95, top_p=1.0, top_k=100):
+        # Forward generation
+        forward_results = self.generate(prompts, device, output_len, temperature, top_p, top_k)
+
+        # Reverse prompts for backward generation
+        reversed_prompts = [prompt[::-1] for prompt in prompts]
+        backward_results = self.generate(reversed_prompts, device, output_len, temperature, top_p, top_k)
+
+        # Combine forward and backward results
+        combined_results = [f + b[::-1] for f, b in zip(forward_results, backward_results)]
+        return combined_results
+
     def load_weights(self, model_path: str):
         if os.path.isfile(model_path):
             self.load_state_dict(

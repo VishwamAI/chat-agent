@@ -4,9 +4,7 @@ import Chat from './components/Chat';
 function App() {
   return (
     <ChakraProvider>
-      <div className="App">
-        <Chat />
-      </div>
+      <Chat />
     </ChakraProvider>
   );
 }

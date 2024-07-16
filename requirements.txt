@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a78db28d2cc9aebdc5a9975ca673b2a21560919a4dcbb83b70afe36496c56eaf
-size 89
+jax==0.4.25
+jaxlib==0.4.25
+dm_haiku==0.0.12
+numpy==1.26.4
+sentencepiece==0.2.0
+nextgenjax

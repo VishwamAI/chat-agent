@@ -1,3 +1,6 @@
+# Run this script in the virtual environment:
+# source venv/bin/activate && python train_vishwamai.py
+
 import jax
 import jax.numpy as jnp
 import json
@@ -5,14 +8,13 @@ import librosa
 import numpy as np
 import optax
 import os
-from datasets import Dataset
+from datasets import Dataset, load_from_disk
 from flax import linen as nn
 from flax.training import train_state
 from huggingface_hub import HfApi
 from nextgenjax.model import create_model
 from sklearn.model_selection import train_test_split
 from typing import List, Dict
-
 
 
 def load_datasets():
@@ -38,6 +40,10 @@ def load_datasets():
                 labels.append(-1)  # Use -1 as a placeholder for missing labels
 
         datasets[split] = Dataset.from_dict({'features': features, 'labels': labels})
+
+    # Load the google/bigbench arithmetic dataset
+    bigbench_dataset = load_from_disk('/home/ubuntu/chat-agent/datasets/bigbench/arithmetic')
+    datasets['bigbench'] = bigbench_dataset
 
     return datasets
 
@@ -124,13 +130,21 @@ def train_vishwamai():
         apply_fn=model.apply, params=params, tx=tx
     )
 
-    train_dataset = load_datasets()['train']
-    eval_dataset = load_datasets()['dev']
+    datasets = load_datasets()
+    train_dataset = datasets['train']
+    eval_dataset = datasets['dev']
+    bigbench_dataset = datasets['bigbench']
 
     for epoch in range(10):  # Adjust number of epochs as needed
+        # Train on audio data
         for batch in train_dataset:
             state, loss = train_step(state, batch)
-            print(f"Epoch {epoch}, Loss: {loss}")
+            print(f"Epoch {epoch}, Audio Loss: {loss}")
+
+        # Train on bigbench data
+        for batch in bigbench_dataset:
+            state, loss = train_step(state, batch)
+            print(f"Epoch {epoch}, BigBench Loss: {loss}")
 
         eval_score = evaluate(state, eval_dataset)
         print(f"Epoch {epoch}, Evaluation Score: {eval_score}")

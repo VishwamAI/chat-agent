@@ -1,14 +1,17 @@
 import jax
 import jax.numpy as jnp
+import json
+import librosa
+import numpy as np
+import optax
+import os
+from datasets import Dataset
 from flax import linen as nn
 from flax.training import train_state
-from nextgenjax import NextGenJAXModel, NextGenJAXConfig
-from datasets import load_dataset, Dataset
-from transformers import AutoTokenizer
-import optax
-import json
-from typing import List, Dict
 from huggingface_hub import HfApi
+from nextgenjax import NextGenJAXModel, NextGenJAXConfig
+from sklearn.model_selection import train_test_split
+from typing import List, Dict
 
 def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
     """
@@ -37,24 +40,27 @@ def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
     return dataset
 
 def load_datasets():
-    mmlu = load_dataset("cais/mmlu", "mathematics")
-    tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b")
+    audio_dirs = {
+        'train': '/home/ubuntu/chat-agent/train',
+        'dev': '/home/ubuntu/chat-agent/dev',
+        'test': '/home/ubuntu/chat-agent/test'
+    }
+    datasets = {}
 
-    def preprocess_function(examples):
-        inputs = [f"Question: {q}\nChoices: A) {a} B) {b} C) {c} D) {d}\nAnswer:" for q, a, b, c, d in zip(examples['question'], examples['choices'][0], examples['choices'][1], examples['choices'][2], examples['choices'][3])]
-        targets = [f" {examples['answer'][i]}" for i in range(len(examples['answer']))]
-        tokenized_inputs = tokenizer(inputs, truncation=True, padding="max_length", max_length=512)
-        tokenized_targets = tokenizer(targets, truncation=True, padding="max_length", max_length=8)
+    for split, directory in audio_dirs.items():
+        audio_files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.wav')]
+        features = [load_audio(file) for file in audio_files]
+        datasets[split] = Dataset.from_dict({'features': features})
 
-        tokenized_inputs["labels"] = tokenized_targets["input_ids"]
-        return tokenized_inputs
+    return datasets
 
-    processed_dataset = mmlu["train"].map(preprocess_function, batched=True, remove_columns=mmlu["train"].column_names)
-    return processed_dataset
+def load_audio(file_path, sr=16000, n_mfcc=13):
+    y, _ = librosa.load(file_path, sr=sr)
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
+    return mfccs.T  # Transpose for (time, features) shape
 
 def create_vishwamai_config():
     return NextGenJAXConfig(
-        vocab_size=32000,
         hidden_size=2048,
         num_hidden_layers=24,
         num_attention_heads=32,
@@ -62,9 +68,13 @@ def create_vishwamai_config():
         hidden_act="gelu",
         max_position_embeddings=2048,
         initializer_range=0.02,
-        # MMLU-specific configuration parameters
-        num_choices=4,
-        max_seq_length=512,
+        # Audio-specific configuration parameters
+        sample_rate=16000,
+        n_mfcc=13,
+        n_fft=2048,
+        hop_length=512,
+        max_audio_length=10,  # in seconds
+        num_classes=10,  # Adjust based on your audio classification task
     )
 
 def create_train_state(rng, config):
@@ -77,9 +87,12 @@ def create_train_state(rng, config):
 
 def train_step(state, batch):
     def loss_fn(params):
-        logits = state.apply_fn(params, batch['input_ids'])
+        # Assuming batch['features'] contains the audio features
+        logits = state.apply_fn(params, batch['features'])
+        # Adjust the loss function for audio classification or regression
+        # This example assumes a classification task with integer labels
         loss = optax.softmax_cross_entropy_with_integer_labels(
-            logits[:, :-1, :], batch['labels'][:, 1:]
+            logits, batch['labels']
         ).mean()
         return loss
 
@@ -89,15 +102,17 @@ def train_step(state, batch):
     return state, loss
 
 def evaluate(state, eval_ds):
-    correct = 0
-    total = 0
+    total_loss = 0
+    total_samples = 0
     for batch in eval_ds:
-        logits = state.apply_fn(state.params, batch['input_ids'])
-        predictions = jnp.argmax(logits[:, -1, :], axis=-1)
-        correct += jnp.sum(predictions == batch['labels'][:, -1])
-        total += len(predictions)
-    accuracy = correct / total
-    return accuracy
+        features = batch['audio_features']
+        labels = batch['labels']
+        logits = state.apply_fn(state.params, features)
+        loss = optax.softmax_cross_entropy_with_integer_labels(logits, labels).mean()
+        total_loss += loss * features.shape[0]
+        total_samples += features.shape[0]
+    avg_loss = total_loss / total_samples
+    return avg_loss
 
 def save_checkpoint(state, path):
     with open(path, 'wb') as f:
@@ -108,16 +123,17 @@ def train_vishwamai():
     config = create_vishwamai_config()
     state = create_train_state(rng, config)
 
-    dataset = load_datasets()
-    eval_dataset = load_dataset("cais/mmlu", "mathematics", split="validation")
+    train_dataset = load_datasets('train')
+    eval_dataset = load_datasets('dev')
 
     for epoch in range(10):  # Adjust number of epochs as needed
-        for batch in dataset:
-            state, loss = train_step(state, batch)
+        for audio_file in train_dataset:
+            features = load_audio(audio_file)
+            state, loss = train_step(state, features)
             print(f"Epoch {epoch}, Loss: {loss}")
 
-        mmlu_score = evaluate(state, eval_dataset)
-        print(f"Epoch {epoch}, MMLU Math Score: {mmlu_score}")
+        eval_score = evaluate(state, eval_dataset)
+        print(f"Epoch {epoch}, Evaluation Score: {eval_score}")
         save_checkpoint(state, f"checkpoint_epoch_{epoch}")
 
     return state

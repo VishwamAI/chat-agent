@@ -8,6 +8,7 @@ import librosa
 import numpy as np
 import optax
 import os
+import logging
 from datasets import Dataset, load_from_disk
 from flax import linen as nn
 from flax.training import train_state
@@ -15,6 +16,8 @@ from huggingface_hub import HfApi
 from nextgenjax.model import create_model
 from sklearn.model_selection import train_test_split
 from typing import List, Dict
+
+logging.basicConfig(level=logging.INFO)
 
 
 def load_datasets():
@@ -74,9 +77,10 @@ def create_train_state(rng, num_layers, hidden_size, num_heads, dropout_rate):
         apply_fn=model.apply, params=params, tx=tx
     )
 
-def train_step(state, batch):
+def train_step(state, batch, rng):
     def loss_fn(params):
-        logits = state.apply_fn(params, batch['features'])
+        rng, dropout_rng = jax.random.split(rng)
+        logits = state.apply_fn(params, batch['features'], rngs={'dropout': dropout_rng})
         if 'labels' in batch and batch['labels'] is not None:
             loss = optax.softmax_cross_entropy_with_integer_labels(
                 logits, batch['labels']
@@ -109,6 +113,7 @@ def save_checkpoint(state, path):
 
 def train_vishwamai():
     rng = jax.random.PRNGKey(0)
+    logging.info(f"Initial RNG: {rng}")
 
     # Define model parameters
     num_layers = 24
@@ -116,19 +121,9 @@ def train_vishwamai():
     num_heads = 32
     dropout_rate = 0.1
 
-    # Create model using create_model function
-    model = create_model(num_layers, hidden_size, num_heads, dropout_rate)
-
-    # Initialize model parameters
-    params = model.init(rng, jnp.ones((1, HIDDEN_SIZE), dtype=jnp.float32))
-
-    # Create optimizer
-    tx = optax.adamw(learning_rate=1e-5)
-
-    # Create train state
-    state = train_state.TrainState.create(
-        apply_fn=model.apply, params=params, tx=tx
-    )
+    # Create train state using create_train_state function
+    rng, init_rng = jax.random.split(rng)
+    state = create_train_state(init_rng, num_layers, hidden_size, num_heads, dropout_rate)
 
     datasets = load_datasets()
     train_dataset = datasets['train']
@@ -138,16 +133,18 @@ def train_vishwamai():
     for epoch in range(10):  # Adjust number of epochs as needed
         # Train on audio data
         for batch in train_dataset:
-            state, loss = train_step(state, batch)
-            print(f"Epoch {epoch}, Audio Loss: {loss}")
+            rng, step_rng = jax.random.split(rng)
+            state, loss = train_step(state, batch, step_rng)
+            logging.info(f"Epoch {epoch}, Audio Loss: {loss}, Step RNG: {step_rng}")
 
         # Train on bigbench data
         for batch in bigbench_dataset:
-            state, loss = train_step(state, batch)
-            print(f"Epoch {epoch}, BigBench Loss: {loss}")
+            rng, step_rng = jax.random.split(rng)
+            state, loss = train_step(state, batch, step_rng)
+            logging.info(f"Epoch {epoch}, BigBench Loss: {loss}, Step RNG: {step_rng}")
 
         eval_score = evaluate(state, eval_dataset)
-        print(f"Epoch {epoch}, Evaluation Score: {eval_score}")
+        logging.info(f"Epoch {epoch}, Evaluation Score: {eval_score}")
         save_checkpoint(state, f"checkpoint_epoch_{epoch}")
 
     return state

@@ -18,6 +18,11 @@ jobs:
       with:
         python-version: '3.8'
 
+    - name: Debug working directory
+      run: |
+        pwd
+        ls -la
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

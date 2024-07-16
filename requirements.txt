@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ebb8ee678a5d2c0cdf679e70b408291c6720a9a4c67ce79ae88dc05763aea7cb
-size 146
+dm_haiku==0.0.12
+jax[cuda12-pip]==0.4.25 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+numpy==1.26.4
+sentencepiece==0.2.0
+nextgenjax

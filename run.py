@@ -15,6 +15,7 @@ import logging
 
 from model import LanguageModelConfig, TransformerConfig, QuantizedWeight8bit as QW8Bit
 from runners import InferenceRunner, ModelRunner, sample_from_model
+from object_detection.detect import detect_objects
 
 
 CKPT_PATH = "./checkpoints/"
@@ -62,8 +63,20 @@ def main():
     inference_runner.initialize()
     gen = inference_runner.run()
 
-    inp = "The answer to life the universe and everything is of course"
-    print(f"Output for prompt: {inp}", sample_from_model(gen, inp, max_len=100, temperature=0.01))
+    while True:
+        user_input = input("User: ")
+        if user_input.lower() == "quit":
+            break
+
+        image_path = input("Enter image path (or press Enter to skip): ")
+        if image_path:
+            detected_objects = detect_objects(image_path)
+            prompt = f"Detected objects: {detected_objects}\n{user_input}"
+        else:
+            prompt = user_input
+
+        response = sample_from_model(gen, prompt, max_len=100, temperature=0.01)
+        print(f"AI: {response}")
 
 
 if __name__ == "__main__":

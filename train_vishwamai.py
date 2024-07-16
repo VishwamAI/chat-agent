@@ -70,16 +70,12 @@ def create_train_state(rng, num_layers, hidden_size, num_heads, dropout_rate):
 
 def train_step(state, batch):
     def loss_fn(params):
-        # Assuming batch['features'] contains the audio features
         logits = state.apply_fn(params, batch['features'])
-        # Check if labels are available in the batch
-        if 'labels' in batch:
-            # Classification task with integer labels
+        if 'labels' in batch and batch['labels'] is not None:
             loss = optax.softmax_cross_entropy_with_integer_labels(
                 logits, batch['labels']
             ).mean()
         else:
-            # If labels are not available, use a dummy loss (e.g., L2 norm of logits)
             loss = jnp.mean(jnp.square(logits))
         return loss
 
@@ -133,8 +129,7 @@ def train_vishwamai():
 
     for epoch in range(10):  # Adjust number of epochs as needed
         for batch in train_dataset:
-            features = batch['features']
-            state, loss = train_step(state, features)
+            state, loss = train_step(state, batch)
             print(f"Epoch {epoch}, Loss: {loss}")
 
         eval_score = evaluate(state, eval_dataset)

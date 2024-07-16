@@ -62,7 +62,7 @@ NUM_CLASSES = 10  # Adjust based on your audio classification task
 
 def create_train_state(rng, num_layers, hidden_size, num_heads, dropout_rate):
     model = create_model(num_layers, hidden_size, num_heads, dropout_rate)
-    params = model.init(rng, jnp.ones((1, 1), dtype=jnp.int32))
+    params = model.init(rng, jnp.ones((1, hidden_size), dtype=jnp.float32))
     tx = optax.adamw(learning_rate=1e-5)
     return train_state.TrainState.create(
         apply_fn=model.apply, params=params, tx=tx
@@ -118,7 +118,7 @@ def train_vishwamai():
     model = create_model(num_layers, hidden_size, num_heads, dropout_rate)
 
     # Initialize model parameters
-    params = model.init(rng, jnp.ones((1, 1), dtype=jnp.int32))
+    params = model.init(rng, jnp.ones((1, HIDDEN_SIZE), dtype=jnp.float32))
 
     # Create optimizer
     tx = optax.adamw(learning_rate=1e-5)

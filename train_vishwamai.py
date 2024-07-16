@@ -3,15 +3,49 @@ import jax.numpy as jnp
 from flax import linen as nn
 from flax.training import train_state
 from nextgenjax import NextGenJAXModel, NextGenJAXConfig
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 from transformers import AutoTokenizer
 import optax
+import json
+from typing import List, Dict
+
+def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
+    """
+    Load and preprocess data from the OpenHermes dataset.
+
+    Args:
+    file_path (str): Path to the train.jsonl file.
+
+    Returns:
+    List[Dict[str, str]]: A list of dictionaries containing 'input' and 'output' keys.
+    """
+    dataset = []
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            data = json.loads(line)
+            text = data['text']
+            # Split the text into user input and assistant output
+            parts = text.split('<|assistant|>')
+            if len(parts) == 2:
+                user_input = parts[0].replace('<|user|>', '').replace('<|end|>', '').strip()
+                assistant_output = parts[1].replace('<|end|>', '').strip()
+                dataset.append({
+                    'input': user_input,
+                    'output': assistant_output
+                })
+    return dataset
 
 def load_datasets():
     # Load and preprocess datasets
     gemma = load_dataset("google/gemma-2b")
     phi = load_dataset("microsoft/phi-1_5")
     mmlu = load_dataset("cais/mmlu", "mathematics")
+
+    # Load OpenHermes dataset
+    openhermes_data = load_openhermes_dataset('/home/ubuntu/chat-agent/openhermes-2.5-phi-3-sft/train.jsonl')
+    openhermes_dataset = Dataset.from_dict({
+        'text': [f"{item['input']} {item['output']}" for item in openhermes_data]
+    })
 
     # Preprocess and combine datasets
     tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b")
@@ -23,6 +57,7 @@ def load_datasets():
         gemma["train"].select(range(1000))
         .concatenate(phi["train"].select(range(1000)))
         .concatenate(mmlu["train"].select(range(1000)))
+        .concatenate(openhermes_dataset.select(range(1000)))
     )
     combined_dataset = combined_dataset.map(preprocess_function, batched=True)
     return combined_dataset

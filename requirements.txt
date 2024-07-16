@@ -1,5 +1,3 @@
-dm_haiku==0.0.12
-jax[cuda12-pip]==0.4.25 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-numpy==1.26.4
-sentencepiece==0.2.0
-nextgenjax
+version https://git-lfs.github.com/spec/v1
+oid sha256:6af257873fa56b4c89983001eba65f86713fe5bf08de5868c8d61a1efa4b7bdd
+size 89

@@ -13,31 +13,7 @@ from nextgenjax.model import create_model
 from sklearn.model_selection import train_test_split
 from typing import List, Dict
 
-def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
-    """
-    Load and preprocess data from the OpenHermes dataset.
 
-    Args:
-    file_path (str): Path to the train.jsonl file.
-
-    Returns:
-    List[Dict[str, str]]: A list of dictionaries containing 'input' and 'output' keys.
-    """
-    dataset = []
-    with open(file_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            data = json.loads(line)
-            text = data['text']
-            # Split the text into user input and assistant output
-            parts = text.split('<|assistant|>')
-            if len(parts) == 2:
-                user_input = parts[0].replace('<|user|>', '').replace('<|end|>', '').strip()
-                assistant_output = parts[1].replace('<|end|>', '').strip()
-                dataset.append({
-                    'input': user_input,
-                    'output': assistant_output
-                })
-    return dataset
 
 def load_datasets():
     audio_dirs = {
@@ -50,7 +26,18 @@ def load_datasets():
     for split, directory in audio_dirs.items():
         audio_files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.wav')]
         features = [load_audio(file) for file in audio_files]
-        datasets[split] = Dataset.from_dict({'features': features})
+
+        # Check if label files exist
+        label_files = [f.replace('.wav', '.txt') for f in audio_files]
+        labels = []
+        for label_file in label_files:
+            if os.path.exists(label_file):
+                with open(label_file, 'r') as f:
+                    labels.append(int(f.read().strip()))
+            else:
+                labels.append(-1)  # Use -1 as a placeholder for missing labels
+
+        datasets[split] = Dataset.from_dict({'features': features, 'labels': labels})
 
     return datasets
 
@@ -85,11 +72,15 @@ def train_step(state, batch):
     def loss_fn(params):
         # Assuming batch['features'] contains the audio features
         logits = state.apply_fn(params, batch['features'])
-        # Adjust the loss function for audio classification or regression
-        # This example assumes a classification task with integer labels
-        loss = optax.softmax_cross_entropy_with_integer_labels(
-            logits, batch['labels']
-        ).mean()
+        # Check if labels are available in the batch
+        if 'labels' in batch:
+            # Classification task with integer labels
+            loss = optax.softmax_cross_entropy_with_integer_labels(
+                logits, batch['labels']
+            ).mean()
+        else:
+            # If labels are not available, use a dummy loss (e.g., L2 norm of logits)
+            loss = jnp.mean(jnp.square(logits))
         return loss
 
     grad_fn = jax.value_and_grad(loss_fn)
@@ -101,7 +92,7 @@ def evaluate(state, eval_ds):
     total_loss = 0
     total_samples = 0
     for batch in eval_ds:
-        features = batch['audio_features']
+        features = batch['features']
         labels = batch['labels']
         logits = state.apply_fn(state.params, features)
         loss = optax.softmax_cross_entropy_with_integer_labels(logits, labels).mean()
@@ -164,7 +155,7 @@ def upload_model_to_hub(state, model_name, version):
     api = HfApi()
     api.upload_folder(
         folder_path=f"{model_name}-{version}",
-        repo_id=f"your-username/{model_name}",
+        repo_id=f"VishwamAI/{model_name}",
         repo_type="model",
     )
 

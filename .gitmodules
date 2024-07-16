@@ -1,0 +1,3 @@
+[submodule "NextGenJAX"]
+	path = NextGenJAX
+	url = https://github.com/VishwamAI/NextGenJAX.git

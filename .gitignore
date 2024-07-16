@@ -3,3 +3,7 @@ checkpoints/*
 
 # Ignore virtual environment directory
 venv/
+
+# Ignore dataset directories
+gemma/
+openhermes-2.5-phi-3-sft/

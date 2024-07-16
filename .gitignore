@@ -7,3 +7,11 @@ venv/
 # Ignore dataset directories
 gemma/
 openhermes-2.5-phi-3-sft/
+
+# Ignore dataset directories and archives
+dev.tar.gz
+dev/
+test.tar.gz
+test/
+train.tar.gz
+train/

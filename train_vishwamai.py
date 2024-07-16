@@ -9,7 +9,7 @@ from datasets import Dataset
 from flax import linen as nn
 from flax.training import train_state
 from huggingface_hub import HfApi
-from nextgenjax import NextGenJAXModel, NextGenJAXConfig
+from nextgenjax.model import create_model
 from sklearn.model_selection import train_test_split
 from typing import List, Dict
 
@@ -59,26 +59,22 @@ def load_audio(file_path, sr=16000, n_mfcc=13):
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
     return mfccs.T  # Transpose for (time, features) shape
 
-def create_vishwamai_config():
-    return NextGenJAXConfig(
-        hidden_size=2048,
-        num_hidden_layers=24,
-        num_attention_heads=32,
-        intermediate_size=8192,
-        hidden_act="gelu",
-        max_position_embeddings=2048,
-        initializer_range=0.02,
-        # Audio-specific configuration parameters
-        sample_rate=16000,
-        n_mfcc=13,
-        n_fft=2048,
-        hop_length=512,
-        max_audio_length=10,  # in seconds
-        num_classes=10,  # Adjust based on your audio classification task
-    )
+# Configuration parameters for the model
+NUM_LAYERS = 24
+HIDDEN_SIZE = 2048
+NUM_HEADS = 32
+DROPOUT_RATE = 0.1
 
-def create_train_state(rng, config):
-    model = NextGenJAXModel(config)
+# Audio-specific configuration parameters
+SAMPLE_RATE = 16000
+N_MFCC = 13
+N_FFT = 2048
+HOP_LENGTH = 512
+MAX_AUDIO_LENGTH = 10  # in seconds
+NUM_CLASSES = 10  # Adjust based on your audio classification task
+
+def create_train_state(rng, num_layers, hidden_size, num_heads, dropout_rate):
+    model = create_model(num_layers, hidden_size, num_heads, dropout_rate)
     params = model.init(rng, jnp.ones((1, 1), dtype=jnp.int32))
     tx = optax.adamw(learning_rate=1e-5)
     return train_state.TrainState.create(
@@ -120,15 +116,33 @@ def save_checkpoint(state, path):
 
 def train_vishwamai():
     rng = jax.random.PRNGKey(0)
-    config = create_vishwamai_config()
-    state = create_train_state(rng, config)
 
-    train_dataset = load_datasets('train')
-    eval_dataset = load_datasets('dev')
+    # Define model parameters
+    num_layers = 24
+    hidden_size = 2048
+    num_heads = 32
+    dropout_rate = 0.1
+
+    # Create model using create_model function
+    model = create_model(num_layers, hidden_size, num_heads, dropout_rate)
+
+    # Initialize model parameters
+    params = model.init(rng, jnp.ones((1, 1), dtype=jnp.int32))
+
+    # Create optimizer
+    tx = optax.adamw(learning_rate=1e-5)
+
+    # Create train state
+    state = train_state.TrainState.create(
+        apply_fn=model.apply, params=params, tx=tx
+    )
+
+    train_dataset = load_datasets()['train']
+    eval_dataset = load_datasets()['dev']
 
     for epoch in range(10):  # Adjust number of epochs as needed
-        for audio_file in train_dataset:
-            features = load_audio(audio_file)
+        for batch in train_dataset:
+            features = batch['features']
             state, loss = train_step(state, features)
             print(f"Epoch {epoch}, Loss: {loss}")
 
@@ -140,9 +154,8 @@ def train_vishwamai():
 
 def upload_model_to_hub(state, model_name, version):
     # Convert state to Hugging Face model format
-    config = create_vishwamai_config()
-    model = NextGenJAXModel(config)
-    model.params = state.params
+    model = create_model(num_layers=24, hidden_size=2048, num_heads=32, dropout_rate=0.1)
+    model = model.bind(state.params)
 
     # Save model locally
     model.save_pretrained(f"{model_name}-{version}")

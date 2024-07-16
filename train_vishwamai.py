@@ -8,6 +8,7 @@ from transformers import AutoTokenizer
 import optax
 import json
 from typing import List, Dict
+from huggingface_hub import HfApi
 
 def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
     """
@@ -36,31 +37,20 @@ def load_openhermes_dataset(file_path: str) -> List[Dict[str, str]]:
     return dataset
 
 def load_datasets():
-    # Load and preprocess datasets
-    gemma = load_dataset("google/gemma-2b")
-    phi = load_dataset("microsoft/phi-1_5")
     mmlu = load_dataset("cais/mmlu", "mathematics")
-
-    # Load OpenHermes dataset
-    openhermes_data = load_openhermes_dataset('/home/ubuntu/chat-agent/openhermes-2.5-phi-3-sft/train.jsonl')
-    openhermes_dataset = Dataset.from_dict({
-        'text': [f"{item['input']} {item['output']}" for item in openhermes_data]
-    })
-
-    # Preprocess and combine datasets
     tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b")
 
     def preprocess_function(examples):
-        return tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512)
+        inputs = [f"Question: {q}\nChoices: A) {a} B) {b} C) {c} D) {d}\nAnswer:" for q, a, b, c, d in zip(examples['question'], examples['choices'][0], examples['choices'][1], examples['choices'][2], examples['choices'][3])]
+        targets = [f" {examples['answer'][i]}" for i in range(len(examples['answer']))]
+        tokenized_inputs = tokenizer(inputs, truncation=True, padding="max_length", max_length=512)
+        tokenized_targets = tokenizer(targets, truncation=True, padding="max_length", max_length=8)
 
-    combined_dataset = (
-        gemma["train"].select(range(1000))
-        .concatenate(phi["train"].select(range(1000)))
-        .concatenate(mmlu["train"].select(range(1000)))
-        .concatenate(openhermes_dataset.select(range(1000)))
-    )
-    combined_dataset = combined_dataset.map(preprocess_function, batched=True)
-    return combined_dataset
+        tokenized_inputs["labels"] = tokenized_targets["input_ids"]
+        return tokenized_inputs
+
+    processed_dataset = mmlu["train"].map(preprocess_function, batched=True, remove_columns=mmlu["train"].column_names)
+    return processed_dataset
 
 def create_vishwamai_config():
     return NextGenJAXConfig(
@@ -72,12 +62,15 @@ def create_vishwamai_config():
         hidden_act="gelu",
         max_position_embeddings=2048,
         initializer_range=0.02,
+        # MMLU-specific configuration parameters
+        num_choices=4,
+        max_seq_length=512,
     )
 
 def create_train_state(rng, config):
     model = NextGenJAXModel(config)
     params = model.init(rng, jnp.ones((1, 1), dtype=jnp.int32))
-    tx = optax.adamw(learning_rate=1e-4)
+    tx = optax.adamw(learning_rate=1e-5)
     return train_state.TrainState.create(
         apply_fn=model.apply, params=params, tx=tx
     )
@@ -86,7 +79,7 @@ def train_step(state, batch):
     def loss_fn(params):
         logits = state.apply_fn(params, batch['input_ids'])
         loss = optax.softmax_cross_entropy_with_integer_labels(
-            logits[:, :-1, :], batch['input_ids'][:, 1:]
+            logits[:, :-1, :], batch['labels'][:, 1:]
         ).mean()
         return loss
 
@@ -96,8 +89,19 @@ def train_step(state, batch):
     return state, loss
 
 def evaluate(state, eval_ds):
-    # TODO: Implement evaluation function
-    pass
+    correct = 0
+    total = 0
+    for batch in eval_ds:
+        logits = state.apply_fn(state.params, batch['input_ids'])
+        predictions = jnp.argmax(logits[:, -1, :], axis=-1)
+        correct += jnp.sum(predictions == batch['labels'][:, -1])
+        total += len(predictions)
+    accuracy = correct / total
+    return accuracy
+
+def save_checkpoint(state, path):
+    with open(path, 'wb') as f:
+        f.write(jax.device_get(jax.tree_util.tree_map(lambda x: x.copy(), state)))
 
 def train_vishwamai():
     rng = jax.random.PRNGKey(0)
@@ -105,13 +109,36 @@ def train_vishwamai():
     state = create_train_state(rng, config)
 
     dataset = load_datasets()
+    eval_dataset = load_dataset("cais/mmlu", "mathematics", split="validation")
 
     for epoch in range(10):  # Adjust number of epochs as needed
         for batch in dataset:
             state, loss = train_step(state, batch)
             print(f"Epoch {epoch}, Loss: {loss}")
 
-        # TODO: Add evaluation and checkpointing logic
+        mmlu_score = evaluate(state, eval_dataset)
+        print(f"Epoch {epoch}, MMLU Math Score: {mmlu_score}")
+        save_checkpoint(state, f"checkpoint_epoch_{epoch}")
+
+    return state
+
+def upload_model_to_hub(state, model_name, version):
+    # Convert state to Hugging Face model format
+    config = create_vishwamai_config()
+    model = NextGenJAXModel(config)
+    model.params = state.params
+
+    # Save model locally
+    model.save_pretrained(f"{model_name}-{version}")
+
+    # Upload to Hugging Face Hub
+    api = HfApi()
+    api.upload_folder(
+        folder_path=f"{model_name}-{version}",
+        repo_id=f"your-username/{model_name}",
+        repo_type="model",
+    )
 
 if __name__ == "__main__":
-    train_vishwamai()
+    final_state = train_vishwamai()
+    upload_model_to_hub(final_state, "vishwamai-mmlu-math", "v1.0")
